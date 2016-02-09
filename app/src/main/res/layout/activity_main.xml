@@ -1,0 +1,117 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.github.quarck.calnotify.ActivityMain" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/middle_text_description"
+            android:id="@+id/textView2" />
+
+        <ToggleButton
+            android:id="@+id/toggleButtonEnableService"
+            android:onClick="OnBtnEnableServiceClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="18sp"
+            android:textOff="@string/off"
+            android:textOn="@string/on"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/expl_text2"
+            android:id="@+id/textView6"
+            />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/no_calendar_reminders"
+            android:id="@+id/textView7"
+            android:onClick="OnEasterEggClick"
+            android:clickable="true"
+            />
+
+        <ToggleButton
+            android:id="@+id/toggleButtonHandlePebble"
+            android:onClick="OnBtnHandlePebbleClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="18sp"
+            android:textOff="Pebble is not handled"
+            android:textOn="Pebble handled"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Notification 1"
+            android:id="@+id/buttonTest"
+            android:onClick="OnButtonTestClick"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Notification 2"
+            android:id="@+id/buttonTest2"
+            android:onClick="OnButtonTestClick"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="\n\n[This is for testing UI layout]\nJust a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. \n\n"
+            android:id="@+id/textViewALotOfSpaceForTest"
+            android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

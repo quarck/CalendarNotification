@@ -1,0 +1,57 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/settings"
+        android:key="pref_key_silence">\
+        
+        <CheckBoxPreference
+            android:key="pref_key_enable_dismiss_button"
+            android:summary="@string/show_dismiss_summary"
+            android:title="@string/show_dismiss_button"
+            android:defaultValue="true"  />
+
+        <CheckBoxPreference
+            android:key="notification_led"
+            android:summary="@string/notification_light_summary"
+            android:title="@string/notification_light_title"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="play_reminder_sound"
+            android:summary="@string/play_reminder_sound_summary"
+            android:title="@string/play_reminder_sound"
+            android:defaultValue="false" />
+
+        <RingtonePreference
+            android:key="pref_key_ringtone"
+            android:summary="@string/ringtone_selection_summary"
+            android:title="@string/ringtone_selection"
+            android:ringtoneType="notification" />
+
+        <CheckBoxPreference android:key="vibra_on"
+            android:title="@string/vibra_on"
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+    <!--
+     <PreferenceCategory 
+        android:title="Notification"
+        android:key="pref_key_notification">
+        
+
+        <RingtonePreference 
+            android:key="pref_key_ringtone"
+            android:summary=""            
+            android:title="Notification tone"
+            android:ringtoneType="notification" />
+
+        <CheckBoxPreference
+            android:key="pref_key_enable_ongoing_notification"
+            android:summary="Display ongoing notification when SmartNotify is active"
+            android:title="Display ongoing notification"
+            android:defaultValue="true"  />
+        
+    </PreferenceCategory>
+    -->
+    
+</PreferenceScreen>

@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".GlobalState"
@@ -70,11 +71,35 @@
 
         <receiver
             android:name=".BroadcastReceiverEventReminder">
-            <intent-filter
-                android:priority="100000"
-                >
-                <action android:name="android.intent.action.EVENT_REMINDER" />
+
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENT_REMINDER"/>
+                <data android:mimeType="vnd.android.cursor.item/calendar-alert"/>
+            </intent-filter>
+
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENTEX_REMINDER"/>
+                <data android:mimeType="vnd.android.cursor.item/calendarEx-alert"/>
+            </intent-filter>
+
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENT_REMINDER"/>
                 <data android:scheme="content"/>
+            </intent-filter>
+
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENT_REMINDER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="vnd.android.cursor.item/calendar_alert_time"/>
+            </intent-filter>
+
+        </receiver>
+
+        <receiver android:name=".BroadcastReceiverCalendarChanged">
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED"/>
+                <data android:scheme="content"/>
+                <data android:host="com.android.calendar"/>
             </intent-filter>
         </receiver>
 

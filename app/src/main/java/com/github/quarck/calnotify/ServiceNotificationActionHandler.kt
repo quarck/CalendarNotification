@@ -2,6 +2,8 @@ package com.github.quarck.calnotify
 
 import android.app.AlarmManager
 import android.app.IntentService
+import android.app.PendingIntent
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -50,69 +52,69 @@ class ServiceNotificationActionHandler : IntentService("ServiceNotificationActio
 		}
 	}
 
-//	fun scheduleEvent(eventId: Long, eventStart: Long, eventEnd: Long)
-//	{
-//		var PROJECTION = arrayOf(CalendarContract.CalendarAlerts.STATE);
-//
-//		// Dismiss current alarm
-//		var uri = CalendarContract.CalendarAlerts.CONTENT_URI;
-//
-//		// Add a new alarm
-//		var alarmTime = System.currentTimeMillis() + Consts.SNOOZE_DELAY;
-//		var values = makeContentValues(eventId, eventStart, eventEnd, alarmTime, 0);
-//
-//		contentResolver.insert(uri, values);
-//
-//		scheduleAlarm(this,
-//			AlertUtils.createAlarmManager(this), alarmTime, false);
-//	}
-//
-//
-//	fun makeContentValues(eventId: Long, begin: Long, end: Long, alarmTime: Long, minutes: Int): ContentValues
-//	{
-//		var values = ContentValues();
-//		values.put(CalendarContract.CalendarAlerts.EVENT_ID, eventId);
-//		values.put(CalendarContract.CalendarAlerts.BEGIN, begin);
-//		values.put(CalendarContract.CalendarAlerts.END, end);
-//		values.put(CalendarContract.CalendarAlerts.ALARM_TIME, alarmTime);
-//		var currentTime = System.currentTimeMillis();
-//		values.put(CalendarContract.CalendarAlerts.CREATION_TIME, currentTime);
-//		values.put(CalendarContract.CalendarAlerts.RECEIVED_TIME, 0);
-//		values.put(CalendarContract.CalendarAlerts.NOTIFY_TIME, 0);
-//		values.put(CalendarContract.CalendarAlerts.STATE, CalendarContract.CalendarAlerts.STATE_SCHEDULED);
-//		values.put(CalendarContract.CalendarAlerts.MINUTES, minutes);
-//		return values;
-//	}
-//
-//	private fun scheduleAlarm(
-//		context: Context,
-//		manager: AlarmManagerInterface,
-//		alarmTime: Long,
-//		quietUpdate: Boolean
-//	)
-//	{
-//		var alarmType = AlarmManager.RTC_WAKEUP;
-//
-//		var intent = Intent(CalendarContract.ACTION_EVENT_REMINDER);
-//		intent.setClass(context, AlertReceiver.class);
-//
-//		if (quietUpdate)
-//		{
-//			alarmType = AlarmManager.RTC;
-//		}
-//		else
-//		{
-//			// Set data field so we get a unique PendingIntent instance per alarm or else alarms
-//			// may be dropped.
-//			Uri.Builder builder = CalendarAlerts.CONTENT_URI.buildUpon();
-//			ContentUris.appendId(builder, alarmTime);
-//			intent.setData(builder.build());
-//		}
-//		intent.putExtra(CalendarContract.CalendarAlerts.ALARM_TIME, alarmTime);
-//		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent,
-//		PendingIntent.FLAG_UPDATE_CURRENT);
-//		manager.set(alarmType, alarmTime, pi);
-//	}
+	fun scheduleEvent(eventId: Long, eventStart: Long, eventEnd: Long)
+	{
+		var PROJECTION = arrayOf(CalendarContract.CalendarAlerts.STATE);
+
+		// Dismiss current alarm
+		var uri = CalendarContract.CalendarAlerts.CONTENT_URI;
+
+		// Add a new alarm
+		var alarmTime = System.currentTimeMillis() + Consts.SNOOZE_DELAY;
+		var values = makeContentValues(eventId, eventStart, eventEnd, alarmTime, 0);
+
+		contentResolver.insert(uri, values);
+
+		scheduleAlarm(this, alarmTime, false);
+	}
+
+
+	fun makeContentValues(eventId: Long, begin: Long, end: Long, alarmTime: Long, minutes: Int): ContentValues
+	{
+		var values = ContentValues();
+		values.put(CalendarContract.CalendarAlerts.EVENT_ID, eventId);
+		values.put(CalendarContract.CalendarAlerts.BEGIN, begin);
+		values.put(CalendarContract.CalendarAlerts.END, end);
+		values.put(CalendarContract.CalendarAlerts.ALARM_TIME, alarmTime);
+		var currentTime = System.currentTimeMillis();
+		values.put(CalendarContract.CalendarAlerts.CREATION_TIME, currentTime);
+		values.put(CalendarContract.CalendarAlerts.RECEIVED_TIME, 0);
+		values.put(CalendarContract.CalendarAlerts.NOTIFY_TIME, 0);
+		values.put(CalendarContract.CalendarAlerts.STATE, CalendarContract.CalendarAlerts.STATE_SCHEDULED);
+		values.put(CalendarContract.CalendarAlerts.MINUTES, minutes);
+		return values;
+	}
+
+	private fun scheduleAlarm(
+		context: Context,
+		alarmTime: Long,
+		quietUpdate: Boolean
+	)
+	{
+		var alarmType = AlarmManager.RTC_WAKEUP;
+
+		var intent = Intent(CalendarContract.ACTION_EVENT_REMINDER);
+		intent.setClass(context, AlarmReceiver::class.java);
+
+		if (quietUpdate)
+		{
+			alarmType = AlarmManager.RTC;
+		}
+		else
+		{
+			// Set data field so we get a unique PendingIntent instance per alarm or else alarms
+			// may be dropped.
+			var builder = CalendarContract.CalendarAlerts.CONTENT_URI.buildUpon();
+			ContentUris.appendId(builder, alarmTime);
+			intent.setData(builder.build());
+		}
+
+		intent.putExtra(CalendarContract.CalendarAlerts.ALARM_TIME, alarmTime);
+		var pi = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		var mgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+		mgr.set(alarmType, alarmTime, pi);
+	}
 
 	companion object
 	{

@@ -82,7 +82,7 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 					}
 					else
 					{
-						Logger.debug(TAG, "Dismissed event - ignored")
+						Logger.debug(TAG, "Ignored dismissed event ${eventId}")
 					}
 
 				} while (cursor.moveToNext())
@@ -93,6 +93,10 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 			}
 
 			cursor?.close()
+		}
+		else
+		{
+			Logger.debug(TAG, "Unsupported action ${intent.action}")
 		}
 
 		if (shouldAbortBroadcast)
@@ -106,8 +110,12 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 			var uri = CalendarContract.CalendarAlerts.CONTENT_URI;
 
 			var selection =
-				"${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_FIRED}" +
-					" AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
+				"(" +
+					"${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_FIRED}" +
+					" OR " +
+					"${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_SCHEDULED}" +
+				")" +
+				" AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
 
 			var dismissValues = ContentValues();
 			dismissValues.put(

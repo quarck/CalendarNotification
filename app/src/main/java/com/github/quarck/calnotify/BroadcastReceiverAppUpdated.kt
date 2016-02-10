@@ -36,10 +36,12 @@ import android.content.Intent
 
 class BroadcastReceiverAppUpdated : BroadcastReceiver()
 {
-	override fun onReceive(context: Context, intent: Intent)
+	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		var intent = Intent(context, ServicePermissionCheck::class.java)
-		context.startService(intent);
-		postCachedNotifications(context)
+		if (context != null)
+		{
+			postEventNotifications(context);
+			scheduleEventsAlarm(context);
+		}
 	}
 }

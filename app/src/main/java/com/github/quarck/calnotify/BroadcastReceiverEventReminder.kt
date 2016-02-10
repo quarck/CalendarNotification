@@ -13,12 +13,17 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 {
 	private val TAG = "BroadcastReceiverEventReminder"
 
-	override fun onReceive(context: Context, intent: Intent)
+	override fun onReceive(context: Context?, intent: Intent?)
 	{
+		if (context == null || intent == null)
+			return;
+
 		var shouldAbortBroadcast = false;
 
 		if (intent.action.equals(CalendarContract.ACTION_EVENT_REMINDER, true))
 		{
+			var settings = Settings(context)
+
 			Logger.debug(TAG, "EVENT_REMINDER received, ${intent.data}");
 
 			var uri = intent.data;
@@ -73,12 +78,14 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 						NotificationViewManager().postNotification(
 							context,
 							notification,
-							Settings(context).notificationSettingsSnapshot
+							settings.notificationSettingsSnapshot
 						);
 
-						dismissNativeReminder(context, eventId);
-
-						shouldAbortBroadcast = true;
+						if (settings.removeOriginal)
+						{
+							dismissNativeReminder(context, eventId);
+							shouldAbortBroadcast = true;
+						}
 					}
 					else
 					{
@@ -100,7 +107,9 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 		}
 
 		if (shouldAbortBroadcast)
+		{
 			abortBroadcast();
+		}
 	}
 
 	fun dismissNativeReminder(context: Context, eventId: Long)

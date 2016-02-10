@@ -15,7 +15,7 @@
 	<string name="empty"></string>
 	<string name="middle_text_description">Enable the app to make Google Calendar event notifications persistent:</string>
 
-	<string name="expl_text2">This app works by replacing Google Calendar notification with identical looking persistent notifications that would stay in the status bar until dismissed manually</string>
+	<string name="expl_text2">This app works by replacing Calendar notification with identical looking persistent notifications that would stay in the status bar until dismissed manually</string>
 
 	<string name="no_calendar_reminders">Please note that only event notifications are handled\nThere is no need to handle reminder notification (they don\'t disappear)</string>
 
@@ -59,4 +59,7 @@
 
 	<string name="help_title">Email developer if you have any feedback or issues:</string>
 	<string name="email_developer">Email developer</string>
+
+	<string name="internal_error">Internal Error</string>
+	<string name="internal_error_text">Please open Calendar and ansure you didn\'t miss any events</string>
 </resources>

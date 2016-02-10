@@ -213,4 +213,30 @@ class NotificationViewManager
 		var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		notificationManager.notify(Consts.NOTIFICATION_ID_UPDATED_NEED_PERMISSIONS, notification) // would update if already exists
 	}
+
+	fun onInternalError(context: Context)
+	{
+		var builder = CalendarContract.CONTENT_URI.buildUpon();
+		builder.appendPath("time");
+		ContentUris.appendId(builder, Calendar.getInstance().timeInMillis);
+		var intent = Intent(Intent.ACTION_VIEW).setData(builder.build());
+		val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+
+		val notification =
+			Notification
+				.Builder(context)
+				.setContentTitle(context.getString(R.string.internal_error))
+				.setContentText(context.getString(R.string.internal_error_text))
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setPriority(Notification.PRIORITY_HIGH)
+				.setContentIntent(pendingIntent)
+				.setAutoCancel(true)
+				.setDefaults(Notification.DEFAULT_SOUND)
+				.setVibrate(longArrayOf(1000))
+				.setLights(0x7fffffff, 300, 300)
+				.build()
+
+		var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+		notificationManager.notify(Consts.NOTIFICATION_ID_ERROR, notification) // would update if already exists
+	}
 }

@@ -63,16 +63,12 @@ class Settings(ctx: Context) {
 		set(value) = prefs.setBoolean(IS_ENABLED_KEY, value)
 
 	var removeOriginal: Boolean
-		get() = prefs!!.getBoolean(REMOVE_ORIGINAL_KEY, false)
+		get() = prefs!!.getBoolean(REMOVE_ORIGINAL_KEY, true)
 		set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
 
 	var showDismissButton: Boolean
 		get() = prefs!!.getBoolean(IS_DISMISS_ENABLED_KEY, true)
 		set(value) = prefs.setBoolean(IS_DISMISS_ENABLED_KEY, value)
-
-	var playReminderSound: Boolean
-		get() = prefs!!.getBoolean(PLAY_REMINDER_SOUND_KEY, true)
-		set(value) = prefs.setBoolean(PLAY_REMINDER_SOUND_KEY, value)
 
 	var vibraOn: Boolean
 		get() = prefs!!.getBoolean(VIBRA_KEY, true)
@@ -87,24 +83,24 @@ class Settings(ctx: Context) {
 		set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
 	val ringtoneURI: Uri?
-		get() {
+		get()
+		{
 			var notification: Uri? = null
 
-			if (playReminderSound) {
-				try {
-					val uriValue = prefs!!.getString(RINGTONE_KEY, "")
+			try
+			{
+				val uriValue = prefs!!.getString(RINGTONE_KEY, "")
 
-					if (uriValue != null && !uriValue.isEmpty())
-						notification = Uri.parse(uriValue)
-				}
-				catch (e: Exception) {
-					e.printStackTrace()
-				}
-				finally {
-					if (notification == null)
-						notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-				}
+				if (uriValue != null && !uriValue.isEmpty())
+					notification = Uri.parse(uriValue)
 			}
+			catch (e: Exception)
+			{
+				e.printStackTrace()
+			}
+
+			if (notification == null)
+				notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 			return notification
 		}
@@ -121,12 +117,12 @@ class Settings(ctx: Context) {
 	companion object
 	{
 		private val IS_ENABLED_KEY = "pref_key_is_enabled"
+
 		private val REMOVE_ORIGINAL_KEY = "remove_original"
+
 		private val IS_DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 
-		private val PLAY_REMINDER_SOUND_KEY = "play_reminder_sound"
 		private val RINGTONE_KEY = "pref_key_ringtone"
-
 		private val VIBRA_KEY = "vibra_on"
 		private val LED_KEY = "notification_led"
 

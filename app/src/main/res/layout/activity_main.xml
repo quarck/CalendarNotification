@@ -27,29 +27,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/middle_text_description"
-            android:id="@+id/textView2" />
-
-        <ToggleButton
-            android:id="@+id/toggleButtonEnableService"
-            android:onClick="OnBtnEnableServiceClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="18sp"
-            android:textOff="@string/off"
-            android:textOn="@string/on"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_horizontal"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/expl_text2"
@@ -59,17 +36,6 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="16dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/no_calendar_reminders"
-            android:id="@+id/textView7"
-            android:onClick="OnEasterEggClick"
-            android:clickable="true"
-            />
 
         <ToggleButton
             android:id="@+id/toggleButtonHandlePebble"
@@ -90,7 +56,7 @@
             android:id="@+id/buttonTest"
             android:onClick="OnButtonTestClick"
             android:layout_gravity="center_horizontal"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -99,7 +65,16 @@
             android:id="@+id/buttonTest2"
             android:onClick="OnButtonTestClick"
             android:layout_gravity="center_horizontal"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="TODO:\n\n1) Watch calendar updates\n\n2)Snooze vs Reschedule\n\n3)List of events on this activity\n\n4)"
+            android:id="@+id/todo"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +83,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="\n\n[This is for testing UI layout]\nJust a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. \n\n"
             android:id="@+id/textViewALotOfSpaceForTest"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         </LinearLayout>
 

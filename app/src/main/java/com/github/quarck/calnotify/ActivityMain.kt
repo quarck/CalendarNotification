@@ -40,9 +40,6 @@ class ActivityMain : Activity()
 
 		setContentView(R.layout.activity_main)
 
-		toggleButtonEnableService = findViewById(R.id.toggleButtonEnableService) as ToggleButton
-		toggleButtonEnableService!!.isChecked = settings!!.isServiceEnabled
-
 		toggleButtonHandlePebble = findViewById(R.id.toggleButtonHandlePebble) as ToggleButton
 		toggleButtonHandlePebble!!.isChecked = settings!!.forwardToPebble
 	}
@@ -160,7 +157,8 @@ class ActivityMain : Activity()
 			Logger.debug(TAG, "onStart(): failed to create ServiceClient()")
 		}
 
-		postCachedNotifications(applicationContext)
+		postEventNotifications(applicationContext)
+		scheduleEventsAlarm(applicationContext)
 	}
 
 	public override fun onStop()

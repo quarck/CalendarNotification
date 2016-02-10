@@ -103,6 +103,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".BroadcastReceiverAlarm"/>
+
     </application>
 
 </manifest>

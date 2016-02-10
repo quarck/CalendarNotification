@@ -2,7 +2,13 @@
     <PreferenceCategory 
         android:title="@string/settings"
         android:key="pref_key_silence">\
-        
+
+        <CheckBoxPreference
+            android:key="remove_original"
+            android:title="Remove original ntf"
+            android:summary="DEBUG ONLY OPTION!!!\nSorry if you are seeing this in release build!!\nUncheck if you want to see event in the google calendar as well, so you can match notification"
+            android:defaultValue="true" />
+
         <CheckBoxPreference
             android:key="pref_key_enable_dismiss_button"
             android:summary="@string/show_dismiss_summary"
@@ -15,12 +21,6 @@
             android:title="@string/notification_light_title"
             android:defaultValue="true" />
 
-        <CheckBoxPreference
-            android:key="play_reminder_sound"
-            android:summary="@string/play_reminder_sound_summary"
-            android:title="@string/play_reminder_sound"
-            android:defaultValue="false" />
-
         <RingtonePreference
             android:key="pref_key_ringtone"
             android:summary="@string/ringtone_selection_summary"
@@ -29,7 +29,7 @@
 
         <CheckBoxPreference android:key="vibra_on"
             android:title="@string/vibra_on"
-            android:defaultValue="false"/>
+            android:defaultValue="true"/>
 
     </PreferenceCategory>
 

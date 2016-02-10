@@ -29,8 +29,6 @@ package com.github.quarck.calnotify
 
 object Consts
 {
-	var OUR_PACKAGE_NAME = "com.github.quarck.calnotify";
-
 	val WAKE_LOCK_NAME = "CalendarNotificationDelayedNotificationCancel"
 
 	//
@@ -56,5 +54,6 @@ object Consts
 	var LED_DURATION_OFF = 2000
 	var LED_COLOR = 0x7f0000ff
 
-	val SNOOZE_DELAY: Long = 15* 1000;
+	val ALARM_THRESHOULD = 3*1000L;
+	val SNOOZE_DELAY: Long = 15*60*1000;
 }

@@ -34,8 +34,12 @@ import android.content.Intent
 
 class BroadcastReceiverBootComplete : BroadcastReceiver()
 {
-	override fun onReceive(context: Context, intent: Intent)
+	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		postCachedNotifications(context)
+		if (context != null)
+		{
+			postEventNotifications(context);
+			scheduleEventsAlarm(context);
+		}
 	}
 }

@@ -31,6 +31,12 @@
             android:title="@string/vibra_on"
             android:defaultValue="true"/>
 
+        <CheckBoxPreference
+            android:key="forward_to_pebble"
+            android:title="@string/forward_to_pebble"
+            android:summary="@string/forward_to_pebble_summary"
+            android:defaultValue="false"/>
+
     </PreferenceCategory>
 
     <!--

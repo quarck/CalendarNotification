@@ -2,20 +2,16 @@ package com.github.quarck.calnotify
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.provider.CalendarContract
 
-fun scheduleEventsAlarm(context: Context)
+fun scheduleNextAlarmForEvents(context: Context)
 {
 	Logger.debug("scheduleEventAlarm called");
 
-	var events = EventsStorage(context).events;
-
-
 	var nextAlarm =
-		events
+		EventsStorage(context)
+			.events
 			.filter { it.snoozedUntil != 0L }
 			.map { it.snoozedUntil }
 			.min();

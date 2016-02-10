@@ -43,17 +43,17 @@ class ServiceNotificationActionHandler : IntentService("ServiceNotificationActio
 						event.snoozedUntil = currentTime + Consts.SNOOZE_DELAY;
 						db.updateEvent(event);
 
-						scheduleEventsAlarm(this);
+						scheduleNextAlarmForEvents(this);
 
 						mgr.removeNotification(this, eventId, notificationId);
 
-						Toast.makeText(this, "Snoozed until ${Date(event.snoozedUntil).toLocaleString()}", 3);
+						Toast.makeText(this, "Snoozed until ${Date(event.snoozedUntil).toLocaleString()}", 3).show();
 
 						Logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
 					}
 					else
 					{
-						Toast.makeText(this, "Error: can't get event from DB", 3);
+						Toast.makeText(this, "Error: can't get event from DB", 3).show();
 					}
 				}
 			}

@@ -37,18 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="16dp"/>
 
-        <ToggleButton
-            android:id="@+id/toggleButtonHandlePebble"
-            android:onClick="OnBtnHandlePebbleClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="18sp"
-            android:textOff="Pebble is not handled"
-            android:textOn="Pebble handled"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone"/>
-
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="TODO:\n\n1) Watch calendar updates\n\n2)Snooze vs Reschedule\n\n3)List of events on this activity\n\n4)"
+            android:text="TODO:\n\n1) Watch calendar updates\n\n2)Snooze vs Reschedule\n\n3)List of events on this activity\n\n4)Variable snooze times"
             android:id="@+id/todo"
             />
 

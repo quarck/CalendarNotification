@@ -11,7 +11,7 @@ class BroadcastReceiverAlarm : BroadcastReceiver()
 		if (context != null)
 		{
 			postEventNotifications(context)
-			scheduleEventsAlarm(context)
+			scheduleNextAlarmForEvents(context)
 		}
 		else
 		{

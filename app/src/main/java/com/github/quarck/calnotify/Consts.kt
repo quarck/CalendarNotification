@@ -29,27 +29,23 @@ package com.github.quarck.calnotify
 
 object Consts
 {
-	val WAKE_LOCK_NAME = "CalendarNotificationDelayedNotificationCancel"
+	var NOTIFICATION_ID_ERROR = 0;
+	var NOTIFICATION_ID_DYNAMIC_FROM = 1;
 
 	//
-	var NOTIFICATION_ID_UPDATED_NEED_PERMISSIONS = 1;
-	var NOTIFICATION_ID_UPDATED = 2;
-	var NOTIFICATION_ID_ERROR = 3;
-	var NOTIFICATION_ID_DYNAMIC_FROM = 4;
-
-	//
-	val NOTIFICATION_TAG = "com.github.quarck.calnotify.ForwardedNotificationTag";
+	val NOTIFICATION_TAG = "com.github.quarck.calnotify.ntftag";
 
 	//
 	var INTENT_NOTIFICATION_ID_KEY = "notificationId";
 	var INTENT_EVENT_ID_KEY = "eventId";
 	val INTENT_TYPE = "intentType"
+
 	val INTENT_TYPE_DELETE = "delete"
 	val INTENT_TYPE_DISMISS = "dismiss"
 	val INTENT_TYPE_SNOOZE = "snooze"
 
 	//
-	var VIBRATION_DURATION : Long = 800
+	var VIBRATION_DURATION : Long = 1000
 	var LED_DURATION_ON = 300
 	var LED_DURATION_OFF = 2000
 	var LED_COLOR = 0x7f0000ff

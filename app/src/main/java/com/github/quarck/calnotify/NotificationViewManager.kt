@@ -138,7 +138,6 @@ class NotificationViewManager
 	private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
 		= PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-
 	private fun formatNotificationText(event: EventRecord): String
 	{
 		var sb = StringBuilder()
@@ -192,26 +191,6 @@ class NotificationViewManager
 	{
 		var notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		notificationManager.cancel("${Consts.NOTIFICATION_TAG};${eventId}", notificationId);
-	}
-
-	fun onAccessToNotificationsLost(context: Context)
-	{
-		val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-		val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-
-		val notification =
-			Notification
-				.Builder(context)
-				.setContentTitle(context.getString(R.string.access_lost))
-				.setContentText(context.getString(R.string.reenable_app))
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setPriority(Notification.PRIORITY_HIGH)
-				.setContentIntent(pendingIntent)
-				.setAutoCancel(true)
-				.build()
-
-		var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-		notificationManager.notify(Consts.NOTIFICATION_ID_UPDATED_NEED_PERMISSIONS, notification) // would update if already exists
 	}
 
 	fun onInternalError(context: Context)

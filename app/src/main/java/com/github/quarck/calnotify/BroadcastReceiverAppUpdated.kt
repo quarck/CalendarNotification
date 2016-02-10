@@ -41,7 +41,7 @@ class BroadcastReceiverAppUpdated : BroadcastReceiver()
 		if (context != null)
 		{
 			postEventNotifications(context);
-			scheduleEventsAlarm(context);
+			scheduleNextAlarmForEvents(context);
 		}
 	}
 }

@@ -58,25 +58,21 @@ class Settings(ctx: Context) {
 
 	private var prefs: SharedPreferences? = null
 
-	var isServiceEnabled: Boolean
-		get() = prefs!!.getBoolean(IS_ENABLED_KEY, false)
-		set(value) = prefs.setBoolean(IS_ENABLED_KEY, value)
-
 	var removeOriginal: Boolean
 		get() = prefs!!.getBoolean(REMOVE_ORIGINAL_KEY, true)
 		set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
 
 	var showDismissButton: Boolean
-		get() = prefs!!.getBoolean(IS_DISMISS_ENABLED_KEY, true)
-		set(value) = prefs.setBoolean(IS_DISMISS_ENABLED_KEY, value)
+		get() = prefs!!.getBoolean(DISMISS_ENABLED_KEY, true)
+		set(value) = prefs.setBoolean(DISMISS_ENABLED_KEY, value)
 
 	var vibraOn: Boolean
-		get() = prefs!!.getBoolean(VIBRA_KEY, true)
-		set(value) = prefs.setBoolean(VIBRA_KEY, value)
+		get() = prefs!!.getBoolean(VIBRATION_ENABLED_KEY, true)
+		set(value) = prefs.setBoolean(VIBRATION_ENABLED_KEY, value)
 
 	var ledNotificationOn: Boolean
-		get() = prefs!!.getBoolean(LED_KEY, true)
-		set(value) = prefs.setBoolean(LED_KEY, value)
+		get() = prefs!!.getBoolean(LED_ENABLED_KEY, true)
+		set(value) = prefs.setBoolean(LED_ENABLED_KEY, value)
 
 	var forwardToPebble: Boolean
 		get() = prefs!!.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
@@ -116,16 +112,11 @@ class Settings(ctx: Context) {
 
 	companion object
 	{
-		private val IS_ENABLED_KEY = "pref_key_is_enabled"
-
 		private val REMOVE_ORIGINAL_KEY = "remove_original"
-
-		private val IS_DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
-
+		private val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 		private val RINGTONE_KEY = "pref_key_ringtone"
-		private val VIBRA_KEY = "vibra_on"
-		private val LED_KEY = "notification_led"
-
+		private val VIBRATION_ENABLED_KEY = "vibra_on"
+		private val LED_ENABLED_KEY = "notification_led"
 		private val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
 	}
 }

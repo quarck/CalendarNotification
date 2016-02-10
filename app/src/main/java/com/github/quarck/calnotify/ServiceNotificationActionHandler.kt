@@ -5,9 +5,6 @@ import android.content.Intent
 import android.widget.Toast
 import java.util.*
 
-/**
- * Created by quarck on 19/01/16.
- */
 class ServiceNotificationActionHandler : IntentService("ServiceNotificationActionHandler")
 {
 	override fun onHandleIntent(intent: Intent?)
@@ -47,13 +44,11 @@ class ServiceNotificationActionHandler : IntentService("ServiceNotificationActio
 
 						mgr.removeNotification(this, eventId, notificationId);
 
-						Toast.makeText(this, "Snoozed until ${Date(event.snoozedUntil).toLocaleString()}", 3).show();
-
 						Logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
 					}
 					else
 					{
-						Toast.makeText(this, "Error: can't get event from DB", 3).show();
+						Logger.error("Error: can't get event from DB");
 					}
 				}
 			}

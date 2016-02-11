@@ -201,7 +201,7 @@ class EventNotificationManager: IEventNotificationManager
 		var calendarIntent = Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);
 		var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
 
-		var notificationText = formatNotificationText(event)
+		var notificationText = event.formatText(ctx);
 
 		var builder = Notification
 			.Builder(ctx)
@@ -296,55 +296,6 @@ class EventNotificationManager: IEventNotificationManager
 
 	private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
 		= PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-
-	private fun formatNotificationText(event: EventRecord): String
-	{
-		var sb = StringBuilder()
-
-		if (event.startTime != 0L)
-		{
-			var today = Date(System.currentTimeMillis())
-			var start = Date(event.startTime)
-
-			var dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
-			var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-
-			if (today.day != start.day
-				&& today.month != start.month
-				&& today.year != start.year)
-			{
-				sb.append(dateFormatter.format(start));
-				sb.append(" ");
-			}
-
-			sb.append(timeFormatter.format(start));
-
-			if (event.endTime != 0L)
-			{
-				sb.append(" - ");
-
-				var end = Date(event.endTime)
-
-				if (end.day != start.day
-					&& end.month != start.month
-					&& end.year != start.year)
-				{
-					sb.append(dateFormatter.format(end))
-					sb.append(" ");
-				}
-
-				sb.append(timeFormatter.format(end))
-			}
-		}
-
-		if (event.location != "")
-		{
-			sb.append("\nLocation: ")
-			sb.append(event.location)
-		}
-
-		return sb.toString()
-	}
 
 	private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int)
 	{

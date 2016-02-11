@@ -7,19 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.util.*
 
-data class EventRecord(
-	val eventId: Long,
-	var notificationId: Int,
-	var title: String,
-	var description: String,
-	var startTime: Long,
-	var endTime: Long,
-	var location: String,
-	var lastEventUpdate: Long,
-	var snoozedUntil: Long = 0,
-	var isDisplayed: Boolean = false
-)
-
 public class EventsStorage(context: Context)
 	: SQLiteOpenHelper(context, EventsStorage.DATABASE_NAME, null, EventsStorage.DATABASE_VERSION)
 {

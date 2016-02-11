@@ -65,21 +65,19 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 
 					if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED)
 					{
-						var notification =
+						var event =
 							EventsStorage(context).addEvent(
 								eventId = eventId,
 								title = title,
 								description = desc,
 								startTime = start,
 								endTime = end,
-								location = location
+								location = location,
+								lastEventUpdate = System.currentTimeMillis(),
+								isDisplayed = false // currently not displayed - to be added
 							);
 
-						NotificationViewManager().postNotification(
-							context,
-							notification,
-							settings.notificationSettingsSnapshot
-						);
+						EventNotificationManager().onEventAdded(context, event)
 
 						if (settings.removeOriginal)
 						{

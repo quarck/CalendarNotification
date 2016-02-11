@@ -15,7 +15,9 @@ data class EventRecord(
 	var startTime: Long,
 	var endTime: Long,
 	var location: String,
-	var snoozedUntil: Long = 0
+	var lastEventUpdate: Long,
+	var snoozedUntil: Long = 0,
+	var isDisplayed: Boolean = false
 )
 
 public class EventsStorage(context: Context)
@@ -26,7 +28,9 @@ public class EventsStorage(context: Context)
 		title: String,
 		description: String,
 		startTime: Long, endTime: Long,
-		location: String
+		location: String,
+		lastEventUpdate: Long,
+		isDisplayed: Boolean
 	): EventRecord
 	{
 		var ret =
@@ -37,11 +41,12 @@ public class EventsStorage(context: Context)
 				description = description,
 				startTime = startTime,
 				endTime = endTime,
-				location = location
+				location = location,
+				lastEventUpdate = lastEventUpdate,
+				isDisplayed = isDisplayed
 			)
 
 		synchronized (EventsStorage::class.java) {
-			ret.notificationId = nextNotificationId()
 			addEvent(ret)
 		}
 
@@ -49,11 +54,7 @@ public class EventsStorage(context: Context)
 	}
 
 	fun addEvent(event: EventRecord)
-		= synchronized (EventsStorage::class.java) {
-				if (event.notificationId == 0)
-					event.notificationId = nextNotificationId()
-				addEventImpl(event)
-			}
+		= synchronized (EventsStorage::class.java) { addEventImpl(event) }
 
 	fun updateEvent(event: EventRecord)
 	 	= synchronized(EventsStorage::class.java) { updateEventImpl(event) }
@@ -69,7 +70,6 @@ public class EventsStorage(context: Context)
 
 	val events: List<EventRecord>
 		get() = synchronized(EventsStorage::class.java) { return eventsImpl }
-
 
 	////////////////////////// Implementations for DB operations //////////////////////
 	///// TODO: move into *Impl class
@@ -88,6 +88,8 @@ public class EventsStorage(context: Context)
 				"$KEY_END INTEGER, " +
 				"$KEY_LOCATION LOCATION, " +
 				"$KEY_SNOOZED_UNTIL INTEGER, " +
+				"$KEY_LAST_EVENT_FIRE INTEGER, " +
+				"$KEY_IS_DISPLAYED INTEGER, " +
 				"$KEY_RESERVED_STR1 TEXT, " +
 				"$KEY_RESERVED_STR2 TEXT, " +
 				"$KEY_RESERVED_STR3 TEXT, " +
@@ -113,13 +115,25 @@ public class EventsStorage(context: Context)
 
 		if (oldVersion != newVersion)
 		{
-			TODO("This has to be implemented whenever you are going to extend the database")
+			if (oldVersion < DATABASE_RELEASE_ONE_VERSION)
+			{
+				db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+				db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
+				onCreate(db);
+			}
+			else
+			{
+				TODO("This has to be implemented whenever you are going to extend the database")
+			}
 		}
 	}
 
 	private fun addEventImpl(event: EventRecord)
 	{
 		Logger.debug(TAG, "addEvent " + event.toString())
+
+		if (event.notificationId == 0)
+			event.notificationId = nextNotificationId();
 
 		val db = this.writableDatabase
 
@@ -138,6 +152,10 @@ public class EventsStorage(context: Context)
 			db.close()
 
 			Logger.debug(TAG, "This entry (${event.eventId}) is already in the DB, updating!")
+
+			// persist original notification id in this case
+			event.notificationId = getEventImpl(event.eventId)?.notificationId ?: event.notificationId;
+
 			updateEventImpl(event)
 		}
 	}
@@ -245,7 +263,7 @@ public class EventsStorage(context: Context)
 
 		db.delete(TABLE_NAME, // table name
 			KEY_EVENTID + " = ?", // selections
-			arrayOf<String>(eventId.toString())) // selections args
+			arrayOf(eventId.toString())) // selections args
 
 		db.close()
 
@@ -254,18 +272,20 @@ public class EventsStorage(context: Context)
 
 	private fun eventRecordToContentValues(event: EventRecord, includeId: Boolean = false): ContentValues
 	{
-		var values = ContentValues()
+		var values = ContentValues();
 
 		if (includeId)
-			values.put(KEY_EVENTID, event.eventId)
+			values.put(KEY_EVENTID, event.eventId);
 
-		values.put(KEY_NOTIFICATIONID, event.notificationId)
-		values.put(KEY_TITLE, event.title)
-		values.put(KEY_DESC, event.description)
-		values.put(KEY_START, event.startTime)
-		values.put(KEY_END, event.endTime)
-		values.put(KEY_LOCATION, event.location)
-		values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil)
+		values.put(KEY_NOTIFICATIONID, event.notificationId);
+		values.put(KEY_TITLE, event.title);
+		values.put(KEY_DESC, event.description);
+		values.put(KEY_START, event.startTime);
+		values.put(KEY_END, event.endTime);
+		values.put(KEY_LOCATION, event.location);
+		values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
+		values.put(KEY_LAST_EVENT_FIRE, event.lastEventUpdate);
+		values.put(KEY_IS_DISPLAYED, if (event.isDisplayed) 1 else 0);
 
 		return values;
 	}
@@ -281,7 +301,9 @@ public class EventsStorage(context: Context)
 			startTime = cursor.getLong(4),
 			endTime = cursor.getLong(5),
 			location = cursor.getString(6),
-			snoozedUntil = cursor.getLong(7)
+			snoozedUntil = cursor.getLong(7),
+			lastEventUpdate = cursor.getLong(8),
+			isDisplayed = (cursor.getInt(9) != 0)
 		)
 	}
 
@@ -289,7 +311,8 @@ public class EventsStorage(context: Context)
 	{
 		private val TAG = "DB"
 
-		private val DATABASE_VERSION = 1
+		private val DATABASE_VERSION = 4
+		private val DATABASE_RELEASE_ONE_VERSION = 4
 
 		private val DATABASE_NAME = "Events"
 
@@ -304,6 +327,9 @@ public class EventsStorage(context: Context)
 		private val KEY_END = "dtend"
 		private val KEY_LOCATION = "location"
 		private val KEY_SNOOZED_UNTIL = "snoozeUntil"
+		private val KEY_IS_DISPLAYED = "isDisplayed"
+		private val KEY_LAST_EVENT_FIRE = "lastFire"
+
 		private val KEY_RESERVED_STR1 = "resstr1"
 		private val KEY_RESERVED_STR2 = "resstr2"
 		private val KEY_RESERVED_STR3 = "resstr3"
@@ -316,7 +342,9 @@ public class EventsStorage(context: Context)
 			KEY_TITLE, KEY_DESC,
 			KEY_START, KEY_END,
 			KEY_LOCATION,
-			KEY_SNOOZED_UNTIL
+			KEY_SNOOZED_UNTIL,
+			KEY_LAST_EVENT_FIRE,
+			KEY_IS_DISPLAYED
 		)
 	}
 }

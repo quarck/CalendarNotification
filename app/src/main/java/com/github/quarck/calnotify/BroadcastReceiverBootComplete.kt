@@ -36,9 +36,11 @@ class BroadcastReceiverBootComplete : BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
+		Logger.debug("BroadcastReceiverBootComplete", "onReceive");
+
 		if (context != null)
 		{
-			postEventNotifications(context);
+			EventNotificationManager().postEventNotifications(context, true);
 			scheduleNextAlarmForEvents(context);
 		}
 	}

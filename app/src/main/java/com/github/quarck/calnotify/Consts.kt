@@ -29,7 +29,7 @@ package com.github.quarck.calnotify
 
 object Consts
 {
-	var NOTIFICATION_ID_ERROR = 0;
+	var NOTIFICATION_ID_COLLAPSED = 0;
 	var NOTIFICATION_ID_DYNAMIC_FROM = 1;
 
 	//
@@ -40,15 +40,17 @@ object Consts
 	var INTENT_EVENT_ID_KEY = "eventId";
 	val INTENT_TYPE = "intentType"
 
-	val INTENT_TYPE_DELETE = "delete"
-	val INTENT_TYPE_DISMISS = "dismiss"
-	val INTENT_TYPE_SNOOZE = "snooze"
+	val INTENT_TYPE_DELETE = "delete";
+	val INTENT_TYPE_DISMISS = "dismiss";
+	val INTENT_TYPE_SNOOZE = "snooze";
+
+	val MAX_NOTIFICATIONS = 8;
 
 	//
-	var VIBRATION_DURATION : Long = 1000
-	var LED_DURATION_ON = 300
-	var LED_DURATION_OFF = 2000
-	var LED_COLOR = 0x7f0000ff
+	var VIBRATION_DURATION : Long = 1000;
+	var LED_DURATION_ON = 300;
+	var LED_DURATION_OFF = 2000;
+	var LED_COLOR = 0x7f0000ff;
 
 	val ALARM_THRESHOULD = 3*1000L;
 	val SNOOZE_DELAY: Long = 15*60*1000;

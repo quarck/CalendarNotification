@@ -18,15 +18,16 @@ class ServiceNotificationActionHandler : IntentService("ServiceNotificationActio
 			var type = intent.getStringExtra(Consts.INTENT_TYPE)
 
 			var db = EventsStorage(this)
-			var mgr = NotificationViewManager()
+			var mgr = EventNotificationManager()
 
 			if (notificationId != -1 && eventId != -1L && type != null)
 			{
 				if (type == Consts.INTENT_TYPE_DELETE || type == Consts.INTENT_TYPE_DISMISS)
 				{
 					Logger.debug("Removing event id ${eventId} from DB, intent type =${type} and dismissing notification id ${notificationId}")
-					db.deleteEvent(eventId)
-					mgr.removeNotification(this, eventId, notificationId)
+					db.deleteEvent(eventId);
+
+					mgr.onEventDismissed(this, eventId, notificationId);
 				}
 				else if (type == Consts.INTENT_TYPE_SNOOZE)
 				{
@@ -38,11 +39,12 @@ class ServiceNotificationActionHandler : IntentService("ServiceNotificationActio
 						var currentTime = System.currentTimeMillis()
 
 						event.snoozedUntil = currentTime + Consts.SNOOZE_DELAY;
+						event.lastEventUpdate = currentTime;
 						db.updateEvent(event);
 
 						scheduleNextAlarmForEvents(this);
 
-						mgr.removeNotification(this, eventId, notificationId);
+						mgr.onEventSnoozed(this, eventId, notificationId);
 
 						Logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
 					}

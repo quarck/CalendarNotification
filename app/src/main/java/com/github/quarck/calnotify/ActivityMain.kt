@@ -63,20 +63,23 @@ class ActivityMain : Activity()
 	{
 		var db = EventsStorage(this)
 
-		var btnIdx : Long = if (v == findViewById(R.id.buttonTest)) 1 else 2;
+		var first = (v == findViewById(R.id.buttonTest));
+
+		var currentTime = System.currentTimeMillis();
 
 		var dbNotification =
 			db.addEvent(
-			btnIdx + 232323232,
-			"Test Notification ${btnIdx}",
-			"This is a test notificaiton",
-			0, 0, "")
+				if (first) 101010101L else currentTime,
+				"Test Notification ${if (first) "first" else ((currentTime/100) % 10000).toString()}",
+				"This is a test notificaiton",
+				0,
+				0,
+				"",
+				System.currentTimeMillis(),
+				false
+			)
 
-		NotificationViewManager().postNotification(
-			this,
-			dbNotification,
-			settings!!.notificationSettingsSnapshot
-		)
+		EventNotificationManager().postEventNotifications(applicationContext, false);
 	}
 
 	public override fun onStart()
@@ -84,7 +87,7 @@ class ActivityMain : Activity()
 		Logger.debug(TAG, "onStart()")
 		super.onStart()
 
-		postEventNotifications(applicationContext)
+		EventNotificationManager().postEventNotifications(applicationContext, true)
 		scheduleNextAlarmForEvents(applicationContext)
 	}
 

@@ -65,4 +65,8 @@
 
 	<string name="forward_to_pebble">Forward to Pebble</string>
 	<string name="forward_to_pebble_summary">If you have Pebble Smart Watch - this will enable app to forward notifications to your Pebble</string>
+
+	<string name="multiple_events">%d more events</string>
+	<string name="multiple_events_details">Tap to see details</string>
+
 </resources>

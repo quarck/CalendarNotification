@@ -8,7 +8,6 @@ import android.view.View
 
 class ActivityHelpAndFeedback : Activity()
 {
-
 	override fun onCreate(savedInstanceState: Bundle?)
     {
 		super.onCreate(savedInstanceState)

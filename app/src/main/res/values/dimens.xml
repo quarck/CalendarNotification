@@ -31,4 +31,11 @@
 
     <dimen name="snooze_view_in_text_vert_padding">4dp</dimen>
     <dimen name="snooze_view_details_initial_padding">10dp</dimen>
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_margin_vertical">0dp</dimen>
+    <dimen name="card_margin_hirizontal">4dp</dimen>
+    <dimen name="card_view_img_padding_top">16dp</dimen>
+    <dimen name="card_view_snoozed_until_top">1dp</dimen>
+    <dimen name="card_view_detais_layout_top_margin">10dp</dimen>
 </resources>

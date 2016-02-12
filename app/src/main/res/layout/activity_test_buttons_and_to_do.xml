@@ -87,7 +87,7 @@
                 android:text=
                     "TODO:
 
-0) Highlighted view for text buttons
+0)[DONE] Highlighted view for text buttons
 \n\n
 1) Watch calendar updates
 \n\n
@@ -95,9 +95,9 @@
 \n\n
 3) List of events on this activity
 \n\n
-4)Variable snooze times
+4) Variable snooze times
 \n\n
-5)Action for location
+5) Action for location
 \n\n
 6) Re-load all monitored details on startup from calendar provider
 \n\n
@@ -106,6 +106,8 @@
 8) Support undo on main view
 \n\n
 9) Reschedules must be confirmed first
+\n\n
+10) Collect all own logs
 \n\n
 "
                 android:id="@+id/todo"

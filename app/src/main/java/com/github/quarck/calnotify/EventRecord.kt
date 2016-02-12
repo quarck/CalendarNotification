@@ -17,6 +17,7 @@ data class EventRecord(
 	var isDisplayed: Boolean = false
 )
 
+// snooze_view_location_layout
 
 fun EventRecord.formatText(ctx: Context): String
 {
@@ -31,8 +32,8 @@ fun EventRecord.formatText(ctx: Context): String
 		var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
 		if (today.day != start.day
-			&& today.month != start.month
-			&& today.year != start.year)
+			|| today.month != start.month
+			|| today.year != start.year)
 		{
 			sb.append(dateFormatter.format(start));
 			sb.append(" ");
@@ -47,8 +48,8 @@ fun EventRecord.formatText(ctx: Context): String
 			var end = Date(this.endTime)
 
 			if (end.day != start.day
-				&& end.month != start.month
-				&& end.year != start.year)
+				|| end.month != start.month
+				|| end.year != start.year)
 			{
 				sb.append(dateFormatter.format(end))
 				sb.append(" ");
@@ -65,4 +66,39 @@ fun EventRecord.formatText(ctx: Context): String
 	}
 
 	return sb.toString()
+}
+
+fun EventRecord.formatTime(ctx: Context): Pair<String, String>
+{
+	var sbDay = StringBuilder()
+	var sbTime = StringBuilder();
+
+	if (this.startTime != 0L)
+	{
+		var today = Date(System.currentTimeMillis())
+		var start = Date(this.startTime)
+
+		var dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
+		var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+
+		sbDay.append(dateFormatter.format(start));
+
+		sbTime.append(timeFormatter.format(start));
+
+		if (this.endTime != 0L)
+		{
+			sbTime.append(" - ");
+
+			var end = Date(this.endTime)
+
+			if (end.day == start.day
+				&& end.month == start.month
+				&& end.year == start.year)
+			{
+				sbTime.append(dateFormatter.format(end))
+			}
+		}
+	}
+
+	return Pair(sbDay.toString(), sbTime.toString());
 }

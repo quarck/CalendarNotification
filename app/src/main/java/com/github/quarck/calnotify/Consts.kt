@@ -54,4 +54,6 @@ object Consts
 
 	val ALARM_THRESHOULD = 3*1000L;
 	val SNOOZE_DELAY: Long = 15*60*1000;
+
+	val SNOOZE_PRESETS = longArrayOf(15*60*1000, 60*60*1000, 4*60*60*1000, 24*60*60*1000);
 }

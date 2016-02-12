@@ -55,6 +55,15 @@
             android:layout_gravity="center_horizontal"
             android:visibility="visible"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Activity"
+            android:id="@+id/buttonTest3"
+            android:onClick="OnButtonTestActivityClick"
+            android:layout_gravity="center_horizontal"
+            android:visibility="visible"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

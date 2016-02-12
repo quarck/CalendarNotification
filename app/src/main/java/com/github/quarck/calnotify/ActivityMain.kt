@@ -34,6 +34,11 @@ class ActivityMain : Activity()
 		setContentView(R.layout.activity_main)
 	}
 
+	public fun OnButtonTestActivityClick(v: View)
+	{
+		startActivity(Intent(applicationContext, ActivitySnooze::class.java));
+	}
+
 	public fun OnEasterEggClick(v: View)
 	{
 		var currentTime = System.currentTimeMillis()

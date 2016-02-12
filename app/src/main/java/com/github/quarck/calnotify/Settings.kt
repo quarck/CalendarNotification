@@ -78,6 +78,16 @@ class Settings(ctx: Context) {
 		get() = prefs!!.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
 		set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
+	fun getSnoozePreset(idx: Int): Long
+	{
+		// Currently hard-coded to use consts instead of dynamic params
+
+		if (idx >= 0 && idx < Consts.SNOOZE_PRESETS.size)
+			return Consts.SNOOZE_PRESETS[idx];
+
+		return Consts.SNOOZE_PRESETS[0];
+	}
+
 	val ringtoneURI: Uri?
 		get()
 		{

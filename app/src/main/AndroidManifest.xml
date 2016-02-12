@@ -7,8 +7,8 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
@@ -16,25 +16,25 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".ActivityMain"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:parentActivityName=".ActivityMain">
         </activity>
-
         <activity
             android:name=".ActivityHelpAndFeedback"
-            android:label="@string/help_feedback">
+            android:label="@string/help_feedback"
+            android:parentActivityName=".ActivityMain">
         </activity>
 
         <service android:name=".ServiceNotificationActionHandler"/>
@@ -44,7 +44,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".BroadcastReceiverBootComplete"
             android:enabled="true"
@@ -57,43 +56,48 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
-
-        <receiver
-            android:name=".BroadcastReceiverEventReminder">
-
+        <receiver android:name=".BroadcastReceiverEventReminder">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
+
                 <data android:mimeType="vnd.android.cursor.item/calendar-alert"/>
             </intent-filter>
-
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENTEX_REMINDER"/>
+
                 <data android:mimeType="vnd.android.cursor.item/calendarEx-alert"/>
             </intent-filter>
-
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
+
                 <data android:scheme="content"/>
             </intent-filter>
-
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
+
                 <data android:mimeType="vnd.android.cursor.item/calendar_alert_time"/>
             </intent-filter>
-
         </receiver>
-
         <receiver android:name=".BroadcastReceiverCalendarChanged">
             <intent-filter>
                 <action android:name="android.intent.action.PROVIDER_CHANGED"/>
+
                 <data android:scheme="content"/>
                 <data android:host="com.android.calendar"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".BroadcastReceiverAlarm"/>
 
+        <activity
+            android:name=".ActivitySnooze"
+            android:label="@string/title_activity_activity_snooze"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
+        </activity>
+
+        <!-- -
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth" -->
     </application>
 
 </manifest>

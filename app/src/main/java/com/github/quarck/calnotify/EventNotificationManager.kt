@@ -220,8 +220,8 @@ class EventNotificationManager: IEventNotificationManager
 		builder.addAction(
 			android.R.drawable.ic_menu_rotate,
 			ctx.getString(R.string.snooze) ?: "SNOOZE",
-			pendingServiceIntent(ctx,
-				serviceIntent(ctx, Consts.INTENT_TYPE_SNOOZE, event.eventId, event.notificationId),
+			pendingActivityIntent(ctx,
+				snoozeIntent(ctx, Consts.INTENT_TYPE_SNOOZE, event.eventId, event.notificationId),
 				event.notificationId * 3 + 0
 			)
 		)
@@ -285,6 +285,15 @@ class EventNotificationManager: IEventNotificationManager
 			PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText)
 	}
 
+	private fun snoozeIntent(ctx: Context, type: String, eventId: Long, notificationId: Int): Intent
+	{
+		var intent = Intent(ctx, ActivitySnooze::class.java)
+		intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
+		intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
+		intent.putExtra(Consts.INTENT_TYPE, type)
+		return intent;
+	}
+
 	private fun serviceIntent(ctx: Context, type: String, eventId: Long, notificationId: Int): Intent
 	{
 		var intent = Intent(ctx, ServiceNotificationActionHandler::class.java)
@@ -296,6 +305,9 @@ class EventNotificationManager: IEventNotificationManager
 
 	private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
 		= PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+
+	private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
+		= PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
 	private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int)
 	{

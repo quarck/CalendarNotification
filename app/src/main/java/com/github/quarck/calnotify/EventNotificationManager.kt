@@ -31,6 +31,7 @@ package com.github.quarck.calnotify
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -307,7 +308,16 @@ class EventNotificationManager: IEventNotificationManager
 		= PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
 	private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
-		= PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+	{
+		var pendingIntent =
+				TaskStackBuilder.create(ctx)
+					.addNextIntentWithParentStack(intent)
+					.getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		return pendingIntent;
+
+//		return PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+	}
 
 	private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int)
 	{

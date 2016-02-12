@@ -15,16 +15,6 @@
         android:id="@+id/snooze_view_event_details_layout"
         >
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:longClickable="false"
-            android:id="@+id/snooze_view_cancel"
-            android:src="@drawable/ic_clear_black_24dp"
-            android:padding="@dimen/snooze_close_btn_padding"
-            android:onClick="onButtonCancelClick"
-            />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/snooze_view_title_height"
@@ -34,7 +24,7 @@
             android:textSize="24.0sp"
             android:textColor="@color/icons"
 
-            android:paddingBottom="@dimen/snooze_view_header_spacing"
+            android:paddingBottom="@dimen/snooze_view_header_padding_bottom"
             android:paddingTop="@dimen/snooze_view_header_padding_top"
 
             android:paddingStart="@dimen/snooze_view_padding_start"
@@ -47,6 +37,21 @@
             android:gravity="left|center"
             />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:longClickable="false"
+            android:id="@+id/snooze_view_cancel"
+            android:src="@drawable/ic_clear_white_24dp"
+            android:paddingTop="@dimen/snooze_view_img_padding_start"
+            android:paddingBottom="@dimen/snooze_view_img_padding_start"
+            android:paddingStart="@dimen/snooze_view_img_padding_start"
+            android:paddingEnd="@dimen/snooze_view_img_padding_end"
+            android:paddingRight="@dimen/snooze_view_img_padding_end"
+            android:paddingLeft="@dimen/snooze_view_img_padding_start"
+            android:onClick="onButtonCancelClick"
+            android:background="?android:attr/selectableItemBackground"
+            />
     </RelativeLayout>
 
     <ScrollView
@@ -61,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingTop="@dimen/snooze_view_details_initial_padding"
             >
 
             <RelativeLayout
@@ -212,6 +218,7 @@
                     android:layout_below="@id/snooze_snooze_for"
                     android:clickable="true"
                     android:onClick="OnButtonSnoozePresent1Click"
+                    android:background="?android:attr/selectableItemBackground"
                     />
 
                 <TextView
@@ -230,6 +237,7 @@
                     android:layout_below="@id/snooze_view_snooze_present1"
                     android:clickable="true"
                     android:onClick="OnButtonSnoozePresent2Click"
+                    android:background="?android:attr/selectableItemBackground"
                     />
 
                 <TextView
@@ -248,6 +256,7 @@
                     android:layout_below="@id/snooze_view_snooze_present2"
                     android:clickable="true"
                     android:onClick="OnButtonSnoozePresent3Click"
+                    android:background="?android:attr/selectableItemBackground"
                     />
 
                 <TextView
@@ -266,18 +275,129 @@
                     android:layout_below="@id/snooze_view_snooze_present3"
                     android:clickable="true"
                     android:onClick="OnButtonSnoozePresent4Click"
+                    android:background="?android:attr/selectableItemBackground"
                     />
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/snooze_view_snooze_layout"
                 android:background="#ffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_today_black_24dp"
+                    android:paddingStart="@dimen/snooze_view_img_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_img_padding_end"
+                    android:paddingRight="@dimen/snooze_view_img_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_img_padding_start"
+                    android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                    android:paddingBottom="@dimen/snooze_view_img_topbottom"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_reschedule_for"
+                    android:text="@string/reschedule_event"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_reschedule_present1"
+                    android:text="@string/one_hour_from_now"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingTop="@dimen/snooze_view_spacing"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:layout_below="@id/snooze_reschedule_for"
+                    android:clickable="true"
+                    android:onClick="OnButtonRescheduleOneHourClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_reschedule_present2"
+                    android:text="@string/same_time_tomorrow"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingTop="@dimen/snooze_view_spacing"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:layout_below="@id/snooze_view_reschedule_present1"
+                    android:clickable="true"
+                    android:onClick="OnButtonRescheduleNextDayClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_reschedule_present3"
+                    android:text="@string/next_week_same_day"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingTop="@dimen/snooze_view_spacing"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:layout_below="@id/snooze_view_reschedule_present2"
+                    android:clickable="true"
+                    android:onClick="OnButtonRescheduleNextWeekClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_reschedule_present4"
+                    android:text="@string/custom_pick_a_date"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingTop="@dimen/snooze_view_spacing"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:layout_below="@id/snooze_view_reschedule_present3"
+                    android:clickable="true"
+                    android:onClick="OnButtonRescheduleCustomClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
 
             </RelativeLayout>
 

@@ -77,4 +77,16 @@
     <string name="snooze_preset_1_hour">1 hour</string>
     <string name="snooze_preset_4_hours">4 hours</string>
     <string name="snooze_preset_1_day">1 day</string>
+
+    <string name="location">Location:</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="reschedule_event">Reschedule event</string>
+    <string name="one_hour_from_now">One hour from now</string>
+    <string name="same_time_tomorrow">Same time tomorrow</string>
+    <string name="next_week_same_day">Next week same day</string>
+    <string name="custom_pick_a_date">Custom (pick a date)</string>
+    <string name="title_activity_activity_test_buttons_and_to_do">ActivityTestButtonsAndToDo
+    </string>
 </resources>

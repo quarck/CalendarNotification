@@ -20,9 +20,6 @@ class ActivityMain : Activity()
 {
 	private var settings: Settings? = null
 
-	private var easterFirstClick : Long = 0
-	private var easterNumClicks = 0
-
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -32,59 +29,6 @@ class ActivityMain : Activity()
 		settings = Settings(this)
 
 		setContentView(R.layout.activity_main)
-	}
-
-	public fun OnButtonTestActivityClick(v: View)
-	{
-		startActivity(Intent(applicationContext, ActivitySnooze::class.java));
-	}
-
-	public fun OnEasterEggClick(v: View)
-	{
-		var currentTime = System.currentTimeMillis()
-
-		if (easterFirstClick == 0L)
-			easterFirstClick = currentTime
-
-		easterNumClicks ++
-
-		if (easterNumClicks >= 20)
-		{
-			if (currentTime - easterFirstClick < 10000)
-			{
-				(findViewById(R.id.buttonTest) as Button).visibility = View.VISIBLE
-				(findViewById(R.id.buttonTest2) as Button).visibility = View.VISIBLE
-				(findViewById(R.id.textViewALotOfSpaceForTest) as TextView).visibility = View.VISIBLE
-
-				Toast.makeText(this, "Yeeeeeaaaa, hidden buttons are now active. Use them wisely!", 1).show()
-			}
-
-			easterNumClicks = 0
-			easterFirstClick = 0L
-		}
-	}
-
-	public fun OnButtonTestClick(v: View)
-	{
-		var db = EventsStorage(this)
-
-		var first = (v == findViewById(R.id.buttonTest));
-
-		var currentTime = System.currentTimeMillis();
-
-		var dbNotification =
-			db.addEvent(
-				if (first) 101010101L else currentTime,
-				"Test Notification ${if (first) "first" else ((currentTime/100) % 10000).toString()}",
-				"This is a test notificaiton",
-				0,
-				0,
-				"",
-				System.currentTimeMillis(),
-				false
-			)
-
-		EventNotificationManager().postEventNotifications(applicationContext, false);
 	}
 
 	public override fun onStart()
@@ -129,6 +73,9 @@ class ActivityMain : Activity()
 
 			R.id.action_feedback ->
 				startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
+
+			R.id.activity_test ->
+				startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
 		}
 
 		return super.onOptionsItemSelected(item)

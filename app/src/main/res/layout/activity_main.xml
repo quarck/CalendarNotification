@@ -8,83 +8,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.github.quarck.calnotify.ActivityMain" >
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listEvents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        >
+        android:background="@color/cardview_light_background"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="0dp"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/expl_text2"
-            android:id="@+id/textView6"
-            />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test Notification 1"
-            android:id="@+id/buttonTest"
-            android:onClick="OnButtonTestClick"
-            android:layout_gravity="center_horizontal"
-            android:visibility="visible"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test Notification 2"
-            android:id="@+id/buttonTest2"
-            android:onClick="OnButtonTestClick"
-            android:layout_gravity="center_horizontal"
-            android:visibility="visible"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test Activity"
-            android:id="@+id/buttonTest3"
-            android:onClick="OnButtonTestActivityClick"
-            android:layout_gravity="center_horizontal"
-            android:visibility="visible"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=
-                "TODO:\n\n1) Watch calendar updates\n\n2)Snooze vs Reschedule\n\n3)List of events on this activity\n\n4)Variable snooze times\n\n5)Action for location"
-            android:id="@+id/todo"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="\n\n[This is for testing UI layout]\nJust a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. Just a lot of text to make it scrolling. \n\n"
-            android:id="@+id/textViewALotOfSpaceForTest"
-            android:visibility="visible"/>
-
-        </LinearLayout>
-
-    </ScrollView>
 
 </RelativeLayout>

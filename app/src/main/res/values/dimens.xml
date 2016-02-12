@@ -7,16 +7,16 @@
 
     <dimen name="snooze_close_btn_padding">8dp</dimen>
 
-    <dimen name="snooze_view_padding_start">50dp</dimen>
+    <dimen name="snooze_view_padding_start">60dp</dimen>
     <dimen name="snooze_view_padding_end">20dp</dimen>
 
-    <dimen name="snooze_view_img_padding_start">10dp</dimen>
-    <dimen name="snooze_view_img_padding_end">10dp</dimen>
+    <dimen name="snooze_view_img_padding_start">16dp</dimen>
+    <dimen name="snooze_view_img_padding_end">16dp</dimen>
 
-    <dimen name="snooze_view_header_padding_top">10dp</dimen>
-    <dimen name="snooze_view_header_padding_bottom">10dp</dimen>
+    <dimen name="snooze_view_header_padding_top">16dp</dimen>
+    <dimen name="snooze_view_header_padding_bottom">24dp</dimen>
 
-    <dimen name="snooze_view_header_spacing">10dp</dimen>
+    <dimen name="snooze_view_header_spacing">22dp</dimen>
 
     <dimen name="snooze_view_action_padding_top">8dp</dimen>
     <dimen name="snooze_view_action_padding_bottom">8dp</dimen>
@@ -27,7 +27,8 @@
 
     <dimen name="snooze_view_event_title_max_height">160dp</dimen>
     <dimen name="snooze_view_event_details_max_height">100dp</dimen>
-    <dimen name="snooze_view_title_height">100dp</dimen>
+    <dimen name="snooze_view_title_height">130dp</dimen>
 
     <dimen name="snooze_view_in_text_vert_padding">4dp</dimen>
+    <dimen name="snooze_view_details_initial_padding">10dp</dimen>
 </resources>

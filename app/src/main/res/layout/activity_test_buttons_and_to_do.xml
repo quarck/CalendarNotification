@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.github.quarck.calnotify.ActivityTestButtonsAndToDo">
+
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="0dp"
+            >
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:background="?android:attr/dividerVertical"
+                android:layout_alignParentTop="true"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TEST NOTIFICATION 1"
+                android:id="@+id/buttonTest"
+                android:onClick="OnButtonTestClick"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"
+                android:background="?android:attr/selectableItemBackground"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TEST NOTIFICATION 2"
+                android:id="@+id/buttonTest2"
+                android:onClick="OnButtonTestClick"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"
+                android:background="?android:attr/selectableItemBackground"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TEST ACTIVITY"
+                android:id="@+id/buttonTest3"
+                android:onClick="OnButtonTestActivityClick"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"
+                android:background="?android:attr/selectableItemBackground"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:background="?android:attr/dividerVertical"
+                android:layout_alignParentTop="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text=
+                    "TODO:
+
+0) Highlighted view for text buttons
+\n\n
+1) Watch calendar updates
+\n\n
+2) Snooze vs Reschedule
+\n\n
+3) List of events on this activity
+\n\n
+4)Variable snooze times
+\n\n
+5)Action for location
+\n\n
+6) Re-load all monitored details on startup from calendar provider
+\n\n
+7) Load colors for calendars
+\n\n
+8) Support undo on main view
+\n\n
+9) Reschedules must be confirmed first
+\n\n
+"
+                android:id="@+id/todo"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

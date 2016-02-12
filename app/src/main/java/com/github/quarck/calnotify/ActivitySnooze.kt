@@ -104,4 +104,10 @@ class ActivitySnooze : Activity()
 	fun OnButtonSnoozePresent2Click(v: View?) = snoozeEvent(1)
 	fun OnButtonSnoozePresent3Click(v: View?) = snoozeEvent(2)
 	fun OnButtonSnoozePresent4Click(v: View?) = snoozeEvent(3)
+
+	fun OnButtonRescheduleOneHourClick(v: View?) {}
+	fun OnButtonRescheduleNextDayClick(v: View?) {}
+	fun OnButtonRescheduleNextWeekClick(v: View?) {}
+	fun OnButtonRescheduleCustomClick(v: View?) {}
+
 }

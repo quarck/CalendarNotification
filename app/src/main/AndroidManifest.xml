@@ -36,6 +36,12 @@
             android:label="@string/help_feedback"
             android:parentActivityName=".ActivityMain">
         </activity>
+        <activity
+            android:name=".ActivitySnooze"
+            android:label="@string/title_activity_activity_snooze"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Holo.NoActionBar">
+        </activity>
 
         <service android:name=".ServiceNotificationActionHandler"/>
 
@@ -91,13 +97,9 @@
         <receiver android:name=".BroadcastReceiverAlarm"/>
 
         <activity
-            android:name=".ActivitySnooze"
-            android:label="@string/title_activity_activity_snooze"
-            android:theme="@android:style/Theme.Holo.NoActionBar">
+            android:name=".ActivityTestButtonsAndToDo"
+            android:label="@string/title_activity_activity_test_buttons_and_to_do">
         </activity>
-
-        <!-- -
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth" -->
     </application>
 
 </manifest>

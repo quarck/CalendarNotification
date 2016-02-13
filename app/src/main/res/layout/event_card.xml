@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/placeCard"
+    android:id="@+id/event_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/card_margin_hirizontal"
@@ -11,12 +11,6 @@
     android:layout_marginBottom="@dimen/card_margin_vertical"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/card_elevation">
-
-    <!-- Used for the ripple effect on touch -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" />
 
     <RelativeLayout
         android:id="@+id/card_view_main_holder"
@@ -32,7 +26,7 @@
             >
 
             <ImageView
-                android:id="@+id/placeImage"
+                android:id="@+id/calendar_image"
                 android:src="@drawable/ic_today_white_24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,6 +53,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/icons"
                 android:ellipsize="end"
+                android:maxLines="6"
                 android:text="__TITLE__"/>
 
             <TextView

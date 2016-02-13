@@ -2,6 +2,7 @@ package com.github.quarck.calnotify
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +78,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			var event = events[position]
 
 			holder?.eventTitle?.text = event.title
+
 			var (date, time) = event.formatTime(context)
 			holder?.eventDate?.text = date
 			holder?.eventTime?.text = time
@@ -106,7 +108,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder?
 	{
-		var view = LayoutInflater.from(parent?.context).inflate(R.layout.event_row, parent, false);
+		var view = LayoutInflater.from(parent?.context).inflate(R.layout.event_card, parent, false);
 		return ViewHolder(view);
 	}
 

@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/snooze_view_title_height"
             android:id="@+id/snooze_view_title"
-            android:text="Event Title Place Holder.. Event Title Place Holder.. Event Title Place Holder.. Event Title Place Holder.. Event Title Place Holder.. "
+            android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
             android:textAppearance="?android:textAppearanceLarge"
             android:textSize="24.0sp"
             android:textColor="@color/icons"
@@ -34,6 +34,7 @@
             android:maxHeight="@dimen/snooze_view_event_title_max_height"
             android:gravity="left|center"
             android:ellipsize="end"
+            android:maxLines="3"
             />
 
         <ImageView

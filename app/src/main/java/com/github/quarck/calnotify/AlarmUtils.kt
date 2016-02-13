@@ -18,16 +18,21 @@ fun scheduleNextAlarmForEvents(context: Context)
 
 	if (nextAlarm != null)
 	{
-		Logger.debug("Next alarm at ${nextAlarm}, in ${(nextAlarm-System.currentTimeMillis())/1000L} seconds");
+	}
 
-		var intent = Intent(context, BroadcastReceiverAlarm::class.java);
+	var intent = Intent(context, BroadcastReceiverAlarm::class.java);
+	var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-		var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+	var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-		alarmManager.set(
-			AlarmManager.RTC_WAKEUP,
-			nextAlarm,
-			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-		);
+	if (nextAlarm != null)
+	{
+		Logger.debug("Next alarm at ${nextAlarm}, in ${(nextAlarm - System.currentTimeMillis()) / 1000L} seconds");
+
+		alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
+	}
+	else
+	{
+		alarmManager.cancel(pendingIntent)
 	}
 }

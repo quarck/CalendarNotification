@@ -222,7 +222,7 @@ class EventNotificationManager: IEventNotificationManager
 			android.R.drawable.ic_menu_rotate,
 			ctx.getString(R.string.snooze) ?: "SNOOZE",
 			pendingActivityIntent(ctx,
-				snoozeIntent(ctx, Consts.INTENT_TYPE_SNOOZE, event.eventId, event.notificationId),
+				snoozeIntent(ctx, event.eventId, event.notificationId),
 				event.notificationId * 3 + 0
 			)
 		)
@@ -233,7 +233,7 @@ class EventNotificationManager: IEventNotificationManager
 				android.R.drawable.ic_menu_close_clear_cancel,
 				ctx.getString(R.string.dismiss) ?: "DISMISS",
 				pendingServiceIntent(ctx,
-					serviceIntent(ctx, Consts.INTENT_TYPE_DISMISS, event.eventId, event.notificationId),
+					dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
 					event.notificationId * 3 + 1
 				)
 			)
@@ -242,7 +242,7 @@ class EventNotificationManager: IEventNotificationManager
 		{
 			builder.setDeleteIntent(
 				pendingServiceIntent(ctx,
-					serviceIntent(ctx, Consts.INTENT_TYPE_DELETE, event.eventId, event.notificationId),
+					dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
 					event.notificationId * 3 + 2
 				)
 			)
@@ -286,21 +286,19 @@ class EventNotificationManager: IEventNotificationManager
 			PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText)
 	}
 
-	private fun snoozeIntent(ctx: Context, type: String, eventId: Long, notificationId: Int): Intent
+	private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent
 	{
 		var intent = Intent(ctx, ActivitySnooze::class.java)
 		intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
 		intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
-		intent.putExtra(Consts.INTENT_TYPE, type)
 		return intent;
 	}
 
-	private fun serviceIntent(ctx: Context, type: String, eventId: Long, notificationId: Int): Intent
+	private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent
 	{
-		var intent = Intent(ctx, ServiceNotificationActionHandler::class.java)
+		var intent = Intent(ctx, ServiceNotificationActionDismiss::class.java)
 		intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
 		intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
-		intent.putExtra(Consts.INTENT_TYPE, type)
 		return intent;
 	}
 

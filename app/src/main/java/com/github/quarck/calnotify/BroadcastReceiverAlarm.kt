@@ -12,14 +12,13 @@ class BroadcastReceiverAlarm : BroadcastReceiver()
 
 		if (context != null)
 		{
-			EventNotificationManager().postEventNotifications(context, true);
+			EventNotificationManager().postEventNotifications(context, false);
 			scheduleNextAlarmForEvents(context);
 		}
 		else
 		{
 			Logger.error("BroadcastReceiverAlarm", "context is null");
 		}
-
 	}
 }
 

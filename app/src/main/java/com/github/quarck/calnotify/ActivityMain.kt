@@ -137,7 +137,6 @@ class ActivityMain : Activity()
 
 				intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
 				intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
-				intent.putExtra(Consts.INTENT_TYPE, Consts.INTENT_TYPE_SNOOZE);
 
 				startActivity(intent);
 			}
@@ -163,7 +162,9 @@ class ActivityMain : Activity()
 
 				EventNotificationManager().onEventDismissed(this, event.eventId, event.notificationId);
 
-				events = events?.filter { it.eventId != eventId }?.toTypedArray()
+				scheduleNextAlarmForEvents(this);
+
+				events = events?.filterIndexed { idx, ev -> idx != position }?.toTypedArray()
 				adapter?.events = events;
 				//adapter?.notifyDataSetChanged()
 				adapter?.notifyItemRemoved(position)

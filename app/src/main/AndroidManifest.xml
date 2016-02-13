@@ -43,7 +43,7 @@
             android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
 
-        <service android:name=".ServiceNotificationActionHandler"/>
+        <service android:name=".ServiceNotificationActionDismiss"/>
 
         <receiver android:name=".BroadcastReceiverAppUpdated">
             <intent-filter>

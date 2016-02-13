@@ -33,16 +33,12 @@ object Consts
 	var NOTIFICATION_ID_DYNAMIC_FROM = 1;
 
 	//
-	val NOTIFICATION_TAG = "com.github.quarck.calnotify.ntftag";
-
-	//
 	var INTENT_NOTIFICATION_ID_KEY = "notificationId";
 	var INTENT_EVENT_ID_KEY = "eventId";
-	val INTENT_TYPE = "intentType"
 
-	val INTENT_TYPE_DELETE = "delete";
-	val INTENT_TYPE_DISMISS = "dismiss";
-	val INTENT_TYPE_SNOOZE = "snooze";
+//	val INTENT_TYPE_DELETE = "delete";
+//	val INTENT_TYPE_DISMISS = "dismiss";
+//	val INTENT_TYPE_SNOOZE = "snooze";
 
 	val MAX_NOTIFICATIONS = 8;
 

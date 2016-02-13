@@ -100,7 +100,7 @@ class ActivitySnooze : Activity()
 		}
 	}
 
-	fun OnButtonSnoozePresent1Click(v: View?) = snoozeEvent(0)
+	fun OnButtonSnoozePresent1Click(v: View?) = snoozeEvent(0)// TODO - this is bad
 	fun OnButtonSnoozePresent2Click(v: View?) = snoozeEvent(1)
 	fun OnButtonSnoozePresent3Click(v: View?) = snoozeEvent(2)
 	fun OnButtonSnoozePresent4Click(v: View?) = snoozeEvent(3)

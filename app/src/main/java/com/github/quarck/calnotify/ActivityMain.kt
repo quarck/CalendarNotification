@@ -44,9 +44,11 @@ class ActivityMain : Activity()
 		adapter = EventListAdapter(this, events!!);
 		recyclerView?.adapter = adapter;
 
-		adapter?.onItemReschedule = { v, p -> onItemReschedule(v ,p); }
-		adapter?.onItemDismiss = { v, p -> onItemDismiss(v ,p); }
-		adapter?.onItemClick = { v, p -> onItemClick(v ,p); }
+		adapter?.onItemReschedule = { v, p, e -> onItemReschedule(v ,p, e); }
+		adapter?.onItemDismiss = { v, p, e -> onItemDismiss(v ,p, e); }
+		adapter?.onItemClick = { v, p, e -> onItemClick(v ,p, e); }
+
+		this.title = this.resources.getString(R.string.main_activity_title);
 	}
 
 	public override fun onStart()
@@ -103,57 +105,73 @@ class ActivityMain : Activity()
 		return super.onOptionsItemSelected(item)
 	}
 
-	private fun onItemClick(v: View, position: Int)
+	private fun onItemClick(v: View, position: Int, eventId: Long)
 	{
-		Toast.makeText(this, "Clicked ${position}", Toast.LENGTH_SHORT).show();
-
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
 
-			var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
-			var calendarIntent = Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);
+			if (event.eventId == eventId)
+			{
+				var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
+				var calendarIntent = Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);
 
-			startActivity(calendarIntent);
+				startActivity(calendarIntent);
+			}
+			else
+			{
+				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 
-	private fun onItemReschedule(v: View, position: Int)
+	private fun onItemReschedule(v: View, position: Int, eventId: Long)
 	{
-		Toast.makeText(this, "Clicked ${position}", Toast.LENGTH_SHORT).show();
-
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
 
-			var intent = Intent(this, ActivitySnooze::class.java)
+			if (event.eventId == eventId)
+			{
+				var intent = Intent(this, ActivitySnooze::class.java)
 
-			intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
-			intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
-			intent.putExtra(Consts.INTENT_TYPE, Consts.INTENT_TYPE_SNOOZE);
+				intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
+				intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
+				intent.putExtra(Consts.INTENT_TYPE, Consts.INTENT_TYPE_SNOOZE);
 
-			startActivity(intent);
+				startActivity(intent);
+			}
+			else
+			{
+				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 
-	private fun onItemDismiss(v: View, position: Int)
+	private fun onItemDismiss(v: View, position: Int, eventId: Long)
 	{
-		Toast.makeText(this, "Clicked ${position}", Toast.LENGTH_SHORT).show();
-
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
 
-			Logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+			if (event.eventId == eventId)
+			{
+				Logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
-			var db = EventsStorage(this);
-			db.deleteEvent(event.eventId);
+				var db = EventsStorage(this);
+				db.deleteEvent(event.eventId);
 
-			EventNotificationManager().onEventDismissed(this, event.eventId, event.notificationId);
+				EventNotificationManager().onEventDismissed(this, event.eventId, event.notificationId);
 
-			events = db.events.toTypedArray();
-			adapter?.events = events;
-			adapter?.notifyDataSetChanged()
+				events = events?.filter { it.eventId != eventId }?.toTypedArray()
+				adapter?.events = events;
+				//adapter?.notifyDataSetChanged()
+				adapter?.notifyItemRemoved(position)
+			}
+			else
+			{
+				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

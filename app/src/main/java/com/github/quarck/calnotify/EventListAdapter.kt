@@ -13,6 +13,8 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 	inner class ViewHolder(itemView: View)
 		: RecyclerView.ViewHolder(itemView)
 	{
+		var eventId: Long = 0;
+
 		var eventHolder: RelativeLayout
 		var eventTitle: TextView
 		var eventDate: TextView
@@ -38,20 +40,20 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			eventHolder.setOnClickListener {
 				var action = onItemClick;
 				if (action != null)
-					action(itemView, adapterPosition);
+					action(itemView, adapterPosition, eventId);
 			};
 
 			dismiss.setOnClickListener {
 				var action = onItemDismiss;
 				if (action != null)
-					action(itemView, adapterPosition);
+					action(itemView, adapterPosition, eventId);
 			}
 
 			reschedule.setOnClickListener {
 				var action = onItemReschedule;
 				if (action != null)
 				{
-					action(itemView, adapterPosition);
+					action(itemView, adapterPosition, eventId);
 				}
 			}
 		}
@@ -59,9 +61,9 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 	internal var context: Context
 
-	public var onItemClick: ((View, Int) -> Unit)? = null;
-	public var onItemDismiss: ((View, Int) -> Unit)? = null;
-	public var onItemReschedule: ((View, Int) -> Unit)? = null;
+	public var onItemClick: ((View, Int, Long) -> Unit)? = null;
+	public var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
+	public var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
 
 	init
 	{
@@ -79,12 +81,26 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			holder?.eventDate?.text = date
 			holder?.eventTime?.text = time
 			holder?.eventLocation?.text = event.location
-			if (event.location != null)
+			if (event.location != "")
 				holder?.eventLocation?.visibility = View.VISIBLE;
 			else
 				holder?.eventLocation?.visibility = View.GONE;
 
-			holder?.snoozedUntil?.text = "Snoozed until " + (event.snoozedUntil / 1000L).toString();
+			if (event.snoozedUntil != 0L)
+			{
+				holder?.snoozedUntil?.text =
+					context.resources.getString(R.string.snoozed_until_string) +
+						event.formatSnoozedUntil(context);
+
+				holder?.snoozedUntil?.visibility = View.VISIBLE;
+			}
+			else
+			{
+				holder?.snoozedUntil?.text = "";
+				holder?.snoozedUntil?.visibility = View.GONE;
+			}
+
+			holder?.eventId = event.eventId;
 		}
 	}
 

@@ -4,6 +4,36 @@ import android.content.Context
 import java.text.DateFormat
 import java.util.*
 
+object EventRecordUtils
+{
+	val oneDay = 24L*3600L*1000L;
+
+	fun dayName(ctx: Context, time: Long, currentTime: Long, formatter: DateFormat): String
+	{
+		var ret: String = "";
+
+		var currentDay: Long = currentTime / oneDay;
+		var day: Long = time / oneDay;
+
+		if (currentDay == day)
+		{
+			ret = ctx.resources.getString(R.string.today);
+		}
+		else if (day == currentDay + 1L)
+		{
+			ret = ctx.resources.getString(R.string.tomorrow);
+		}
+		else
+		{
+			ret = formatter.format(Date(time));
+		}
+
+		return ret;
+	}
+}
+
+
+
 
 fun EventRecord.formatText(ctx: Context): String
 {
@@ -17,7 +47,7 @@ fun EventRecord.formatText(ctx: Context): String
 		var start = Date(this.startTime)
 		var end = Date(this.endTime)
 
-		val oneDay = 24L*3600L*1000L;
+		val oneDay = EventRecordUtils.oneDay;
 
 		var currentDay: Long = currentTime / oneDay;
 		var startDay: Long = this.startTime / oneDay;
@@ -29,7 +59,14 @@ fun EventRecord.formatText(ctx: Context): String
 
 		if (currentDay != startDay)
 		{
-			sb.append(dateFormatter.format(start));
+			if (startDay == endDay)
+			{
+				sb.append(EventRecordUtils.dayName(ctx, startTime, currentTime, dateFormatter));
+			}
+			else
+			{
+				sb.append(dateFormatter.format(start));
+			}
 			sb.append(" ");
 		}
 
@@ -68,7 +105,7 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String>
 	{
 		var currentTime = System.currentTimeMillis();
 
-		val oneDay = 24L*3600L*1000L;
+		val oneDay = EventRecordUtils.oneDay;
 		var currentDay: Long = currentTime / oneDay;
 		var startDay: Long = this.startTime / oneDay;
 		var endDay: Long = this.endTime / oneDay;
@@ -83,20 +120,48 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String>
 			sbTime.append(timeFormatter.format(Date(this.endTime)))
 		}
 
-		if (currentDay == startDay)
-		{
-			sbDay.append(ctx.resources.getString(R.string.today));
-		}
-		else if (startDay == currentDay + 1L)
-		{
-			sbDay.append(ctx.resources.getString(R.string.tomorrow));
-		}
-		else
-		{
-			var dateFormatter = DateFormat.getDateInstance(DateFormat.FULL)
-			sbDay.append(dateFormatter.format(Date(this.startTime)));
-		}
+		sbDay.append(
+			EventRecordUtils.dayName(
+				ctx,
+				startTime, currentTime,
+				DateFormat.getDateInstance(DateFormat.FULL)
+			)
+		);
 	}
 
 	return Pair(sbDay.toString(), sbTime.toString());
 }
+
+fun EventRecord.formatSnoozedUntil(ctx: Context): String
+{
+	var sb = StringBuilder();
+
+	if (snoozedUntil != 0L)
+	{
+		var currentTime = System.currentTimeMillis();
+
+		val oneDay = EventRecordUtils.oneDay;
+
+		var currentDay: Long = currentTime / oneDay;
+		var snoozedDay: Long = this.snoozedUntil / oneDay;
+
+		var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+
+		if (snoozedDay != currentDay)
+		{
+			sb.append(
+				EventRecordUtils.dayName(
+					ctx,
+					snoozedUntil, currentTime,
+					DateFormat.getDateInstance(DateFormat.SHORT)
+				)
+			);
+			sb.append(" ");
+		}
+
+		sb.append(timeFormatter.format(Date(snoozedUntil)));
+	}
+
+	return sb.toString();
+}
+

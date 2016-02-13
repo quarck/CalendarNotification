@@ -47,6 +47,7 @@
                 android:id="@+id/card_view_event_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxHeight="@dimen/card_view_title_max_height"
                 android:layout_gravity="center_vertical"
                 android:gravity="left"
                 android:paddingTop="@dimen/snooze_view_spacing"
@@ -57,7 +58,8 @@
                 android:paddingLeft="@dimen/snooze_view_padding_start"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@color/icons"
-                android:text="__EVENT_TITLE_PLACEHOLDER__"/>
+                android:ellipsize="end"
+                android:text="__TITLE__"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -146,31 +148,37 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DISMISS"
+                android:text="@string/card_view_btn_dismiss"
                 android:id="@+id/card_view_button_dismiss"
                 android:visibility="visible"
                 android:textColor="@color/primary_dark"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingStart="@dimen/card_view_action_buttons_start_padding"
+                android:paddingLeft="@dimen/card_view_action_buttons_start_padding"
+                android:paddingEnd="@dimen/card_view_action_buttons_end_padding"
+                android:paddingRight="@dimen/card_view_action_buttons_end_padding"
+                android:paddingTop="@dimen/card_view_action_buttons_top_padding"
+                android:paddingBottom="@dimen/card_view_action_buttons_bottom_padding"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RESCHEDULE"
+                android:text="@string/card_view_btn_change"
                 android:id="@+id/card_view_button_reschedule"
                 android:visibility="visible"
                 android:textColor="@color/primary_dark"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingStart="@dimen/card_view_action_buttons_start_padding"
+                android:paddingLeft="@dimen/card_view_action_buttons_start_padding"
+                android:paddingEnd="@dimen/card_view_action_buttons_end_padding"
+                android:paddingRight="@dimen/card_view_action_buttons_end_padding"
+                android:paddingTop="@dimen/card_view_action_buttons_top_padding"
+                android:paddingBottom="@dimen/card_view_action_buttons_bottom_padding"
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_toStartOf="@id/card_view_button_dismiss"
+                android:layout_toLeftOf="@id/card_view_button_dismiss"
                 />
 
 

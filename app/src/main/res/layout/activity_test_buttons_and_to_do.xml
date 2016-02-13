@@ -93,7 +93,7 @@
 \n\n
 2) Snooze vs Reschedule
 \n\n
-3) List of events on this activity
+3) List of events on main activity
 \n\n
 4) Variable snooze times
 \n\n
@@ -108,6 +108,14 @@
 9) Reschedules must be confirmed first
 \n\n
 10) Collect all own logs
+\n\n
+11) Different icon - add alarm or bell symbol to existing one
+\n\n
+12) Clickable location on the snooze screen
+\n\n
+13) Clickable \'Today\' and event time -- bring event edit activity
+\n\n
+14) Limit max height of the card
 \n\n
 "
                 android:id="@+id/todo"

@@ -24,6 +24,8 @@ class ServiceUINotifierClient
 
 			binder.sevice.updateActivity = {
 
+				isUserAction ->
+
 				logger.debug("updateActivity called, forwarning");
 
 				var action = updateActivity;
@@ -31,7 +33,7 @@ class ServiceUINotifierClient
 				if (action != null)
 				{
 					logger.debug("calling action");
-					action();
+					action(isUserAction);
 				}
 				else
 				{
@@ -48,7 +50,7 @@ class ServiceUINotifierClient
 		}
 	}
 
-	public var updateActivity: (() -> Unit)? = null
+	public var updateActivity: ((Boolean) -> Unit)? = null
 
 	fun bindService(context: Context)
 	{

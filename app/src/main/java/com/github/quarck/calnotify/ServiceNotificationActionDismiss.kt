@@ -25,7 +25,7 @@ class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActio
 
 				AlarmUtils.scheduleNextAlarmForEvents(this);
 
-				ServiceUINotifier.notifyUI(this);
+				ServiceUINotifier.notifyUI(this, true);
 			}
 			else
 			{

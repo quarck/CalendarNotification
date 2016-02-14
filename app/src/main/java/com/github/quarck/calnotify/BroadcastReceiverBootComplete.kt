@@ -43,7 +43,7 @@ class BroadcastReceiverBootComplete : BroadcastReceiver()
 			EventNotificationManager().postEventNotifications(context, true);
 			AlarmUtils.scheduleNextAlarmForEvents(context);
 
-			ServiceUINotifier.notifyUI(context);
+			ServiceUINotifier.notifyUI(context, false);
 		}
 	}
 

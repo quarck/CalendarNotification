@@ -36,9 +36,7 @@ object Consts
 	var INTENT_NOTIFICATION_ID_KEY = "notificationId";
 	var INTENT_EVENT_ID_KEY = "eventId";
 
-//	val INTENT_TYPE_DELETE = "delete";
-//	val INTENT_TYPE_DISMISS = "dismiss";
-//	val INTENT_TYPE_SNOOZE = "snooze";
+	val INTENT_IS_USER_ACTION = "causedByUser"
 
 	val MAX_NOTIFICATIONS = 8;
 

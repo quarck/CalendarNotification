@@ -106,7 +106,7 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 			abortBroadcast();
 		}
 
-		ServiceUINotifier.notifyUI(context);
+		ServiceUINotifier.notifyUI(context, false);
 	}
 
 	fun dismissNativeReminder(context: Context, eventId: Long)

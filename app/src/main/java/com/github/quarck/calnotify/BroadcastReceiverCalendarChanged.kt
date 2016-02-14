@@ -10,7 +10,7 @@ class BroadcastReceiverCalendarChanged: BroadcastReceiver()
 	{
 		logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
 
-		ServiceUINotifier.notifyUI(context);
+		ServiceUINotifier.notifyUI(context, false);
 	}
 
 	companion object

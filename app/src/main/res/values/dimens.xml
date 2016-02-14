@@ -47,4 +47,12 @@
     <dimen name="card_view_action_buttons_bottom_padding">10dp</dimen>
 
     <dimen name="card_view_title_max_height">188dp</dimen>
+    <dimen name="activity_main_action_buttons_start_padding">16dp</dimen>
+    <dimen name="activity_main_action_buttons_end_padding">16dp</dimen>
+    <dimen name="activity_main_action_buttons_top_padding">16dp</dimen>
+    <dimen name="activity_main_action_buttons_bottom_padding">16dp</dimen>
+    <dimen name="activity_main_text_pading_top">16dp</dimen>
+    <dimen name="activity_main_text_pading_bottom">16dp</dimen>
+    <dimen name="activity_main_text_pading_start">24dp</dimen>
+    <dimen name="activity_main_text_pading_end">16dp</dimen>
 </resources>

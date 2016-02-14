@@ -16,7 +16,7 @@ class ServiceUINotifier : IntentService("ServiceUINotifier")
 
 	private val binder = ServiceBinder()
 
-	public var updateActivity: (() -> Unit)? = null
+	public var updateActivity: ((Boolean) -> Unit)? = null
 
 	override fun onBind(intent: Intent): IBinder?
 	{
@@ -44,8 +44,9 @@ class ServiceUINotifier : IntentService("ServiceUINotifier")
 		var action = updateActivity
 		if (action != null)
 		{
-			logger.debug("calling action")
-			action();
+			var isUserAction = intent.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, true)
+			logger.debug("calling action, isUserAction=$isUserAction")
+			action(isUserAction);
 		}
 		else
 		{
@@ -57,11 +58,14 @@ class ServiceUINotifier : IntentService("ServiceUINotifier")
 	{
 		private val logger = Logger("ServiceUINotifier")
 
-		public fun notifyUI(context: Context?)
+		public fun notifyUI(context: Context?, isUserAction: Boolean)
 		{
+			logger.debug("notifyUI called, isUserAction=$isUserAction")
+
 			if (context != null)
 			{
 				var serviceIntent = Intent(context, ServiceUINotifier::class.java)
+				serviceIntent.putExtra(Consts.INTENT_IS_USER_ACTION, isUserAction);
 				context.startService(serviceIntent)
 			}
 		}

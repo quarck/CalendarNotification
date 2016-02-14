@@ -12,6 +12,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.RelativeLayout
 import android.widget.Toast
 
 class ActivityMain : Activity()
@@ -26,6 +27,8 @@ class ActivityMain : Activity()
 	private var events: Array<EventRecord>? = null
 
 	private var svcClient = ServiceUINotifierClient();
+
+	private var reloadLayout: RelativeLayout? = null
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -50,7 +53,7 @@ class ActivityMain : Activity()
 		adapter?.onItemDismiss = { v, p, e -> onItemDismiss(v ,p, e); }
 		adapter?.onItemClick = { v, p, e -> onItemClick(v ,p, e); }
 
-		this.title = this.resources.getString(R.string.main_activity_title);
+		reloadLayout = findViewById(R.id.activity_main_reload_layout) as RelativeLayout;
 	}
 
 	public override fun onStart()
@@ -68,20 +71,26 @@ class ActivityMain : Activity()
 		super.onStop()
 	}
 
-	private fun reloadData()
-	{
-		events = EventsStorage(this).events.toTypedArray();
-		adapter?.events = events;
-		adapter?.notifyDataSetChanged()
-	}
-
 	public override fun onResume()
 	{
 		logger.debug("onResume")
 		super.onResume()
 
 		svcClient.bindService(this)
-		svcClient.updateActivity = { runOnUiThread { reloadData() } }
+		svcClient.updateActivity =
+			{
+				isUserAction ->
+					runOnUiThread {
+					if (isUserAction)
+					{
+						reloadData()
+					}
+					else
+					{
+						reloadLayout?.visibility = View.VISIBLE
+					}
+				}
+			}
 
 		reloadData()
 	}
@@ -137,6 +146,19 @@ class ActivityMain : Activity()
 				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
 			}
 		}
+	}
+
+	private fun reloadData()
+	{
+		events = EventsStorage(this).events.toTypedArray();
+		adapter?.events = events;
+		adapter?.notifyDataSetChanged()
+	}
+
+	fun onReloadButtonClick(v: View)
+	{
+		reloadLayout?.visibility = View.GONE;
+		reloadData();
 	}
 
 	private fun onItemReschedule(v: View, position: Int, eventId: Long)

@@ -23,7 +23,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 		var eventLocation: TextView
 		var actionLayout: View
 		var snoozedUntil: TextView
-		var reschedule: Button
+		var change: Button
 		var dismiss: Button
 
 		init
@@ -35,7 +35,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			eventLocation = itemView.findViewById(R.id.card_view_location) as TextView
 			actionLayout = itemView.findViewById(R.id.card_view_event_action_layout) as View
 			snoozedUntil = itemView.findViewById(R.id.card_view_snoozed_until) as TextView
-			reschedule = itemView.findViewById(R.id.card_view_button_reschedule) as Button
+			change = itemView.findViewById(R.id.card_view_button_reschedule) as Button
 			dismiss = itemView.findViewById(R.id.card_view_button_dismiss) as Button
 
 			eventHolder.setOnClickListener {
@@ -50,7 +50,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 					action(itemView, adapterPosition, eventId);
 			}
 
-			reschedule.setOnClickListener {
+			change.setOnClickListener {
 				var action = onItemReschedule;
 				if (action != null)
 				{
@@ -95,11 +95,15 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 						event.formatSnoozedUntil(context);
 
 				holder?.snoozedUntil?.visibility = View.VISIBLE;
+
+				holder?.change?.text = context.resources.getString(R.string.card_view_btn_change);
 			}
 			else
 			{
 				holder?.snoozedUntil?.text = "";
 				holder?.snoozedUntil?.visibility = View.GONE;
+
+				holder?.change?.text = context.resources.getString(R.string.card_view_btn_snooze)
 			}
 
 			holder?.eventId = event.eventId;

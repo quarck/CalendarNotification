@@ -12,6 +12,8 @@ class ActivityHelpAndFeedback : Activity()
     {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_help_and_feedback)
+
+        logger.debug("onCreate")
 	}
 
     public fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
@@ -20,6 +22,8 @@ class ActivityHelpAndFeedback : Activity()
 
     public fun OnButtonEmailDeveloper(v: View)
     {
+        logger.debug("Emailing developer");
+
         var email = Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail));
         email.putExtra(Intent.EXTRA_SUBJECT,emailSubject);
@@ -37,5 +41,7 @@ class ActivityHelpAndFeedback : Activity()
         var emailSubject = "Advanced Calendar Notification Feedback / Question"
         var emailText = "Please describe your question or feedback in English or Russian:\n\n"
         var mimeType = "message/rfc822"
+
+        var logger = Logger("ActivityHelpAndFeedback")
     }
 }

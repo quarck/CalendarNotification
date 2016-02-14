@@ -33,5 +33,9 @@ object PebbleUtils
 		i.putExtra(INTENT_EXTRA_NOTIFICATION_DATA_KEY, notificationData)
 
 		context.sendBroadcast(i)
+
+		logger.info("Notification was forwarded to pebble")
 	}
+
+	private val logger = Logger("PebbleUtils")
 }

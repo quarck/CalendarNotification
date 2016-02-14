@@ -25,11 +25,13 @@ class ActivityMain : Activity()
 
 	private var events: Array<EventRecord>? = null
 
+	private var svcClient = ServiceUINotifierClient();
+
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
 
-		Logger.debug(TAG, "onCreateView")
+		logger.debug( "onCreateView")
 
 		setContentView(R.layout.activity_main)
 
@@ -53,33 +55,43 @@ class ActivityMain : Activity()
 
 	public override fun onStart()
 	{
-		Logger.debug(TAG, "onStart()")
+		logger.debug("onStart()")
 		super.onStart()
 
 		EventNotificationManager().postEventNotifications(applicationContext, true)
-		scheduleNextAlarmForEvents(applicationContext)
+		AlarmUtils.scheduleNextAlarmForEvents(applicationContext)
 	}
 
 	public override fun onStop()
 	{
-		Logger.debug(TAG, "onStop()")
+		logger.debug("onStop()")
 		super.onStop()
 	}
 
-	public override fun onPause()
+	private fun reloadData()
 	{
-		Logger.debug(TAG, "onPause")
-		super.onPause()
+		events = EventsStorage(this).events.toTypedArray();
+		adapter?.events = events;
+		adapter?.notifyDataSetChanged()
 	}
 
 	public override fun onResume()
 	{
-		Logger.debug(TAG, "onResume")
+		logger.debug("onResume")
 		super.onResume()
 
-		events = EventsStorage(this).events.toTypedArray();
-		adapter?.events = events;
-		adapter?.notifyDataSetChanged()
+		svcClient.bindService(this)
+		svcClient.updateActivity = { runOnUiThread { reloadData() } }
+
+		reloadData()
+	}
+	public override fun onPause()
+	{
+		logger.debug("onPause")
+
+		svcClient.unbindService(this)
+
+		super.onPause()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean
@@ -107,6 +119,8 @@ class ActivityMain : Activity()
 
 	private fun onItemClick(v: View, position: Int, eventId: Long)
 	{
+		logger.debug("onItemClick, pos=$position, eventId=$eventId");
+
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
@@ -127,6 +141,8 @@ class ActivityMain : Activity()
 
 	private fun onItemReschedule(v: View, position: Int, eventId: Long)
 	{
+		logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
+
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
@@ -143,26 +159,29 @@ class ActivityMain : Activity()
 			else
 			{
 				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+				logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
 			}
 		}
 	}
 
 	private fun onItemDismiss(v: View, position: Int, eventId: Long)
 	{
+		logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
+
 		if (position >= 0 && position < events!!.size)
 		{
 			var event = events!![position];
 
 			if (event.eventId == eventId)
 			{
-				Logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+				logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
 				var db = EventsStorage(this);
 				db.deleteEvent(event.eventId);
 
 				EventNotificationManager().onEventDismissed(this, event.eventId, event.notificationId);
 
-				scheduleNextAlarmForEvents(this);
+				AlarmUtils.scheduleNextAlarmForEvents(this);
 
 				events = events?.filterIndexed { idx, ev -> idx != position }?.toTypedArray()
 				adapter?.events = events;
@@ -172,12 +191,13 @@ class ActivityMain : Activity()
 			else
 			{
 				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+				logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
 			}
 		}
 	}
 
 	companion object
 	{
-		private val TAG = "MainActivity"
+		private val logger = Logger("ActivityMain")
 	}
 }

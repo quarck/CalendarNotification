@@ -11,8 +11,6 @@ import android.provider.CalendarContract
 
 class BroadcastReceiverEventReminder : BroadcastReceiver()
 {
-	private val TAG = "BroadcastReceiverEventReminder"
-
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
 		if (context == null || intent == null)
@@ -24,7 +22,7 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 		{
 			var settings = Settings(context)
 
-			Logger.debug(TAG, "EVENT_REMINDER received, ${intent.data}");
+			logger.debug("EVENT_REMINDER received, ${intent.data}");
 
 			var uri = intent.data;
 
@@ -60,8 +58,7 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 					var end = cursor.getLong(5)
 					var location = cursor.getString(6)
 
-					Logger.debug(TAG,
-						"Event Details: ${eventId}, st ${state}, title ${title}, desc ${desc}, from ${start} to ${end}, loc ${location}")
+					logger.info("Received event details: ${eventId}, st ${state}, from ${start} to ${end}")
 
 					if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED)
 					{
@@ -87,27 +84,29 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 					}
 					else
 					{
-						Logger.debug(TAG, "Ignored dismissed event ${eventId}")
+						logger.info("Ignored dismissed event $eventId")
 					}
 
 				} while (cursor.moveToNext())
 			}
 			else
 			{
-				Logger.error(TAG, "Failed to parse event")
+				logger.error("Failed to parse event")
 			}
 
 			cursor?.close()
 		}
 		else
 		{
-			Logger.debug(TAG, "Unsupported action ${intent.action}")
+			logger.debug("Unsupported action ${intent.action}")
 		}
 
 		if (shouldAbortBroadcast)
 		{
 			abortBroadcast();
 		}
+
+		ServiceUINotifier.notifyUI(context);
 	}
 
 	fun dismissNativeReminder(context: Context, eventId: Long)
@@ -134,7 +133,12 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 		}
 		catch (ex: Exception)
 		{
-			Logger.debug(TAG, "dismissNativeReminder failed")
+			logger.debug("dismissNativeReminder failed")
 		}
+	}
+
+	companion object
+	{
+		private val logger = Logger("BroadcastReceiverEventReminder");
 	}
 }

@@ -32,9 +32,6 @@ object EventRecordUtils
 	}
 }
 
-
-
-
 fun EventRecord.formatText(ctx: Context): String
 {
 	var sb = StringBuilder()

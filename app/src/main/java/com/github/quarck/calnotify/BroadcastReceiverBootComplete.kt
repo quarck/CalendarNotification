@@ -36,12 +36,19 @@ class BroadcastReceiverBootComplete : BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		Logger.debug("BroadcastReceiverBootComplete", "onReceive");
+		logger.debug("onReceive");
 
 		if (context != null)
 		{
 			EventNotificationManager().postEventNotifications(context, true);
-			scheduleNextAlarmForEvents(context);
+			AlarmUtils.scheduleNextAlarmForEvents(context);
+
+			ServiceUINotifier.notifyUI(context);
 		}
+	}
+
+	companion object
+	{
+		private val logger = Logger("BroadcastReceiverBootComplete");
 	}
 }

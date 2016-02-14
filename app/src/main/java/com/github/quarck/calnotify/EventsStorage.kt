@@ -85,20 +85,20 @@ public class EventsStorage(context: Context)
 				"$KEY_RESERVED_INT3 INTEGER" +
 				" )"
 
-		Logger.debug(TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+		logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
 		db.execSQL(CREATE_PKG_TABLE)
 
 		val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID)"
 
-		Logger.debug(TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
+		logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
 
 		db.execSQL(CREATE_INDEX)
 	}
 
 	override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int)
 	{
-		Logger.debug(TAG, "DROPPING table and index")
+		logger.debug("DROPPING table and index")
 
 		if (oldVersion != newVersion)
 		{
@@ -117,7 +117,7 @@ public class EventsStorage(context: Context)
 
 	private fun addEventImpl(event: EventRecord)
 	{
-		Logger.debug(TAG, "addEvent " + event.toString())
+		logger.debug( "addEvent " + event.toString())
 
 		if (event.notificationId == 0)
 			event.notificationId = nextNotificationId();
@@ -138,7 +138,7 @@ public class EventsStorage(context: Context)
 			// Close Db before attempting to open it again from another method
 			db.close()
 
-			Logger.debug(TAG, "This entry (${event.eventId}) is already in the DB, updating!")
+			logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
 
 			// persist original notification id in this case
 			event.notificationId = getEventImpl(event.eventId)?.notificationId ?: event.notificationId;
@@ -153,6 +153,8 @@ public class EventsStorage(context: Context)
 
 		val values = eventRecordToContentValues(event)
 
+		logger.debug("Updating event, eventId=${event.eventId}");
+
 		db.update(TABLE_NAME, // table
 			values, // column/value
 			KEY_EVENTID + " = ?", // selections
@@ -166,8 +168,6 @@ public class EventsStorage(context: Context)
 		var ret = 0;
 
 		val db = this.readableDatabase
-
-		Logger.debug(TAG, "nextNotificationId")
 
 		val query = "SELECT MAX($KEY_NOTIFICATIONID) FROM " + TABLE_NAME
 
@@ -189,6 +189,8 @@ public class EventsStorage(context: Context)
 
 		if (ret == 0)
 			ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
+
+		logger.debug("nextNotificationId, returning $ret")
 
 		return ret
 	}
@@ -241,6 +243,8 @@ public class EventsStorage(context: Context)
 				cursor.close()
 			}
 
+			logger.debug("eventsImpl, returnint ${ret.size} events")
+
 			return ret
 		}
 
@@ -254,7 +258,7 @@ public class EventsStorage(context: Context)
 
 		db.close()
 
-		Logger.debug(TAG, "deleteNotification ${eventId}")
+		logger.debug("deleteNotification ${eventId}")
 	}
 
 	private fun eventRecordToContentValues(event: EventRecord, includeId: Boolean = false): ContentValues
@@ -296,7 +300,7 @@ public class EventsStorage(context: Context)
 
 	companion object
 	{
-		private val TAG = "DB"
+		private val logger = Logger("EventsStorage")
 
 		private val DATABASE_VERSION = 4
 		private val DATABASE_RELEASE_ONE_VERSION = 4

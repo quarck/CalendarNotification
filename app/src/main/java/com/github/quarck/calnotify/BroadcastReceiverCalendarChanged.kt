@@ -8,6 +8,13 @@ class BroadcastReceiverCalendarChanged: BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		Logger.debug("BroadcastReceiverCalendarChanged", "onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
+		logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
+
+		ServiceUINotifier.notifyUI(context);
+	}
+
+	companion object
+	{
+		private val logger = Logger("BroadcastReceiverCalendarChanged");
 	}
 }

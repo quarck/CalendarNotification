@@ -38,12 +38,19 @@ class BroadcastReceiverAppUpdated : BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		Logger.debug("BroadcastReceiverAppUpdated", "onReceive");
+		logger.debug("onReceive");
 
 		if (context != null)
 		{
 			EventNotificationManager().postEventNotifications(context, true);
-			scheduleNextAlarmForEvents(context);
+			AlarmUtils.scheduleNextAlarmForEvents(context);
+
+			ServiceUINotifier.notifyUI(context);
 		}
+	}
+
+	companion object
+	{
+		private val logger = Logger("BroadcastReceiverAppUpdated");
 	}
 }

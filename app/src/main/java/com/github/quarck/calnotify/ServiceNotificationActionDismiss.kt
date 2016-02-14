@@ -9,7 +9,7 @@ class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActio
 {
 	override fun onHandleIntent(intent: Intent?)
 	{
-		Logger.debug(TAG, "onHandleIntent")
+		logger.debug("onHandleIntent")
 
 		if (intent != null)
 		{
@@ -18,26 +18,28 @@ class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActio
 
 			if (notificationId != -1 && eventId != -1L)
 			{
-				Logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
+				logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
 
 				EventsStorage(this).deleteEvent(eventId);
 				EventNotificationManager().onEventDismissed(this, eventId, notificationId);
 
-				scheduleNextAlarmForEvents(this);
+				AlarmUtils.scheduleNextAlarmForEvents(this);
+
+				ServiceUINotifier.notifyUI(this);
 			}
 			else
 			{
-				Logger.error(TAG, "notificationId=${notificationId}, eventId=${eventId}, or type is null")
+				logger.error("notificationId=${notificationId}, eventId=${eventId}, or type is null")
 			}
 		}
 		else
 		{
-			Logger.error(TAG, "Intent is null!")
+			logger.error("Intent is null!")
 		}
 	}
 
 	companion object
 	{
-		val TAG = "DiscardNotificationService"
+		private val logger = Logger("DiscardNotificationService")
 	}
 }

@@ -74,7 +74,7 @@ class ActivitySnooze : Activity()
 
 		if (notificationId != -1 && eventId != -1L && storage != null)
 		{
-			Logger.debug("Snoozing event id ${eventId}, snoozeDelay=${snoozeDelay/1000L}")
+			logger.debug("Snoozing event id ${eventId}, snoozeDelay=${snoozeDelay/1000L}")
 
 			var event = storage!!.getEvent(eventId)
 			if (event != null)
@@ -85,17 +85,17 @@ class ActivitySnooze : Activity()
 				event.lastEventUpdate = currentTime;
 				storage!!.updateEvent(event);
 
-				scheduleNextAlarmForEvents(this);
+				AlarmUtils.scheduleNextAlarmForEvents(this);
 
 				notificationsManager.onEventSnoozed(this, eventId, notificationId);
 
-				Logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
+				logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
 
 				finish();
 			}
 			else
 			{
-				Logger.error("Error: can't get event from DB");
+				logger.error("Error: can't get event from DB");
 			}
 		}
 	}
@@ -109,5 +109,10 @@ class ActivitySnooze : Activity()
 	fun OnButtonRescheduleNextDayClick(v: View?) {}
 	fun OnButtonRescheduleNextWeekClick(v: View?) {}
 	fun OnButtonRescheduleCustomClick(v: View?) {}
+
+	companion object
+	{
+		private val logger = Logger("ActivitySnooze");
+	}
 
 }

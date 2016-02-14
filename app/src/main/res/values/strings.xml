@@ -92,7 +92,8 @@
     <string name="custom_pick_a_date">Custom (pick a date)</string>
     <string name="title_activity_activity_test_buttons_and_to_do">ActivityTestButtonsAndToDo</string>
 
-    <string name="snoozed_until_string">Snoozed until:</string>
+    <string name="snoozed_until_string">Snoozed until </string>
     <string name="card_view_btn_change">CHANGE</string>
+    <string name="card_view_btn_snooze">SNOOZE</string>
     <string name="card_view_btn_dismiss">DISMISS</string>
 </resources>

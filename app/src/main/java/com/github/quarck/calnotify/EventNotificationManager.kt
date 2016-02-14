@@ -107,20 +107,19 @@ class EventNotificationManager: IEventNotificationManager
 			hideCollapsedNotifications(context, db, older, force);
 			postRegularEvents(context, db, settings, recent, force);
 
-			Logger.debug("SHOWING COLLAPSED NOTIFICATION");
 			postNumNotificationsCollapsed(context, older.size);
 		}
 	}
 
 	private fun hideCollapsedNotifications(context: Context, db: EventsStorage, events: List<EventRecord>, force: Boolean)
 	{
-		Logger.debug("Hiding notifications for ${events.size} notification")
+		logger.debug("Hiding notifications for ${events.size} notification")
 
 		for (event in events)
 		{
 			if (event.isDisplayed || force)
 			{
-				Logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
+				logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
 				removeNotification(context, event.eventId, event.notificationId);
 
 				event.isDisplayed = false;
@@ -128,7 +127,7 @@ class EventNotificationManager: IEventNotificationManager
 			}
 			else
 			{
-				Logger.debug("Skipping hiding of notification id ${event.notificationId}, eventId ${event.eventId} - already hidden");
+				logger.debug("Skipping hiding of notification id ${event.notificationId}, eventId ${event.eventId} - already hidden");
 			}
 		}
 	}
@@ -140,7 +139,7 @@ class EventNotificationManager: IEventNotificationManager
 		events: List<EventRecord>, force: Boolean
 	)
 	{
-		Logger.debug("Posting ${events.size} notifications");
+		logger.debug("Posting ${events.size} notifications");
 
 		for (event in events)
 		{
@@ -149,7 +148,7 @@ class EventNotificationManager: IEventNotificationManager
 				// Event was already "beeped", need to make sure it is shown, quietly...
 				if (!event.isDisplayed || force)
 				{
-					Logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
+					logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
 					postNotification(
 						context,
@@ -168,12 +167,12 @@ class EventNotificationManager: IEventNotificationManager
 				}
 				else
 				{
-					Logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
+					logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
 				}
 			}
 			else
 			{
-				Logger.debug("Initial posting notification id ${event.notificationId}, eventId ${event.eventId}");
+				logger.debug("Initial posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
 				// it is time to show this event after a snooze or whatever,
 				// turn on all the bells and whistles
@@ -216,7 +215,7 @@ class EventNotificationManager: IEventNotificationManager
 			.setStyle(Notification.BigTextStyle()
 				.bigText(notificationText))
 
-		Logger.debug("NotificationViewManager: adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
+		logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
 		builder.addAction(
 			android.R.drawable.ic_menu_rotate,
@@ -267,7 +266,7 @@ class EventNotificationManager: IEventNotificationManager
 
 		try
 		{
-			Logger.debug("NotificationViewManager",
+			logger.debug(
 				"adding: notificationId=${event.notificationId}, notification is ${notification}, stack:")
 
 			notificationManager.notify(
@@ -277,7 +276,7 @@ class EventNotificationManager: IEventNotificationManager
 		}
 		catch (ex: Exception)
 		{
-			Logger.error("NotificationViewManager",
+			logger.error(
 				"Exception: ${ex.toString()}, notificationId=${event.notificationId}, notification is ${if (notification != null) 1 else 0}, stack:")
 			ex.printStackTrace()
 		}
@@ -313,8 +312,6 @@ class EventNotificationManager: IEventNotificationManager
 					.getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		return pendingIntent;
-
-//		return PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 	}
 
 	private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int)
@@ -325,7 +322,7 @@ class EventNotificationManager: IEventNotificationManager
 
 	private fun postNumNotificationsCollapsed(context: Context, numCollapsed: Int)
 	{
-		Logger.debug("Posting 'collapsed view' notification");
+		logger.debug("Posting 'collapsed view' notification");
 
 		var intent = Intent(context, ActivityMain::class.java);
 		val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
@@ -353,9 +350,14 @@ class EventNotificationManager: IEventNotificationManager
 
 	private fun hideNumNotificationsCollapsed(context: Context)
 	{
-		Logger.debug("Hiding 'collapsed view' notification");
+		logger.debug("Hiding 'collapsed view' notification");
 
 		var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED);
+	}
+
+	companion object
+	{
+		private val logger = Logger("EventNotificationManager")
 	}
 }

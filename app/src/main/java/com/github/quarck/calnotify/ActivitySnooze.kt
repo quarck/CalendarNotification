@@ -14,7 +14,6 @@ class ActivitySnooze : Activity()
 	var notificationId: Int = -1;
 
 	var storage: EventsStorage? = null
-	var notificationsManager = EventNotificationManager()
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -79,17 +78,7 @@ class ActivitySnooze : Activity()
 			var event = storage!!.getEvent(eventId)
 			if (event != null)
 			{
-				var currentTime = System.currentTimeMillis()
-
-				event.snoozedUntil = currentTime + snoozeDelay;
-				event.lastEventUpdate = currentTime;
-				storage!!.updateEvent(event);
-
-				AlarmUtils.scheduleNextAlarmForEvents(this);
-
-				notificationsManager.onEventSnoozed(this, eventId, notificationId);
-
-				logger.debug("alarm set -  called for ${event}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
+				EventsManager.snoozeEvent(this, event, snoozeDelay, storage);
 
 				finish();
 			}

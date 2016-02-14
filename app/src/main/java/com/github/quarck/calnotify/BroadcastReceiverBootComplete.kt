@@ -38,13 +38,7 @@ class BroadcastReceiverBootComplete : BroadcastReceiver()
 	{
 		logger.debug("onReceive");
 
-		if (context != null)
-		{
-			EventNotificationManager().postEventNotifications(context, true);
-			AlarmUtils.scheduleNextAlarmForEvents(context);
-
-			ServiceUINotifier.notifyUI(context, false);
-		}
+		EventsManager.onBootComplete(context, intent)
 	}
 
 	companion object

@@ -18,14 +18,7 @@ class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActio
 
 			if (notificationId != -1 && eventId != -1L)
 			{
-				logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
-
-				EventsStorage(this).deleteEvent(eventId);
-				EventNotificationManager().onEventDismissed(this, eventId, notificationId);
-
-				AlarmUtils.scheduleNextAlarmForEvents(this);
-
-				ServiceUINotifier.notifyUI(this, true);
+				EventsManager.dismissEvent(this, eventId, notificationId)
 			}
 			else
 			{

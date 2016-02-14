@@ -14,5 +14,6 @@ data class EventRecord(
 	var location: String,
 	var lastEventUpdate: Long,
 	var snoozedUntil: Long = 0,
-	var isDisplayed: Boolean = false
+	var isDisplayed: Boolean = false,
+	var color: Int = 0
 )

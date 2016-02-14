@@ -39,14 +39,7 @@ class BroadcastReceiverAppUpdated : BroadcastReceiver()
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
 		logger.debug("onReceive");
-
-		if (context != null)
-		{
-			EventNotificationManager().postEventNotifications(context, true);
-			AlarmUtils.scheduleNextAlarmForEvents(context);
-
-			ServiceUINotifier.notifyUI(context, false);
-		}
+		EventsManager.onAppUpdated(context, intent)
 	}
 
 	companion object

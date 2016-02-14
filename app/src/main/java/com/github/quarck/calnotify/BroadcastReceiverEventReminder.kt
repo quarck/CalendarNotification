@@ -39,7 +39,8 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 							CalendarContract.CalendarAlerts.DESCRIPTION,
 							CalendarContract.CalendarAlerts.DTSTART,
 							CalendarContract.CalendarAlerts.DTEND,
-							CalendarContract.CalendarAlerts.EVENT_LOCATION
+							CalendarContract.CalendarAlerts.EVENT_LOCATION,
+							CalendarContract.CalendarAlerts.DISPLAY_COLOR
 						),
 					selection,
 					arrayOf(alertTime),
@@ -57,24 +58,27 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 					var start = cursor.getLong(4)
 					var end = cursor.getLong(5)
 					var location = cursor.getString(6)
+					var color = cursor.getInt(7)
 
 					logger.info("Received event details: ${eventId}, st ${state}, from ${start} to ${end}")
 
 					if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED)
 					{
 						var event =
-							EventsStorage(context).addEvent(
+							EventRecord(
 								eventId = eventId,
+								notificationId = 0,
 								title = title,
 								description = desc,
 								startTime = start,
 								endTime = end,
 								location = location,
 								lastEventUpdate = System.currentTimeMillis(),
-								isDisplayed = false // currently not displayed - to be added
+								isDisplayed = false,
+								color = color
 							);
 
-						EventNotificationManager().onEventAdded(context, event)
+						EventsManager.onCalendarEventFired(context, intent, event);
 
 						if (settings.removeOriginal)
 						{
@@ -105,8 +109,6 @@ class BroadcastReceiverEventReminder : BroadcastReceiver()
 		{
 			abortBroadcast();
 		}
-
-		ServiceUINotifier.notifyUI(context, false);
 	}
 
 	fun dismissNativeReminder(context: Context, eventId: Long)

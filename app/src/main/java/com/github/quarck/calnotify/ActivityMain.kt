@@ -61,8 +61,7 @@ class ActivityMain : Activity()
 		logger.debug("onStart()")
 		super.onStart()
 
-		EventNotificationManager().postEventNotifications(applicationContext, true)
-		AlarmUtils.scheduleNextAlarmForEvents(applicationContext)
+		EventsManager.onAppStarted(applicationContext);
 	}
 
 	public override fun onStop()
@@ -198,12 +197,7 @@ class ActivityMain : Activity()
 			{
 				logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
-				var db = EventsStorage(this);
-				db.deleteEvent(event.eventId);
-
-				EventNotificationManager().onEventDismissed(this, event.eventId, event.notificationId);
-
-				AlarmUtils.scheduleNextAlarmForEvents(this);
+				EventsManager.dismissEvent(this, event);
 
 				events = events?.filterIndexed { idx, ev -> idx != position }?.toTypedArray()
 				adapter?.events = events;

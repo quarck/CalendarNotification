@@ -9,16 +9,7 @@ class BroadcastReceiverAlarm : BroadcastReceiver()
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
 		logger.debug("onReceive");
-
-		if (context != null)
-		{
-			EventNotificationManager().postEventNotifications(context, false);
-			AlarmUtils.scheduleNextAlarmForEvents(context);
-		}
-		else
-		{
-			logger.error("context is null");
-		}
+		EventsManager.onAlarm(context, intent);
 	}
 
 	companion object

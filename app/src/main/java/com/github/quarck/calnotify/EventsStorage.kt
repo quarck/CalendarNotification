@@ -10,6 +10,7 @@ import java.util.*
 public class EventsStorage(context: Context)
 	: SQLiteOpenHelper(context, EventsStorage.DATABASE_NAME, null, EventsStorage.DATABASE_VERSION)
 {
+	// Still used by some test code
 	fun addEvent(
 		eventId: Long,
 		title: String,
@@ -17,7 +18,8 @@ public class EventsStorage(context: Context)
 		startTime: Long, endTime: Long,
 		location: String,
 		lastEventUpdate: Long,
-		isDisplayed: Boolean
+		isDisplayed: Boolean,
+		color: Int
 	): EventRecord
 	{
 		var ret =
@@ -30,7 +32,8 @@ public class EventsStorage(context: Context)
 				endTime = endTime,
 				location = location,
 				lastEventUpdate = lastEventUpdate,
-				isDisplayed = isDisplayed
+				isDisplayed = isDisplayed,
+				color = color
 			)
 
 		synchronized (EventsStorage::class.java) {
@@ -77,6 +80,7 @@ public class EventsStorage(context: Context)
 				"$KEY_SNOOZED_UNTIL INTEGER, " +
 				"$KEY_LAST_EVENT_FIRE INTEGER, " +
 				"$KEY_IS_DISPLAYED INTEGER, " +
+				"$KEY_COLOR INTEGER, " +
 				"$KEY_RESERVED_STR1 TEXT, " +
 				"$KEY_RESERVED_STR2 TEXT, " +
 				"$KEY_RESERVED_STR3 TEXT, " +
@@ -277,6 +281,7 @@ public class EventsStorage(context: Context)
 		values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
 		values.put(KEY_LAST_EVENT_FIRE, event.lastEventUpdate);
 		values.put(KEY_IS_DISPLAYED, if (event.isDisplayed) 1 else 0);
+		values.put(KEY_COLOR, event.color)
 
 		return values;
 	}
@@ -294,7 +299,8 @@ public class EventsStorage(context: Context)
 			location = cursor.getString(6),
 			snoozedUntil = cursor.getLong(7),
 			lastEventUpdate = cursor.getLong(8),
-			isDisplayed = (cursor.getInt(9) != 0)
+			isDisplayed = (cursor.getInt(9) != 0),
+			color = cursor.getInt(10)
 		)
 	}
 
@@ -302,8 +308,8 @@ public class EventsStorage(context: Context)
 	{
 		private val logger = Logger("EventsStorage")
 
-		private val DATABASE_VERSION = 4
-		private val DATABASE_RELEASE_ONE_VERSION = 4
+		private val DATABASE_VERSION = 5
+		private val DATABASE_RELEASE_ONE_VERSION = 5
 
 		private val DATABASE_NAME = "Events"
 
@@ -320,6 +326,7 @@ public class EventsStorage(context: Context)
 		private val KEY_SNOOZED_UNTIL = "snoozeUntil"
 		private val KEY_IS_DISPLAYED = "isDisplayed"
 		private val KEY_LAST_EVENT_FIRE = "lastFire"
+		private val KEY_COLOR = "color"
 
 		private val KEY_RESERVED_STR1 = "resstr1"
 		private val KEY_RESERVED_STR2 = "resstr2"
@@ -335,7 +342,8 @@ public class EventsStorage(context: Context)
 			KEY_LOCATION,
 			KEY_SNOOZED_UNTIL,
 			KEY_LAST_EVENT_FIRE,
-			KEY_IS_DISPLAYED
+			KEY_IS_DISPLAYED,
+			KEY_COLOR
 		)
 	}
 }

@@ -14,8 +14,6 @@ class BroadcastReceiverAlarm : BroadcastReceiver()
 		{
 			EventNotificationManager().postEventNotifications(context, false);
 			AlarmUtils.scheduleNextAlarmForEvents(context);
-
-			ServiceUINotifier.notifyUI(context, false);
 		}
 		else
 		{

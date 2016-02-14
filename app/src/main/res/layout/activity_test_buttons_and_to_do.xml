@@ -10,9 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.github.quarck.calnotify.ActivityTestButtonsAndToDo">
 
-
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -89,7 +86,7 @@
 \n\n
 0)[DONE] Highlighted view for text buttons
 \n\n
-1) Watch calendar updates
+1) [DONE] Watch calendar updates
 \n\n
 2) Snooze vs Reschedule
 \n\n
@@ -99,7 +96,7 @@
 \n\n
 5) Action for location
 \n\n
-6) Re-load all monitored details on startup from calendar provider
+6) [DONE] Re-load all monitored details on startup from calendar provider
 \n\n
 7) [DONE] Load colors for calendars
 \n\n

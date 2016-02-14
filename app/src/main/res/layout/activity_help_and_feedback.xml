@@ -10,119 +10,93 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.github.quarck.calnotify.ActivityHelpAndFeedback">
 
-    <ScrollView
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/primary_text"
+        android:text="@string/help_title"
+        android:id="@+id/help_and_feedback_text_view"
+        />
+
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_height="wrap_content"
+        android:text="@string/email_developer"
+        android:id="@+id/buttonEmailDeveloper"
+        android:onClick="OnButtonEmailDeveloper"
+        android:textColor="@color/primary_dark"
+        android:padding="16dp"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_below="@id/help_and_feedback_text_view"
+        />
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/layout_kotlin"
         >
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/app_created_with"
+            android:id="@+id/textViewKotlinLbl"
+            android:textColor="@color/primary_text"
+            android:paddingLeft="@dimen/activity_help_credits_padding_left"
+            android:paddingStart="@dimen/activity_help_credits_padding_left"
+            android:paddingRight="@dimen/activity_help_credits_padding_right"
+            android:paddingEnd="@dimen/activity_help_credits_padding_right"
+            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/help_title"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/kotlin_language"
+            android:id="@+id/textViewKotlin"
+            android:layout_marginBottom="6dp"
+            android:onClick="OnTextViewKotlinClick"
+            android:textColor="@color/primary_dark"
+            android:clickable="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/layout_kotlin"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/app_icon_credit"
+            android:id="@+id/textViewCreditsLbl"
+            android:textColor="@color/primary_text"
+            android:paddingLeft="@dimen/activity_help_credits_padding_left"
+            android:paddingStart="@dimen/activity_help_credits_padding_left"
+            android:paddingRight="@dimen/activity_help_credits_padding_right"
+            android:paddingEnd="@dimen/activity_help_credits_padding_right"
+            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             />
 
-        <Space android:layout_height="16dp"
-               android:layout_width="match_parent"/>
-
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/email_developer"
-            android:id="@+id/buttonEmailDeveloper"
-            android:onClick="OnButtonEmailDeveloper"
-            android:layout_gravity="center"
-            />
-
-        <Space android:layout_height="16dp"
-               android:layout_width="match_parent"/>
-
-
-
-        <!-- TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/why_question_mark"
-            android:id="@+id/textViewWhy"
-            android:onClick="OnTextViewWhyClick"
-            android:layout_below="@+id/textView6"
-            android:layout_alignParentEnd="true"
-            android:textColor="#1d3bc0"
-            android:clickable="true" / -->
-
-        <!-- TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/why2_question_mark"
-            android:id="@+id/textViewWhy2"
-            android:onClick="OnTextViewWhy2Click"
-            android:layout_below="@+id/textView7"
-            android:layout_alignParentEnd="true"
-            android:textColor="#1d3bc0"
-            android:clickable="true" / -->
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="App created with "
-                android:id="@+id/textViewKotlinLbl"
-                android:layout_marginBottom="6dp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Kotlin Language"
-                android:id="@+id/textViewKotlin"
-                android:layout_marginBottom="6dp"
-                android:onClick="OnTextViewKotlinClick"
-                android:textColor="#1d3bc0"
-                android:clickable="true"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="App icon credit: "
-                android:id="@+id/textViewCreditsLbl"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Cornmanthe 3rd"
-                android:id="@+id/textViewCredits"
-                android:onClick="OnTextViewCreditsClick"
-                android:textColor="#1d3bc0"
-                android:clickable="true"/>
-
-            </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/credits_icon_author"
+            android:id="@+id/textViewCredits"
+            android:onClick="OnTextViewCreditsClick"
+            android:textColor="@color/primary_dark"
+            android:clickable="true"/>
 
         </LinearLayout>
-    </ScrollView>
 
 </RelativeLayout>

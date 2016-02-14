@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.github.quarck.calnotify.ActivitySnooze"
-    android:background="#ffffff">
+    android:background="#ffffffff">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -72,7 +72,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="#ffffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top">
 
@@ -126,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/snooze_view_location_layout"
-                android:background="#ffffff"
+                android:background="#ffffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top"
                 android:visibility="gone">
@@ -170,7 +170,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="#FFffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top">
 
@@ -290,9 +290,10 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
+                android:background="#FFffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                android:paddingTop="@dimen/snooze_view_action_padding_top">
+                android:paddingTop="@dimen/snooze_view_action_padding_top"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"

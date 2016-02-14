@@ -60,8 +60,9 @@
 
     <string name="feedback">Feedback</string>
 
-    <string name="help_title">Email developer if you have any feedback or issues:</string>
-    <string name="email_developer">Email developer</string>
+    <string name="help_title">
+If you found a bug, have a question or want to suggest a feature or give a feedback - please contact developer via email.\n\nPlease don\'t expect instant response.I\'m developint this application in my free time and can only response when I have time for that</string>
+    <string name="email_developer">EMAIL DEVELOPER</string>
 
     <string name="internal_error">Internal Error</string>
     <string name="internal_error_text">Please open Calendar and ansure you didn\'t miss any events</string>
@@ -99,4 +100,8 @@
     <string name="new_events_detected">Reload to see new events</string>
     <string name="button_reload">RELOAD</string>
     <string name="settings_name">Settings</string>
+    <string name="credits_icon_author">Cornmanthe 3rd</string>
+    <string name="app_icon_credit">App icon credit:</string>
+    <string name="kotlin_language">Kotlin Language</string>
+    <string name="app_created_with">App created with</string>
 </resources>

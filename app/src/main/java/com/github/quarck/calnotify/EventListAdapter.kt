@@ -100,7 +100,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			if (event.snoozedUntil != 0L)
 			{
 				holder?.snoozedUntil?.text =
-					context.resources.getString(R.string.snoozed_until_string) +
+					context.resources.getString(R.string.snoozed_until_string) + " "
 						event.formatSnoozedUntil(context);
 
 				holder?.snoozedUntil?.visibility = View.VISIBLE;
@@ -119,8 +119,6 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 			holder?.color?.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
 			holder?.eventTitleLayout?.background  = holder?.color
-
-			Log.d("XXXX", "color= ${event.color}")
 		}
 	}
 

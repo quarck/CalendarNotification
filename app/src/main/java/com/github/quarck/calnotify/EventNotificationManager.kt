@@ -145,22 +145,32 @@ class EventNotificationManager: IEventNotificationManager
 		{
 			if (event.snoozedUntil == 0L)
 			{
-				// Event was already "beeped", need to make sure it is shown, quietly...
 				if (!event.isDisplayed || force)
 				{
 					logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
-					postNotification(
-						context,
-						event,
-						NotificationSettingsSnapshot(
-							settings.showDismissButton,
-							null,
-							false,
-							settings.ledNotificationOn,
-							false
+					if (!force)
+					{
+						postNotification(
+							context,
+							event,
+							settings.notificationSettingsSnapshot
 						)
-					)
+					}
+					else
+					{
+						postNotification(
+							context,
+							event,
+							NotificationSettingsSnapshot(
+								settings.showDismissButton,
+								null,
+								false,
+								settings.ledNotificationOn,
+								false
+							)
+						)
+					}
 
 					event.isDisplayed = true;
 					db.updateEvent(event);
@@ -172,7 +182,7 @@ class EventNotificationManager: IEventNotificationManager
 			}
 			else
 			{
-				logger.debug("Initial posting notification id ${event.notificationId}, eventId ${event.eventId}");
+				logger.debug("Initial(??) posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
 				// it is time to show this event after a snooze or whatever,
 				// turn on all the bells and whistles
@@ -214,6 +224,7 @@ class EventNotificationManager: IEventNotificationManager
 			.setOngoing(notificationSettings.showDismissButton)
 			.setStyle(Notification.BigTextStyle()
 				.bigText(notificationText))
+			.setWhen(System.currentTimeMillis())
 
 		logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
@@ -249,16 +260,19 @@ class EventNotificationManager: IEventNotificationManager
 
 		if (notificationSettings.ringtoneUri != null)
 		{
+			logger.debug("Adding ringtone uri ${notificationSettings.ringtoneUri}");
 			builder.setSound(notificationSettings.ringtoneUri)
 		}
 
 		if (notificationSettings.vibraOn)
 		{
-			builder.setVibrate(longArrayOf(Consts.VIBRATION_DURATION));
+			logger.debug("adding vibration");
+			builder.setVibrate(longArrayOf(0, Consts.VIBRATION_DURATION));
 		}
 
 		if (notificationSettings.ledNotificationOn)
 		{
+			logger.debug("Adding leds")
 			builder.setLights(Consts.LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
 		}
 

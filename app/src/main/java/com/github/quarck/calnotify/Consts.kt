@@ -41,7 +41,7 @@ object Consts
 	val MAX_NOTIFICATIONS = 8;
 
 	//
-	var VIBRATION_DURATION : Long = 1000;
+	var VIBRATION_DURATION : Long = 1200;
 	var LED_DURATION_ON = 300;
 	var LED_DURATION_OFF = 2000;
 	var LED_COLOR = 0x7f0000ff;

@@ -71,7 +71,7 @@ class ActivityTestButtonsAndToDo : Activity()
 			if((cnt % 2)==0) "" else "Connolly st., Dublin, IFSC",
 			System.currentTimeMillis(),
 			false,
-			0xFFC107
+			0xffFFC107 - 1 - 0xffffffff
 		)
 
 		cnt++;

@@ -1,8 +1,10 @@
 package com.github.quarck.calnotify
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 		var eventHolder: RelativeLayout
 		var eventTitle: TextView
+		var eventTitleLayout: RelativeLayout
 		var eventDate: TextView
 		var eventTime: TextView
 		var eventLocation: TextView
@@ -25,11 +28,13 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 		var snoozedUntil: TextView
 		var change: Button
 		var dismiss: Button
+		var color: ColorDrawable
 
 		init
 		{
 			eventHolder = itemView.findViewById(R.id.card_view_main_holder) as RelativeLayout
 			eventTitle = itemView.findViewById(R.id.card_view_event_name) as TextView
+			eventTitleLayout = itemView.findViewById(R.id.card_view_event_title_layout) as RelativeLayout
 			eventDate = itemView.findViewById(R.id.card_view_event_date) as TextView
 			eventTime = itemView.findViewById(R.id.card_view_event_time) as TextView
 			eventLocation = itemView.findViewById(R.id.card_view_location) as TextView
@@ -37,6 +42,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			snoozedUntil = itemView.findViewById(R.id.card_view_snoozed_until) as TextView
 			change = itemView.findViewById(R.id.card_view_button_reschedule) as Button
 			dismiss = itemView.findViewById(R.id.card_view_button_dismiss) as Button
+			color = ColorDrawable(0)
 
 			eventHolder.setOnClickListener {
 				var action = onItemClick;
@@ -66,9 +72,12 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 	public var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
 	public var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
 
+	private val primaryColor: Int
+
 	init
 	{
 		this.context = context
+		primaryColor = context.resources.getColor(R.color.primary)
 	}
 
 	override fun onBindViewHolder(holder: ViewHolder?, position: Int)
@@ -107,6 +116,11 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			}
 
 			holder?.eventId = event.eventId;
+
+			holder?.color?.color = if (event.color != 0) event.color else primaryColor
+			holder?.eventTitleLayout?.background  = holder?.color
+
+			Log.d("XXXX", "color= ${event.color}")
 		}
 	}
 

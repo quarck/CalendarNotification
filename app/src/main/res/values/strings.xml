@@ -98,4 +98,5 @@
     <string name="card_view_btn_dismiss">DISMISS</string>
     <string name="new_events_detected">Reload to see new events</string>
     <string name="button_reload">RELOAD</string>
+    <string name="settings_name">Settings</string>
 </resources>

@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.provider.CalendarContract
 import android.view.View
+import android.widget.RelativeLayout
 import android.widget.TextView
 
 class ActivitySnooze : Activity()
@@ -50,6 +52,11 @@ class ActivitySnooze : Activity()
 				(this.findViewById(R.id.snooze_view_title) as TextView).text = title;
 				(this.findViewById(R.id.snooze_view_event_date) as TextView).text = date;
 				(this.findViewById(R.id.snooze_view_event_time) as TextView).text = time;
+
+				var color: Int = event.color;
+				if (color == 0)
+					color = resources.getColor(R.color.primary)
+				(this.findViewById(R.id.snooze_view_event_details_layout) as RelativeLayout).background = ColorDrawable(color)
 			}
 		}
 

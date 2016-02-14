@@ -117,6 +117,7 @@
 \n\n
 14) [DONE] Limit max height of the card
 \n\n
+15) Load events in BG
 "
                 android:id="@+id/todo"
                 />

@@ -96,6 +96,6 @@
     <string name="card_view_btn_change">CHANGE</string>
     <string name="card_view_btn_snooze">SNOOZE</string>
     <string name="card_view_btn_dismiss">DISMISS</string>
-    <string name="new_events_detected">New events detected</string>
+    <string name="new_events_detected">Reload to see new events</string>
     <string name="button_reload">RELOAD</string>
 </resources>

@@ -42,7 +42,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TEST NOTIFICATION 1"
+                android:text="TEST 1"
                 android:id="@+id/buttonTest"
                 android:onClick="OnButtonTestClick"
                 android:layout_gravity="center_horizontal"
@@ -53,7 +53,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TEST NOTIFICATION 2"
+                android:text="TEST 2"
                 android:id="@+id/buttonTest2"
                 android:onClick="OnButtonTestClick"
                 android:layout_gravity="center_horizontal"
@@ -64,7 +64,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TEST ACTIVITY"
+                android:text="SNOOZE ACTIVITY"
                 android:id="@+id/buttonTest3"
                 android:onClick="OnButtonTestActivityClick"
                 android:layout_gravity="center_horizontal"
@@ -85,15 +85,15 @@
                 android:layout_marginTop="6dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text=
-                    "TODO:
-
+"TODO:
+\n\n
 0)[DONE] Highlighted view for text buttons
 \n\n
 1) Watch calendar updates
 \n\n
 2) Snooze vs Reschedule
 \n\n
-3) List of events on main activity
+3)[DONE] List of events on main activity
 \n\n
 4) Variable snooze times
 \n\n
@@ -115,7 +115,7 @@
 \n\n
 13) Clickable \'Today\' and event time -- bring event edit activity
 \n\n
-14) Limit max height of the card
+14) [DONE] Limit max height of the card
 \n\n
 "
                 android:id="@+id/todo"

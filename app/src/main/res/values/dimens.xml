@@ -53,6 +53,6 @@
     <dimen name="activity_main_action_buttons_bottom_padding">16dp</dimen>
     <dimen name="activity_main_text_pading_top">16dp</dimen>
     <dimen name="activity_main_text_pading_bottom">16dp</dimen>
-    <dimen name="activity_main_text_pading_start">24dp</dimen>
+    <dimen name="activity_main_text_pading_start">16dp</dimen>
     <dimen name="activity_main_text_pading_end">16dp</dimen>
 </resources>

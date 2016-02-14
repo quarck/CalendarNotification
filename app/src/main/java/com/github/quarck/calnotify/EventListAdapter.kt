@@ -117,7 +117,7 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 			holder?.eventId = event.eventId;
 
-			holder?.color?.color = if (event.color != 0) event.color else primaryColor
+			holder?.color?.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
 			holder?.eventTitleLayout?.background  = holder?.color
 
 			Log.d("XXXX", "color= ${event.color}")

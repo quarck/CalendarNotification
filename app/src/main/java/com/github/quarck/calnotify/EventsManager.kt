@@ -60,14 +60,50 @@ class EventsManager
 			}
 		}
 
+
+		private fun reloadCalendar(context: Context): Boolean
+		{
+			var repostNotifications = false
+
+			var db = EventsStorage(context)
+
+			var events = db.events
+
+			for (event in events)
+			{
+				var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
+				if (newEvent == null)
+				{
+					logger.debug("Event ${event.eventId} disappeared, removing notification");
+					dismissEvent(context, event.eventId, event.notificationId, true);
+				}
+				else
+				{
+					logger.debug("Event ${event.eventId} is still here");
+
+					if (event.updateFrom(newEvent))
+					{
+						logger.debug("Event was updated, updating our copy");
+
+						EventsStorage(context).updateEvent(event);
+						repostNotifications = true
+					}
+				}
+			}
+
+			return repostNotifications
+		}
+
 		fun onAppUpdated(context: Context?, intent: Intent?)
 		{
 			if (context != null)
 			{
+				var changes = reloadCalendar(context)
 				notificationManager.postEventNotifications(context, true);
 				scheduleNextAlarmForEvents(context);
 
-				ServiceUINotifier.notifyUI(context, false);
+				if (changes)
+					ServiceUINotifier.notifyUI(context, false);
 			}
 		}
 
@@ -75,25 +111,32 @@ class EventsManager
 		{
 			if (context != null)
 			{
+				var changes = reloadCalendar(context);
 				notificationManager.postEventNotifications(context, true);
 				scheduleNextAlarmForEvents(context);
 
-				ServiceUINotifier.notifyUI(context, false);
+				if (changes)
+					ServiceUINotifier.notifyUI(context, false);
 			}
 		}
 
 		fun onCalendarChanged(context: Context?, intent: Intent?)
 		{
-			ServiceUINotifier.notifyUI(context, false);
-			// TODO - implement me
+			if (context != null)
+			{
+				var changes = reloadCalendar(context)
+				if (changes)
+				{
+					notificationManager.postEventNotifications(context, true);
+					ServiceUINotifier.notifyUI(context, false);
+				}
+			}
 		}
 
-		fun onCalendarEventFired(context: Context, intent: Intent, event: EventRecord)
+		fun onCalendarEventFired(context: Context, event: EventRecord)
 		{
 			EventsStorage(context).addEvent(event);
-
 			notificationManager.onEventAdded(context, event)
-
 			ServiceUINotifier.notifyUI(context, false);
 		}
 

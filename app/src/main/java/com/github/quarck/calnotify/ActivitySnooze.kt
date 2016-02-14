@@ -53,7 +53,7 @@ class ActivitySnooze : Activity()
 				(this.findViewById(R.id.snooze_view_event_date) as TextView).text = date;
 				(this.findViewById(R.id.snooze_view_event_time) as TextView).text = time;
 
-				var color: Int = event.color;
+				var color: Int = event.color.adjustCalendarColor();
 				if (color == 0)
 					color = resources.getColor(R.color.primary)
 				(this.findViewById(R.id.snooze_view_event_details_layout) as RelativeLayout).background = ColorDrawable(color)

@@ -38,8 +38,8 @@ class ActivityHelpAndFeedback : Activity()
         var kotlinUri = "https://kotlinlang.org/"
 
         var developerEmail = "s.parshin.sc@gmail.com"
-        var emailSubject = "Advanced Calendar Notification Feedback / Question"
-        var emailText = "Please describe your question or feedback in English or Russian:\n\n"
+        var emailSubject = "Calendar Notification Plus Feedback"
+        var emailText = "Please write your question or feedback below: (English/Russian languages only)\n\n"
         var mimeType = "message/rfc822"
 
         var logger = Logger("ActivityHelpAndFeedback")

@@ -32,7 +32,7 @@ dependencies {
     compile 'com.android.support:palette-v7:23.1.1'
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-2423'
+    ext.kotlin_version = '1.0.0'
     repositories {
         mavenCentral()
     }

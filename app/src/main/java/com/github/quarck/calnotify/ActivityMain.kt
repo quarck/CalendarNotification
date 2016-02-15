@@ -150,7 +150,7 @@ class ActivityMain : Activity()
 	private fun reloadData()
 	{
 		events = EventsStorage(this).events.toTypedArray();
-		adapter?.events = events;
+		adapter?.events = events!!;
 		adapter?.notifyDataSetChanged()
 	}
 
@@ -200,7 +200,7 @@ class ActivityMain : Activity()
 				EventsManager.dismissEvent(this, event);
 
 				events = events?.filterIndexed { idx, ev -> idx != position }?.toTypedArray()
-				adapter?.events = events;
+				adapter?.events = events!!;
 				//adapter?.notifyDataSetChanged()
 				adapter?.notifyItemRemoved(position)
 			}

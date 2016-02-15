@@ -73,11 +73,15 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 	public var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
 
 	private val primaryColor: Int
+	private val changeString: String
+	private val snoozeString: String
 
 	init
 	{
 		this.context = context
 		primaryColor = context.resources.getColor(R.color.primary)
+		changeString = context.resources.getString(R.string.card_view_btn_change);
+		snoozeString = context.resources.getString(R.string.card_view_btn_snooze);
 	}
 
 	override fun onBindViewHolder(holder: ViewHolder?, position: Int)
@@ -89,9 +93,11 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			holder?.eventTitle?.text = event.title
 
 			var (date, time) = event.formatTime(context)
+
 			holder?.eventDate?.text = date
 			holder?.eventTime?.text = time
 			holder?.eventLocation?.text = event.location
+
 			if (event.location != "")
 				holder?.eventLocation?.visibility = View.VISIBLE;
 			else
@@ -100,19 +106,17 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 			if (event.snoozedUntil != 0L)
 			{
 				holder?.snoozedUntil?.text =
-					context.resources.getString(R.string.snoozed_until_string) + " "
+					context.resources.getString(R.string.snoozed_until_string) + " " +
 						event.formatSnoozedUntil(context);
 
 				holder?.snoozedUntil?.visibility = View.VISIBLE;
-
-				holder?.change?.text = context.resources.getString(R.string.card_view_btn_change);
+				holder?.change?.text = changeString
 			}
 			else
 			{
 				holder?.snoozedUntil?.text = "";
 				holder?.snoozedUntil?.visibility = View.GONE;
-
-				holder?.change?.text = context.resources.getString(R.string.card_view_btn_snooze)
+				holder?.change?.text = snoozeString
 			}
 
 			holder?.eventId = event.eventId;

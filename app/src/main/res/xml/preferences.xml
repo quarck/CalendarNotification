@@ -3,11 +3,11 @@
         android:title="@string/settings"
         android:key="pref_key_settings">
 
-        <CheckBoxPreference
+        <!-- CheckBoxPreference
             android:key="remove_original"
             android:title="Remove original ntf"
             android:summary="DEBUG ONLY OPTION!!!\nSorry if you are seeing this in release build!!\nUncheck if you want to see event in the google calendar as well, so you can match notification"
-            android:defaultValue="true" />
+            android:defaultValue="true" / -->
 
         <CheckBoxPreference
             android:key="pref_key_enable_dismiss_button"

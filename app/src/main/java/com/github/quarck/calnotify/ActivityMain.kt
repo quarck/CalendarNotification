@@ -118,8 +118,8 @@ class ActivityMain : Activity()
 			R.id.action_feedback ->
 				startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
 
-			R.id.activity_test ->
-				startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
+//			R.id.activity_test ->
+//				startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
 		}
 
 		return super.onOptionsItemSelected(item)

@@ -17,11 +17,11 @@
         android:title="@string/help_feedback"
         />
 
-    <item android:id="@+id/activity_test"
+    <!-- item android:id="@+id/activity_test"
           android:orderInCategory="112121"
           android:icon="@android:drawable/ic_menu_camera"
           android:showAsAction="never"
           android:title="Hello World"
-          />
+          / -->
 
 </menu>

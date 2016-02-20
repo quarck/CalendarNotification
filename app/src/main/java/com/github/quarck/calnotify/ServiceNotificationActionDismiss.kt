@@ -38,6 +38,7 @@ class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActio
 			if (notificationId != -1 && eventId != -1L)
 			{
 				EventsManager.dismissEvent(this, eventId, notificationId)
+				DebugTransactionLog(this).log("ServiceNotificationActionDismiss", "remove", "Event dismissed by user: $eventId")
 			}
 			else
 			{

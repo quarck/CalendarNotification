@@ -24,9 +24,14 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.view.View
+import android.widget.TextView
 
 class ActivityHelpAndFeedback : Activity()
 {
+    private var easterEggCount = 0;
+    private var firstClick = 0L;
+
+
 	override fun onCreate(savedInstanceState: Bundle?)
     {
 		super.onCreate(savedInstanceState)
@@ -49,6 +54,27 @@ class ActivityHelpAndFeedback : Activity()
         email.putExtra(Intent.EXTRA_TEXT,emailText);
         email.setType(mimeType);
         startActivity(email);
+    }
+
+    public fun OnButtonEasterEgg(v: View)
+    {
+        if (easterEggCount == 0)
+        {
+            firstClick = System.currentTimeMillis();
+        }
+
+        if (++easterEggCount > 13)
+        {
+            if (System.currentTimeMillis() - firstClick < 5000L)
+            {
+                startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
+            }
+            else
+            {
+                easterEggCount = 0;
+                firstClick = 0L;
+            }
+        }
     }
 
     companion object

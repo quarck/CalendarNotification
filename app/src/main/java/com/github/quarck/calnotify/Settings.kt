@@ -69,6 +69,10 @@ class Settings(ctx: Context) {
 		get() = prefs!!.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
 		set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
+	var debugTransactionLogEnabled: Boolean
+		get() = prefs!!.getBoolean(DEBUG_LOG_KEY, false)
+		set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
+
 	fun getSnoozePreset(idx: Int): Long
 	{
 		// Currently hard-coded to use consts instead of dynamic params
@@ -119,5 +123,6 @@ class Settings(ctx: Context) {
 		private val VIBRATION_ENABLED_KEY = "vibra_on"
 		private val LED_ENABLED_KEY = "notification_led"
 		private val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
+		private val DEBUG_LOG_KEY = "debugLog"
 	}
 }

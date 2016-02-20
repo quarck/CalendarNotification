@@ -43,10 +43,6 @@ class EventsManager
 					.map { it.snoozedUntil }
 					.min();
 
-			if (nextAlarm != null)
-			{
-			}
-
 			var intent = Intent(context, BroadcastReceiverAlarm::class.java);
 			var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -54,15 +50,21 @@ class EventsManager
 
 			if (nextAlarm != null)
 			{
-				logger.info("Next alarm at ${nextAlarm}, in ${(nextAlarm - System.currentTimeMillis()) / 1000L} seconds");
+				var seconds = (nextAlarm - System.currentTimeMillis()) / 1000L
+
+				logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
 
 				alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
+
+				DebugTransactionLog(context).log("EventsManager", "alarm", "alarm scheduled, $seconds from now")
 			}
 			else
 			{
 				logger.info("Cancelling alarms");
 
 				alarmManager.cancel(pendingIntent)
+
+				DebugTransactionLog(context).log("EventsManager", "alarm", "alarm removed")
 			}
 		}
 
@@ -95,6 +97,8 @@ class EventsManager
 				{
 					logger.debug("Event ${event.eventId} disappeared, removing notification");
 					dismissEvent(context, event.eventId, event.notificationId, true);
+
+					DebugTransactionLog(context).log("EventsManager", "remove", "Event disappeared from calendar: ${event.title}")
 				}
 				else
 				{
@@ -106,6 +110,8 @@ class EventsManager
 
 						EventsStorage(context).updateEvent(event);
 						repostNotifications = true
+
+						DebugTransactionLog(context).log("EventsManager", "update", "event updated in db, title: ${event.title}")
 					}
 				}
 			}
@@ -156,6 +162,9 @@ class EventsManager
 		{
 			EventsStorage(context).addEvent(event);
 			notificationManager.onEventAdded(context, event)
+
+			DebugTransactionLog(context).log("EventsManager", "add", "event added: ${event.title}")
+
 			ServiceUINotifier.notifyUI(context, false);
 		}
 
@@ -173,7 +182,10 @@ class EventsManager
 
 			notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
 
-			logger.debug("alarm set -  called for ${event.eventId}, for ${(event.snoozedUntil-currentTime)/1000} seconds from now");
+			var seconds = (event.snoozedUntil-currentTime)/1000
+			logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
+
+			DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, title: ${event.title}")
 		}
 
 		fun onAppStarted(context: Context?)

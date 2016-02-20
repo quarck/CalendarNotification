@@ -18,6 +18,8 @@
         android:textColor="@color/primary_text"
         android:text="@string/help_title"
         android:id="@+id/help_and_feedback_text_view"
+        android:clickable="true"
+        android:onClick="OnButtonEasterEgg"
         />
 
     <Button

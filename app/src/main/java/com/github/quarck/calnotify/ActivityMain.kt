@@ -23,6 +23,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.ContentUris
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.support.v7.widget.RecyclerView
@@ -42,8 +43,10 @@ class ActivityMain : Activity()
 	private var staggeredLayoutManager: StaggeredGridLayoutManager? = null;
 
 	private var adapter: EventListAdapter? = null;
+	private var presenter: EventsPresenter? = null;
 
-	private var events: Array<EventRecord>? = null
+//	private var events: Array<EventRecord>? = null
+//	private val eventsLock = Any()
 
 	private var svcClient = ServiceUINotifierClient();
 
@@ -63,9 +66,9 @@ class ActivityMain : Activity()
 		staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL);
 		recyclerView?.layoutManager = staggeredLayoutManager;
 
-		events = arrayOf<EventRecord>(); // EventsStorage(this).events.toTypedArray(); // TODO: THIS IS BAD
+		adapter = EventListAdapter(this, arrayOf<EventRecord>());
+		presenter = EventsPresenter(adapter!!);
 
-		adapter = EventListAdapter(this, events!!);
 		recyclerView?.adapter = adapter;
 
 		adapter?.onItemReschedule = { v, p, e -> onItemReschedule(v ,p, e); }
@@ -97,16 +100,15 @@ class ActivityMain : Activity()
 		svcClient.bindService(this)
 		svcClient.updateActivity =
 			{
-				isUserAction ->
-					runOnUiThread {
-					if (isUserAction)
-					{
-						reloadData()
-					}
-					else
-					{
-						reloadLayout?.visibility = View.VISIBLE
-					}
+				isCausedByUser ->
+
+				if (isCausedByUser)
+				{
+					reloadData()
+				}
+				else
+				{
+					runOnUiThread {  reloadLayout?.visibility = View.VISIBLE }
 				}
 			}
 
@@ -136,22 +138,48 @@ class ActivityMain : Activity()
 
 			R.id.action_feedback ->
 				startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
-
-//			R.id.activity_test ->
-//				startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
 		}
 
 		return super.onOptionsItemSelected(item)
+	}
+
+	inner private class ReloadOperation: AsyncTask<Void?, Void?, Void?>()
+	{
+		private var events: Array<EventRecord>? = null
+
+		override fun doInBackground(vararg p0: Void?): Void?
+		{
+			events = EventsStorage(this@ActivityMain).events.toTypedArray();
+			return null;
+		}
+
+		override fun onPostExecute(result: Void?)
+		{
+			if (presenter != null && events != null)
+				presenter?.setEventsToDisplay(events!!);
+			else
+				logger.debug("presenter or events is null");
+		}
+	}
+
+	private fun reloadData()
+	{
+		ReloadOperation().execute();
+	}
+
+	fun onReloadButtonClick(v: View)
+	{
+		reloadLayout?.visibility = View.GONE;
+		reloadData();
 	}
 
 	private fun onItemClick(v: View, position: Int, eventId: Long)
 	{
 		logger.debug("onItemClick, pos=$position, eventId=$eventId");
 
-		if (position >= 0 && position < events!!.size)
+		var event = presenter?.getEventAtPosition(position)
+		if (event != null)
 		{
-			var event = events!![position];
-
 			if (event.eventId == eventId)
 			{
 				var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
@@ -166,27 +194,13 @@ class ActivityMain : Activity()
 		}
 	}
 
-	private fun reloadData()
-	{
-		events = EventsStorage(this).events.toTypedArray();
-		adapter?.events = events!!;
-		adapter?.notifyDataSetChanged()
-	}
-
-	fun onReloadButtonClick(v: View)
-	{
-		reloadLayout?.visibility = View.GONE;
-		reloadData();
-	}
-
 	private fun onItemReschedule(v: View, position: Int, eventId: Long)
 	{
 		logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
 
-		if (position >= 0 && position < events!!.size)
+		var event = presenter?.getEventAtPosition(position)
+		if (event != null)
 		{
-			var event = events!![position];
-
 			if (event.eventId == eventId)
 			{
 				var intent = Intent(this, ActivitySnooze::class.java)
@@ -208,20 +222,17 @@ class ActivityMain : Activity()
 	{
 		logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
 
-		if (position >= 0 && position < events!!.size)
+		var event = presenter?.getEventAtPosition(position)
+		if (event != null)
 		{
-			var event = events!![position];
-
 			if (event.eventId == eventId)
 			{
 				logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
 				EventsManager.dismissEvent(this, event);
+				DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
 
-				events = events?.filterIndexed { idx, ev -> idx != position }?.toTypedArray()
-				adapter?.events = events!!;
-				//adapter?.notifyDataSetChanged()
-				adapter?.notifyItemRemoved(position)
+				presenter?.removeAt(position)
 			}
 			else
 			{

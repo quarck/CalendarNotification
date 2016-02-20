@@ -24,50 +24,77 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="0dp"
             >
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp"/>
 
-            <View
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:layout_marginLeft="4dip"
-                android:layout_marginRight="4dip"
-                android:background="?android:attr/dividerVertical"
-                android:layout_alignParentTop="true"/>
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TEST 1"
+                    android:id="@+id/buttonTest"
+                    android:onClick="OnButtonTestClick"
+                    android:padding="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TEST 1"
-                android:id="@+id/buttonTest"
-                android:onClick="OnButtonTestClick"
-                android:layout_gravity="center_horizontal"
-                android:visibility="visible"
-                android:background="?android:attr/selectableItemBackground"
-                />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/dividerVertical"
+                    />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TEST 2"
-                android:id="@+id/buttonTest2"
-                android:onClick="OnButtonTestClick"
-                android:layout_gravity="center_horizontal"
-                android:visibility="visible"
-                android:background="?android:attr/selectableItemBackground"
-                />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TEST 2"
+                    android:id="@+id/buttonTest2"
+                    android:onClick="OnButtonTestClick"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    android:padding="4dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SNOOZE ACTIVITY"
-                android:id="@+id/buttonTest3"
-                android:onClick="OnButtonTestActivityClick"
-                android:layout_gravity="center_horizontal"
-                android:visibility="visible"
-                android:background="?android:attr/selectableItemBackground"
-                />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/dividerVertical"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SZ ACT"
+                    android:id="@+id/buttonTest3"
+                    android:onClick="OnButtonTestActivityClick"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="4dp"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/dividerVertical"
+                    />
+
+                <ToggleButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/debug_logging_toggle"
+                    android:onClick="OnDebugLoggingToggle"
+                    android:textOn="DBGLGON"
+                    android:textOff="DBGLGOFF"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+            </LinearLayout>
+
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
@@ -80,43 +107,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text=
-"TODO:
-\n\n
-0)[DONE] Highlighted view for text buttons
-\n\n
-1) [DONE] Watch calendar updates
-\n\n
-2) Snooze vs Reschedule
-\n\n
-3)[DONE] List of events on main activity
-\n\n
-4) Variable snooze times
-\n\n
-5) Action for location
-\n\n
-6) [DONE] Re-load all monitored details on startup from calendar provider
-\n\n
-7) [DONE] Load colors for calendars
-\n\n
-8) Support undo on main view
-\n\n
-9) Reschedules must be confirmed first
-\n\n
-10) Collect all own logs
-\n\n
-11) Different icon - add alarm or bell symbol to existing one
-\n\n
-12) Clickable location on the snooze screen
-\n\n
-13) Clickable \'Today\' and event time -- bring event edit activity
-\n\n
-14) [DONE] Limit max height of the card
-\n\n
-15) Load events in BG
-"
+"TODO:\n0)[DONE] Highlighted view for text buttons\n1) [DONE] Watch calendar updates\n2) Snooze vs Reschedule\n3)[DONE] List of events on main activity\n4) Variable snooze times\n5) Action for location\n6) [DONE] Re-load all monitored details on startup from calendar provider\n7) [DONE] Load colors for calendars\n8) Support undo on main view\n9) Reschedules must be confirmed first\n10) Collect all own logs\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one\n12) Clickable location on the snooze screen\n13) Clickable \'Today\' and event time -- bring event edit activity\n14) [DONE] Limit max height of the card\n15) [DONE] Load events in BG\n"
                 android:id="@+id/todo"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text=""
+                android:id="@+id/log"
                 />
 
         </LinearLayout>

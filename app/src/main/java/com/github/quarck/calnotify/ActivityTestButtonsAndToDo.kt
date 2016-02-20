@@ -23,6 +23,8 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
 import android.view.View
+import android.widget.TextView
+import android.widget.ToggleButton
 import java.util.*
 
 class ActivityTestButtonsAndToDo : Activity()
@@ -32,15 +34,29 @@ class ActivityTestButtonsAndToDo : Activity()
 	{
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_test_buttons_and_to_do)
+
+		(findViewById(R.id.log) as TextView).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
+		(findViewById(R.id.debug_logging_toggle) as ToggleButton).isChecked = Settings(this).debugTransactionLogEnabled;
 	}
 
 
-	public fun OnButtonTestActivityClick(v: View)
+	fun OnDebugLoggingToggle(v: View)
+	{
+		if (v is ToggleButton)
+		{
+			Settings(this).debugTransactionLogEnabled = v.isChecked;
+			if (!v.isChecked)
+				DebugTransactionLog(this).dropAll();
+		}
+	}
+
+
+	fun OnButtonTestActivityClick(v: View)
 	{
 		startActivity(Intent(applicationContext, ActivitySnooze::class.java));
 	}
 
-	public fun randomTitle(currentTime: Long): String
+	fun randomTitle(currentTime: Long): String
 	{
 		var dict = arrayOf("hello", "world", "item", "remove", "code", "is", "bug",
 			"memory", "leak", "detected", "avoid", "refactoring" ,
@@ -73,7 +89,7 @@ class ActivityTestButtonsAndToDo : Activity()
 
 	private var cnt = 0;
 
-	public fun OnButtonTestClick(v: View)
+	fun OnButtonTestClick(v: View)
 	{
 		var db = EventsStorage(this)
 

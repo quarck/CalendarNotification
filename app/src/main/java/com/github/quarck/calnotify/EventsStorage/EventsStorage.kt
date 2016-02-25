@@ -17,17 +17,20 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.EventsStorage
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Logs.Logger
 import java.util.*
 
 public class EventsStorage(context: Context)
-	: SQLiteOpenHelper(context, EventsStorage.DATABASE_NAME, null, EventsStorage.DATABASE_VERSION)
+	: SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION)
 {
 	// Still used by some test code
 	fun addEvent(
@@ -43,19 +46,19 @@ public class EventsStorage(context: Context)
 	): EventRecord
 	{
 		var ret =
-			EventRecord(
-				eventId = eventId,
-				notificationId = 0,
-				alertTime = alertTime,
-				title = title,
-				description = description,
-				startTime = startTime,
-				endTime = endTime,
-				location = location,
-				lastEventUpdate = lastEventUpdate,
-				isDisplayed = isDisplayed,
-				color = color
-			)
+				EventRecord(
+						eventId = eventId,
+						notificationId = 0,
+						alertTime = alertTime,
+						title = title,
+						description = description,
+						startTime = startTime,
+						endTime = endTime,
+						location = location,
+						lastEventUpdate = lastEventUpdate,
+						isDisplayed = isDisplayed,
+						color = color
+				)
 
 		synchronized (EventsStorage::class.java) {
 			addEvent(ret)
@@ -89,33 +92,33 @@ public class EventsStorage(context: Context)
 	{
 		var CREATE_PKG_TABLE =
 			"CREATE " +
-				"TABLE $TABLE_NAME " +
+				"TABLE ${TABLE_NAME} " +
 				"( " +
-				"$KEY_EVENTID INTEGER PRIMARY KEY, " +
-				"$KEY_NOTIFICATIONID INTEGER, " +
-				"$KEY_TITLE TEXT, " +
-				"$KEY_DESC TEXT, " +
-				"$KEY_START INTEGER, " +
-				"$KEY_END INTEGER, " +
-				"$KEY_LOCATION LOCATION, " +
-				"$KEY_SNOOZED_UNTIL INTEGER, " +
-				"$KEY_LAST_EVENT_FIRE INTEGER, " +
-				"$KEY_IS_DISPLAYED INTEGER, " +
-				"$KEY_COLOR INTEGER, " +
-				"$KEY_ALERT_TIME INTEGER, " +
-				"$KEY_RESERVED_STR1 TEXT, " +
-				"$KEY_RESERVED_STR2 TEXT, " +
-				"$KEY_RESERVED_STR3 TEXT, " +
-				"$KEY_RESERVED_INT1 INTEGER, " +
-				"$KEY_RESERVED_INT2 INTEGER, " +
-				"$KEY_RESERVED_INT3 INTEGER" +
+				"${KEY_EVENTID} INTEGER PRIMARY KEY, " +
+				"${KEY_NOTIFICATIONID} INTEGER, " +
+				"${KEY_TITLE} TEXT, " +
+				"${KEY_DESC} TEXT, " +
+				"${KEY_START} INTEGER, " +
+				"${KEY_END} INTEGER, " +
+				"${KEY_LOCATION} LOCATION, " +
+				"${KEY_SNOOZED_UNTIL} INTEGER, " +
+				"${KEY_LAST_EVENT_FIRE} INTEGER, " +
+				"${KEY_IS_DISPLAYED} INTEGER, " +
+				"${KEY_COLOR} INTEGER, " +
+				"${KEY_ALERT_TIME} INTEGER, " +
+				"${KEY_RESERVED_STR1} TEXT, " +
+				"${KEY_RESERVED_STR2} TEXT, " +
+				"${KEY_RESERVED_STR3} TEXT, " +
+				"${KEY_RESERVED_INT1} INTEGER, " +
+				"${KEY_RESERVED_INT2} INTEGER, " +
+				"${KEY_RESERVED_INT3} INTEGER" +
 				" )"
 
 		logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
 		db.execSQL(CREATE_PKG_TABLE)
 
-		val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID)"
+		val CREATE_INDEX = "CREATE UNIQUE INDEX ${INDEX_NAME} ON ${TABLE_NAME} (${KEY_EVENTID})"
 
 		logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
 
@@ -159,7 +162,7 @@ public class EventsStorage(context: Context)
 			// values
 			db.close()
 		}
-		catch (ex: android.database.sqlite.SQLiteConstraintException)
+		catch (ex: SQLiteConstraintException)
 		{
 			// Close Db before attempting to open it again from another method
 			db.close()
@@ -195,7 +198,7 @@ public class EventsStorage(context: Context)
 
 		val db = this.readableDatabase
 
-		val query = "SELECT MAX($KEY_NOTIFICATIONID) FROM " + TABLE_NAME
+		val query = "SELECT MAX(${KEY_NOTIFICATIONID}) FROM " + TABLE_NAME
 
 		val cursor = db.rawQuery(query, null)
 
@@ -226,8 +229,8 @@ public class EventsStorage(context: Context)
 		val db = this.readableDatabase
 
 		val cursor = db.query(TABLE_NAME, // a. table
-			SELECT_COLUMNS, // b. column names
-			" $KEY_EVENTID = ?", // c. selections
+				SELECT_COLUMNS, // b. column names
+			" ${KEY_EVENTID} = ?", // c. selections
 			arrayOf<String>(eventId.toString()), // d. selections args
 			null, // e. group by
 			null, // f. h aving
@@ -313,18 +316,18 @@ public class EventsStorage(context: Context)
 	{
 
 		return EventRecord(
-			eventId = cursor.getLong(0),
-			notificationId = cursor.getInt(1),
-			title = cursor.getString(2),
-			description = cursor.getString(3),
-			startTime = cursor.getLong(4),
-			endTime = cursor.getLong(5),
-			location = cursor.getString(6),
-			snoozedUntil = cursor.getLong(7),
-			lastEventUpdate = cursor.getLong(8),
-			isDisplayed = (cursor.getInt(9) != 0),
-			color = cursor.getInt(10),
-			alertTime = cursor.getLong(11)
+				eventId = cursor.getLong(0),
+				notificationId = cursor.getInt(1),
+				title = cursor.getString(2),
+				description = cursor.getString(3),
+				startTime = cursor.getLong(4),
+				endTime = cursor.getLong(5),
+				location = cursor.getString(6),
+				snoozedUntil = cursor.getLong(7),
+				lastEventUpdate = cursor.getLong(8),
+				isDisplayed = (cursor.getInt(9) != 0),
+				color = cursor.getInt(10),
+				alertTime = cursor.getLong(11)
 		)
 	}
 
@@ -332,44 +335,44 @@ public class EventsStorage(context: Context)
 	{
 		private val logger = Logger("EventsStorage")
 
-		private val DATABASE_VERSION = 6
-		private val DATABASE_RELEASE_ONE_VERSION = 6
+		private const val DATABASE_VERSION = 6
+		private const val DATABASE_RELEASE_ONE_VERSION = 6
 
-		private val DATABASE_NAME = "Events"
+		private const val DATABASE_NAME = "Events"
 
-		private val TABLE_NAME = "events"
-		private val INDEX_NAME = "eventsIdx"
+		private const val TABLE_NAME = "events"
+		private const val INDEX_NAME = "eventsIdx"
 
-		private val KEY_EVENTID = "eventId"
-		private val KEY_NOTIFICATIONID = "notificationId"
-		private val KEY_TITLE = "title"
-		private val KEY_DESC = "description"
-		private val KEY_START = "start"
-		private val KEY_END = "end"
-		private val KEY_LOCATION = "location"
-		private val KEY_SNOOZED_UNTIL = "snoozeUntil"
-		private val KEY_IS_DISPLAYED = "displayed"
-		private val KEY_LAST_EVENT_FIRE = "lastFire"
-		private val KEY_COLOR = "color"
-		private val KEY_ALERT_TIME = "alertTime"
+		private const val KEY_EVENTID = "eventId"
+		private const val KEY_NOTIFICATIONID = "notificationId"
+		private const val KEY_TITLE = "title"
+		private const val KEY_DESC = "description"
+		private const val KEY_START = "start"
+		private const val KEY_END = "end"
+		private const val KEY_LOCATION = "location"
+		private const val KEY_SNOOZED_UNTIL = "snoozeUntil"
+		private const val KEY_IS_DISPLAYED = "displayed"
+		private const val KEY_LAST_EVENT_FIRE = "lastFire"
+		private const val KEY_COLOR = "color"
+		private const val KEY_ALERT_TIME = "alertTime"
 
-		private val KEY_RESERVED_STR1 = "resstr1"
-		private val KEY_RESERVED_STR2 = "resstr2"
-		private val KEY_RESERVED_STR3 = "resstr3"
-		private val KEY_RESERVED_INT1 = "resint1"
-		private val KEY_RESERVED_INT2 = "resint2"
-		private val KEY_RESERVED_INT3 = "resint3"
+		private const val KEY_RESERVED_STR1 = "s1"
+		private const val KEY_RESERVED_STR2 = "s2"
+		private const val KEY_RESERVED_STR3 = "s3"
+		private const val KEY_RESERVED_INT1 = "i1"
+		private const val KEY_RESERVED_INT2 = "i2"
+		private const val KEY_RESERVED_INT3 = "i3"
 
 		private val SELECT_COLUMNS = arrayOf<String>(
-			KEY_EVENTID, KEY_NOTIFICATIONID,
-			KEY_TITLE, KEY_DESC,
-			KEY_START, KEY_END,
-			KEY_LOCATION,
-			KEY_SNOOZED_UNTIL,
-			KEY_LAST_EVENT_FIRE,
-			KEY_IS_DISPLAYED,
-			KEY_COLOR,
-			KEY_ALERT_TIME
+				KEY_EVENTID, KEY_NOTIFICATIONID,
+				KEY_TITLE, KEY_DESC,
+				KEY_START, KEY_END,
+				KEY_LOCATION,
+				KEY_SNOOZED_UNTIL,
+				KEY_LAST_EVENT_FIRE,
+				KEY_IS_DISPLAYED,
+				KEY_COLOR,
+				KEY_ALERT_TIME
 		)
 	}
 }

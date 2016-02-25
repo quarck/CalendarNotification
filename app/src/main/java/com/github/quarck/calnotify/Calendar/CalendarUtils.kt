@@ -17,13 +17,15 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Calendar
 
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.Logs.Logger
 import java.util.*
 
 object CalendarUtils
@@ -54,19 +56,19 @@ object CalendarUtils
 		var color = cursor.getInt(7)
 
 		var event =
-			EventRecord(
-				eventId = eventId,
-				notificationId = 0,
-				alertTime = alertTime,
-				title = title,
-				description = desc,
-				startTime = start,
-				endTime = end,
-				location = location,
-				lastEventUpdate = System.currentTimeMillis(),
-				isDisplayed = false,
-				color = color
-			);
+				EventRecord(
+						eventId = eventId,
+						notificationId = 0,
+						alertTime = alertTime,
+						title = title,
+						description = desc,
+						startTime = start,
+						endTime = end,
+						location = location,
+						lastEventUpdate = System.currentTimeMillis(),
+						isDisplayed = false,
+						color = color
+				);
 
 		return Pair(state, event)
 	}
@@ -80,7 +82,7 @@ object CalendarUtils
 		var cursor: Cursor? =
 			context.contentResolver.query(
 				CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-				eventFields,
+					eventFields,
 				selection,
 				arrayOf(alertTime),
 				null
@@ -154,7 +156,7 @@ object CalendarUtils
 		var cursor: Cursor? =
 			context.contentResolver.query(
 				CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-				eventFields,
+					eventFields,
 				selection,
 				arrayOf(alertTime.toString()),
 				null

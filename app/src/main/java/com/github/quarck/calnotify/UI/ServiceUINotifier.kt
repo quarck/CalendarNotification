@@ -17,13 +17,15 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Logs.Logger
 
 class ServiceUINotifier : IntentService("ServiceUINotifier")
 {
@@ -77,7 +79,7 @@ class ServiceUINotifier : IntentService("ServiceUINotifier")
 	{
 		private val logger = Logger("ServiceUINotifier")
 
-		public fun notifyUI(context: Context?, isUserAction: Boolean)
+		fun notifyUI(context: Context?, isUserAction: Boolean)
 		{
 			logger.debug("notifyUI called, isUserAction=$isUserAction")
 

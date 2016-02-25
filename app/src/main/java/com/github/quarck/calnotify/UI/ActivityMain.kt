@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.app.Activity
 import android.app.PendingIntent
@@ -34,23 +34,27 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
+import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.EventsStorage.EventsStorage
+import com.github.quarck.calnotify.Logs.DebugTransactionLog
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.Utils.background
+import com.github.quarck.calnotify.Utils.find
 
 class ActivityMain : Activity()
 {
-	private var settings: Settings? = null;
+	private val settings: Settings by lazy { Settings(this) }
 
-	private var recyclerView: RecyclerView? = null;
-	private var staggeredLayoutManager: StaggeredGridLayoutManager? = null;
+	private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
+	private lateinit var recyclerView: RecyclerView
+	private lateinit var reloadLayout: RelativeLayout
 
-	private var adapter: EventListAdapter? = null;
-	private var presenter: EventsPresenter? = null;
+	private lateinit var adapter: EventListAdapter
+	private lateinit var presenter: EventsPresenter
 
-//	private var events: Array<EventRecord>? = null
-//	private val eventsLock = Any()
 
-	private var svcClient = ServiceUINotifierClient();
-
-	private var reloadLayout: RelativeLayout? = null
+	private val svcClient by lazy { ServiceUINotifierClient() }
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -60,22 +64,19 @@ class ActivityMain : Activity()
 
 		setContentView(R.layout.activity_main)
 
-		settings = Settings(this)
+		adapter = EventListAdapter(this, arrayOf<EventRecord>())
+		adapter.onItemReschedule = { v, p, e -> onItemReschedule(v ,p, e); }
+		adapter.onItemDismiss = { v, p, e -> onItemDismiss(v ,p, e); }
+		adapter.onItemClick = { v, p, e -> onItemClick(v ,p, e); }
 
-		recyclerView = findViewById(R.id.listEvents) as RecyclerView;
-		staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL);
-		recyclerView?.layoutManager = staggeredLayoutManager;
+		presenter = EventsPresenter(adapter)
 
-		adapter = EventListAdapter(this, arrayOf<EventRecord>());
-		presenter = EventsPresenter(adapter!!);
+		staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL)
+		recyclerView = find<RecyclerView>(R.id.listEvents)
+		recyclerView.layoutManager = staggeredLayoutManager;
+		recyclerView.adapter = adapter;
 
-		recyclerView?.adapter = adapter;
-
-		adapter?.onItemReschedule = { v, p, e -> onItemReschedule(v ,p, e); }
-		adapter?.onItemDismiss = { v, p, e -> onItemDismiss(v ,p, e); }
-		adapter?.onItemClick = { v, p, e -> onItemClick(v ,p, e); }
-
-		reloadLayout = findViewById(R.id.activity_main_reload_layout) as RelativeLayout;
+		reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
 	}
 
 	public override fun onStart()
@@ -108,7 +109,7 @@ class ActivityMain : Activity()
 				}
 				else
 				{
-					runOnUiThread {  reloadLayout?.visibility = View.VISIBLE }
+					runOnUiThread {  reloadLayout.visibility = View.VISIBLE }
 				}
 			}
 
@@ -134,7 +135,7 @@ class ActivityMain : Activity()
 		when (item.itemId)
 		{
 			R.id.action_settings ->
-				startActivity(Intent(this, SettingsActivity::class.java))
+				startActivity(Intent(this, ActivitySettings::class.java))
 
 			R.id.action_feedback ->
 				startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
@@ -143,33 +144,20 @@ class ActivityMain : Activity()
 		return super.onOptionsItemSelected(item)
 	}
 
-	inner private class ReloadOperation: AsyncTask<Void?, Void?, Void?>()
-	{
-		private var events: Array<EventRecord>? = null
-
-		override fun doInBackground(vararg p0: Void?): Void?
-		{
-			events = EventsStorage(this@ActivityMain).events.toTypedArray();
-			return null;
-		}
-
-		override fun onPostExecute(result: Void?)
-		{
-			if (presenter != null && events != null)
-				presenter?.setEventsToDisplay(events!!);
-			else
-				logger.debug("presenter or events is null");
-		}
-	}
-
 	private fun reloadData()
 	{
-		ReloadOperation().execute();
+		background {
+			var events = EventsStorage(this).events.toTypedArray()
+
+			runOnUiThread {
+				presenter.setEventsToDisplay(events);
+			}
+		}
 	}
 
 	fun onReloadButtonClick(v: View)
 	{
-		reloadLayout?.visibility = View.GONE;
+		reloadLayout.visibility = View.GONE;
 		reloadData();
 	}
 
@@ -177,7 +165,7 @@ class ActivityMain : Activity()
 	{
 		logger.debug("onItemClick, pos=$position, eventId=$eventId");
 
-		var event = presenter?.getEventAtPosition(position)
+		var event = presenter.getEventAtPosition(position)
 		if (event != null)
 		{
 			if (event.eventId == eventId)
@@ -198,7 +186,7 @@ class ActivityMain : Activity()
 	{
 		logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
 
-		var event = presenter?.getEventAtPosition(position)
+		var event = presenter.getEventAtPosition(position)
 		if (event != null)
 		{
 			if (event.eventId == eventId)
@@ -222,7 +210,7 @@ class ActivityMain : Activity()
 	{
 		logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
 
-		var event = presenter?.getEventAtPosition(position)
+		var event = presenter.getEventAtPosition(position)
 		if (event != null)
 		{
 			if (event.eventId == eventId)
@@ -232,7 +220,7 @@ class ActivityMain : Activity()
 				EventsManager.dismissEvent(this, event);
 				DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
 
-				presenter?.removeAt(position)
+				presenter.removeAt(position)
 			}
 			else
 			{

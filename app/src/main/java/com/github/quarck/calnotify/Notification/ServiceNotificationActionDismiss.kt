@@ -17,11 +17,15 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Notification
 
 import android.app.IntentService
 import android.content.Intent
 import android.widget.Toast
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Logs.DebugTransactionLog
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
 import java.util.*
 
 class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActionDismiss")

@@ -23,6 +23,15 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.BroadcastReceivers.BroadcastReceiverAlarm
+import com.github.quarck.calnotify.Calendar.CalendarUtils
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.EventsStorage.EventsStorage
+import com.github.quarck.calnotify.Logs.DebugTransactionLog
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.Notification.EventNotificationManager
+import com.github.quarck.calnotify.Notification.IEventNotificationManager
+import com.github.quarck.calnotify.UI.ServiceUINotifier
 
 class EventsManager
 {
@@ -55,16 +64,12 @@ class EventsManager
 				logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
 
 				alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
-
-				DebugTransactionLog(context).log("EventsManager", "alarm", "alarm scheduled, $seconds from now")
 			}
 			else
 			{
 				logger.info("Cancelling alarms");
 
 				alarmManager.cancel(pendingIntent)
-
-				DebugTransactionLog(context).log("EventsManager", "alarm", "alarm removed")
 			}
 		}
 

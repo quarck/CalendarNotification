@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.os.Bundle
 import android.app.Activity
@@ -28,13 +28,19 @@ import android.provider.CalendarContract
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.EventsStorage.EventsStorage
+import com.github.quarck.calnotify.EventsStorage.formatTime
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.Utils.adjustCalendarColor
+import com.github.quarck.calnotify.Utils.find
 
 class ActivitySnooze : Activity()
 {
 	var eventId: Long = -1;
 	var notificationId: Int = -1;
 
-	var storage: EventsStorage? = null
+	lateinit var storage: EventsStorage
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -46,39 +52,35 @@ class ActivitySnooze : Activity()
 		notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
 		eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
-		if (storage != null)
+		var event = storage.getEvent(eventId)
+
+		if (event != null)
 		{
-			var event = storage!!.getEvent(eventId)
+			var title =
+				if (event.title == "")
+					this.resources.getString(R.string.empty_title)
+				else
+					event.title;
 
-			if (event != null)
+			var (date, time) = event.formatTime(this);
+
+			var location = event.location;
+
+			if (location != "")
 			{
-				var title =
-					if (event.title == "")
-						this.resources.getString(R.string.empty_title)
-					else
-						event.title;
-
-				var (date, time) = event.formatTime(this);
-
-				var location = event.location;
-
-				if (location != "")
-				{
-					findViewById(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
-					(findViewById(R.id.snooze_view_location) as TextView).text = location;
-				}
-
-				(this.findViewById(R.id.snooze_view_title) as TextView).text = title;
-				(this.findViewById(R.id.snooze_view_event_date) as TextView).text = date;
-				(this.findViewById(R.id.snooze_view_event_time) as TextView).text = time;
-
-				var color: Int = event.color.adjustCalendarColor();
-				if (color == 0)
-					color = resources.getColor(R.color.primary)
-				(this.findViewById(R.id.snooze_view_event_details_layout) as RelativeLayout).background = ColorDrawable(color)
+				find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
+				find<TextView>(R.id.snooze_view_location).text = location;
 			}
-		}
 
+			find<TextView>(R.id.snooze_view_title).text = title;
+			find<TextView>(R.id.snooze_view_event_date).text = date;
+			find<TextView>(R.id.snooze_view_event_time).text = time;
+
+			var color: Int = event.color.adjustCalendarColor();
+			if (color == 0)
+				color = resources.getColor(R.color.primary)
+			find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
+		}
 	}
 
 	fun onButtonCancelClick(v: View?)

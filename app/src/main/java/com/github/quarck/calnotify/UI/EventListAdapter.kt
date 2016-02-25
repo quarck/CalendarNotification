@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
@@ -28,6 +28,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Utils.adjustCalendarColor
+import com.github.quarck.calnotify.Utils.find
+import com.github.quarck.calnotify.EventsStorage.formatSnoozedUntil
+import com.github.quarck.calnotify.EventsStorage.formatTime
 
 class EventListAdapter(context: Context, var events: Array<EventRecord>)
 : RecyclerView.Adapter<EventListAdapter.ViewHolder>()
@@ -51,16 +57,17 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 		init
 		{
-			eventHolder = itemView.findViewById(R.id.card_view_main_holder) as RelativeLayout
-			eventTitle = itemView.findViewById(R.id.card_view_event_name) as TextView
-			eventTitleLayout = itemView.findViewById(R.id.card_view_event_title_layout) as RelativeLayout
-			eventDate = itemView.findViewById(R.id.card_view_event_date) as TextView
-			eventTime = itemView.findViewById(R.id.card_view_event_time) as TextView
-			eventLocation = itemView.findViewById(R.id.card_view_location) as TextView
-			actionLayout = itemView.findViewById(R.id.card_view_event_action_layout) as View
-			snoozedUntil = itemView.findViewById(R.id.card_view_snoozed_until) as TextView
-			change = itemView.findViewById(R.id.card_view_button_reschedule) as Button
-			dismiss = itemView.findViewById(R.id.card_view_button_dismiss) as Button
+			eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
+			eventTitle = itemView.find<TextView>(R.id.card_view_event_name)
+			eventTitleLayout = itemView.find<RelativeLayout>(R.id.card_view_event_title_layout)
+			eventDate = itemView.find<TextView>(R.id.card_view_event_date)
+			eventTime = itemView.find<TextView>(R.id.card_view_event_time)
+			eventLocation = itemView.find<TextView>(R.id.card_view_location)
+			actionLayout = itemView.find<View>(R.id.card_view_event_action_layout)
+			snoozedUntil = itemView.find<TextView>(R.id.card_view_snoozed_until)
+			change = itemView.find<Button>(R.id.card_view_button_reschedule)
+			dismiss = itemView.find<Button>(R.id.card_view_button_dismiss)
+
 			color = ColorDrawable(0)
 
 			eventHolder.setOnClickListener {
@@ -87,9 +94,9 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 	internal var context: Context
 
-	public var onItemClick: ((View, Int, Long) -> Unit)? = null;
-	public var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
-	public var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
+	var onItemClick: ((View, Int, Long) -> Unit)? = null;
+	var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
+	var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
 
 	private val primaryColor: Int
 	private val changeString: String
@@ -105,43 +112,43 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
 
 	override fun onBindViewHolder(holder: ViewHolder?, position: Int)
 	{
-		if (position >= 0 && position < events.size)
+		if (position >= 0 && position < events.size && holder != null)
 		{
 			var event = events[position]
 
-			holder?.eventTitle?.text = event.title
+			holder.eventTitle?.text = event.title
 
 			var (date, time) = event.formatTime(context)
 
-			holder?.eventDate?.text = date
-			holder?.eventTime?.text = time
-			holder?.eventLocation?.text = event.location
+			holder.eventDate.text = date
+			holder.eventTime.text = time
+			holder.eventLocation.text = event.location
 
 			if (event.location != "")
-				holder?.eventLocation?.visibility = View.VISIBLE;
+				holder.eventLocation.visibility = View.VISIBLE;
 			else
-				holder?.eventLocation?.visibility = View.GONE;
+				holder.eventLocation.visibility = View.GONE;
 
 			if (event.snoozedUntil != 0L)
 			{
-				holder?.snoozedUntil?.text =
+				holder.snoozedUntil.text =
 					context.resources.getString(R.string.snoozed_until_string) + " " +
 						event.formatSnoozedUntil(context);
 
-				holder?.snoozedUntil?.visibility = View.VISIBLE;
-				holder?.change?.text = changeString
+				holder.snoozedUntil.visibility = View.VISIBLE;
+				holder.change.text = changeString
 			}
 			else
 			{
-				holder?.snoozedUntil?.text = "";
-				holder?.snoozedUntil?.visibility = View.GONE;
-				holder?.change?.text = snoozeString
+				holder.snoozedUntil.text = "";
+				holder.snoozedUntil.visibility = View.GONE;
+				holder.change.text = snoozeString
 			}
 
-			holder?.eventId = event.eventId;
+			holder.eventId = event.eventId;
 
-			holder?.color?.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
-			holder?.eventTitleLayout?.background  = holder?.color
+			holder.color.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
+			holder.eventTitleLayout.background  = holder.color
 		}
 	}
 

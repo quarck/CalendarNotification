@@ -17,8 +17,9 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Notification
 
+import android.R
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -27,6 +28,16 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.EventsStorage.EventsStorage
+import com.github.quarck.calnotify.EventsStorage.formatText
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.Pebble.PebbleUtils
+import com.github.quarck.calnotify.UI.ActivityMain
+import com.github.quarck.calnotify.UI.ActivitySnooze
+import com.github.quarck.calnotify.Notification.ServiceNotificationActionDismiss
+import java.lang.String
 import java.text.DateFormat
 import java.util.*
 
@@ -153,13 +164,13 @@ class EventNotificationManager: IEventNotificationManager
 						postNotification(
 							context,
 							event,
-							NotificationSettingsSnapshot(
-								settings.showDismissButton,
-								null,
-								false,
-								settings.ledNotificationOn,
-								false
-							)
+								NotificationSettingsSnapshot(
+										settings.showDismissButton,
+										null,
+										false,
+										settings.ledNotificationOn,
+										false
+								)
 						)
 					}
 
@@ -204,11 +215,10 @@ class EventNotificationManager: IEventNotificationManager
 
 		var notificationText = event.formatText(ctx);
 
-		var builder = Notification
-			.Builder(ctx)
+		var builder = Notification.Builder(ctx)
 			.setContentTitle(event.title)
 			.setContentText(notificationText)
-			.setSmallIcon(R.drawable.stat_notify_calendar)
+			.setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
 			.setPriority(Notification.PRIORITY_HIGH)
 			.setContentIntent(calendarPendingIntent)
 			.setAutoCancel(!notificationSettings.showDismissButton)
@@ -220,8 +230,8 @@ class EventNotificationManager: IEventNotificationManager
 		logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
 		builder.addAction(
-			android.R.drawable.ic_menu_rotate,
-			ctx.getString(R.string.snooze) ?: "SNOOZE",
+			R.drawable.ic_menu_rotate,
+			ctx.getString(com.github.quarck.calnotify.R.string.snooze) ?: "SNOOZE",
 			pendingActivityIntent(ctx,
 				snoozeIntent(ctx, event.eventId, event.notificationId),
 				event.notificationId * 3 + 0
@@ -231,8 +241,8 @@ class EventNotificationManager: IEventNotificationManager
 		if (notificationSettings.showDismissButton)
 		{
 			builder.addAction(
-				android.R.drawable.ic_menu_close_clear_cancel,
-				ctx.getString(R.string.dismiss) ?: "DISMISS",
+				R.drawable.ic_menu_close_clear_cancel,
+				ctx.getString(com.github.quarck.calnotify.R.string.dismiss) ?: "DISMISS",
 				pendingServiceIntent(ctx,
 					dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
 					event.notificationId * 3 + 1
@@ -332,14 +342,13 @@ class EventNotificationManager: IEventNotificationManager
 		var intent = Intent(context, ActivityMain::class.java);
 		val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-		var title = java.lang.String.format(context.getString(R.string.multiple_events), numCollapsed);
+		var title = java.lang.String.format(context.getString(com.github.quarck.calnotify.R.string.multiple_events), numCollapsed);
 
 		val notification =
-			Notification
-				.Builder(context)
+			Notification.Builder(context)
 				.setContentTitle(title)
-				.setContentText(context.getString(R.string.multiple_events_details))
-				.setSmallIcon(R.drawable.stat_notify_calendar)
+				.setContentText(context.getString(com.github.quarck.calnotify.R.string.multiple_events_details))
+				.setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
 				.setPriority(Notification.PRIORITY_DEFAULT)
 				.setContentIntent(pendingIntent)
 				.setAutoCancel(false)

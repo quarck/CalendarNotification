@@ -17,18 +17,19 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.BroadcastReceivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
 
 class BroadcastReceiverBootComplete : BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
 		logger.debug("onReceive");
-
 		EventsManager.onBootComplete(context, intent)
 	}
 

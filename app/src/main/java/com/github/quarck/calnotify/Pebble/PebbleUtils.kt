@@ -17,10 +17,11 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Pebble
 
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.Logs.Logger
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*

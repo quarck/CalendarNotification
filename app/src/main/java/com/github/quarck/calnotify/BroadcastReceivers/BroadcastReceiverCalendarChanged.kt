@@ -17,17 +17,24 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.BroadcastReceivers
 
-import android.os.Bundle
-import android.preference.PreferenceActivity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
 
-class SettingsActivity : PreferenceActivity()
+class BroadcastReceiverCalendarChanged: BroadcastReceiver()
 {
-	@SuppressWarnings("deprecation")
-	public override fun onCreate(savedInstanceState: Bundle?)
+	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		super.onCreate(savedInstanceState)
-		addPreferencesFromResource(R.xml.preferences)
+		logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
+		EventsManager.onCalendarChanged(context, intent)
+	}
+
+	companion object
+	{
+		private val logger = Logger("BroadcastReceiverCalendarChanged");
 	}
 }

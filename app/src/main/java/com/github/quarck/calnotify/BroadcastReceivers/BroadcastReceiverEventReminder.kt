@@ -17,12 +17,16 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.BroadcastReceivers
 
 import android.content.*
 import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.Calendar.CalendarUtils
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.Settings
 
 class BroadcastReceiverEventReminder : BroadcastReceiver()
 {

@@ -1,5 +1,9 @@
 package com.github.quarck.calnotify
 
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.UI.EventListAdapter
+
 
 class EventsPresenter(var adapter: EventListAdapter)
 {

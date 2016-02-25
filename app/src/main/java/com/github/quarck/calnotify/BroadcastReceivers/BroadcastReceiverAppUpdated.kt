@@ -17,26 +17,27 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.BroadcastReceivers
 
-import android.util.Log
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
 
-class Logger(val tag: String)
+class BroadcastReceiverAppUpdated : BroadcastReceiver()
 {
-	private val TAG_PREFIX = "CalendarNotification:"
-
-	fun debug(message: String)
+	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		Log.d(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+		logger.debug("onReceive");
+		EventsManager.onAppUpdated(context, intent)
 	}
 
-	fun info(message: String)
+	companion object
 	{
-		Log.i(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
-	}
-
-	fun error(message: String)
-	{
-		Log.e(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+		private val logger = Logger("BroadcastReceiverAppUpdated");
 	}
 }

@@ -17,18 +17,20 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Logs
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.quarck.calnotify.EventsStorage.EventRecord
+import com.github.quarck.calnotify.Settings
 import java.text.DateFormat
 import java.util.*
 
 class DebugTransactionLog(context: Context)
-: SQLiteOpenHelper(context, DebugTransactionLog.DATABASE_NAME, null, DebugTransactionLog.DATABASE_VERSION)
+: SQLiteOpenHelper(context, Companion.DATABASE_NAME, null, Companion.DATABASE_VERSION)
 {
 	private val settings = Settings(context)
 
@@ -36,13 +38,13 @@ class DebugTransactionLog(context: Context)
 	{
 		var CREATE_PKG_TABLE =
 			"CREATE " +
-				"TABLE $TABLE_NAME " +
+				"TABLE ${TABLE_NAME} " +
 				"( " +
-				"$KEY_ENTRY_ID INTEGER PRIMARY KEY, " +
-				"$KEY_ENTRY_TIME INTEGER, " +
-				"$KEY_SRC TEXT, " +
-				"$KEY_TYPE TEXT, " +
-				"$KEY_MESSAGE TEXT" +
+				"${KEY_ENTRY_ID} INTEGER PRIMARY KEY, " +
+				"${KEY_ENTRY_TIME} INTEGER, " +
+				"${KEY_SRC} TEXT, " +
+				"${KEY_TYPE} TEXT, " +
+				"${KEY_MESSAGE} TEXT" +
 				" )"
 
 		logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)

@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.os.Bundle
 import android.app.Activity
@@ -25,18 +25,24 @@ import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import android.widget.ToggleButton
+import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.EventsStorage.EventsStorage
+import com.github.quarck.calnotify.Logs.DebugTransactionLog
+import com.github.quarck.calnotify.Notification.EventNotificationManager
+import com.github.quarck.calnotify.Utils.find
 import java.util.*
 
 class ActivityTestButtonsAndToDo : Activity()
 {
+	private val settings by lazy { Settings(this) }
 
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_test_buttons_and_to_do)
 
-		(findViewById(R.id.log) as TextView).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
-		(findViewById(R.id.debug_logging_toggle) as ToggleButton).isChecked = Settings(this).debugTransactionLogEnabled;
+		find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
+		find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
 	}
 
 
@@ -44,7 +50,7 @@ class ActivityTestButtonsAndToDo : Activity()
 	{
 		if (v is ToggleButton)
 		{
-			Settings(this).debugTransactionLogEnabled = v.isChecked;
+			settings.debugTransactionLogEnabled = v.isChecked;
 			if (!v.isChecked)
 				DebugTransactionLog(this).dropAll();
 		}

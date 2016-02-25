@@ -44,33 +44,33 @@ data class NotificationSettingsSnapshot
 	val forwardToPebble: Boolean
 )
 
-class Settings(ctx: Context) {
-	private var context: Context? = null
-
-	private var prefs: SharedPreferences? = null
+class Settings(ctx: Context)
+{
+	private var context: Context
+	private var prefs: SharedPreferences
 
 	var removeOriginal: Boolean
-		get() = prefs!!.getBoolean(REMOVE_ORIGINAL_KEY, true)
+		get() = prefs.getBoolean(REMOVE_ORIGINAL_KEY, true)
 		set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
 
 	var showDismissButton: Boolean
-		get() = prefs!!.getBoolean(DISMISS_ENABLED_KEY, true)
+		get() = prefs.getBoolean(DISMISS_ENABLED_KEY, true)
 		set(value) = prefs.setBoolean(DISMISS_ENABLED_KEY, value)
 
 	var vibraOn: Boolean
-		get() = prefs!!.getBoolean(VIBRATION_ENABLED_KEY, true)
+		get() = prefs.getBoolean(VIBRATION_ENABLED_KEY, true)
 		set(value) = prefs.setBoolean(VIBRATION_ENABLED_KEY, value)
 
 	var ledNotificationOn: Boolean
-		get() = prefs!!.getBoolean(LED_ENABLED_KEY, true)
+		get() = prefs.getBoolean(LED_ENABLED_KEY, true)
 		set(value) = prefs.setBoolean(LED_ENABLED_KEY, value)
 
 	var forwardToPebble: Boolean
-		get() = prefs!!.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
+		get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
 		set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
 	var debugTransactionLogEnabled: Boolean
-		get() = prefs!!.getBoolean(DEBUG_LOG_KEY, false)
+		get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
 		set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
 
 	fun getSnoozePreset(idx: Int): Long
@@ -90,7 +90,7 @@ class Settings(ctx: Context) {
 
 			try
 			{
-				val uriValue = prefs!!.getString(RINGTONE_KEY, "")
+				val uriValue = prefs.getString(RINGTONE_KEY, "")
 
 				if (uriValue != null && !uriValue.isEmpty())
 					notification = Uri.parse(uriValue)
@@ -117,12 +117,12 @@ class Settings(ctx: Context) {
 
 	companion object
 	{
-		private val REMOVE_ORIGINAL_KEY = "remove_original"
-		private val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
-		private val RINGTONE_KEY = "pref_key_ringtone"
-		private val VIBRATION_ENABLED_KEY = "vibra_on"
-		private val LED_ENABLED_KEY = "notification_led"
-		private val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
-		private val DEBUG_LOG_KEY = "debugLog"
+		private const val REMOVE_ORIGINAL_KEY = "remove_original"
+		private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
+		private const val RINGTONE_KEY = "pref_key_ringtone"
+		private const val VIBRATION_ENABLED_KEY = "vibra_on"
+		private const val LED_ENABLED_KEY = "notification_led"
+		private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
+		private const val DEBUG_LOG_KEY = "debugLog"
 	}
 }

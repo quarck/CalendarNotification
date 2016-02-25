@@ -17,22 +17,26 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.Logs
 
+import android.util.Log
 
-fun Int.adjustCalendarColor(): Int
+class Logger(val tag: String)
 {
-	val colorFadeR = 1.2;
-	val colorFadeG = 1.3;
-	val colorFadeB = 1.2;
+	private val TAG_PREFIX = "CalendarNotification:"
 
-	var r = (this.ushr(16)) and 0xff
-	var g = (this.ushr(8)) and 0xff
-	var b = (this.ushr(0)) and 0xff
+	fun debug(message: String)
+	{
+		Log.d(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 
-	r = (r / colorFadeR).toInt()
-	g = (g / colorFadeG).toInt()
-	b = (b / colorFadeB).toInt()
+	fun info(message: String)
+	{
+		Log.i(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 
-	return 0xff000000.toInt() or (r shl 16) or (g shl 8) or (b shl 0)
+	fun error(message: String)
+	{
+		Log.e(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 }

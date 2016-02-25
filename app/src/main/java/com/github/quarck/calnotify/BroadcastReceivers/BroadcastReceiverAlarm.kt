@@ -17,23 +17,25 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.BroadcastReceivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.Logs.Logger
 
-class BroadcastReceiverCalendarChanged: BroadcastReceiver()
+class BroadcastReceiverAlarm : BroadcastReceiver()
 {
 	override fun onReceive(context: Context?, intent: Intent?)
 	{
-		logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
-
-		EventsManager.onCalendarChanged(context, intent)
+		logger.debug("onReceive");
+		EventsManager.onAlarm(context, intent);
 	}
 
 	companion object
 	{
-		private val logger = Logger("BroadcastReceiverCalendarChanged");
+		private val logger = Logger("BroadcastReceiverAlarm");
 	}
 }
+

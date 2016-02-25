@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.UI
 
 import android.os.Bundle
 import android.app.Activity
@@ -25,6 +25,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import com.github.quarck.calnotify.Logs.Logger
+import com.github.quarck.calnotify.R
 
 class ActivityHelpAndFeedback : Activity()
 {
@@ -50,8 +52,8 @@ class ActivityHelpAndFeedback : Activity()
 
         var email = Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail));
-        email.putExtra(Intent.EXTRA_SUBJECT,emailSubject);
-        email.putExtra(Intent.EXTRA_TEXT,emailText);
+        email.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+        email.putExtra(Intent.EXTRA_TEXT, emailText);
         email.setType(mimeType);
         startActivity(email);
     }

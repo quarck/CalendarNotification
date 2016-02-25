@@ -96,6 +96,7 @@
                 android:paddingEnd="@dimen/snooze_view_padding_end"
                 android:paddingRight="@dimen/snooze_view_padding_end"
                 android:paddingLeft="@dimen/snooze_view_padding_start"
+                android:clickable="true"
                 />
 
             <TextView
@@ -112,6 +113,7 @@
                 android:paddingRight="@dimen/snooze_view_padding_end"
                 android:paddingLeft="@dimen/snooze_view_padding_start"
                 android:layout_below="@id/card_view_event_date"
+                android:clickable="true"
                 />
 
             <TextView
@@ -128,6 +130,7 @@
                 android:paddingRight="@dimen/snooze_view_padding_end"
                 android:paddingLeft="@dimen/snooze_view_padding_start"
                 android:layout_below="@id/card_view_event_time"
+                android:clickable="true"
                 android:visibility="gone"
                 />
         </RelativeLayout>
@@ -175,8 +178,6 @@
                 android:layout_toStartOf="@id/card_view_button_dismiss"
                 android:layout_toLeftOf="@id/card_view_button_dismiss"
                 />
-
-
         </RelativeLayout>
 
     </RelativeLayout>

@@ -103,4 +103,22 @@
     <string name="app_icon_credit">App icon credit:</string>
     <string name="kotlin_language">Kotlin Language</string>
     <string name="app_created_with">App created with</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="snooze_presets">Snooze presets</string>
+    <string name="smartwatch_support">Smartwatch support</string>
+    <string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
+
+    <string name="error_cannot_parse_preset">Sorry, cannot parse your input</string>
+    <string name="snooze_presets_title">Snooze Presets</string>
+    <string name="snooze_presets_summary">Here you can change default snooze presets</string>
+
+    <string name="error_too_many_presets">Only up to 6 presets are supported, extra presets would be ignored</string>
+
+    <string name="days">days</string>
+    <string name="day">day</string>
+    <string name="hours">hours</string>
+    <string name="hour">hour</string>
+    <string name="minutes">minutes</string>
+    <string name="minute">minute</string>
+
 </resources>

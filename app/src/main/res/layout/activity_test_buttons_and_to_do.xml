@@ -109,7 +109,23 @@
                 android:layout_marginTop="6dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text=
-"TODO:\n0)[DONE] Highlighted view for text buttons\n1) [DONE] Watch calendar updates\n2) Snooze vs Reschedule\n3)[DONE] List of events on main activity\n4) Variable snooze times\n5) Action for location\n6) [DONE] Re-load all monitored details on startup from calendar provider\n7) [DONE] Load colors for calendars\n8) Support undo on main view\n9) Reschedules must be confirmed first\n10) Collect all own logs\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one\n12) Clickable location on the snooze screen\n13) Clickable \'Today\' and event time -- bring event edit activity\n14) [DONE] Limit max height of the card\n15) [DONE] Load events in BG\n"
+"TODO:
+\n0) [DONE] Highlighted view for text buttons
+\n1) [DONE] Watch calendar updates
+\n2) Snooze vs Reschedule
+\n3) [DONE] List of events on main activity
+\n4) [DONE] Variable snooze times
+\n5) Action for location
+\n6) [DONE] Re-load all monitored details on startup from calendar provider
+\n7) [DONE] Load colors for calendars
+\n8) Support undo on main view
+\n9) Reschedules must be confirmed first
+\n10) [KIND OF DONE] Collect all own logs
+\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one
+\n12) Clickable location on the snooze screen
+\n13) Clickable \'Today\' and event time -- bring event edit activity
+\n14) [DONE] Limit max height of the card
+\n15) [DONE] Load events in BG\n"
                 android:id="@+id/todo"
                 />
 

@@ -58,4 +58,6 @@
     <dimen name="activity_help_credits_padding_left">0dp</dimen>
     <dimen name="activity_help_credits_padding_right">16dp</dimen>
     <dimen name="activity_help_credits_padding_vertical">6dp</dimen>
+    <dimen name="dlg_snooze_presets_text_label_padding">16dp</dimen>
+    <dimen name="dlg_snooze_presets_input_padding">16dp</dimen>
 </resources>

@@ -73,7 +73,18 @@ class Settings(ctx: Context)
 		get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
 		set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
 
-	fun getSnoozePreset(idx: Int): Long
+	val snoozePresets: LongArray
+		get()
+		{
+			var ret = parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
+			if (ret == null)
+				ret = parseSnoozePresets(DEFAULT_SNOOZE_PRESET)
+			if (ret == null)
+				ret = Consts.DEFAULT_SNOOZE_PRESETS
+			return ret;
+		}
+
+	/*fun getSnoozePreset(idx: Int): Long
 	{
 		// Currently hard-coded to use consts instead of dynamic params
 
@@ -81,7 +92,7 @@ class Settings(ctx: Context)
 			return Consts.SNOOZE_PRESETS[idx];
 
 		return Consts.SNOOZE_PRESETS[0];
-	}
+	} */
 
 	val ringtoneURI: Uri?
 		get()
@@ -124,5 +135,42 @@ class Settings(ctx: Context)
 		private const val LED_ENABLED_KEY = "notification_led"
 		private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
 		private const val DEBUG_LOG_KEY = "debugLog"
+		private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
+
+		internal const val DEFAULT_SNOOZE_PRESET="15m, 1h, 4h, 1d"
+
+		internal fun parseSnoozePresets(value: String): LongArray?
+		{
+			var ret: LongArray? = null;
+
+			try
+			{
+				ret =
+					value
+						.split(",")
+						.map { it.trim() }
+						.filter { !it.isEmpty() }
+						.map {
+							str ->
+							var unit = str.takeLast(1)
+							var num = str.dropLast(1).toLong()
+							var seconds =
+								when (unit) {
+									"m" -> 	num * Consts.MINUTE_IN_SECONDS;
+									"h" ->  num * Consts.HOUR_IN_SECONDS;
+									"d" -> num * Consts.DAY_IN_SECONDS;
+									else -> throw Exception("Unknown unit ${unit}")
+								}
+							seconds * 1000L
+						}
+						.toLongArray()
+			}
+			catch (ex: Exception)
+			{
+				ret = null;
+			}
+
+			return ret;
+		}
 	}
 }

@@ -23,15 +23,15 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.BroadcastReceivers.BroadcastReceiverAlarm
-import com.github.quarck.calnotify.Calendar.CalendarUtils
-import com.github.quarck.calnotify.EventsStorage.EventRecord
-import com.github.quarck.calnotify.EventsStorage.EventsStorage
-import com.github.quarck.calnotify.Logs.DebugTransactionLog
-import com.github.quarck.calnotify.Logs.Logger
-import com.github.quarck.calnotify.Notification.EventNotificationManager
-import com.github.quarck.calnotify.Notification.IEventNotificationManager
-import com.github.quarck.calnotify.UI.ServiceUINotifier
+import com.github.quarck.calnotify.broadcastreceivers.BroadcastReceiverAlarm
+import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.logs.DebugTransactionLog
+import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.notification.EventNotificationManager
+import com.github.quarck.calnotify.notification.IEventNotificationManager
+import com.github.quarck.calnotify.ui.ServiceUINotifier
 
 class EventsManager
 {

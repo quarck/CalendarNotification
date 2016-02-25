@@ -17,34 +17,22 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.utils
 
-object Consts
+
+fun Int.adjustCalendarColor(): Int
 {
-	const val DAY_IN_SECONDS: Long = 3600L * 24
-	const val HOUR_IN_SECONDS: Long = 3600L
-	const val MINUTE_IN_SECONDS: Long = 60L;
+	val colorFadeR = 1.2;
+	val colorFadeG = 1.3;
+	val colorFadeB = 1.2;
 
-	const val NOTIFICATION_ID_COLLAPSED = 0;
-	const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
+	var r = (this.ushr(16)) and 0xff
+	var g = (this.ushr(8)) and 0xff
+	var b = (this.ushr(0)) and 0xff
 
-	//
-	const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
-	const val INTENT_EVENT_ID_KEY = "eventId";
+	r = (r / colorFadeR).toInt()
+	g = (g / colorFadeG).toInt()
+	b = (b / colorFadeB).toInt()
 
-	const val INTENT_IS_USER_ACTION = "causedByUser"
-
-	const val MAX_NOTIFICATIONS = 8;
-
-	//
-	const val VIBRATION_DURATION : Long = 1200;
-	const val LED_DURATION_ON = 300;
-	const val LED_DURATION_OFF = 2000;
-	const val LED_COLOR = 0x7f0000ff;
-
-	const val ALARM_THRESHOULD = 3*1000L;
-
-	val DEFAULT_SNOOZE_PRESETS = longArrayOf(15*60*1000, 60*60*1000, 4*60*60*1000, 24*60*60*1000);
-
-	const val MAX_SUPPORTED_PRESETS = 6
+	return 0xff000000.toInt() or (r shl 16) or (g shl 8) or (b shl 0)
 }

@@ -1,13 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory 
-        android:title="@string/settings"
+        android:title="@string/notification_settings"
         android:key="pref_key_settings">
-
-        <!-- CheckBoxPreference
-            android:key="remove_original"
-            android:title="Remove original ntf"
-            android:summary="DEBUG ONLY OPTION!!!\nSorry if you are seeing this in release build!!\nUncheck if you want to see event in the google calendar as well, so you can match notification"
-            android:defaultValue="true" / -->
 
         <CheckBoxPreference
             android:key="pref_key_enable_dismiss_button"
@@ -31,6 +25,25 @@
             android:title="@string/vibra_on"
             android:defaultValue="true"/>
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/snooze_presets"
+        android:key="pref_key_snooze_prs">
+
+        <com.github.quarck.calnotify.prefs.SnoozePresetPreference
+            android:key="pref_snooze_presets"
+            android:title="@string/snooze_presets_title"
+            android:summary="@string/snooze_presets_summary"
+            android:defaultValue="15m, 1h, 4h, 1d"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/smartwatch_support"
+        android:key="pref_key_smartwatch">
+
         <CheckBoxPreference
             android:key="forward_to_pebble"
             android:title="@string/forward_to_pebble"
@@ -39,25 +52,4 @@
 
     </PreferenceCategory>
 
-    <!--
-     <PreferenceCategory 
-        android:title="Notification"
-        android:key="pref_key_notification">
-        
-
-        <RingtonePreference 
-            android:key="pref_key_ringtone"
-            android:summary=""            
-            android:title="Notification tone"
-            android:ringtoneType="notification" />
-
-        <CheckBoxPreference
-            android:key="pref_key_enable_ongoing_notification"
-            android:summary="Display ongoing notification when SmartNotify is active"
-            android:title="Display ongoing notification"
-            android:defaultValue="true"  />
-        
-    </PreferenceCategory>
-    -->
-    
 </PreferenceScreen>

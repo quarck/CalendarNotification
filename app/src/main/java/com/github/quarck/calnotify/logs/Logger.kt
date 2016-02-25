@@ -17,34 +17,26 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.logs
 
-object Consts
+import android.util.Log
+
+class Logger(val tag: String)
 {
-	const val DAY_IN_SECONDS: Long = 3600L * 24
-	const val HOUR_IN_SECONDS: Long = 3600L
-	const val MINUTE_IN_SECONDS: Long = 60L;
+	private val TAG_PREFIX = "CalendarNotification:"
 
-	const val NOTIFICATION_ID_COLLAPSED = 0;
-	const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
+	fun debug(message: String)
+	{
+		Log.d(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 
-	//
-	const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
-	const val INTENT_EVENT_ID_KEY = "eventId";
+	fun info(message: String)
+	{
+		Log.i(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 
-	const val INTENT_IS_USER_ACTION = "causedByUser"
-
-	const val MAX_NOTIFICATIONS = 8;
-
-	//
-	const val VIBRATION_DURATION : Long = 1200;
-	const val LED_DURATION_ON = 300;
-	const val LED_DURATION_OFF = 2000;
-	const val LED_COLOR = 0x7f0000ff;
-
-	const val ALARM_THRESHOULD = 3*1000L;
-
-	val DEFAULT_SNOOZE_PRESETS = longArrayOf(15*60*1000, 60*60*1000, 4*60*60*1000, 24*60*60*1000);
-
-	const val MAX_SUPPORTED_PRESETS = 6
+	fun error(message: String)
+	{
+		Log.e(TAG_PREFIX + tag, "" + System.currentTimeMillis() + " " + message)
+	}
 }

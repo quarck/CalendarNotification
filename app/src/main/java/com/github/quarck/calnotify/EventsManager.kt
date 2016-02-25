@@ -168,7 +168,7 @@ class EventsManager
 			EventsStorage(context).addEvent(event);
 			notificationManager.onEventAdded(context, event)
 
-			DebugTransactionLog(context).log("EventsManager", "add", "event added: ${event.title}")
+			DebugTransactionLog(context).log("EventsManager", "add", "event added: ${event.eventId} ${event.title}")
 
 			ServiceUINotifier.notifyUI(context, false);
 		}
@@ -190,7 +190,7 @@ class EventsManager
 			var seconds = (event.snoozedUntil-currentTime)/1000
 			logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
 
-			DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, title: ${event.title}")
+			DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, id: ${event.eventId}, title: ${event.title}")
 		}
 
 		fun onAppStarted(context: Context?)

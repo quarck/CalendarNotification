@@ -25,6 +25,50 @@
             android:layout_marginBottom="0dp"
             >
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginLeft="4dip"
+                android:layout_marginRight="4dip"
+                android:background="?android:attr/dividerVertical"
+                android:layout_alignParentTop="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text=
+"WARNING:\n\nTHIS ACTIVITY IS FOR DEBUGGING PURPOSE ONLY\nPLEASE LEAVE IT NOW\nNO USABLE OR 'HIDDEN' APP FUNCTIONALITY CAN BE FOUND HERE\n\n\nDISCLAIMER:\n\nIf debug transaction log (DBG LOG) is enabled (off by default), app would collect some debug information about when event has fired, when notification was dismissed or snoozed, etc. None of such information is transferred to Internet or to any 3rd party. All the data is stored locally. All the data is wiped when debug transaction log is disabled. \nIF YOU ARE NOT DEVELOPER OF THIS APP - DON NOT ENABLE IT.\n\nAPP ONGOING TODO:
+\n0) [DONE] Highlighted view for text buttons
+\n1) [DONE] Watch calendar updates
+\n2) Snooze vs Reschedule
+\n3) [DONE] List of events on main activity
+\n4) [DONE] Variable snooze times
+\n5) [IGNORE] Action for location
+\n6) [DONE] Re-load all monitored details on startup from calendar provider
+\n7) [DONE] Load colors for calendars
+\n8) Support undo on main view
+\n9) Reschedules must be confirmed first
+\n10) [KIND OF DONE] Collect all own logs
+\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one
+\n12) [DONE] Clickable location on the snooze screen
+\n13) [KIND OF DONE] Clickable \'Today\' and event time -- bring event edit activity
+\n14) [DONE] Limit max height of the card
+\n15) [DONE] Load events in background\n\n
+\nDebug log entries (if any):\n\n"
+                android:id="@+id/todo"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text=""
+                android:id="@+id/log"
+                />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -87,56 +131,13 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/debug_logging_toggle"
                     android:onClick="OnDebugLoggingToggle"
-                    android:textOn="DBGLGON"
-                    android:textOff="DBGLGOFF"
+                    android:textOn="DBG LOG ON"
+                    android:textOff="DBG LOG OFF"
                     android:background="?android:attr/selectableItemBackground"
                     />
 
             </LinearLayout>
 
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:layout_marginLeft="4dip"
-                android:layout_marginRight="4dip"
-                android:background="?android:attr/dividerVertical"
-                android:layout_alignParentTop="true"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text=
-"TODO:
-\n0) [DONE] Highlighted view for text buttons
-\n1) [DONE] Watch calendar updates
-\n2) Snooze vs Reschedule
-\n3) [DONE] List of events on main activity
-\n4) [DONE] Variable snooze times
-\n5) Action for location
-\n6) [DONE] Re-load all monitored details on startup from calendar provider
-\n7) [DONE] Load colors for calendars
-\n8) Support undo on main view
-\n9) Reschedules must be confirmed first
-\n10) [KIND OF DONE] Collect all own logs
-\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one
-\n12) Clickable location on the snooze screen
-\n13) Clickable \'Today\' and event time -- bring event edit activity
-\n14) [DONE] Limit max height of the card
-\n15) [DONE] Load events in BG\n"
-                android:id="@+id/todo"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text=""
-                android:id="@+id/log"
-                />
 
         </LinearLayout>
 

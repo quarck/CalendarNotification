@@ -6,17 +6,14 @@ package com.github.quarck.calnotify.utils
 
 import android.os.AsyncTask
 
-class AsyncOperation(val fn: ()->Unit)
-        : AsyncTask<Void?, Void?, Void?>()
-{
-    override fun doInBackground(vararg p0: Void?): Void?
-    {
+class AsyncOperation(val fn: () -> Unit)
+: AsyncTask<Void?, Void?, Void?>() {
+    override fun doInBackground(vararg p0: Void?): Void? {
         fn()
         return null
     }
 }
 
-inline fun background(noinline fn: ()->Unit)
-{
+inline fun background(noinline fn: () -> Unit) {
     AsyncOperation(fn).execute();
 }

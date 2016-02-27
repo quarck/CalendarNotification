@@ -20,12 +20,8 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.Activity
-import android.app.PendingIntent
-import android.content.ContentUris
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
@@ -44,231 +40,192 @@ import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
-class ActivityMain : Activity()
-{
-	private val settings: Settings by lazy { Settings(this) }
+class ActivityMain : Activity() {
+    private val settings: Settings by lazy { Settings(this) }
 
-	private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
-	private lateinit var recyclerView: RecyclerView
-	private lateinit var reloadLayout: RelativeLayout
+    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var reloadLayout: RelativeLayout
 
-	private lateinit var adapter: EventListAdapter
-	private lateinit var presenter: EventsPresenter
+    private lateinit var adapter: EventListAdapter
+    private lateinit var presenter: EventsPresenter
 
 
-	private val svcClient by lazy { ServiceUINotifierClient() }
+    private val svcClient by lazy { ServiceUINotifierClient() }
 
-	override fun onCreate(savedInstanceState: Bundle?)
-	{
-		super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-		logger.debug( "onCreateView")
+        logger.debug("onCreateView")
 
-		setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
-		adapter = EventListAdapter(this, arrayOf<EventRecord>())
-		adapter.onItemReschedule = { v, p, e -> onItemReschedule(v ,p, e); }
-		adapter.onItemDismiss = { v, p, e -> onItemDismiss(v ,p, e); }
-		adapter.onItemClick = { v, p, e -> onItemClick(v ,p, e); }
-		adapter.onItemLocation = { v, p, e -> onItemLocation(v ,p, e); }
-		adapter.onItemDateTime = { v, p, e -> onItemDateTime(v ,p, e); }
+        adapter = EventListAdapter(this, arrayOf<EventRecord>())
+        adapter.onItemReschedule = { v, p, e -> onItemReschedule(v, p, e); }
+        adapter.onItemDismiss = { v, p, e -> onItemDismiss(v, p, e); }
+        adapter.onItemClick = { v, p, e -> onItemClick(v, p, e); }
+        adapter.onItemLocation = { v, p, e -> onItemLocation(v, p, e); }
+        adapter.onItemDateTime = { v, p, e -> onItemDateTime(v, p, e); }
 
-		presenter = EventsPresenter(adapter)
+        presenter = EventsPresenter(adapter)
 
-		staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL)
-		recyclerView = find<RecyclerView>(R.id.listEvents)
-		recyclerView.layoutManager = staggeredLayoutManager;
-		recyclerView.adapter = adapter;
+        staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL)
+        recyclerView = find<RecyclerView>(R.id.listEvents)
+        recyclerView.layoutManager = staggeredLayoutManager;
+        recyclerView.adapter = adapter;
 
-		reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
-	}
+        reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
+    }
 
-	public override fun onStart()
-	{
-		logger.debug("onStart()")
-		super.onStart()
+    public override fun onStart() {
+        logger.debug("onStart()")
+        super.onStart()
 
-		EventsManager.onAppStarted(applicationContext);
-	}
+        EventsManager.onAppStarted(applicationContext);
+    }
 
-	public override fun onStop()
-	{
-		logger.debug("onStop()")
-		super.onStop()
-	}
+    public override fun onStop() {
+        logger.debug("onStop()")
+        super.onStop()
+    }
 
-	public override fun onResume()
-	{
-		logger.debug("onResume")
-		super.onResume()
+    public override fun onResume() {
+        logger.debug("onResume")
+        super.onResume()
 
-		svcClient.bindService(this)
-		svcClient.updateActivity =
-			{
-				isCausedByUser ->
+        svcClient.bindService(this)
+        svcClient.updateActivity =
+                {
+                    isCausedByUser ->
 
-				if (isCausedByUser)
-				{
-					reloadData()
-				}
-				else
-				{
-					runOnUiThread {  reloadLayout.visibility = View.VISIBLE }
-				}
-			}
+                    if (isCausedByUser) {
+                        reloadData()
+                    } else {
+                        runOnUiThread { reloadLayout.visibility = View.VISIBLE }
+                    }
+                }
 
-		reloadData()
-	}
-	public override fun onPause()
-	{
-		logger.debug("onPause")
+        reloadData()
+    }
 
-		svcClient.unbindService(this)
+    public override fun onPause() {
+        logger.debug("onPause")
 
-		super.onPause()
-	}
+        svcClient.unbindService(this)
 
-	override fun onCreateOptionsMenu(menu: Menu): Boolean
-	{
-		menuInflater.inflate(R.menu.main, menu)
-		return true
-	}
+        super.onPause()
+    }
 
-	override fun onOptionsItemSelected(item: MenuItem): Boolean
-	{
-		when (item.itemId)
-		{
-			R.id.action_settings ->
-				startActivity(Intent(this, ActivitySettings::class.java))
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
 
-			R.id.action_feedback ->
-				startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
-		}
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings ->
+                startActivity(Intent(this, ActivitySettings::class.java))
 
-		return super.onOptionsItemSelected(item)
-	}
+            R.id.action_feedback ->
+                startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
+        }
 
-	private fun reloadData()
-	{
-		background {
-			var events = EventsStorage(this).events.toTypedArray()
+        return super.onOptionsItemSelected(item)
+    }
 
-			runOnUiThread {
-				presenter.setEventsToDisplay(events);
-			}
-		}
-	}
+    private fun reloadData() {
+        background {
+            var events = EventsStorage(this).events.toTypedArray()
 
-	fun onReloadButtonClick(v: View)
-	{
-		reloadLayout.visibility = View.GONE;
-		reloadData();
-	}
+            runOnUiThread {
+                presenter.setEventsToDisplay(events);
+            }
+        }
+    }
 
-	private fun onItemLocation(v: View, position: Int, eventId: Long)
-	{
-		logger.debug("onItemLocation, pos=$position, eventId=$eventId");
+    fun onReloadButtonClick(v: View) {
+        reloadLayout.visibility = View.GONE;
+        reloadData();
+    }
 
-		var event = presenter.getEventAtPosition(position)
-		if (event != null)
-		{
-			if (event.eventId == eventId)
-			{
-				MapsUtils.openLocation(this, event.location)
-			}
-			else
-			{
-				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-			}
-		}
-	}
+    private fun onItemLocation(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemLocation, pos=$position, eventId=$eventId");
 
-	private fun onItemDateTime(v: View, position: Int, eventId: Long)
-	{
-		logger.debug("onItemDateTime, pos=$position, eventId=$eventId");
+        var event = presenter.getEventAtPosition(position)
+        if (event != null) {
+            if (event.eventId == eventId) {
+                MapsUtils.openLocation(this, event.location)
+            } else {
+                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
-		var event = presenter.getEventAtPosition(position)
-		if (event != null)
-		{
-			if (event.eventId == eventId)
-			{
-				CalendarUtils.editCalendarEvent(this, event.eventId)
-			}
-			else
-			{
-				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-			}
-		}
-	}
+    private fun onItemDateTime(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemDateTime, pos=$position, eventId=$eventId");
 
-	private fun onItemClick(v: View, position: Int, eventId: Long)
-	{
-		logger.debug("onItemClick, pos=$position, eventId=$eventId");
+        var event = presenter.getEventAtPosition(position)
+        if (event != null) {
+            if (event.eventId == eventId) {
+                CalendarUtils.editCalendarEvent(this, event.eventId)
+            } else {
+                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
-		var event = presenter.getEventAtPosition(position)
-		if (event != null)
-		{
-			if (event.eventId == eventId)
-			{
-				CalendarUtils.viewCalendarEvent(this, event.eventId)
-			}
-			else
-			{
-				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-			}
-		}
-	}
+    private fun onItemClick(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemClick, pos=$position, eventId=$eventId");
 
-	private fun onItemReschedule(v: View, position: Int, eventId: Long)
-	{
-		logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
+        var event = presenter.getEventAtPosition(position)
+        if (event != null) {
+            if (event.eventId == eventId) {
+                CalendarUtils.viewCalendarEvent(this, event.eventId)
+            } else {
+                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
-		var event = presenter.getEventAtPosition(position)
-		if (event != null)
-		{
-			if (event.eventId == eventId)
-			{
-				var intent = Intent(this, ActivitySnooze::class.java)
+    private fun onItemReschedule(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
 
-				intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
-				intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
+        var event = presenter.getEventAtPosition(position)
+        if (event != null) {
+            if (event.eventId == eventId) {
+                var intent = Intent(this, ActivitySnooze::class.java)
 
-				startActivity(intent);
-			}
-			else
-			{
-				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-				logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
-			}
-		}
-	}
+                intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
+                intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
 
-	private fun onItemDismiss(v: View, position: Int, eventId: Long)
-	{
-		logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+                logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
+            }
+        }
+    }
 
-		var event = presenter.getEventAtPosition(position)
-		if (event != null)
-		{
-			if (event.eventId == eventId)
-			{
-				logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+    private fun onItemDismiss(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
 
-				EventsManager.dismissEvent(this, event);
-				DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
+        var event = presenter.getEventAtPosition(position)
+        if (event != null) {
+            if (event.eventId == eventId) {
+                logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
-				presenter.removeAt(position)
-			}
-			else
-			{
-				Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-				logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
-			}
-		}
-	}
+                EventsManager.dismissEvent(this, event);
+                DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
 
-	companion object
-	{
-		private val logger = Logger("ActivityMain")
-	}
+                presenter.removeAt(position)
+            } else {
+                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
+                logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
+            }
+        }
+    }
+
+    companion object {
+        private val logger = Logger("ActivityMain")
+    }
 }

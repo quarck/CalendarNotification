@@ -19,55 +19,48 @@
 
 package com.github.quarck.calnotify.broadcastreceivers
 
-import android.content.*
-import android.database.Cursor
-import android.net.Uri
-import android.provider.CalendarContract
-import com.github.quarck.calnotify.calendar.CalendarUtils
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
-import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.logs.Logger
 
-class BroadcastReceiverEventReminder : BroadcastReceiver()
-{
-	override fun onReceive(context: Context?, intent: Intent?)
-	{
-		if (context == null || intent == null)
-			return;
+class BroadcastReceiverEventReminder : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (context == null || intent == null)
+            return;
 
-		var shouldAbortBroadcast = false;
+        var shouldAbortBroadcast = false;
 
-		var removeOriginal = Settings(context).removeOriginal
+        var removeOriginal = Settings(context).removeOriginal
 
-		logger.debug("Event reminder received, ${intent.data}, ${intent.action}");
+        logger.debug("Event reminder received, ${intent.data}, ${intent.action}");
 
-		var uri = intent.data;
+        var uri = intent.data;
 
-		var alertTime: String? = uri.lastPathSegment;
+        var alertTime: String? = uri.lastPathSegment;
 
-		if (alertTime != null)
-		{
-			var events = CalendarUtils.getFiredEventsDetails(context, alertTime)
+        if (alertTime != null) {
+            var events = CalendarUtils.getFiredEventsDetails(context, alertTime)
 
-			for (event in events)
-			{
-				EventsManager.onCalendarEventFired(context, event);
+            for (event in events) {
+                EventsManager.onCalendarEventFired(context, event);
 
-				if (removeOriginal)
-				{
-					CalendarUtils.dismissNativeEventReminder(context, event.eventId);
-					shouldAbortBroadcast = true;
-				}
-			}
-		}
+                if (removeOriginal) {
+                    CalendarUtils.dismissNativeEventReminder(context, event.eventId);
+                    shouldAbortBroadcast = true;
+                }
+            }
+        }
 
-		if (shouldAbortBroadcast)
-		{
-			abortBroadcast();
-		}
-	}
-	companion object
-	{
-		private val logger = Logger("BroadcastReceiverEventReminder");
-	}
+        if (shouldAbortBroadcast) {
+            abortBroadcast();
+        }
+    }
+
+    companion object {
+        private val logger = Logger("BroadcastReceiverEventReminder");
+    }
 }

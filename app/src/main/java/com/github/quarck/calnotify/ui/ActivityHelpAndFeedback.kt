@@ -19,35 +19,30 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.os.Bundle
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.logs.Logger
 
-class ActivityHelpAndFeedback : Activity()
-{
+class ActivityHelpAndFeedback : Activity() {
     private var easterEggCount = 0;
     private var firstClick = 0L;
 
 
-	override fun onCreate(savedInstanceState: Bundle?)
-    {
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_help_and_feedback)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_help_and_feedback)
 
         logger.debug("onCreate")
-	}
+    }
 
     public fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
 
     public fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
 
-    public fun OnButtonEmailDeveloper(v: View)
-    {
+    public fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
         var email = Intent(Intent.ACTION_SEND);
@@ -58,29 +53,22 @@ class ActivityHelpAndFeedback : Activity()
         startActivity(email);
     }
 
-    public fun OnButtonEasterEgg(v: View)
-    {
-        if (easterEggCount == 0)
-        {
+    public fun OnButtonEasterEgg(v: View) {
+        if (easterEggCount == 0) {
             firstClick = System.currentTimeMillis();
         }
 
-        if (++easterEggCount > 13)
-        {
-            if (System.currentTimeMillis() - firstClick < 5000L)
-            {
+        if (++easterEggCount > 13) {
+            if (System.currentTimeMillis() - firstClick < 5000L) {
                 startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
-            }
-            else
-            {
+            } else {
                 easterEggCount = 0;
                 firstClick = 0L;
             }
         }
     }
 
-    companion object
-    {
+    companion object {
         var imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
         var kotlinUri = "https://kotlinlang.org/"
 

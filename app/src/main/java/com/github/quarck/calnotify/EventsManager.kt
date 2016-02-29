@@ -85,12 +85,31 @@ class EventsManager {
             var events = db.events
 
             for (event in events) {
-                var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
-                if (newEvent == null) {
-                    logger.debug("Event ${event.eventId} disappeared, removing notification");
-                    dismissEvent(context, event.eventId, event.notificationId, true);
 
-                    DebugTransactionLog(context).log("EventsManager", "remove", "Event disappeared from calendar: ${event.title}")
+                var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
+
+                if (newEvent == null ) {
+
+                    newEvent = CalendarUtils.getEvent(context, event.eventId)
+
+                    if (newEvent != null
+                            && newEvent.startTime > event.startTime
+                            && newEvent.alertTime >= System.currentTimeMillis()) {
+                        // Here we have a confirmation that event was re-scheduled by user
+                        // to some time in the future and that's why original event instance has disappeared
+                        // - we are good to go to dismiss event reminder automatically
+                        dismissEvent(context, event.eventId, event.notificationId, true);
+                        var movedSec = (newEvent.startTime - event.startTime) / 1000L
+                        logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
+                        DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared from calendar, moved further by $movedSec seconds")
+                    } else {
+                        // Here we can't confrim that event was moved into the future.
+                        // Perhaps it was removed, but this is not what users usually do.
+                        // Leave it for user to remove the notification
+                        logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
+                        DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared but reschedule confirmation has failed, not removing")
+                    }
+
                 } else {
                     logger.debug("Event ${event.eventId} is still here");
 
@@ -100,7 +119,7 @@ class EventsManager {
                         EventsStorage(context).updateEvent(event);
                         repostNotifications = true
 
-                        DebugTransactionLog(context).log("EventsManager", "update", "event updated in db, title: ${event.title}")
+                        DebugTransactionLog(context).log("EventsManager", "update", "Event ${event.eventId} updated in db, title: ${event.title}")
                     }
                 }
             }

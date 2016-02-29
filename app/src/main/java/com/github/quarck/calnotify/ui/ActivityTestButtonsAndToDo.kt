@@ -43,6 +43,7 @@ class ActivityTestButtonsAndToDo : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_buttons_and_to_do)
 
+        find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
         find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
     }
@@ -94,16 +95,15 @@ class ActivityTestButtonsAndToDo : Activity() {
 
     private var cnt = 0;
 
-    private val selectedEventId: Long?
-        get() = find<EditText>(R.id.edittext_debug_event_id).text.toString().toLongOrNull()
+    private val filterText: String
+        get() = find<EditText>(R.id.edittext_debug_event_id).text.toString()
 
     fun OnButtonFilterClick(v: View) {
-        var id = selectedEventId
-        find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n", id);
+        find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n", filterText);
     }
 
     fun OnButtonViewClick(v: View) {
-        var id = selectedEventId
+        var id = filterText.toLongOrNull()
         if (id != null)
             CalendarUtils.viewCalendarEvent(this, id);
     }

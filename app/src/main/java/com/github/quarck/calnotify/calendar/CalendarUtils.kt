@@ -40,10 +40,11 @@ object CalendarUtils {
                     CalendarContract.CalendarAlerts.DTSTART,
                     CalendarContract.CalendarAlerts.DTEND,
                     CalendarContract.CalendarAlerts.EVENT_LOCATION,
-                    CalendarContract.CalendarAlerts.DISPLAY_COLOR
+                    CalendarContract.CalendarAlerts.DISPLAY_COLOR,
+                    CalendarContract.CalendarAlerts.ALARM_TIME
             )
 
-    private fun cursorToEventRecord(cursor: Cursor, alertTime: Long): Pair<Int, EventRecord> {
+    private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int, EventRecord> {
         var eventId = cursor.getLong(0)
         var state = cursor.getInt(1)
         var title = cursor.getString(2)
@@ -52,12 +53,13 @@ object CalendarUtils {
         var end = cursor.getLong(5)
         var location = cursor.getString(6)
         var color = cursor.getInt(7)
+        var newAlarmTime = cursor.getLong(8)
 
         var event =
                 EventRecord(
                         eventId = eventId,
                         notificationId = 0,
-                        alertTime = alertTime,
+                        alertTime = alarmTime ?: newAlarmTime,
                         title = title,
                         description = desc,
                         startTime = start,
@@ -165,6 +167,41 @@ object CalendarUtils {
 
         return ret
     }
+
+    fun getEvent(context: Context, eventId: Long): EventRecord? {
+        var ret: EventRecord? = null
+
+        var selection = CalendarContract.CalendarAlerts.EVENT_ID + "=?";
+
+        var cursor: Cursor? =
+                context.contentResolver.query(
+                        CalendarContract.CalendarAlerts.CONTENT_URI,
+                        eventFields,
+                        selection,
+                        arrayOf(eventId.toString()),
+                        null
+                );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                var (state, event) = cursorToEventRecord(cursor, null);
+
+                if (event.eventId == eventId) {
+                    ret = event;
+                    break;
+                }
+
+            } while (cursor.moveToNext())
+        } else {
+            logger.error("Event $eventId not found")
+        }
+
+        cursor?.close()
+
+        return ret
+    }
+
+
 
     fun getCalendarViewIntent(eventId: Long): Intent {
         var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);

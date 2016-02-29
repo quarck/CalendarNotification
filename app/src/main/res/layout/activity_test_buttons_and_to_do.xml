@@ -58,7 +58,7 @@
 \n15) [DONE] Load events in background\n\n
 \nDebug log entries (if any):\n\n"
                 android:id="@+id/todo"
-                android:visibility="gone"
+                android:visibility="visible"
                 />
 
             <LinearLayout

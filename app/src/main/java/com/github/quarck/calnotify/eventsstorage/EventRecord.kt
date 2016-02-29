@@ -24,7 +24,7 @@ data class EventRecord(
         val alertTime: Long,
         var notificationId: Int,
         var title: String,
-        var description: String,
+//        var description: String,
         var startTime: Long,
         var endTime: Long,
         var location: String,
@@ -41,10 +41,10 @@ data class EventRecord(
             ret = true
         }
 
-        if (description != newEvent.description) {
-            description = newEvent.description
-            ret = true
-        }
+//        if (description != newEvent.description) {
+//            description = newEvent.description
+//            ret = true
+//        }
 
         if (startTime != newEvent.startTime) {
             startTime = newEvent.startTime

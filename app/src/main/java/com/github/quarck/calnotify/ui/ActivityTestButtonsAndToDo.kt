@@ -119,7 +119,6 @@ class ActivityTestButtonsAndToDo : Activity() {
                 if (first) 101010101L else currentTime,
                 System.currentTimeMillis(),
                 if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-                "This is a test notification",
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",

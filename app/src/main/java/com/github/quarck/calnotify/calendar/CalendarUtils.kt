@@ -48,7 +48,7 @@ object CalendarUtils {
         var eventId = cursor.getLong(0)
         var state = cursor.getInt(1)
         var title = cursor.getString(2)
-        var desc = cursor.getString(3)
+        //var desc = cursor.getString(3)
         var start = cursor.getLong(4)
         var end = cursor.getLong(5)
         var location = cursor.getString(6)
@@ -61,7 +61,7 @@ object CalendarUtils {
                         notificationId = 0,
                         alertTime = alarmTime ?: newAlarmTime,
                         title = title,
-                        description = desc,
+                        //description = "", // Never used but causing issues on some devices
                         startTime = start,
                         endTime = end,
                         location = location,

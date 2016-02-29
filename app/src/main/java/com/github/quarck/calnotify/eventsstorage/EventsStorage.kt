@@ -36,7 +36,7 @@ public class EventsStorage(context: Context)
             eventId: Long,
             alertTime: Long,
             title: String,
-            description: String,
+//            description: String,
             startTime: Long, endTime: Long,
             location: String,
             lastEventUpdate: Long,
@@ -49,7 +49,7 @@ public class EventsStorage(context: Context)
                         notificationId = 0,
                         alertTime = alertTime,
                         title = title,
-                        description = description,
+//                        description = description,
                         startTime = startTime,
                         endTime = endTime,
                         location = location,
@@ -275,7 +275,7 @@ public class EventsStorage(context: Context)
 
         values.put(KEY_NOTIFICATIONID, event.notificationId);
         values.put(KEY_TITLE, event.title);
-        values.put(KEY_DESC, event.description);
+        values.put(KEY_DESC, ""); // we have no description anymore
         values.put(KEY_START, event.startTime);
         values.put(KEY_END, event.endTime);
         values.put(KEY_LOCATION, event.location);
@@ -294,7 +294,7 @@ public class EventsStorage(context: Context)
                 eventId = cursor.getLong(0),
                 notificationId = cursor.getInt(1),
                 title = cursor.getString(2),
-                description = cursor.getString(3),
+//                description = cursor.getString(3),
                 startTime = cursor.getLong(4),
                 endTime = cursor.getLong(5),
                 location = cursor.getString(6),

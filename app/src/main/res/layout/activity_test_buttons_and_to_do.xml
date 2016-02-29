@@ -58,7 +58,51 @@
 \n15) [DONE] Load events in background\n\n
 \nDebug log entries (if any):\n\n"
                 android:id="@+id/todo"
+                android:visibility="gone"
                 />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EventID:"/>
+
+                <EditText
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:id="@+id/edittext_debug_event_id"
+                    android:layout_weight="2"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FILTER"
+                    android:id="@+id/test_btn_filter"
+                    android:onClick="OnButtonFilterClick"
+                    android:padding="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIEW"
+                    android:id="@+id/test_btn_view"
+                    android:onClick="OnButtonViewClick"
+                    android:padding="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="visible"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
+
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -142,6 +186,5 @@
         </LinearLayout>
 
     </ScrollView>
-
 
 </RelativeLayout>

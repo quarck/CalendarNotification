@@ -92,14 +92,16 @@ class DebugTransactionLog(context: Context)
     }
 
 
-    fun getMessages(entrySeparator: String = "\t", lineSeparator: String = "\r\n"): String {
+    fun getMessages(entrySeparator: String = "\t", lineSeparator: String = "\r\n", eventId: Long? = null): String {
         var sb = StringBuffer();
 
         var timeFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
 
         val ret = LinkedList<EventRecord>()
 
-        val query = "SELECT * FROM " + TABLE_NAME
+        var query = "SELECT * FROM $TABLE_NAME"
+        if (eventId != null)
+            query = query + " WHERE msg like \"%${eventId}%\"" // Yes, this is ugly actually, but there is no dedicated eventId field
 
         val db = this.readableDatabase
         val cursor = db.rawQuery(query, null)

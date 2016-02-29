@@ -23,14 +23,17 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 class ActivityTestButtonsAndToDo : Activity() {
@@ -90,6 +93,20 @@ class ActivityTestButtonsAndToDo : Activity() {
     }
 
     private var cnt = 0;
+
+    private val selectedEventId: Long?
+        get() = find<EditText>(R.id.edittext_debug_event_id).text.toString().toLongOrNull()
+
+    fun OnButtonFilterClick(v: View) {
+        var id = selectedEventId
+        find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n", id);
+    }
+
+    fun OnButtonViewClick(v: View) {
+        var id = selectedEventId
+        if (id != null)
+            CalendarUtils.viewCalendarEvent(this, id);
+    }
 
     fun OnButtonTestClick(v: View) {
         var db = EventsStorage(this)

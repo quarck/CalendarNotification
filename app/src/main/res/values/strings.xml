@@ -6,7 +6,7 @@
     <string name="main_activity_title">Calendar Notifications</string>
 
     <string name="settings">Settings</string>
-    <string name="application_has_no_access">This application needs special permissions to be able to access calendar notifications. Open Settings app to grant such access?</string>
+    <string name="application_has_no_access">This application needs special permissions to be able to access calendar notifications\n\nPlease grant READ_CALENDAR and WRITE_CALENDAR permissions\n\nWRITE_CALENDAR is required to hide original calendar notification</string>
 
     <string name="open_settings">Open Settings</string>
     <string name="cancel">Cancel</string>
@@ -120,5 +120,7 @@
     <string name="hour">hour</string>
     <string name="minutes">minutes</string>
     <string name="minute">minute</string>
+    <string name="no_events_to_display">No events to display</string>
+    <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
 
 </resources>

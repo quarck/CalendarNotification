@@ -49,46 +49,49 @@ interface IEventNotificationManager {
 }
 
 class EventNotificationManager : IEventNotificationManager {
+
     override fun onEventAdded(
             ctx: Context,
             event: EventRecord
     ) {
-        //		postNotification(ctx, event, Settings(ctx).notificationSettingsSnapshot);
         postEventNotifications(ctx, false);
     }
 
     override fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int) {
+        //
         removeNotification(ctx, eventId, notificationId);
-
         postEventNotifications(ctx, false);
     }
 
     override fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int) {
+        //
         removeNotification(ctx, eventId, notificationId);
-
         postEventNotifications(ctx, false);
     }
 
     override fun postEventNotifications(context: Context, force: Boolean) {
+        //
         var db = EventsStorage(context)
         var settings = Settings(context)
 
         var currentTime = System.currentTimeMillis()
 
+        // events with snoozedUntil == 0 are currently visible ones
+        // events with experied snoozedUntil are the ones to beep about
+        // everything else should be hidden and waiting for the next alarm
+
         var eventsToUpdate =
                 db.events.filter {
-                    // events with snoozedUntil == 0 are currently visible ones
-                    // events with experied snoozedUntil are the ones to beep about
-                    // everything else should be hidden and waiting for the next alarm
                     (it.snoozedUntil == 0L)
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                 }
 
         if (eventsToUpdate.size <= Consts.MAX_NOTIFICATIONS) {
+            //
             hideNumNotificationsCollapsed(context);
-
             postRegularEvents(context, db, settings, eventsToUpdate, force)
         } else {
+            //
             var sortedEvents = eventsToUpdate.sortedBy { it.lastEventUpdate }
 
             var recent = sortedEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
@@ -125,47 +128,38 @@ class EventNotificationManager : IEventNotificationManager {
     ) {
         logger.debug("Posting ${events.size} notifications");
 
+        var notificationsSettings = settings.notificationSettingsSnapshot
+        var notificationsSettingsQuiet = notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
+
         for (event in events) {
             if (event.snoozedUntil == 0L) {
+                // This should be currently displayed, if snoozedUntil is zero
                 if (!event.isDisplayed || force) {
+                    // currently not displayed or forced -- post notifications
                     logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
-                    if (!force) {
-                        postNotification(
-                                context,
-                                event,
-                                settings.notificationSettingsSnapshot
+                    // Unless forced - play sound
+                    postNotification(
+                            context,
+                            event,
+                            if (!force) notificationsSettings else notificationsSettingsQuiet
                         )
-                    } else {
-                        postNotification(
-                                context,
-                                event,
-                                NotificationSettingsSnapshot(
-                                        settings.showDismissButton,
-                                        null,
-                                        false,
-                                        settings.ledNotificationOn,
-                                        false
-                                )
-                        )
-                    }
 
+                    // Update db to indicate that this event is currently actively displayed
                     event.isDisplayed = true;
                     db.updateEvent(event);
+
                 } else {
                     logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
                 }
             } else {
-                logger.debug("Initial(??) posting notification id ${event.notificationId}, eventId ${event.eventId}");
+                // This event is currently snoozed and switching to "Shown" state
 
-                // it is time to show this event after a snooze or whatever,
-                // turn on all the bells and whistles
-                postNotification(
-                        context,
-                        event,
-                        settings.notificationSettingsSnapshot
-                )
+                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}");
 
+                postNotification(context, event, notificationsSettings)
+
+                // Update Db to indicate that event is currently displayed and no longer snoozed
                 event.isDisplayed = true;
                 event.snoozedUntil = 0; // Since it is displayed now -- it is no longer snoozed
                 db.updateEvent(event);
@@ -262,6 +256,7 @@ class EventNotificationManager : IEventNotificationManager {
     }
 
     private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
+
         var intent = Intent(ctx, ActivitySnooze::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
@@ -269,6 +264,7 @@ class EventNotificationManager : IEventNotificationManager {
     }
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
+
         var intent = Intent(ctx, ServiceNotificationActionDismiss::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);

@@ -80,16 +80,6 @@ class Settings(ctx: Context) {
             return ret;
         }
 
-    /*fun getSnoozePreset(idx: Int): Long
-    {
-        // Currently hard-coded to use consts instead of dynamic params
-
-        if (idx >= 0 && idx < Consts.SNOOZE_PRESETS.size)
-            return Consts.SNOOZE_PRESETS[idx];
-
-        return Consts.SNOOZE_PRESETS[0];
-    } */
-
     val ringtoneURI: Uri?
         get() {
             var notification: Uri? = null
@@ -133,25 +123,24 @@ class Settings(ctx: Context) {
             var ret: LongArray? = null;
 
             try {
-                ret =
-                        value
-                                .split(",")
-                                .map { it.trim() }
-                                .filter { !it.isEmpty() }
-                                .map {
-                                    str ->
-                                    var unit = str.takeLast(1)
-                                    var num = str.dropLast(1).toLong()
-                                    var seconds =
-                                            when (unit) {
-                                                "m" -> num * Consts.MINUTE_IN_SECONDS;
-                                                "h" -> num * Consts.HOUR_IN_SECONDS;
-                                                "d" -> num * Consts.DAY_IN_SECONDS;
-                                                else -> throw Exception("Unknown unit ${unit}")
-                                            }
-                                    seconds * 1000L
-                                }
-                                .toLongArray()
+                ret = value
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { !it.isEmpty() }
+                        .map {
+                            str ->
+                            var unit = str.takeLast(1)
+                            var num = str.dropLast(1).toLong()
+                            var seconds =
+                                    when (unit) {
+                                        "m" -> num * Consts.MINUTE_IN_SECONDS;
+                                        "h" -> num * Consts.HOUR_IN_SECONDS;
+                                        "d" -> num * Consts.DAY_IN_SECONDS;
+                                        else -> throw Exception("Unknown unit ${unit}")
+                                    }
+                            seconds * 1000L
+                        }
+                        .toLongArray()
             } catch (ex: Exception) {
                 ret = null;
             }

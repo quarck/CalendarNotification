@@ -28,6 +28,7 @@ import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.permissions.PermissionsManager
 
 object CalendarUtils {
     private val logger = Logger("CalendarUtils");
@@ -75,7 +76,11 @@ object CalendarUtils {
         return Pair(state, event)
     }
 
-    fun getFiredEventsDetails(context: Context, alertTime: String): List<EventRecord> {
+    fun getFiredEventsDetails(context: Context, alertTime: String): List<EventRecord>? {
+
+        if (!PermissionsManager.hasReadCalendar(context))
+            return null;
+
         var ret = arrayListOf<EventRecord>()
 
         var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
@@ -116,6 +121,10 @@ object CalendarUtils {
     }
 
     fun dismissNativeEventReminder(context: Context, eventId: Long) {
+
+        if (!PermissionsManager.hasWriteCalendar(context))
+            return;
+
         try {
             var uri = CalendarContract.CalendarAlerts.CONTENT_URI;
 
@@ -142,6 +151,10 @@ object CalendarUtils {
     }
 
     fun getEvent(context: Context, eventId: Long, alertTime: Long): EventRecord? {
+
+        if (!PermissionsManager.hasReadCalendar(context))
+            return null;
+
         var ret: EventRecord? = null
 
         var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
@@ -175,6 +188,10 @@ object CalendarUtils {
     }
 
     fun getEvent(context: Context, eventId: Long): EventRecord? {
+
+        if (!PermissionsManager.hasReadCalendar(context))
+            return null;
+
         var ret: EventRecord? = null
 
         var selection = CalendarContract.CalendarAlerts.EVENT_ID + "=?";
@@ -208,7 +225,8 @@ object CalendarUtils {
     }
 
 
-
+    //
+    //
     fun getCalendarViewIntent(eventId: Long): Intent {
         var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
         return Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);

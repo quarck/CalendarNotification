@@ -45,14 +45,15 @@ class BroadcastReceiverEventReminder : BroadcastReceiver() {
         if (alertTime != null) {
             var events = CalendarUtils.getFiredEventsDetails(context, alertTime)
 
-            for (event in events) {
-                EventsManager.onCalendarEventFired(context, event);
+            if (events != null)
+                for (event in events) {
+                    EventsManager.onCalendarEventFired(context, event);
 
-                if (removeOriginal) {
-                    CalendarUtils.dismissNativeEventReminder(context, event.eventId);
-                    shouldAbortBroadcast = true;
+                    if (removeOriginal) {
+                        CalendarUtils.dismissNativeEventReminder(context, event.eventId);
+                        shouldAbortBroadcast = true;
+                    }
                 }
-            }
         }
 
         if (shouldAbortBroadcast) {

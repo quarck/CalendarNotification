@@ -20,7 +20,9 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -29,6 +31,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
@@ -37,6 +40,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
+import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
@@ -70,7 +74,7 @@ class ActivityMain : Activity() {
         presenter = EventsPresenter(adapter)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL)
-        recyclerView = find<RecyclerView>(R.id.listEvents)
+        recyclerView = find<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
 
@@ -94,8 +98,7 @@ class ActivityMain : Activity() {
         super.onResume()
 
         svcClient.bindService(this)
-        svcClient.updateActivity =
-                {
+        svcClient.updateActivity = {
                     isCausedByUser ->
 
                     if (isCausedByUser) {
@@ -106,6 +109,47 @@ class ActivityMain : Activity() {
                 }
 
         reloadData()
+
+        var hasPermissions = PermissionsManager.hasAllPermissions(this)
+
+        find<TextView>(R.id.no_permissions_view).visibility =
+                if (hasPermissions) View.GONE else View.VISIBLE;
+
+        if (!hasPermissions) {
+
+            if (PermissionsManager.shouldShowRationale(this)) {
+
+                AlertDialog.Builder(this)
+                        .setMessage(R.string.application_has_no_access)
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.ok) {
+                                x, y ->
+                                PermissionsManager.requestPermissions(this)
+                            }
+                        .setNegativeButton(R.string.cancel) {
+                                x, y ->
+                            }
+                        .create()
+                        .show()
+            } else {
+                PermissionsManager.requestPermissions(this)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        if (grantResults == null)
+            return;
+
+        var granted = true
+
+        for (result in grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED)
+                granted = false
+        }
+
+        find<TextView>(R.id.no_permissions_view).visibility =
+                if (granted) View.GONE else View.VISIBLE;
     }
 
     public override fun onPause() {
@@ -139,6 +183,8 @@ class ActivityMain : Activity() {
 
             runOnUiThread {
                 presenter.setEventsToDisplay(events);
+                find<TextView>(R.id.empty_view).visibility =
+                    if (events.size > 0) View.GONE else View.VISIBLE;
             }
         }
     }

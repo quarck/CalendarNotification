@@ -25,6 +25,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
 
@@ -44,30 +45,31 @@ object CalendarUtils {
                     CalendarContract.CalendarAlerts.ALARM_TIME
             )
 
-    private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int, EventRecord> {
-        var eventId = cursor.getLong(0)
-        var state = cursor.getInt(1)
-        var title = cursor.getString(2)
-        //var desc = cursor.getString(3)
-        var start = cursor.getLong(4)
-        var end = cursor.getLong(5)
-        var location = cursor.getString(6)
-        var color = cursor.getInt(7)
-        var newAlarmTime = cursor.getLong(8)
+    private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
+        var eventId: Long? = cursor.getLong(0)
+        var state: Int? = cursor.getInt(1)
+        var title: String? = cursor.getString(2)
+        var start: Long? = cursor.getLong(4)
+        var end: Long? = cursor.getLong(5)
+        var location: String? = cursor.getString(6)
+        var color: Int? = cursor.getInt(7)
+        var newAlarmTime: Long? = cursor.getLong(8)
+
+        if (eventId == null || state == null || title == null || start == null)
+            return Pair(null, null);
 
         var event =
                 EventRecord(
                         eventId = eventId,
                         notificationId = 0,
-                        alertTime = alarmTime ?: newAlarmTime,
+                        alertTime = alarmTime ?: newAlarmTime ?: 0,
                         title = title,
-                        //description = "", // Never used but causing issues on some devices
                         startTime = start,
-                        endTime = end,
-                        location = location,
+                        endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                        location = location ?: "",
                         lastEventUpdate = System.currentTimeMillis(),
                         isDisplayed = false,
-                        color = color
+                        color = color ?: Consts.DEFAULT_COLOR
                 );
 
         return Pair(state, event)
@@ -91,12 +93,16 @@ object CalendarUtils {
             do {
                 var (state, event) = cursorToEventRecord(cursor, alertTime.toLong());
 
-                logger.info("Received event details: ${event.eventId}, st ${state}, from ${event.startTime} to ${event.endTime}")
+                if (state != null && event != null) {
+                    logger.info("Received event details: ${event.eventId}, st ${state}, from ${event.startTime} to ${event.endTime}")
 
-                if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
-                    ret.add(event)
+                    if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
+                        ret.add(event)
+                    } else {
+                        logger.info("Ignored dismissed event ${event.eventId}")
+                    }
                 } else {
-                    logger.info("Ignored dismissed event ${event.eventId}")
+                    logger.error("Cannot read fired event details!!")
                 }
 
             } while (cursor.moveToNext())
@@ -153,7 +159,7 @@ object CalendarUtils {
             do {
                 var (state, event) = cursorToEventRecord(cursor, alertTime);
 
-                if (event.eventId == eventId) {
+                if (event != null && event.eventId == eventId) {
                     ret = event;
                     break;
                 }
@@ -186,7 +192,7 @@ object CalendarUtils {
             do {
                 var (state, event) = cursorToEventRecord(cursor, null);
 
-                if (event.eventId == eventId) {
+                if (event != null && event.eventId == eventId) {
                     ret = event;
                     break;
                 }

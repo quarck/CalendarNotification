@@ -41,7 +41,7 @@ object Consts {
     const val LED_DURATION_OFF = 2000;
     const val LED_COLOR = 0x7f0000ff;
 
-    const val ALARM_THRESHOULD = 3 * 1000L;
+    const val ALARM_THRESHOULD = 15 * 1000L;
 
     val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000);
 

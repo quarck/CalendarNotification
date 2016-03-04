@@ -86,9 +86,9 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="yesterday">Yesterday</string>
     <string name="change_event_time">Change event time</string>
-    <string name="one_hour_from_now">+1 hour</string>
-    <string name="same_time_tomorrow">+1 day</string>
-    <string name="next_week_same_day">+1 week</string>
+    <string name="one_hour_from_now">Move next hour</string>
+    <string name="same_time_tomorrow">Move next day</string>
+    <string name="next_week_same_day">Move next week</string>
     <string name="custom_pick_a_date">Custom (pick a date)</string>
     <string name="title_activity_activity_test_buttons_and_to_do">ActivityTestButtonsAndToDo</string>
 

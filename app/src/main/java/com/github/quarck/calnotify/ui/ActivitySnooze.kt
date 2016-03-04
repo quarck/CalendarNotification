@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
+import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -116,6 +117,10 @@ class ActivitySnooze : Activity() {
             if (color == 0)
                 color = resources.getColor(R.color.primary)
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
+
+            var isRepeating = CalendarUtils.isRepeatingEvent(this, event)
+            if (isRepeating != null && !isRepeating)
+                find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
         }
     }
 
@@ -191,13 +196,22 @@ class ActivitySnooze : Activity() {
     fun reschedule(addTime: Long) {
         var event = storage.getEvent(eventId)
         if (event != null) {
-            var newId = CalendarUtils.rescheduleEvent(this, event, addTime)
-            if (newId != -1L) {
+
+            logger.info("Moving event ${event.eventId} by ${addTime/1000L} seconds");
+
+            var moved = CalendarUtils.moveEvent(this, event, addTime)
+            if (moved) {
+                DebugTransactionLog(this).log("snooze", "move", "Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
                 EventsManager.dismissEvent(this, eventId, notificationId)
 
                 // Show
-                CalendarUtils.viewCalendarEvent(this, newId)
+                CalendarUtils.viewCalendarEvent(this, event.eventId)
+
+                // terminate ourselfs
+                finish();
+            } else {
+                DebugTransactionLog(this).log("snooze", "move", "Failed to move event ${event.eventId} by ${addTime/1000L} seconds")
             }
         }
     }

@@ -334,7 +334,8 @@
                 android:background="#FFffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top"
-                android:visibility="visible">
+                android:id="@+id/snooze_reschedule_layout"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"

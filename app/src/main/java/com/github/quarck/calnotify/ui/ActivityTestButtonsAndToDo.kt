@@ -104,8 +104,12 @@ class ActivityTestButtonsAndToDo : Activity() {
 
     fun OnButtonViewClick(v: View) {
         var id = filterText.toLongOrNull()
-        if (id != null)
+        if (id != null) {
+
+            var ev = CalendarUtils.getEvent(this, id);
+
             CalendarUtils.viewCalendarEvent(this, id);
+        }
     }
 
     fun OnButtonTestClick(v: View) {

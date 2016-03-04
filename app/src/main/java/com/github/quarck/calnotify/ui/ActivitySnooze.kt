@@ -205,10 +205,12 @@ class ActivitySnooze : Activity() {
                 // Dismiss
                 EventsManager.dismissEvent(this, eventId, notificationId)
 
-                // Show
-                CalendarUtils.viewCalendarEvent(this, event.eventId)
+                if (Settings(this).viewAfterEdit) {
+                    // Show
+                    CalendarUtils.viewCalendarEvent(this, event.eventId)
+                }
 
-                // terminate ourselfs
+                // terminate ourselves
                 finish();
             } else {
                 DebugTransactionLog(this).log("snooze", "move", "Failed to move event ${event.eventId} by ${addTime/1000L} seconds")

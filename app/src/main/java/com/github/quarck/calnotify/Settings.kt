@@ -66,6 +66,10 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
         set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
+    var viewAfterEdit: Boolean
+        get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
+        set(value) = prefs.setBoolean(VIEW_AFTER_EDIT_KEY, value)
+
     var debugTransactionLogEnabled: Boolean
         get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
         set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
@@ -116,6 +120,7 @@ class Settings(ctx: Context) {
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val DEBUG_LOG_KEY = "debugLog"
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
+        private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
 
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
 

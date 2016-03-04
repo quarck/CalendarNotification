@@ -104,7 +104,7 @@
     <string name="kotlin_language">Kotlin Language</string>
     <string name="app_created_with">App created with</string>
     <string name="notification_settings">Notification Settings</string>
-    <string name="snooze_presets">Snooze presets</string>
+    <string name="snooze_presets">Snooze settings</string>
     <string name="smartwatch_support">Smartwatch support</string>
     <string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
 
@@ -122,5 +122,7 @@
     <string name="minute">minute</string>
     <string name="no_events_to_display">No events to display</string>
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
+    <string name="view_after_edit">View after edit</string>
+    <string name="view_after_edit_summary">Enable to automatically view event in the calendar after changing event time using Snooze activity</string>
 
 </resources>

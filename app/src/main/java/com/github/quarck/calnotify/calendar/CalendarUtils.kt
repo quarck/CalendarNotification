@@ -203,7 +203,7 @@ object CalendarUtils {
 
         var ret: EventRecord? = null
 
-        var selection = CalendarContract.CalendarAlerts.EVENT_ID + "=?";
+        var selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
 
         var cursor: Cursor? =
                 context.contentResolver.query(

@@ -29,6 +29,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import java.util.*
 
 object CalendarUtils {
     private val logger = Logger("CalendarUtils");
@@ -41,8 +42,8 @@ object CalendarUtils {
                     CalendarContract.CalendarAlerts.DESCRIPTION,
                     CalendarContract.CalendarAlerts.DTSTART,
                     CalendarContract.CalendarAlerts.DTEND,
-                    CalendarContract.CalendarAlerts.EVENT_LOCATION,
-                    CalendarContract.CalendarAlerts.DISPLAY_COLOR,
+                    CalendarContract.Events.EVENT_LOCATION,
+                    CalendarContract.Events.DISPLAY_COLOR,
                     CalendarContract.CalendarAlerts.ALARM_TIME
             )
 
@@ -224,6 +225,104 @@ object CalendarUtils {
         return ret
     }
 
+    //
+    // Reschedule works by creating a new event with exactly the same contents but for the new date / time
+    // Original notification is dismissed after that
+    //
+    // Returns event ID of the new event, or -1 on error
+    //
+    fun rescheduleEvent(context: Context, event: EventRecord, addTime: Long): Long
+    {
+        var ret = -1L;
+
+        if (!PermissionsManager.hasReadCalendar(context)
+                || !PermissionsManager.hasWriteCalendar(context))
+            return -1;
+
+        if (event.alertTime == 0L)
+            return -1;
+
+        var fields = arrayOf(
+                CalendarContract.CalendarAlerts.EVENT_ID,
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.CALENDAR_ID,
+                CalendarContract.Events.EVENT_TIMEZONE,
+                CalendarContract.Events.DESCRIPTION,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND,
+                CalendarContract.Events.EVENT_LOCATION,
+                CalendarContract.Events.DISPLAY_COLOR,
+                CalendarContract.CalendarAlerts.ALARM_TIME,
+                CalendarContract.CalendarAlerts.MINUTES,
+                CalendarContract.Events.ACCESS_LEVEL,
+                CalendarContract.Events.AVAILABILITY,
+                CalendarContract.Events.HAS_ALARM
+        )
+
+        //
+        // First - retrieve full set of events we are looking for
+        //
+        var values: ContentValues? = null // values for the new event
+
+        var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+
+        var cursor: Cursor? =
+                context.contentResolver.query(
+                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
+                        fields,
+                        selection,
+                        arrayOf(event.alertTime.toString()),
+                        null
+                );
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    var eventId = cursor.getLong(0)
+                    if (eventId != event.eventId)
+                        continue;
+
+                    values = ContentValues()
+                    values.put(CalendarContract.Events.TITLE, cursor.getString(1));
+                    values.put(CalendarContract.Events.CALENDAR_ID, cursor.getLong(2));
+                    values.put(CalendarContract.Events.EVENT_TIMEZONE, cursor.getString(3));
+                    values.put(CalendarContract.Events.DESCRIPTION, cursor.getString(4) ?: "");
+
+                    values.put(CalendarContract.Events.DTSTART, cursor.getLong(5) + addTime);
+                    values.put(CalendarContract.Events.DTEND, cursor.getLong(6) + addTime);
+
+                    values.put(CalendarContract.Events.EVENT_LOCATION, cursor.getString(7) ?: "");
+                    values.put(CalendarContract.Events.DISPLAY_COLOR, cursor.getInt(8));
+
+                    // skip ALARM_TIME - getLong(9)
+
+                    values.put(CalendarContract.CalendarAlerts.MINUTES, cursor.getInt(10));
+                    values.put(CalendarContract.Events.ACCESS_LEVEL, cursor.getInt(10));
+                    values.put(CalendarContract.Events.AVAILABILITY, cursor.getInt(11));
+                    values.put(CalendarContract.Events.HAS_ALARM, cursor.getInt(12));
+
+                    break;
+
+                } while (cursor.moveToNext())
+            }
+
+
+        } catch (ex: Exception) {
+
+        } finally {
+            cursor?.close()
+        }
+
+        if (values != null)
+            try {
+                var uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+                // get the event ID that is the last element in the Uri
+                ret = uri.getLastPathSegment().toLong()
+            } catch (ex: Exception) {
+            }
+
+        return ret;
+    }
 
     //
     //

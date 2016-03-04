@@ -188,7 +188,32 @@ class ActivitySnooze : Activity() {
         }
     }
 
+    fun reschedule(addTime: Long) {
+        var event = storage.getEvent(eventId)
+        if (event != null) {
+            var newId = CalendarUtils.rescheduleEvent(this, event, addTime)
+            if (newId != -1L) {
+                // Dismiss
+                EventsManager.dismissEvent(this, eventId, notificationId)
+
+                // Show
+                CalendarUtils.viewCalendarEvent(this, newId)
+            }
+        }
+    }
+
     fun OnButtonRescheduleClick(v: View?) {
+        if (v == null)
+            return
+
+        when (v.id) {
+            R.id.snooze_view_reschedule_present1 ->
+                reschedule( Consts.HOUR_IN_SECONDS * 1000L)
+            R.id.snooze_view_reschedule_present2 ->
+                reschedule( Consts.DAY_IN_SECONDS * 1000L)
+            R.id.snooze_view_reschedule_present3 ->
+                reschedule( Consts.DAY_IN_SECONDS * 7L * 1000L)
+        }
     }
 
     fun OnButtonRescheduleCustomClick(v: View?) {

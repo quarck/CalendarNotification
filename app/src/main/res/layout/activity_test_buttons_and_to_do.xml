@@ -55,10 +55,19 @@
 \n12) [DONE] Clickable location on the snooze screen
 \n13) [KIND OF DONE] Clickable \'Today\' and event time -- bring event edit activity
 \n14) [DONE] Limit max height of the card
-\n15) [DONE] Load events in background\n\n
-\nDebug log entries (if any):\n\n"
+\n15) [DONE] Load events in background\n\n"
                 android:id="@+id/todo"
                 android:visibility="gone"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="16dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Debug log entries (if any):"
+                android:id="@+id/log_ent_title"
                 />
 
             <LinearLayout

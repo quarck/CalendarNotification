@@ -264,6 +264,9 @@ class ActivityMain : Activity() {
                 DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
 
                 presenter.removeAt(position)
+
+                find<TextView>(R.id.empty_view).visibility =
+                        if (presenter.size > 0) View.GONE else View.VISIBLE;
             } else {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
                 logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");

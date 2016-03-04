@@ -334,7 +334,7 @@
                 android:background="#FFffffff"
                 android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_action_padding_top"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -439,6 +439,7 @@
                     android:clickable="true"
                     android:onClick="OnButtonRescheduleCustomClick"
                     android:background="?android:attr/selectableItemBackground"
+                    android:visibility="gone"
                     />
 
             </RelativeLayout>

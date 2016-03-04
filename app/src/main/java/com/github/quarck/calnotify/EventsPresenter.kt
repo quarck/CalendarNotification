@@ -8,6 +8,9 @@ import com.github.quarck.calnotify.ui.EventListAdapter
 class EventsPresenter(var adapter: EventListAdapter) {
     private var events = arrayOf<EventRecord>()
 
+    val size: Int
+        get() = events.size
+
     fun setEventsToDisplay(newEvents: Array<EventRecord>) {
         logger.debug("setEventsToDisplay called for ${newEvents.size} events")
 

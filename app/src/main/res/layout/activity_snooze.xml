@@ -383,6 +383,7 @@
                     android:clickable="true"
                     android:onClick="OnButtonRescheduleClick"
                     android:background="?android:attr/selectableItemBackground"
+                    android:visibility="gone"
                     />
 
                 <TextView

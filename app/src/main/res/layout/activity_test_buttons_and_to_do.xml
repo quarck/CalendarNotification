@@ -188,6 +188,16 @@
 
             </LinearLayout>
 
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/remove_original_event"
+                android:onClick="OnRemoveOriginalEventToggle"
+                android:textOn="Removing original event"
+                android:textOff="Not removing original event"
+                android:background="?android:attr/selectableItemBackground"
+                />
+
 
         </LinearLayout>
 

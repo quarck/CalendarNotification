@@ -25,6 +25,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 
 class BroadcastReceiverEventReminder : BroadcastReceiver() {
@@ -40,24 +41,36 @@ class BroadcastReceiverEventReminder : BroadcastReceiver() {
 
         var uri = intent.data;
 
+        var dbgLog = DebugTransactionLog(context)
+
         var alertTime: String? = uri.lastPathSegment;
 
         if (alertTime != null) {
             var events = CalendarUtils.getFiredEventsDetails(context, alertTime)
 
-            if (events != null)
+            if (events != null) {
                 for (event in events) {
+                    dbgLog.log("broadcastreceiver", "new", "Seen event ${event.eventId} / ${event.title}")
+
                     EventsManager.onCalendarEventFired(context, event);
 
                     if (removeOriginal) {
+                        dbgLog.log("broadcastreceiver", "new", "Dismissing original reminder")
+
                         CalendarUtils.dismissNativeEventReminder(context, event.eventId);
                         shouldAbortBroadcast = true;
                     }
                 }
+            } else {
+                dbgLog.log("broadcastreceiver", "ERROR", "Fired but no events")
+            }
+        } else {
+            dbgLog.log("broadcastreceiver", "ERROR", "alertTime is null!!")
         }
 
-        if (shouldAbortBroadcast) {
-            abortBroadcast();
+        if (shouldAbortBroadcast && Settings(context).abortBroadcast) {
+            dbgLog.log("broadcastreceiver", "new", "Aborting broadcast")
+        //    abortBroadcast();
         }
     }
 

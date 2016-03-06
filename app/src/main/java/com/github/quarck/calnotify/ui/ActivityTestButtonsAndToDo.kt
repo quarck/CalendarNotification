@@ -46,6 +46,7 @@ class ActivityTestButtonsAndToDo : Activity() {
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
         find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
+        find<ToggleButton>(R.id.remove_original_event).isChecked = settings.removeOriginal
     }
 
 
@@ -54,6 +55,12 @@ class ActivityTestButtonsAndToDo : Activity() {
             settings.debugTransactionLogEnabled = v.isChecked;
             if (!v.isChecked)
                 DebugTransactionLog(this).dropAll();
+        }
+    }
+
+    fun OnRemoveOriginalEventToggle(v: View) {
+        if (v is ToggleButton) {
+            settings.removeOriginal = v.isChecked
         }
     }
 

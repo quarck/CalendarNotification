@@ -74,6 +74,10 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
         set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
 
+    var abortBroadcast: Boolean
+        get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
+        set(value) = prefs.setBoolean(ABORT_BROADCAST_KEY, value)
+
     val snoozePresets: LongArray
         get() {
             var ret = parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
@@ -121,6 +125,7 @@ class Settings(ctx: Context) {
         private const val DEBUG_LOG_KEY = "debugLog"
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
+        private const val ABORT_BROADCAST_KEY = "abort_broadcast"
 
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
 

@@ -124,5 +124,6 @@
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
     <string name="view_after_edit">View after edit</string>
     <string name="view_after_edit_summary">Enable to automatically view event in the calendar after changing event time using Snooze activity</string>
+    <string name="misc_settings">Misc settings</string>
 
 </resources>

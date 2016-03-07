@@ -63,8 +63,8 @@
 
         <CheckBoxPreference
             android:key="abort_broadcast"
-            android:title="Abort broadcast"
-            android:summary="Select this if you are seeing notifications from calendar along with notifications from this app"
+            android:title="@string/abort_broadcast"
+            android:summary="@string/abort_broadcast_summary"
             android:defaultValue="false"/>
 
     </PreferenceCategory>

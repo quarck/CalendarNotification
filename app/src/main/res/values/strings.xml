@@ -125,5 +125,7 @@
     <string name="view_after_edit">View after edit</string>
     <string name="view_after_edit_summary">Enable to automatically view event in the calendar after changing event time using Snooze activity</string>
     <string name="misc_settings">Misc settings</string>
+    <string name="abort_broadcast">Abort broadcast</string>
+    <string name="abort_broadcast_summary">Select this if you are seeing notifications from calendar along with notifications from this app</string>
 
 </resources>

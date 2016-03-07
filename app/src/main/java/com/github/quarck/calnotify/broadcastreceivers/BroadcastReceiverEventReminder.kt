@@ -70,7 +70,7 @@ class BroadcastReceiverEventReminder : BroadcastReceiver() {
 
         if (shouldAbortBroadcast && Settings(context).abortBroadcast) {
             dbgLog.log("broadcastreceiver", "new", "Aborting broadcast")
-        //    abortBroadcast();
+            abortBroadcast();
         }
     }
 

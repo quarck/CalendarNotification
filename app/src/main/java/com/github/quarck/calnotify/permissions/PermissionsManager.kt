@@ -13,7 +13,7 @@ object PermissionsManager
             ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED;
 
     private fun Activity.shouldShowRationale(perm: String) =
-            ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED;
+            ActivityCompat.shouldShowRequestPermissionRationale(this, perm)
 
     fun hasWriteCalendar(context: Context) = context.hasPermission(Manifest.permission.WRITE_CALENDAR)
 

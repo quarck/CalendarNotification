@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Calendar Notifications Plus</string>
+
+    <string name="main_activity_title">Calendar Notifications</string>
+
+    <string name="settings">Configurações</string>
+    <string name="application_has_no_access">Esta aplicação precisa de permissões especiais para poder acessar as notificações do calendário\n\nPor favor, garanta as permissões READ_CALENDAR e WRITE_CALENDAR\n\nWRITE_CALENDAR é requerida para esconder as notificações originais do calendário</string>
+
+    <string name="open_settings">Abrir Configurações</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- string name="app_updated">App Updated</string -->
+    <string name="on">Ativado</string>
+    <string name="off">Desativado</string>
+
+    <string name="empty" translatable="false"></string>
+    <string name="middle_text_description">Ative a aplicação para tornar as notificações de eventos do Calendário da Google persistentes:</string>
+
+    <string name="expl_text2">Esta aplicação substitui as notificações do Calendário por outras similares, mas persistentes, que devem permanecer na barra de status até serem dispensadas manualmente</string>
+
+    <string name="no_calendar_reminders">Por favor, note que a aplicação lida apenas com as notificações de eventos\nNão há necessidade em lidar com notificações de lembretes (elas não desaparecem)</string>
+
+    <string name="why_question_mark">(Por quê?)</string>
+
+    <string name="why2_question_mark">(Por quê?)</string>
+
+    <string name="sticky_cal_error_title">Erro na Notificação do Calendário</string>
+
+    <string name="sticky_cal_error">Não pode receber a informação original do evento</string>
+
+    <string name="rationale">Por que esta aplicação?\nPorque as notificações do Calendário da Google permanecem apenas por uma hora na barra de status e depois desaparecem.\nNem todas as pessoa apreciam este comportamento.\n\nComo funciona?\nEsta aplicação filtra todas as notificações do Calendário da Google e as substitui por outras idênticas que abrirão os mesmos eventos ao serem clicadas</string>
+
+    <string name="rationale2">Por que a aplicação não lida com lembretes?\nInfelismente, o formato destas notificações é diferente das dos eventos normais e elas são menos documentadas\nNeste momento é mais seguro não lidar com elas\n\nNão há nem necessidade, na verdade - elas permaneceram na barra de status até serem marcadas como \'DONE\'</string>
+
+    <!-- string name="explanationAboutRestart">On some android systems it might require to enable access to notifications again after app was updated. Please click on "Enable" twice (so to disable and enable it back) and app will do all necessary checks to verify if access is required</string -->
+
+    <string name="dismiss">Dispensar</string>
+    <string name="snooze">Adiar</string>
+
+    <string name="access_lost">Acesso às notificações perdido</string>
+    <string name="reenable_app">Por favor, reabilite o acesso às notificações para ativar as funcionalidades desta aplicação</string>
+
+    <string name="show_dismiss_button">Mostrar o botão \'Dispensar\'</string>
+    <string name="show_dismiss_summary">A ação \'Dispensar\' será mostrada em todas as notificações, que só poderão ser dispensadas por meio deste botão</string>
+
+    <string name="play_reminder_sound">Som da notificação</string>
+    <string name="play_reminder_sound_summary">Tocar o som de notificação</string>
+
+    <string name="ringtone_selection">Áudio de Notificação</string>
+    <string name="ringtone_selection_summary">Escolha o Áudio de Notificação</string>
+
+    <string name="vibra_on">Vibração</string>
+
+    <string name="notification_light_summary">Use o LED para alertar a respeito de notificações ativas</string>
+    <string name="notification_light_title">LED de Notificação</string>
+
+    <string name="help_feedback">Ajuda e retorno</string>
+
+    <string name="feedback">Retorno</string>
+
+    <string name="help_title">Se você encontrou um erro, possuí uma questão, deseja sugerir uma funcionalidade ou mesmo dar um retorno - por favor, contate o desenvolvedor por email.\n\nPor favor, não espere uma resposta instantânea. Eu estou desenvolvendo essa aplicação em meu tempo livre e posso responder apenas quando tiver tempo para isso</string>
+    <string name="email_developer">EMAIL DEVELOPER</string>
+
+    <string name="internal_error">Erro Interno</string>
+    <string name="internal_error_text">Por favor, abra o Calendario e certifique-se de que você não perdeu nenhum evento</string>
+
+    <string name="forward_to_pebble">Enviar para o Pebble</string>
+    <string name="forward_to_pebble_summary">Se você possuí um Smart Watch Peeble - isso irá habilitar a aplicação a enviar notificações para o seu relógio</string>
+
+    <string name="multiple_events">%d eventos a mais</string>
+    <string name="multiple_events_details">Toque para ver detalhes</string>
+    <string name="title_activity_activity_snooze">Adiar</string>
+
+    <string name="empty_title">(Sem título)</string>
+    <string name="snooze_event_for">Adiar o evento por:</string>
+
+    <string name="snooze_preset_15_min">15 minutos</string>
+    <string name="snooze_preset_1_hour">1 hora</string>
+    <string name="snooze_preset_4_hours">4 horas</string>
+    <string name="snooze_preset_1_day">1 dia</string>
+
+    <string name="location">Local:</string>
+    <string name="today">Hoje</string>
+    <string name="tomorrow">Amanhã</string>
+    <string name="yesterday">Ontem</string>
+    <string name="change_event_time">Altere o tempo do evento</string>
+    <string name="one_hour_from_now">Mova para a hora seguinte</string>
+    <string name="same_time_tomorrow">Mova para o dia seguinte</string>
+    <string name="next_week_same_day">Mova para a semana seguinte</string>
+    <string name="custom_pick_a_date">Personalizada (escolha uma data)</string>
+    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
+
+    <string name="snoozed_until_string">Adiar até</string>
+    <string name="card_view_btn_change">ALTERAR</string>
+    <string name="card_view_btn_snooze">ADIAR</string>
+    <string name="card_view_btn_dismiss">DISPENSAR</string>
+    <string name="new_events_detected">Recarregar para ver novos eventos</string>
+    <string name="button_reload">RECAREGAR</string>
+    <string name="settings_name">Configurações</string>
+    <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
+    <string name="app_icon_credit">Crédito do ícone da aplicação:</string>
+    <string name="kotlin_language" translatable="false">Kotlin Language</string>
+    <string name="app_created_with">Aplicação criada com</string>
+    <string name="notification_settings">Configurações de Notificação</string>
+    <string name="snooze_presets">Configurações de adiamento</string>
+    <string name="smartwatch_support">Suporte a Smartwatch</string>
+    <string name="dialog_snooze_text_label">Lista das opções de adiamento separadas por vírgulas\n\nValores suportados como \'15m\', \'2h\' or \'3d\'\n\nAté 6 items na lista\n\nDeixe em branco para usar o padrão</string>
+
+    <string name="error_cannot_parse_preset">Desculpe, não foi possível processar sua entrada</string>
+    <string name="snooze_presets_title">Opções de Adiamento</string>
+    <string name="snooze_presets_summary">Aqui você pode alterar as opções padrão de adiamento</string>
+
+    <string name="error_too_many_presets">São suportados no máximo 6 opções, aquelas adicionais serão ignoradas</string>
+
+    <string name="days">dias</string>
+    <string name="day">dia</string>
+    <string name="hours">horas</string>
+    <string name="hour">hora</string>
+    <string name="minutes">minutos</string>
+    <string name="minute">minuto</string>
+    <string name="no_events_to_display">Nenhum evento</string>
+    <string name="no_calendar_permissions_main">Aplicação não possuí permissões de calendário</string>
+    <string name="view_after_edit">Visualizar depois de editar</string>
+    <string name="view_after_edit_summary">Ative para vizualizar automaticamente o evento após alterar sua data utilizando a opção de Adiar</string>
+    <string name="misc_settings">Outras configurações</string>
+    <string name="abort_broadcast">Abortar transmissão</string>
+    <string name="abort_broadcast_summary">Selecione esta opção, caso você esteja recebendo notificações do Calendário juntamente com as dessa aplicação</string>
+
+    <!-- 'Akira Nóis ;) -->
+
+
+</resources>

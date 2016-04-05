@@ -15,7 +15,7 @@
     <string name="on">Enabled</string>
     <string name="off">Disabled</string>
 
-    <string name="empty"></string>
+    <string name="empty" translatable="false"></string>
     <string name="middle_text_description">Enable the app to make Google Calendar event notifications persistent:</string>
 
     <string name="expl_text2">This app works by replacing Calendar notification with identical looking persistent notifications that would stay in the status bar until dismissed manually</string>
@@ -60,11 +60,11 @@
 
     <string name="feedback">Feedback</string>
 
-    <string name="help_title">If you found a bug, have a question or want to suggest a feature or give a feedback - please contact developer via email.\n\nPlease don\'t expect instant response.I\'m developint this application in my free time and can only response when I have time for that</string>
+    <string name="help_title">If you found a bug, have a question or want to suggest a feature or give a feedback - please contact developer via email.\n\nPlease don\'t expect instant response. I\'m developing this application in my free time and can only respond when I have time for that</string>
     <string name="email_developer">EMAIL DEVELOPER</string>
 
     <string name="internal_error">Internal Error</string>
-    <string name="internal_error_text">Please open Calendar and ansure you didn\'t miss any events</string>
+    <string name="internal_error_text">Please open Calendar and ensure you didn\'t miss any events</string>
 
     <string name="forward_to_pebble">Forward to Pebble</string>
     <string name="forward_to_pebble_summary">If you have Pebble Smart Watch - this will enable app to forward notifications to your Pebble</string>
@@ -90,7 +90,7 @@
     <string name="same_time_tomorrow">Move next day</string>
     <string name="next_week_same_day">Move next week</string>
     <string name="custom_pick_a_date">Custom (pick a date)</string>
-    <string name="title_activity_activity_test_buttons_and_to_do">ActivityTestButtonsAndToDo</string>
+    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
     <string name="snoozed_until_string">Snoozed until </string>
     <string name="card_view_btn_change">CHANGE</string>
@@ -99,9 +99,9 @@
     <string name="new_events_detected">Reload to see new events</string>
     <string name="button_reload">RELOAD</string>
     <string name="settings_name">Settings</string>
-    <string name="credits_icon_author">Cornmanthe 3rd</string>
+    <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
     <string name="app_icon_credit">App icon credit:</string>
-    <string name="kotlin_language">Kotlin Language</string>
+    <string name="kotlin_language" translatable="false">Kotlin Language</string>
     <string name="app_created_with">App created with</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="snooze_presets">Snooze settings</string>

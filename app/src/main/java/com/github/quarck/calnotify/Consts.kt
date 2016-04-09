@@ -20,6 +20,10 @@
 package com.github.quarck.calnotify
 
 object Consts {
+
+    const val WAKE_LOCK_NAME = "com.github.quarck.calnotify.reminderwakelock"
+    const val MIN_REMINDER_INTERVAL = 60 * 1000
+
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val HOUR_IN_SECONDS: Long = 3600L
     const val MINUTE_IN_SECONDS: Long = 60L;

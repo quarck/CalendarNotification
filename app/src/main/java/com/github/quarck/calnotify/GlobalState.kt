@@ -17,30 +17,16 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.utils
 
-fun String.toLongOrNull(): Long? {
+package com.github.quarck.calnotify
 
-    var ret: Long? = null
+import android.app.Application
+import android.content.Context
 
-    try {
-        ret = this.toLong()
-    } catch (ex: Exception) {
-        ret = null
-    }
-
-    return ret;
+class GlobalState : Application() {
+	var lastFireTime: Long = 0
 }
 
-fun String.toIntOrNull(): Int? {
+val Context.globalState: GlobalState
+	get() = applicationContext as GlobalState
 
-    var ret: Int? = null
-
-    try {
-        ret = this.toInt()
-    } catch (ex: Exception) {
-        ret = null
-    }
-
-    return ret;
-}

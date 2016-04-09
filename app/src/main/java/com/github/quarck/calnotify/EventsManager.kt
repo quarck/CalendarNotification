@@ -31,195 +31,231 @@ import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
+import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.ui.ServiceUINotifier
 
-class EventsManager {
-    companion object {
-        private val notificationManager: IEventNotificationManager = EventNotificationManager()
+object EventsManager {
+    private val notificationManager: IEventNotificationManager = EventNotificationManager()
 
-        private val logger = Logger("EventsManager");
+    private val logger = Logger("EventsManager");
 
-        private fun scheduleNextAlarmForEvents(context: Context) {
-            logger.debug("scheduleEventAlarm called");
+    private fun scheduleNextAlarmForEvents(context: Context) {
+        logger.debug("scheduleEventAlarm called");
 
-            var nextAlarm =
-                    EventsStorage(context)
-                            .events
-                            .filter { it.snoozedUntil != 0L }
-                            .map { it.snoozedUntil }
-                            .min();
+        var nextAlarm =
+                EventsStorage(context)
+                        .events
+                        .filter { it.snoozedUntil != 0L }
+                        .map { it.snoozedUntil }
+                        .min();
 
-            var intent = Intent(context, BroadcastReceiverAlarm::class.java);
-            var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        var intent = Intent(context, BroadcastReceiverAlarm::class.java);
+        var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+        var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
-            if (nextAlarm != null) {
-                var seconds = (nextAlarm - System.currentTimeMillis()) / 1000L
+        if (nextAlarm != null) {
+            var seconds = (nextAlarm - System.currentTimeMillis()) / 1000L
 
-                logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
+            logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
 
-                alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
-            } else {
-                logger.info("Cancelling alarms");
+            alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
+        } else {
+            logger.info("Cancelling alarms");
 
-                alarmManager.cancel(pendingIntent)
-            }
+            alarmManager.cancel(pendingIntent)
+        }
+    }
+
+    private fun scheduleAlarmForReminders(context: Context) {
+
+        var settings = Settings(context);
+
+        if (!settings.remindersEnabled) {
+            ReminderAlarm.cancelAlarm(context); // cancel existing, if any
+            return;
         }
 
-        fun onAlarm(context: Context?, intent: Intent?) {
-            if (context != null) {
-                notificationManager.postEventNotifications(context, false);
-                scheduleNextAlarmForEvents(context);
-            } else {
-                logger.error("onAlarm: context is null");
-            }
+        val hasActiveNotifications =
+                EventsStorage(context)
+                        .events
+                        .filter { it.snoozedUntil == 0L }
+                        .any();
+
+        if (hasActiveNotifications) {
+            ReminderAlarm.cancelAlarm(context); // cancel existing to re-schedule
+            ReminderAlarm.scheduleAlarmMillis(context, Settings(context).remindersIntervalMillis);
         }
+    }
 
+    fun updateReminderAlarm(context: Context) {
+        scheduleAlarmForReminders(context)
+    }
 
-        private fun reloadCalendar(context: Context): Boolean {
-            var repostNotifications = false
+    fun hasActiveEvents(context: Context) =
+        EventsStorage(context).events.filter { it.snoozedUntil == 0L }.any()
 
-            var db = EventsStorage(context)
+    fun onAlarm(context: Context?, intent: Intent?) {
+        if (context != null) {
+            notificationManager.postEventNotifications(context, false);
+            scheduleNextAlarmForEvents(context);
+            scheduleAlarmForReminders(context);
+        } else {
+            logger.error("onAlarm: context is null");
+        }
+    }
 
-            var events = db.events
+    private fun reloadCalendar(context: Context): Boolean {
+        var repostNotifications = false
 
-            for (event in events) {
+        var db = EventsStorage(context)
 
-                var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
+        var events = db.events
 
-                if (newEvent == null ) {
+        for (event in events) {
 
-                    newEvent = CalendarUtils.getEvent(context, event.eventId)
+            var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
 
-                    if (newEvent != null
-                            && newEvent.startTime > event.startTime
-                            && newEvent.alertTime >= System.currentTimeMillis()) {
-                        // Here we have a confirmation that event was re-scheduled by user
-                        // to some time in the future and that's why original event instance has disappeared
-                        // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, event.eventId, event.notificationId, true);
-                        var movedSec = (newEvent.startTime - event.startTime) / 1000L
-                        logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
-                        DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared from calendar, moved further by $movedSec seconds")
-                    } else {
-                        // Here we can't confrim that event was moved into the future.
-                        // Perhaps it was removed, but this is not what users usually do.
-                        // Leave it for user to remove the notification
-                        logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
-                        DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared but reschedule confirmation has failed, not removing")
-                    }
+            if (newEvent == null ) {
 
+                newEvent = CalendarUtils.getEvent(context, event.eventId)
+
+                if (newEvent != null
+                        && newEvent.startTime > event.startTime
+                        && newEvent.alertTime >= System.currentTimeMillis()) {
+                    // Here we have a confirmation that event was re-scheduled by user
+                    // to some time in the future and that's why original event instance has disappeared
+                    // - we are good to go to dismiss event reminder automatically
+                    dismissEvent(context, event.eventId, event.notificationId, true);
+                    var movedSec = (newEvent.startTime - event.startTime) / 1000L
+                    logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
+                    DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared from calendar, moved further by $movedSec seconds")
                 } else {
-                    logger.debug("Event ${event.eventId} is still here");
-
-                    if (event.updateFrom(newEvent)) {
-                        logger.debug("Event was updated, updating our copy");
-
-                        EventsStorage(context).updateEvent(event);
-                        repostNotifications = true
-
-                        DebugTransactionLog(context).log("EventsManager", "update", "Event ${event.eventId} updated in db, title: ${event.title}")
-                    }
+                    // Here we can't confrim that event was moved into the future.
+                    // Perhaps it was removed, but this is not what users usually do.
+                    // Leave it for user to remove the notification
+                    logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
+                    DebugTransactionLog(context).log("EventsManager", "remove", "Event ${event.eventId} disappeared but reschedule confirmation has failed, not removing")
                 }
-            }
 
-            return repostNotifications
-        }
+            } else {
+                logger.debug("Event ${event.eventId} is still here");
 
-        fun onAppUpdated(context: Context?, intent: Intent?) {
-            if (context != null) {
-                var changes = reloadCalendar(context)
-                notificationManager.postEventNotifications(context, true);
-                scheduleNextAlarmForEvents(context);
+                if (event.updateFrom(newEvent)) {
+                    logger.debug("Event was updated, updating our copy");
 
-                if (changes)
-                    ServiceUINotifier.notifyUI(context, false);
-            }
-        }
+                    EventsStorage(context).updateEvent(event);
+                    repostNotifications = true
 
-        fun onBootComplete(context: Context?, intent: Intent?) {
-            if (context != null) {
-                var changes = reloadCalendar(context);
-                notificationManager.postEventNotifications(context, true);
-                scheduleNextAlarmForEvents(context);
-
-                if (changes)
-                    ServiceUINotifier.notifyUI(context, false);
-            }
-        }
-
-        fun onCalendarChanged(context: Context?, intent: Intent?) {
-            if (context != null) {
-                var changes = reloadCalendar(context)
-                if (changes) {
-                    notificationManager.postEventNotifications(context, true);
-                    ServiceUINotifier.notifyUI(context, false);
+                    DebugTransactionLog(context).log("EventsManager", "update", "Event ${event.eventId} updated in db, title: ${event.title}")
                 }
             }
         }
 
-        fun onCalendarEventFired(context: Context, event: EventRecord) {
-            EventsStorage(context).addEvent(event);
-            notificationManager.onEventAdded(context, event)
+        return repostNotifications
+    }
 
-            DebugTransactionLog(context).log("EventsManager", "add", "event added: ${event.eventId} ${event.title}")
+    fun onAppUpdated(context: Context?, intent: Intent?) {
+        if (context != null) {
+            var changes = reloadCalendar(context)
+            notificationManager.postEventNotifications(context, true);
+            scheduleNextAlarmForEvents(context);
+            scheduleAlarmForReminders(context);
 
-            ServiceUINotifier.notifyUI(context, false);
+            if (changes)
+                ServiceUINotifier.notifyUI(context, false);
         }
+    }
 
-        fun snoozeEvent(context: Context, event: EventRecord, snoozeDelay: Long, eventsStorage: EventsStorage?) {
-            var storage = eventsStorage ?: EventsStorage(context)
+    fun onBootComplete(context: Context?, intent: Intent?) {
+        if (context != null) {
+            var changes = reloadCalendar(context);
+            notificationManager.postEventNotifications(context, true);
+            scheduleNextAlarmForEvents(context);
+            scheduleAlarmForReminders(context);
 
-            var currentTime = System.currentTimeMillis()
+            if (changes)
+                ServiceUINotifier.notifyUI(context, false);
+        }
+    }
 
-            event.snoozedUntil = currentTime + snoozeDelay;
-            event.lastEventUpdate = currentTime;
-            storage.updateEvent(event);
+    fun onCalendarChanged(context: Context?, intent: Intent?) {
+        if (context != null) {
+            var changes = reloadCalendar(context)
+            if (changes) {
+                notificationManager.postEventNotifications(context, true);
+                ServiceUINotifier.notifyUI(context, false);
+            }
+        }
+    }
+
+    fun onCalendarEventFired(context: Context, event: EventRecord) {
+        EventsStorage(context).addEvent(event);
+        notificationManager.onEventAdded(context, event)
+
+        scheduleAlarmForReminders(context);
+
+        DebugTransactionLog(context).log("EventsManager", "add", "event added: ${event.eventId} ${event.title}")
+
+        ServiceUINotifier.notifyUI(context, false);
+    }
+
+    fun snoozeEvent(context: Context, event: EventRecord, snoozeDelay: Long, eventsStorage: EventsStorage?) {
+        var storage = eventsStorage ?: EventsStorage(context)
+
+        var currentTime = System.currentTimeMillis()
+
+        event.snoozedUntil = currentTime + snoozeDelay;
+        event.lastEventUpdate = currentTime;
+        storage.updateEvent(event);
+
+        scheduleNextAlarmForEvents(context);
+
+        notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
+
+        scheduleAlarmForReminders(context);
+
+        var seconds = (event.snoozedUntil - currentTime) / 1000
+        logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
+
+        DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, id: ${event.eventId}, title: ${event.title}")
+    }
+
+    fun onAppStarted(context: Context?) {
+        if (context != null) {
+            notificationManager.postEventNotifications(context, true)
+            scheduleNextAlarmForEvents(context)
+        }
+    }
+
+    fun dismissEvent(context: Context?, event: EventRecord) {
+        if (context != null) {
+            logger.debug("Removing[1] event id ${event.eventId} from DB, and dismissing notification id ${event.notificationId}")
+
+            var db = EventsStorage(context);
+            db.deleteEvent(event.eventId);
+
+            notificationManager.onEventDismissed(context, event.eventId, event.notificationId);
 
             scheduleNextAlarmForEvents(context);
 
-            notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
-
-            var seconds = (event.snoozedUntil - currentTime) / 1000
-            logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
-
-            DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, id: ${event.eventId}, title: ${event.title}")
+            scheduleAlarmForReminders(context);
         }
+    }
 
-        fun onAppStarted(context: Context?) {
-            if (context != null) {
-                notificationManager.postEventNotifications(context, true)
-                scheduleNextAlarmForEvents(context)
-            }
-        }
+    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
+        if (context != null) {
+            logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
 
-        fun dismissEvent(context: Context?, event: EventRecord) {
-            if (context != null) {
-                logger.debug("Removing[1] event id ${event.eventId} from DB, and dismissing notification id ${event.notificationId}")
+            EventsStorage(context).deleteEvent(eventId);
 
-                var db = EventsStorage(context);
-                db.deleteEvent(event.eventId);
+            notificationManager.onEventDismissed(context, eventId, notificationId);
 
-                notificationManager.onEventDismissed(context, event.eventId, event.notificationId);
+            scheduleNextAlarmForEvents(context);
+            scheduleAlarmForReminders(context);
 
-                scheduleNextAlarmForEvents(context);
-            }
-        }
-
-        fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
-            if (context != null) {
-                logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
-
-                EventsStorage(context).deleteEvent(eventId);
-
-                notificationManager.onEventDismissed(context, eventId, notificationId);
-
-                scheduleNextAlarmForEvents(context);
-
-                if (notifyActivity)
-                    ServiceUINotifier.notifyUI(context, true);
-            }
+            if (notifyActivity)
+                ServiceUINotifier.notifyUI(context, true);
         }
     }
 }

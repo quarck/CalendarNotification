@@ -19,28 +19,35 @@
 
 package com.github.quarck.calnotify.utils
 
-fun String.toLongOrNull(): Long? {
+import android.app.AlarmManager
+import android.content.Context
+import android.media.AudioManager
+import android.os.PowerManager
 
-    var ret: Long? = null
+fun<T> Context.service(svc: String) =  getSystemService(svc) as T
+
+val Context.alarmManager: AlarmManager
+    get() = service(Context.ALARM_SERVICE)
+
+val Context.audioManager: AudioManager
+    get() = service(Context.AUDIO_SERVICE)
+
+val Context.powerManager: PowerManager
+    get() = service(Context.POWER_SERVICE)
+
+
+
+fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit) {
+
+    var wakeLock = pm.newWakeLock(levelAndFlags, tag);
+    if (wakeLock == null)
+        throw Exception("Failed to acquire wakelock")
 
     try {
-        ret = this.toLong()
-    } catch (ex: Exception) {
-        ret = null
+        wakeLock.acquire()
+        fn();
     }
-
-    return ret;
-}
-
-fun String.toIntOrNull(): Int? {
-
-    var ret: Int? = null
-
-    try {
-        ret = this.toInt()
-    } catch (ex: Exception) {
-        ret = null
+    finally {
+        wakeLock.release()
     }
-
-    return ret;
 }

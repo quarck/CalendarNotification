@@ -88,6 +88,11 @@ class ActivityMain : Activity() {
         EventsManager.onAppStarted(applicationContext);
     }
 
+    private fun refreshReminderLastFired() {
+        // avoid firing reminders when UI is active and user is interacting with it
+        this.globalState.lastFireTime = System.currentTimeMillis()
+    }
+
     public override fun onStop() {
         logger.debug("onStop()")
         super.onStop()
@@ -109,6 +114,9 @@ class ActivityMain : Activity() {
                 }
 
         reloadData()
+
+        refreshReminderLastFired()
+        EventsManager.updateReminderAlarm(this)
 
         var hasPermissions = PermissionsManager.hasAllPermissions(this)
 
@@ -157,6 +165,8 @@ class ActivityMain : Activity() {
 
         svcClient.unbindService(this)
 
+        refreshReminderLastFired()
+
         super.onPause()
     }
 
@@ -166,6 +176,9 @@ class ActivityMain : Activity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        refreshReminderLastFired()
+
         when (item.itemId) {
             R.id.action_settings ->
                 startActivity(Intent(this, ActivitySettings::class.java))
@@ -192,6 +205,7 @@ class ActivityMain : Activity() {
     fun onReloadButtonClick(v: View) {
         reloadLayout.visibility = View.GONE;
         reloadData();
+        refreshReminderLastFired()
     }
 
     private fun onItemLocation(v: View, position: Int, eventId: Long) {
@@ -218,6 +232,7 @@ class ActivityMain : Activity() {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
             }
         }
+        refreshReminderLastFired()
     }
 
     private fun onItemClick(v: View, position: Int, eventId: Long) {
@@ -231,6 +246,7 @@ class ActivityMain : Activity() {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
             }
         }
+        refreshReminderLastFired()
     }
 
     private fun onItemReschedule(v: View, position: Int, eventId: Long) {
@@ -250,6 +266,7 @@ class ActivityMain : Activity() {
                 logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
             }
         }
+        refreshReminderLastFired()
     }
 
     private fun onItemDismiss(v: View, position: Int, eventId: Long) {
@@ -272,6 +289,7 @@ class ActivityMain : Activity() {
                 logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
             }
         }
+        refreshReminderLastFired()
     }
 
     companion object {

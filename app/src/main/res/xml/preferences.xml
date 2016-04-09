@@ -46,6 +46,27 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="Reminder Section"
+        android:key="pref_key_reminder"
+        >
+
+        <CheckBoxPreference
+            android:key="enable_reminding_key"
+            android:title="@string/enable_reminders"
+            android:summary="@string/enable_reminders_summary"
+            android:defaultValue="false"/>
+
+        <EditTextPreference
+            android:key="remind_interval_key"
+            android:title="@string/remind_interval"
+            android:summary="@string/remind_interval_summary"
+            android:numeric="integer"
+            android:defaultValue="10"
+            android:dependency="enable_reminding_key" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/smartwatch_support"
         android:key="pref_key_smartwatch">
 

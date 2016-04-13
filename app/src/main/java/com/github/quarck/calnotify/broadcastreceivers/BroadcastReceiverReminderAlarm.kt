@@ -61,7 +61,7 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
 
                 val sinceLastFire = currentTime - lastFireTime;
 
-                if (sinceLastFire < interval - 10000L)  {
+                if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
                     logger.debug("Seen alarm to early, re-schedule and go back");
 
                     val leftMillis = interval - sinceLastFire;

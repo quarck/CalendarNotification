@@ -132,4 +132,7 @@
     <string name="remind_interval">Remind interval</string>
     <string name="remind_interval_summary">Remind interval in minutes</string>
 
+    <string name="invalid_reminder_interval">Reminder interval cannot be zero, reverted to 1 minute</string>
+    <string name="hh_mm">HH:MM</string>
+
 </resources>

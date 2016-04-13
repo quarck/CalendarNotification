@@ -86,4 +86,12 @@
     <string name="rationale">Wozu diese App?\nDie Google Kalender-Benachrichtigungen werden nur ungefähr eine Stunde lang angezeigt und verschwinden dann.\nNicht jedem gefällt dieses Verhalten.\n\nWie funktioniert die App?\nSie wird alle Benachrichtigungen vom Google Kalender abfangen und durch gleich aussehende Benachrichtigungen ersetzen, die beim Tippen denselben Termin anzeigen</string>
     <string name="rationale2">Warum werden andere Erinnerungen nicht berücksichtigt?\nLeider ist das Format dieser Benachrichtungen anders als bei normalen Terminen und sie sind weniger gut dokumentiert\nMomentan ist es sicherer, sie nicht zu berücksichtigen\n\nEs ist auch gar nicht nötig - sie bleiben offen, bis sie als \'ERLEDIGT\' markiert sind</string>
     <string name="reenable_app">Bitte gewähren Sie der App den Zugriff auf Benachrichtigungen, damit sie korrekt funktionieren kann</string>
+
+    <string name="enable_reminders">Aktivieren Erinnerungen</string>
+    <string name="enable_reminders_summary">Wenn aktiviert, würde App wiederholt über aktive Benachrichtigungen erinnern</string>
+    <string name="remind_interval">Erinnern Intervall</string>
+
+    <string name="invalid_reminder_interval">Intervall ist nicht Null, zurückgesetzt zu 1 Minute</string>
+    <string name="hh_mm">SS:MM</string>
+
 </resources>

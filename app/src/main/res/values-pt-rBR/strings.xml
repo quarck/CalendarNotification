@@ -15,7 +15,6 @@
     <string name="on">Ativado</string>
     <string name="off">Desativado</string>
 
-    <string name="empty" translatable="false"></string>
     <string name="middle_text_description">Ative a aplicação para tornar as notificações de eventos do Calendário da Google persistentes:</string>
 
     <string name="expl_text2">Esta aplicação substitui as notificações do Calendário por outras similares, mas persistentes, que devem permanecer na barra de status até serem dispensadas manualmente</string>
@@ -90,7 +89,6 @@
     <string name="same_time_tomorrow">Mova para o dia seguinte</string>
     <string name="next_week_same_day">Mova para a semana seguinte</string>
     <string name="custom_pick_a_date">Personalizada (escolha uma data)</string>
-    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
     <string name="snoozed_until_string">Adiar até</string>
     <string name="card_view_btn_change">ALTERAR</string>
@@ -99,9 +97,7 @@
     <string name="new_events_detected">Recarregar para ver novos eventos</string>
     <string name="button_reload">RECAREGAR</string>
     <string name="settings_name">Configurações</string>
-    <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
     <string name="app_icon_credit">Crédito do ícone da aplicação:</string>
-    <string name="kotlin_language" translatable="false">Kotlin Language</string>
     <string name="app_created_with">Aplicação criada com</string>
     <string name="notification_settings">Configurações de Notificação</string>
     <string name="snooze_presets">Configurações de adiamento</string>
@@ -129,6 +125,12 @@
     <string name="abort_broadcast_summary">Selecione esta opção, caso você esteja recebendo notificações do Calendário juntamente com as dessa aplicação</string>
 
     <!-- 'Akira Nóis ;) -->
+
+    <string name="enable_reminders">Ativar lembretes</string>
+    <string name="enable_reminders_summary">Se ativado, app que repetidamente lembrar sobre as notificações de ativos</string>
+    <string name="remind_interval">Lembre intervalo</string>
+    <string name="invalid_reminder_interval">Lembrete intervalo não pode ser igual a zero, reverteu para um minuto</string>
+    <string name="hh_mm">HH:MM</string>
 
 
 </resources>

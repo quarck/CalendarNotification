@@ -127,10 +127,10 @@
     <string name="misc_settings">Misc settings</string>
     <string name="abort_broadcast">Abort broadcast</string>
     <string name="abort_broadcast_summary">Select this if you are seeing notifications from calendar along with notifications from this app</string>
+
     <string name="enable_reminders">Enable reminders</string>
     <string name="enable_reminders_summary">If enabled, app would repeatedly remind about active notifications</string>
     <string name="remind_interval">Remind interval</string>
-    <string name="remind_interval_summary">Remind interval in minutes</string>
 
     <string name="invalid_reminder_interval">Reminder interval cannot be zero, reverted to 1 minute</string>
     <string name="hh_mm">HH:MM</string>

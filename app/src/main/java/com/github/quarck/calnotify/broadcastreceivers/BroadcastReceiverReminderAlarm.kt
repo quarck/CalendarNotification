@@ -55,28 +55,39 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                 logger.debug("Reminders are enabled and have something to remind about")
 
                 val currentTime = System.currentTimeMillis()
-                val lastFireTime = context.globalState.lastFireTime
 
+                val lastReminder = context.globalState.reminderLastFireTime
+                val lastNotification = context.globalState.notificationLastFireTime
                 val interval = settings.remindersIntervalMillis
 
-                val sinceLastFire = currentTime - lastFireTime;
+                val lastFireTime = Math.max(lastNotification, lastReminder);
 
-                if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
-                    logger.debug("Seen alarm to early, re-schedule and go back");
+                val numRemindersFired = (lastFireTime - lastReminder) / interval
+                val maxFires = settings.maxNumerOfRemindres
 
-                    val leftMillis = interval - sinceLastFire;
-                    ReminderAlarm.scheduleAlarmMillis(context, interval, leftMillis)
+                if (maxFires == 0 || numRemindersFired <= maxFires) {
 
-                } else {
-                    // OK ot fire
-                    logger.debug("Since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
+                    val sinceLastFire = currentTime - lastFireTime;
 
-                    val fired = checkPhoneSilentAndFire(context, settings)
-                    if (fired) {
-                        context.globalState.lastFireTime = currentTime
+                    if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
+                        logger.debug("Seen alarm to early, re-schedule and go back");
+
+                        val leftMillis = interval - sinceLastFire;
+                        ReminderAlarm.scheduleAlarmMillis(context, interval, leftMillis)
+
+                    } else {
+                        // OK ot fire
+                        logger.debug("Since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
+
+                        val fired = checkPhoneSilentAndFire(context, settings)
+                        if (fired) {
+                            context.globalState.reminderLastFireTime = currentTime
+                        }
                     }
+                } else {
+                    logger.debug("Exceeded max numer of fires, maxFires=$maxFires, numRemindersFired=$numRemindersFired")
+                    ReminderAlarm.cancelAlarm(context)
                 }
-
             } else {
                 logger.debug("Reminders are disabled or nothing to remind about, received this by error")
                 ReminderAlarm.cancelAlarm(context)

@@ -68,6 +68,33 @@ public class EventsStorage(context: Context)
     fun addEvent(event: EventRecord)
             = synchronized (EventsStorage::class.java) { addEventImpl(event) }
 
+    fun updateEvent(event: EventRecord,
+                    alertTime: Long? = null,
+                    title: String? = null,
+                    snoozedUntil: Long? = null,
+                    startTime: Long? = null,
+                    endTime: Long? = null,
+                    location: String? = null,
+                    lastEventUpdate: Long? = null,
+                    isDisplayed: Boolean? = null,
+                    color: Int? = null
+    ) {
+        var newEvent =
+                event.copy(
+                        alertTime = alertTime ?: event.alertTime,
+                        title = title ?: event.title,
+                        snoozedUntil = snoozedUntil ?: event.snoozedUntil,
+                        startTime = startTime ?: event.startTime,
+                        endTime = endTime ?: event.endTime,
+                        location = location ?: event.location,
+                        lastEventUpdate = lastEventUpdate ?: event.lastEventUpdate,
+                        isDisplayed = isDisplayed ?: event.isDisplayed,
+                        color = color ?: event.color
+                );
+
+        updateEvent(newEvent)
+    }
+
     fun updateEvent(event: EventRecord)
             = synchronized(EventsStorage::class.java) { updateEventImpl(event) }
 

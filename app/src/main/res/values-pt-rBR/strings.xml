@@ -131,6 +131,8 @@
     <string name="remind_interval">Lembre intervalo</string>
     <string name="invalid_reminder_interval">Lembrete intervalo não pode ser igual a zero, reverteu para um minuto</string>
     <string name="hh_mm">HH:MM</string>
+    <string name="max_reminders">Lembretes máximos</string>
+    <string name="max_reminders_summary">O número máximo de lembretes para o fogo, 0 para a indefinida</string>
 
 
 </resources>

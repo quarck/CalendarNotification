@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatText
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.ui.ActivityMain
@@ -120,16 +121,21 @@ class EventNotificationManager : IEventNotificationManager {
         }
     }
 
+    // force - if true - would re-post all active notifications. Normally only new notifications are posted to
+    // avoid excessive blinking in the notifications area. Forced notifications are posted without sound or vibra
     private fun postRegularEvents(
             context: Context,
             db: EventsStorage,
             settings: Settings,
-            events: List<EventRecord>, force: Boolean
+            events: List<EventRecord>,
+            force: Boolean
     ) {
         logger.debug("Posting ${events.size} notifications");
 
         var notificationsSettings = settings.notificationSettingsSnapshot
         var notificationsSettingsQuiet = notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
+
+        var wasQuiet = true
 
         for (event in events) {
             if (event.snoozedUntil == 0L) {
@@ -146,8 +152,9 @@ class EventNotificationManager : IEventNotificationManager {
                         )
 
                     // Update db to indicate that this event is currently actively displayed
-                    event.isDisplayed = true;
-                    db.updateEvent(event);
+                    db.updateEvent(event, isDisplayed = true);
+
+                    wasQuiet = wasQuiet && force
 
                 } else {
                     logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
@@ -160,11 +167,15 @@ class EventNotificationManager : IEventNotificationManager {
                 postNotification(context, event, notificationsSettings)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
-                event.isDisplayed = true;
-                event.snoozedUntil = 0; // Since it is displayed now -- it is no longer snoozed
-                db.updateEvent(event);
+                // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero also
+                db.updateEvent(event, isDisplayed = true, snoozedUntil = 0);
+
+                wasQuiet = false
             }
         }
+
+        if (!wasQuiet)
+            context.globalState.notificationLastFireTime = System.currentTimeMillis()
     }
 
     private fun postNotification(
@@ -312,6 +323,8 @@ class EventNotificationManager : IEventNotificationManager {
 
         var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
+
+        context.globalState.notificationLastFireTime = System.currentTimeMillis()
     }
 
     private fun hideNumNotificationsCollapsed(context: Context) {

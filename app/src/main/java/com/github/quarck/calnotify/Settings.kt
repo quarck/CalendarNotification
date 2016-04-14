@@ -113,6 +113,9 @@ class Settings(ctx: Context) {
     val remindersIntervalMillis: Long
         get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
+    val maxNumerOfRemindres: Int
+        get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toInt()
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(showDismissButton, ringtoneURI, vibraOn, ledNotificationOn, forwardToPebble)
 
@@ -139,10 +142,12 @@ class Settings(ctx: Context) {
 
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
+        private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
 
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
         internal const val DEFAULT_REMINDER_INTERVAL = 10
+        internal const val DEFAULT_MAX_REMINDERS = "0"
 
         internal fun parseSnoozePresets(value: String): LongArray? {
             var ret: LongArray? = null;

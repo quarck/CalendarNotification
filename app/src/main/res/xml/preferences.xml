@@ -56,13 +56,18 @@
             android:summary="@string/enable_reminders_summary"
             android:defaultValue="false"/>
 
-        <!--             android:summary="@string/remind_interval_summary"
--->
         <com.github.quarck.calnotify.prefs.ReminderIntervalPreference
             android:key="remind_interval_key2"
             android:title="@string/remind_interval"
             android:numeric="integer"
             android:defaultValue="10"
+            android:dependency="enable_reminding_key" />
+
+        <EditTextPreference
+            android:key="reminder_max_reminders"
+            android:title="@string/max_reminders"
+            android:summary="@string/max_reminders_summary"
+            android:defaultValue="0"
             android:dependency="enable_reminding_key" />
 
     </PreferenceCategory>

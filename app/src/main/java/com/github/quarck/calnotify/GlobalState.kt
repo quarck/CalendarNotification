@@ -24,7 +24,8 @@ import android.app.Application
 import android.content.Context
 
 class GlobalState : Application() {
-	var lastFireTime: Long = 0
+	var reminderLastFireTime: Long = 0
+	var notificationLastFireTime: Long = 0
 }
 
 val Context.globalState: GlobalState

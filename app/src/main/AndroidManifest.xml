@@ -2,8 +2,8 @@
 <manifest package="com.github.quarck.calnotify"
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:installLocation="internalOnly"
-          android:versionCode="16"
-          android:versionName="1.0.16">
+          android:versionCode="17"
+          android:versionName="1.0.17">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>

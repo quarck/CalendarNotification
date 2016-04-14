@@ -90,7 +90,7 @@ class ActivityMain : Activity() {
 
     private fun refreshReminderLastFired() {
         // avoid firing reminders when UI is active and user is interacting with it
-        this.globalState.lastFireTime = System.currentTimeMillis()
+        this.globalState.reminderLastFireTime = System.currentTimeMillis()
     }
 
     public override fun onStop() {

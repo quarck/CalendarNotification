@@ -21,6 +21,8 @@ package com.github.quarck.calnotify.pebble
 
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import org.json.JSONArray
 import org.json.JSONObject
@@ -37,11 +39,13 @@ object PebbleUtils {
     val INTENT_EXTRA_NOTIFICATION_DATA_KEY = "notificationData"
 
     fun forwardNotificationToPebble(context: Context, title: String, text: String) {
+
         val i = Intent(SEND_NOTIFICATION_ACTION)
 
         val data = HashMap<String, String>()
-        data.put(JSON_OBJECT_KEY_TITLE, title)
-        data.put(JSON_OBJECT_KEY_BODY, text)
+
+        data.put(JSON_OBJECT_KEY_TITLE, context.resources.getString(R.string.pebble_notification_title))
+        data.put(JSON_OBJECT_KEY_BODY, "${title}\n${text}")
 
         val jsonData = JSONObject(data)
         val notificationData = JSONArray().put(jsonData).toString()

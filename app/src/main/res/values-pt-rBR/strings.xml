@@ -133,9 +133,9 @@
     <string name="max_reminders">Máximo de lembretes</string>
     <string name="max_reminders_summary">O número máximo de lembretes a serem acionados, 0 para indefinido</string>
 
-
 <!-- 'Akira Nóis ;) -->
 
+    <string name="pebble_notification_title">Calendar</string>
 
 
 </resources>

@@ -94,5 +94,6 @@
     <string name="hh_mm">SS:MM</string>
     <string name="max_reminders">Maximale Erinnerungen</string>
     <string name="max_reminders_summary">Maximale Anzahl der Mahnungen zu feuern, 0 für unbestimmte</string>
+    <string name="pebble_notification_title">Calendar</string>
 
 </resources>

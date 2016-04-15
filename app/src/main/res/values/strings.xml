@@ -136,4 +136,6 @@
     <string name="max_reminders">Max reminders</string>
     <string name="max_reminders_summary">Maximum number of reminders to fire, 0 for indefinite</string>
 
+    <string name="pebble_notification_title">Calendar</string>
+
 </resources>

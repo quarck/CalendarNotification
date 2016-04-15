@@ -124,15 +124,18 @@
     <string name="abort_broadcast">Abortar transmissão</string>
     <string name="abort_broadcast_summary">Selecione esta opção, caso você esteja recebendo notificações do Calendário juntamente com as dessa aplicação</string>
 
-    <!-- 'Akira Nóis ;) -->
 
-    <string name="enable_reminders">Ativar lembretes</string>
-    <string name="enable_reminders_summary">Se ativado, app que repetidamente lembrar sobre as notificações de ativos</string>
-    <string name="remind_interval">Lembre intervalo</string>
-    <string name="invalid_reminder_interval">Lembrete intervalo não pode ser igual a zero, reverteu para um minuto</string>
+    <string name="enable_reminders">Habilitar lembretes</string>
+    <string name="enable_reminders_summary">Se habilitado, a aplicação irá lembrar repetidamente sobre notificações ativas</string>
+    <string name="remind_interval">Intervalo do lembrete</string>
+    <string name="invalid_reminder_interval">O intervalo do lembrete não pode ser zero, revertido para 1 minuto</string>
     <string name="hh_mm">HH:MM</string>
-    <string name="max_reminders">Lembretes máximos</string>
-    <string name="max_reminders_summary">O número máximo de lembretes para o fogo, 0 para a indefinida</string>
+    <string name="max_reminders">Máximo de lembretes</string>
+    <string name="max_reminders_summary">O número máximo de lembretes a serem acionados, 0 para indefinido</string>
+
+
+<!-- 'Akira Nóis ;) -->
+
 
 
 </resources>

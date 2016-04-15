@@ -43,6 +43,7 @@ import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
+import java.util.*
 
 class ActivityMain : Activity() {
     private val settings: Settings by lazy { Settings(this) }
@@ -192,7 +193,12 @@ class ActivityMain : Activity() {
 
     private fun reloadData() {
         background {
-            var events = EventsStorage(this).events.toTypedArray()
+
+            var events =
+                EventsStorage(this)
+                        .events
+                        .sortedBy { it.snoozedUntil }
+                        .toTypedArray()
 
             runOnUiThread {
                 presenter.setEventsToDisplay(events);

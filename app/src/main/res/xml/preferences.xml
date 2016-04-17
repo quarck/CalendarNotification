@@ -25,6 +25,11 @@
             android:title="@string/vibra_on"
             android:defaultValue="true"/>
 
+        <CheckBoxPreference android:key="heads_up_notification"
+            android:title="@string/heads_up_notification"
+            android:summary="@string/heads_up_notification_summary"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

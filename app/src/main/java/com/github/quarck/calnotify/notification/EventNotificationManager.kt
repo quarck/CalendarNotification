@@ -186,7 +186,13 @@ class EventNotificationManager : IEventNotificationManager {
         var notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         var calendarIntent = CalendarUtils.getCalendarViewIntent(event.eventId);
-        var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
+        //calendarIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
+        //var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
+
+        var calendarPendingIntent =
+                TaskStackBuilder.create(ctx)
+                        .addNextIntentWithParentStack(calendarIntent)
+                        .getPendingIntent(0, 0)//PendingIntent.FLAG_UPDATE_CURRENT);
 
         var notificationText = event.formatText(ctx);
 
@@ -194,7 +200,12 @@ class EventNotificationManager : IEventNotificationManager {
                 .setContentTitle(event.title)
                 .setContentText(notificationText)
                 .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
-                .setPriority(Notification.PRIORITY_HIGH)
+                .setPriority(
+                        if (notificationSettings.headsUpNotification)
+                            Notification.PRIORITY_HIGH
+                        else
+                            Notification.PRIORITY_DEFAULT
+                )
                 .setContentIntent(calendarPendingIntent)
                 .setAutoCancel(!notificationSettings.showDismissButton)
                 .setOngoing(notificationSettings.showDismissButton)
@@ -286,12 +297,23 @@ class EventNotificationManager : IEventNotificationManager {
             = PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
     private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent {
+
+//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK;
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         var pendingIntent =
                 TaskStackBuilder.create(ctx)
                         .addNextIntentWithParentStack(intent)
                         .getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return pendingIntent;
+      /*  var pendingIntent =
+                PendingIntent.getActivity(
+                        ctx,
+                        id,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+*/
+        return pendingIntent
     }
 
     private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int) {

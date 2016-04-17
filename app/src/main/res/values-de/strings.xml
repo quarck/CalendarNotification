@@ -96,4 +96,7 @@
     <string name="max_reminders_summary">Maximale Anzahl der Mahnungen zu feuern, 0 für unbestimmte</string>
     <string name="pebble_notification_title">Calendar</string>
 
+    <string name="heads_up_notification">Heads-up Notification</string>
+    <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
+
 </resources>

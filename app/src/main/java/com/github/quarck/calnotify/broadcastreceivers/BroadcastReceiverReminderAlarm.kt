@@ -63,7 +63,7 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                 val lastFireTime = Math.max(lastNotification, lastReminder);
 
                 val numRemindersFired = (lastFireTime - lastReminder) / interval
-                val maxFires = settings.maxNumerOfRemindres
+                val maxFires = settings.maxNumerOfReminders
 
                 if (maxFires == 0 || numRemindersFired <= maxFires) {
 

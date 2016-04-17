@@ -39,6 +39,7 @@ data class NotificationSettingsSnapshot
         val ringtoneUri: Uri?,
         val vibraOn: Boolean,
         val ledNotificationOn: Boolean,
+        val headsUpNotification: Boolean,
         val forwardToPebble: Boolean
 )
 
@@ -65,6 +66,10 @@ class Settings(ctx: Context) {
     var forwardToPebble: Boolean
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
         set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
+
+    var headsUpNotification: Boolean
+        get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
+        set(value) = prefs.setBoolean(HEADS_UP_NOTIFICATINO_KEY, value)
 
     var viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
@@ -113,11 +118,13 @@ class Settings(ctx: Context) {
     val remindersIntervalMillis: Long
         get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
-    val maxNumerOfRemindres: Int
+    val maxNumerOfReminders: Int
         get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toInt()
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
-        get() = NotificationSettingsSnapshot(showDismissButton, ringtoneURI, vibraOn, ledNotificationOn, forwardToPebble)
+        get() = NotificationSettingsSnapshot(
+                showDismissButton, ringtoneURI, vibraOn,
+                ledNotificationOn, headsUpNotification, forwardToPebble)
 
     init {
         context = ctx
@@ -132,6 +139,7 @@ class Settings(ctx: Context) {
         private const val VIBRATION_ENABLED_KEY = "vibra_on"
         private const val LED_ENABLED_KEY = "notification_led"
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
+        private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
 
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
 
@@ -143,6 +151,7 @@ class Settings(ctx: Context) {
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
+
 
 
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"

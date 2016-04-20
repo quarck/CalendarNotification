@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.ui.ServiceUINotifier
+import com.github.quarck.calnotify.utils.setExactCompat
 
 object EventsManager {
     private val notificationManager: IEventNotificationManager = EventNotificationManager()
@@ -59,7 +60,7 @@ object EventsManager {
 
             logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
 
-            alarmManager.set(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
+            alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
         } else {
             logger.info("Cancelling alarms");
 
@@ -71,10 +72,8 @@ object EventsManager {
 
         var settings = Settings(context);
 
-        if (!settings.remindersEnabled) {
-            ReminderAlarm.cancelAlarm(context); // cancel existing, if any
+        if (!settings.remindersEnabled)
             return;
-        }
 
         val hasActiveNotifications =
                 EventsStorage(context)

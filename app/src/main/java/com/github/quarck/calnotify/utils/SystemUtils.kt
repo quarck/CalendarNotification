@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.utils
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.media.AudioManager
 import android.os.PowerManager
@@ -50,4 +51,19 @@ fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit
     finally {
         wakeLock.release()
     }
+}
+
+fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: PendingIntent) {
+
+    var build = android.os.Build.VERSION.SDK_INT
+
+    if (build >= android.os.Build.VERSION_CODES.M) {
+        // Marshmallow way of doing this
+        return this.setExactAndAllowWhileIdle(type, triggerAtMillis, operation);
+    } else if (build >= android.os.Build.VERSION_CODES.KITKAT) {
+        // KitKat way
+        return this.setExact(type, triggerAtMillis, operation);
+    }
+    // Old way
+    return this.set(type, triggerAtMillis, operation);
 }

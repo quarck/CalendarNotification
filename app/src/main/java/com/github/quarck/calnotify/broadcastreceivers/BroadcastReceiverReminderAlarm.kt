@@ -73,7 +73,9 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         logger.debug("Seen alarm to early, re-schedule and go back");
 
                         val leftMillis = interval - sinceLastFire;
-                        ReminderAlarm.scheduleAlarmMillis(context, interval, leftMillis)
+
+                        // Schedule actual time to fire based on how long ago we have fired
+                        ReminderAlarm.scheduleAlarmMillis(context, leftMillis)
 
                     } else {
                         // OK ot fire
@@ -83,14 +85,17 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         if (fired) {
                             context.globalState.reminderLastFireTime = currentTime
                         }
+
+                        // Should schedule next alarm
+                        ReminderAlarm.scheduleAlarmMillis(context, interval)
                     }
                 } else {
                     logger.debug("Exceeded max numer of fires, maxFires=$maxFires, numRemindersFired=$numRemindersFired")
-                    ReminderAlarm.cancelAlarm(context)
+                    // ReminderAlarm.cancelAlarm(context) // no need to cancel - no longer using repeating alarms
                 }
             } else {
                 logger.debug("Reminders are disabled or nothing to remind about, received this by error")
-                ReminderAlarm.cancelAlarm(context)
+                // ReminderAlarm.cancelAlarm(context) // no need to cancel - no longer using repeating alarms
             }
         }
     }

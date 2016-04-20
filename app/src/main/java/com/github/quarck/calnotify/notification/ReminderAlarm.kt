@@ -27,25 +27,23 @@ import android.content.Intent
 import com.github.quarck.calnotify.broadcastreceivers.BroadcastReceiverReminderAlarm
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.alarmManager
+import com.github.quarck.calnotify.utils.setExactCompat
 
 object ReminderAlarm {
 
     private val logger = Logger("ReminderManager");
 
-    fun scheduleAlarmMillis(context: Context, repeatMillis: Long, nextMillis: Long = 0L) {
+    fun scheduleAlarmMillis(context: Context, nextMillis: Long) {
 
-        logger.debug("Setting reminder alarm with repeation interval ${repeatMillis/1000L} seconds")
+        logger.debug("Setting reminder alarm in  ${nextMillis/1000L} seconds")
 
         val intent = Intent(context, BroadcastReceiverReminderAlarm::class.java)
 
         val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val nextAlarmMillis = System.currentTimeMillis() + if (nextMillis > 0) nextMillis else repeatMillis;
-
-        context.alarmManager.setRepeating(
+        context.alarmManager.setExactCompat(
                 AlarmManager.RTC_WAKEUP,
-                nextAlarmMillis,
-                repeatMillis,
+                nextMillis,
                 pendIntent)
     }
 

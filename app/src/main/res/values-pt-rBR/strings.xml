@@ -135,9 +135,9 @@
 
 <!-- 'Akira Nóis ;) -->
 
-    <string name="pebble_notification_title">Calendar</string>
+    <string name="pebble_notification_title">Calendário</string>
 
-    <string name="heads_up_notification">Heads-up Notification</string>
-    <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
+    <string name="heads_up_notification">Notificações Heads-up</string>
+    <string name="heads_up_notification_summary">Mostra brevemente o balão de notificação no topo da tela</string>
 
 </resources>

@@ -298,15 +298,14 @@ class EventNotificationManager : IEventNotificationManager {
 
     private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent {
 
-//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK;
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         var pendingIntent =
                 TaskStackBuilder.create(ctx)
                         .addNextIntentWithParentStack(intent)
                         .getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
-
-      /*  var pendingIntent =
+/*
+        var pendingIntent =
                 PendingIntent.getActivity(
                         ctx,
                         id,

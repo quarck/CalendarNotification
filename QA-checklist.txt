@@ -1,3 +1,17 @@
 1. There should be no 'snooze' activity visible in the recents 
 
+2. App should ask for permissions on Android 6
+
+3. Notification reminders should work as expected
+
+4. Snooze should fire on time as expected 
+
+5. "Notification ballons" should be configurable 
+
+6. Test with "Dismiss" button disabled 
+
+7. Events on the main view must be sorted by the next alarm time
+
+8. Test the UI on ultra-low resolution devices (like Galaxy Pocket Neo)
+
 

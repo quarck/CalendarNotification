@@ -216,7 +216,7 @@ class EventNotificationManager : IEventNotificationManager {
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
         builder.addAction(
-                R.drawable.ic_menu_rotate,
+                com.github.quarck.calnotify.R.drawable.ic_update_black_24dp,
                 ctx.getString(com.github.quarck.calnotify.R.string.snooze) ?: "SNOOZE",
                 pendingActivityIntent(ctx,
                         snoozeIntent(ctx, event.eventId, event.notificationId),
@@ -226,7 +226,7 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (notificationSettings.showDismissButton) {
             builder.addAction(
-                    R.drawable.ic_menu_close_clear_cancel,
+                    com.github.quarck.calnotify.R.drawable.ic_clear_black_24dp,
                     ctx.getString(com.github.quarck.calnotify.R.string.dismiss) ?: "DISMISS",
                     pendingServiceIntent(ctx,
                             dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),

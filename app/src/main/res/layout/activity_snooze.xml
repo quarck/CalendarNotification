@@ -181,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:longClickable="false"
-                    android:src="@drawable/ic_history_black_24dp"
+                    android:src="@drawable/ic_update_black_24dp"
                     android:paddingStart="@dimen/snooze_view_img_padding_start"
                     android:paddingEnd="@dimen/snooze_view_img_padding_end"
                     android:paddingRight="@dimen/snooze_view_img_padding_end"

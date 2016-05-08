@@ -139,5 +139,6 @@
 
     <string name="heads_up_notification">Notificações Heads-up</string>
     <string name="heads_up_notification_summary">Mostra brevemente o balão de notificação no topo da tela</string>
+    <string name="projectPageOnGitHub">Project page on GitHub</string>
 
 </resources>

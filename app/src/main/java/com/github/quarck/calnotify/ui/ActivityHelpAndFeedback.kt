@@ -38,11 +38,13 @@ class ActivityHelpAndFeedback : Activity() {
         logger.debug("onCreate")
     }
 
-    public fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
+    fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
 
-    public fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
+    fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
 
-    public fun OnButtonEmailDeveloper(v: View) {
+    fun OnTextViewGitHubClick(v: View) = startActivity(Intent.parseUri(githubUri, 0))
+
+    fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
         var email = Intent(Intent.ACTION_SEND);
@@ -69,14 +71,24 @@ class ActivityHelpAndFeedback : Activity() {
     }
 
     companion object {
+        var logger = Logger("ActivityHelpAndFeedback")
+
         var imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
         var kotlinUri = "https://kotlinlang.org/"
+        var githubUri = "https://github.com/quarck/CalendarNotification/issues"
 
         var developerEmail = "s.parshin.sc@gmail.com"
-        var emailSubject = "Calendar Notification Plus Feedback"
-        var emailText = "Please write your question or feedback below: (English/Russian languages only)\n\n"
         var mimeType = "message/rfc822"
+        var emailSubject = "Calendar Notification Plus Feedback"
+        var emailText =
+"""Please describe your problem or suggestion below this text (English/Russian languages only)
+If submitting problem report, please include the following details:
+ * Your device model
+ * Android version
+ * Stock / custom ROM? (leave blank if not sure)
 
-        var logger = Logger("ActivityHelpAndFeedback")
+<type your feedback / request here>
+"""
+
     }
 }

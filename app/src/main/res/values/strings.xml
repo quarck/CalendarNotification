@@ -100,9 +100,9 @@
     <string name="button_reload">RELOAD</string>
     <string name="settings_name">Settings</string>
     <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
-    <string name="app_icon_credit">App icon credit:</string>
+    <string name="app_icon_credit">Icon credit:</string>
     <string name="kotlin_language" translatable="false">Kotlin Language</string>
-    <string name="app_created_with">App created with</string>
+    <string name="app_created_with">Created with</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="snooze_presets">Snooze settings</string>
     <string name="smartwatch_support">Smartwatch support</string>
@@ -139,5 +139,6 @@
     <string name="pebble_notification_title">Calendar</string>
     <string name="heads_up_notification">Heads-up Notification</string>
     <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
+    <string name="projectPageOnGitHub">Project page on GitHub</string>
 
 </resources>

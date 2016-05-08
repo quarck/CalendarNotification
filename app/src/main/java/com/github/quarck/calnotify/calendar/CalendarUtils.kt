@@ -26,6 +26,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -70,7 +71,7 @@ object CalendarUtils {
                         endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
                         location = location ?: "",
                         lastEventUpdate = System.currentTimeMillis(),
-                        isDisplayed = false,
+                        displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_COLOR
                 );
 

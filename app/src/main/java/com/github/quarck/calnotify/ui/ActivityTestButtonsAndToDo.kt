@@ -29,6 +29,7 @@ import android.widget.ToggleButton
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
@@ -134,7 +135,7 @@ class ActivityTestButtonsAndToDo : Activity() {
                 currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
                 System.currentTimeMillis(),
-                false,
+                EventDisplayStatus.Hidden,
                 0xffFFC107.toInt()
         )
 

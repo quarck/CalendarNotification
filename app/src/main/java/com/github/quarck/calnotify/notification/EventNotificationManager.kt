@@ -30,6 +30,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.NotificationSettingsSnapshot
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatText
@@ -101,7 +102,7 @@ class EventNotificationManager : IEventNotificationManager {
             hideCollapsedNotifications(context, db, older, force);
             postRegularEvents(context, db, settings, recent, force);
 
-            postNumNotificationsCollapsed(context, older.size);
+            postNumNotificationsCollapsed(context, older);
         }
     }
 
@@ -109,11 +110,11 @@ class EventNotificationManager : IEventNotificationManager {
         logger.debug("Hiding notifications for ${events.size} notification")
 
         for (event in events) {
-            if (event.isDisplayed || force) {
+            if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId);
 
-                event.isDisplayed = false;
+                event.displayStatus = EventDisplayStatus.DisplayedCollapsed;
                 db.updateEvent(event);
             } else {
                 logger.debug("Skipping hiding of notification id ${event.notificationId}, eventId ${event.eventId} - already hidden");
@@ -140,19 +141,21 @@ class EventNotificationManager : IEventNotificationManager {
         for (event in events) {
             if (event.snoozedUntil == 0L) {
                 // This should be currently displayed, if snoozedUntil is zero
-                if (!event.isDisplayed || force) {
+                if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
                     logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
-                    // Unless forced - play sound
-                    postNotification(
-                            context,
-                            event,
-                            if (!force) notificationsSettings else notificationsSettingsQuiet
-                        )
+                    var settings = notificationsSettings
+
+                    // If forced or if we are posting notification that was previously posted as collapsed
+                    // - don't play sound
+                    if (force || (event.displayStatus == EventDisplayStatus.DisplayedCollapsed))
+                        settings = notificationsSettingsQuiet
+
+                    postNotification( context, event, settings )
 
                     // Update db to indicate that this event is currently actively displayed
-                    db.updateEvent(event, isDisplayed = true);
+                    db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal);
 
                     wasQuiet = wasQuiet && force
 
@@ -168,7 +171,7 @@ class EventNotificationManager : IEventNotificationManager {
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero also
-                db.updateEvent(event, isDisplayed = true, snoozedUntil = 0);
+                db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal, snoozedUntil = 0);
 
                 wasQuiet = false
             }
@@ -320,13 +323,13 @@ class EventNotificationManager : IEventNotificationManager {
         notificationManager.cancel(notificationId);
     }
 
-    private fun postNumNotificationsCollapsed(context: Context, numCollapsed: Int) {
+    private fun postNumNotificationsCollapsed(context: Context, events: List<EventRecord>) {
         logger.debug("Posting 'collapsed view' notification");
 
         var intent = Intent(context, ActivityMain::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        var title = java.lang.String.format(context.getString(com.github.quarck.calnotify.R.string.multiple_events), numCollapsed);
+        var title = java.lang.String.format(context.getString(com.github.quarck.calnotify.R.string.multiple_events), events.size);
 
         val notification =
                 Notification.Builder(context)
@@ -337,8 +340,6 @@ class EventNotificationManager : IEventNotificationManager {
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setVibrate(longArrayOf(Consts.VIBRATION_DURATION))
                         .setLights(Consts.LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
                         .build()
 

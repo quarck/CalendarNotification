@@ -40,7 +40,7 @@ public class EventsStorage(context: Context)
             startTime: Long, endTime: Long,
             location: String,
             lastEventUpdate: Long,
-            isDisplayed: Boolean,
+            displayStatus: EventDisplayStatus,
             color: Int
     ): EventRecord {
         var ret =
@@ -54,7 +54,7 @@ public class EventsStorage(context: Context)
                         endTime = endTime,
                         location = location,
                         lastEventUpdate = lastEventUpdate,
-                        isDisplayed = isDisplayed,
+                        displayStatus = displayStatus,
                         color = color
                 )
 
@@ -76,7 +76,7 @@ public class EventsStorage(context: Context)
                     endTime: Long? = null,
                     location: String? = null,
                     lastEventUpdate: Long? = null,
-                    isDisplayed: Boolean? = null,
+                    displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
     ) {
         var newEvent =
@@ -88,7 +88,7 @@ public class EventsStorage(context: Context)
                         endTime = endTime ?: event.endTime,
                         location = location ?: event.location,
                         lastEventUpdate = lastEventUpdate ?: event.lastEventUpdate,
-                        isDisplayed = isDisplayed ?: event.isDisplayed,
+                        displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color
                 );
 
@@ -308,7 +308,7 @@ public class EventsStorage(context: Context)
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
         values.put(KEY_LAST_EVENT_FIRE, event.lastEventUpdate);
-        values.put(KEY_IS_DISPLAYED, if (event.isDisplayed) 1 else 0);
+        values.put(KEY_IS_DISPLAYED, event.displayStatus.code);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_ALERT_TIME, event.alertTime)
 
@@ -327,7 +327,7 @@ public class EventsStorage(context: Context)
                 location = cursor.getString(6),
                 snoozedUntil = cursor.getLong(7),
                 lastEventUpdate = cursor.getLong(8),
-                isDisplayed = (cursor.getInt(9) != 0),
+                displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
                 color = cursor.getInt(10),
                 alertTime = cursor.getLong(11)
         )

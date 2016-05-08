@@ -19,18 +19,27 @@
 
 package com.github.quarck.calnotify.eventsstorage
 
+enum class EventDisplayStatus(val code: Int) {
+    Hidden(0),
+    DisplayedNormal(1),
+    DisplayedCollapsed(2);
+
+    companion object {
+        fun fromInt(v: Int) = EventDisplayStatus.values()[v]
+    }
+}
+
 data class EventRecord(
         val eventId: Long,
         val alertTime: Long,
         var notificationId: Int,
         var title: String,
-//        var description: String,
         var startTime: Long,
         var endTime: Long,
         var location: String,
         var lastEventUpdate: Long,
         var snoozedUntil: Long = 0,
-        var isDisplayed: Boolean = false,
+        var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
         var color: Int = 0
 ) {
     fun updateFrom(newEvent: EventRecord): Boolean {
@@ -40,11 +49,6 @@ data class EventRecord(
             title = newEvent.title
             ret = true
         }
-
-//        if (description != newEvent.description) {
-//            description = newEvent.description
-//            ret = true
-//        }
 
         if (startTime != newEvent.startTime) {
             startTime = newEvent.startTime

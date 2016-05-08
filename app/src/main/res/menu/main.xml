@@ -3,6 +3,12 @@
     tools:context=".ActivityMain" >
 
     <item
+        android:id="@+id/action_snooze_all"
+        android:orderInCategory="90"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/snooze_all" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"

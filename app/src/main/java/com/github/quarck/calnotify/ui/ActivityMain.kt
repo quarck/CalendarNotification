@@ -173,6 +173,11 @@ class ActivityMain : Activity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
+
+        var menuItem = menu.findItem(R.id.action_snooze_all)
+        if (menuItem != null)
+            menuItem.isEnabled = presenter.size > 0
+
         return true
     }
 
@@ -181,6 +186,9 @@ class ActivityMain : Activity() {
         refreshReminderLastFired()
 
         when (item.itemId) {
+            R.id.action_snooze_all ->
+                startActivity(Intent(this, ActivitySnooze::class.java))
+
             R.id.action_settings ->
                 startActivity(Intent(this, ActivitySettings::class.java))
 
@@ -202,8 +210,7 @@ class ActivityMain : Activity() {
 
             runOnUiThread {
                 presenter.setEventsToDisplay(events);
-                find<TextView>(R.id.empty_view).visibility =
-                    if (events.size > 0) View.GONE else View.VISIBLE;
+                onNumEventsUpdated()
             }
         }
     }
@@ -288,14 +295,25 @@ class ActivityMain : Activity() {
 
                 presenter.removeAt(position)
 
-                find<TextView>(R.id.empty_view).visibility =
-                        if (presenter.size > 0) View.GONE else View.VISIBLE;
+                onNumEventsUpdated()
+
             } else {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
                 logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
             }
         }
         refreshReminderLastFired()
+    }
+
+    private fun onNumEventsUpdated() {
+
+        var hasEvents = presenter.size > 0
+
+        find<TextView>(R.id.empty_view).visibility =
+                if (hasEvents) View.GONE else View.VISIBLE;
+
+        this.invalidateOptionsMenu();
+
     }
 
     companion object {

@@ -20,9 +20,11 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
@@ -82,7 +84,7 @@ class ActivitySnooze : Activity() {
 
         var event = storage.getEvent(eventId)
 
-        if (event != null) {
+        if (eventId != -1L && event != null) {
             var title =
                     if (event.title == "")
                         this.resources.getString(R.string.empty_title)
@@ -121,6 +123,15 @@ class ActivitySnooze : Activity() {
             var isRepeating = CalendarUtils.isRepeatingEvent(this, event)
             if (isRepeating != null && !isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
+
+        } else if (eventId == -1L) { // no eventId passed or -1 passed - it is "Snooze All"
+
+            find<TextView>(R.id.snooze_view_title).text = this.resources.getString(R.string.all_events);
+            find<RelativeLayout>(R.id.layout_snooze_time).visibility = View.GONE
+            find<View>(R.id.view_snooze_divider).visibility = View.GONE
+            find<TextView>(R.id.snooze_view_event_date).text = ""
+            find<TextView>(R.id.snooze_view_event_time).text = ""
+            find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.snooze_events_for)
         }
     }
 
@@ -178,6 +189,29 @@ class ActivitySnooze : Activity() {
             } else {
                 logger.error("Error: can't get event from DB");
             }
+        } else {
+
+            AlertDialog.Builder(this)
+                    .setMessage(R.string.snooze_all_confirmation)
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.yes) {
+                        x, y ->
+
+                        logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
+
+                        var events = storage.events
+
+                        for (event in events) {
+                            EventsManager.snoozeEvent(this, event, snoozeDelay, storage);
+                        }
+
+                        finish();
+                    }
+                    .setNegativeButton(R.string.cancel) {
+                        x, y ->
+                    }
+                    .create()
+                    .show()
         }
     }
 

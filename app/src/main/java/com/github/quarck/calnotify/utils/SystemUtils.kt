@@ -24,6 +24,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.media.AudioManager
 import android.os.PowerManager
+import android.os.Vibrator
 
 fun<T> Context.service(svc: String) =  getSystemService(svc) as T
 
@@ -36,7 +37,8 @@ val Context.audioManager: AudioManager
 val Context.powerManager: PowerManager
     get() = service(Context.POWER_SERVICE)
 
-
+val Context.vibratorService: Vibrator
+    get() = service(Context.VIBRATOR_SERVICE)
 
 fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit) {
 

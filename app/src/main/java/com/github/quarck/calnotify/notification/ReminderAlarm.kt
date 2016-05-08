@@ -43,7 +43,7 @@ object ReminderAlarm {
 
         context.alarmManager.setExactCompat(
                 AlarmManager.RTC_WAKEUP,
-                nextMillis,
+                System.currentTimeMillis() + nextMillis,
                 pendIntent)
     }
 

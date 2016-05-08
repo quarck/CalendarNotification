@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.utils.audioManager
 import com.github.quarck.calnotify.utils.powerManager
+import com.github.quarck.calnotify.utils.vibratorService
 import com.github.quarck.calnotify.utils.wakeLocked
 
 class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
@@ -70,9 +71,9 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                     val sinceLastFire = currentTime - lastFireTime;
 
                     if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
-                        logger.debug("Seen alarm to early, re-schedule and go back");
-
                         val leftMillis = interval - sinceLastFire;
+
+                        logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
 
                         // Schedule actual time to fire based on how long ago we have fired
                         ReminderAlarm.scheduleAlarmMillis(context, leftMillis)
@@ -81,10 +82,8 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         // OK ot fire
                         logger.debug("Since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
 
-                        val fired = checkPhoneSilentAndFire(context, settings)
-                        if (fired) {
-                            context.globalState.reminderLastFireTime = currentTime
-                        }
+                        fireReminder(context, settings)
+                        context.globalState.reminderLastFireTime = currentTime
 
                         // Should schedule next alarm
                         ReminderAlarm.scheduleAlarmMillis(context, interval)
@@ -100,66 +99,30 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
         }
     }
 
-    private fun checkPhoneSilentAndFire(ctx: Context, settings: Settings): Boolean {
+    private fun fireReminder(ctx: Context, settings: Settings) {
 
-        var mayFireVibration = false
-        var mayFireSound = false
+        logger.debug("Firing reminder")
 
-        var fired = false
+        val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
+        ctx.vibratorService.vibrate(pattern, -1)
 
-        val am = ctx.audioManager
+        if (settings.ringtoneURI != null) {
+            try {
+                val notificationUri = settings.ringtoneURI
 
-        when (am.ringerMode) {
+                val mediaPlayer = MediaPlayer()
 
-            AudioManager.RINGER_MODE_SILENT ->
-                logger.debug("checkPhoneSilentAndFire: AudioManager.RINGER_MODE_SILENT")
+                mediaPlayer.setDataSource(ctx, notificationUri)
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
+                mediaPlayer.prepare()
+                mediaPlayer.setOnCompletionListener { mp -> mp.release() }
+                mediaPlayer.start()
 
-            AudioManager.RINGER_MODE_VIBRATE -> {
-                logger.debug("checkPhoneSilentAndFire: AudioManager.RINGER_MODE_VIBRATE")
-                mayFireVibration = true
-            }
-
-            AudioManager.RINGER_MODE_NORMAL -> {
-                logger.debug("checkPhoneSilentAndFire: AudioManager.RINGER_MODE_NORMAL")
-                mayFireVibration = true
-                mayFireSound = true
-            }
-        }
-
-        if (mayFireVibration) {
-            logger.debug("Firing vibro-alarm")
-
-            fired = true
-
-            val v = ctx.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
-            v.vibrate(pattern, -1)
-        }
-
-        if (mayFireSound) {
-            logger.debug("Playing sound notification, if URI is not null")
-
-            fired = true
-
-            if (settings.ringtoneURI != null) {
-                try {
-                    val notificationUri = settings.ringtoneURI
-
-                    val mediaPlayer = MediaPlayer()
-
-                    mediaPlayer.setDataSource(ctx, notificationUri)
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
-                    mediaPlayer.prepare()
-                    mediaPlayer.setOnCompletionListener { mp -> mp.release() }
-                    mediaPlayer.start()
-                } catch (e: Exception) {
-                    logger.debug("Exception while playing notification")
-                    e.printStackTrace()
-                }
+            } catch (e: Exception) {
+                logger.debug("Exception while playing notification")
+                e.printStackTrace()
             }
         }
-
-        return fired
     }
 
     companion object {

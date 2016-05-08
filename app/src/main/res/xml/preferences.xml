@@ -19,7 +19,10 @@
             android:key="pref_key_ringtone"
             android:summary="@string/ringtone_selection_summary"
             android:title="@string/ringtone_selection"
-            android:ringtoneType="notification" />
+            android:ringtoneType="notification"
+            android:showSilent="false"
+            android:showDefault="true"
+            />
 
         <CheckBoxPreference android:key="vibra_on"
             android:title="@string/vibra_on"

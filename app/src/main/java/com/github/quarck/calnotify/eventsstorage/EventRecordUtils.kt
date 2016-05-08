@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.eventsstorage
 
 import android.content.Context
+import android.text.format.DateUtils
 import com.github.quarck.calnotify.R
 import java.text.DateFormat
 import java.util.*
@@ -27,15 +28,12 @@ import java.util.*
 object EventRecordUtils {
     val oneDay = 24L * 3600L * 1000L;
 
-    fun dayName(ctx: Context, time: Long, currentTime: Long, formatter: DateFormat): String {
+    fun dayName(ctx: Context, time: Long, formatter: DateFormat): String {
         var ret: String = "";
 
-        var currentDay: Long = currentTime / oneDay;
-        var day: Long = time / oneDay;
-
-        if (currentDay == day) {
+        if (DateUtils.isToday(time)) {
             ret = ctx.resources.getString(R.string.today);
-        } else if (day == currentDay + 1L) {
+        } else if (DateUtils.isToday(time - oneDay)) {
             ret = ctx.resources.getString(R.string.tomorrow);
         } else {
             ret = formatter.format(Date(time));
@@ -67,7 +65,7 @@ fun EventRecord.formatText(ctx: Context): String {
 
         if (currentDay != startDay) {
             if (startDay == endDay) {
-                sb.append(EventRecordUtils.dayName(ctx, startTime, currentTime, dateFormatter));
+                sb.append(EventRecordUtils.dayName(ctx, startTime, dateFormatter));
             } else {
                 sb.append(dateFormatter.format(start));
             }
@@ -121,8 +119,7 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
         sbDay.append(
                 EventRecordUtils.dayName(
                         ctx,
-                        startTime, currentTime,
-                        DateFormat.getDateInstance(DateFormat.FULL)
+                        startTime, DateFormat.getDateInstance(DateFormat.FULL)
                 )
         );
     }
@@ -147,8 +144,7 @@ fun EventRecord.formatSnoozedUntil(ctx: Context): String {
             sb.append(
                     EventRecordUtils.dayName(
                             ctx,
-                            snoozedUntil, currentTime,
-                            DateFormat.getDateInstance(DateFormat.SHORT)
+                            snoozedUntil, DateFormat.getDateInstance(DateFormat.SHORT)
                     )
             );
             sb.append(" ");

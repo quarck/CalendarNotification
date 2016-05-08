@@ -480,13 +480,11 @@ object CalendarUtils {
             var newStartTime = event.startTime + addTime
             var newEndTime = event.endTime + addTime
 
-            if (newStartTime < currentTime + Consts.ALARM_THRESHOULD)
-            {
-                var adj = currentTime + Consts.ALARM_THRESHOULD - newStartTime
-                newStartTime += adj;
-                newEndTime += adj;
+            while (newStartTime < currentTime + Consts.ALARM_THRESHOULD) {
+                logger.error("Requested time is already in the past, adding another ${addTime/1000} sec")
 
-                logger.error("Requested time is already in the past, adjusted by ${adj/1000L} sec")
+                newStartTime += addTime
+                newEndTime += addTime
             }
 
             values.put(CalendarContract.Events.DTSTART, newStartTime);

@@ -14,4 +14,14 @@
 
 8. Test the UI on ultra-low resolution devices (like Galaxy Pocket Neo)
 
+9. Test re-schedule when T+1(d|w) is already in the past 
+
+10. Reminders should play sound and vibration when phone settings allowing that 
+
+11. Today / tomorrow detection (see #27)
+
+12. "Hide notifications balloons" - test it
+
+13. After snoozing notification, activity should not stay in the switcher "recent" list
+
 

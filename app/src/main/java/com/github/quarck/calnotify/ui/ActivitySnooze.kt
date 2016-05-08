@@ -201,8 +201,15 @@ class ActivitySnooze : Activity() {
 
                         var events = storage.events
 
+                        // Don't allow events to have exactly the same "snoozedUntil", so to have
+                        // predicted sorting order, so add a tiny (less than 0.1s) adjust to each
+                        // snoozed time
+
+                        var snoozeAdjust = 0L
+
                         for (event in events) {
-                            EventsManager.snoozeEvent(this, event, snoozeDelay, storage);
+                            EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage);
+                            ++ snoozeAdjust
                         }
 
                         finish();

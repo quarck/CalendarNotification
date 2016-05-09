@@ -48,6 +48,8 @@ interface IEventNotificationManager {
     fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int);
 
     fun postEventNotifications(context: Context, force: Boolean);
+
+    fun fireEventReminder(context: Context)
 }
 
 class EventNotificationManager : IEventNotificationManager {
@@ -103,6 +105,24 @@ class EventNotificationManager : IEventNotificationManager {
             postRegularEvents(context, db, settings, recent, force);
 
             postNumNotificationsCollapsed(context, older);
+        }
+    }
+
+    override fun fireEventReminder(context: Context) {
+
+        var db = EventsStorage(context)
+
+        var mostRecentEvent =
+                db.events
+                        .filter { it.snoozedUntil == 0L }
+                        .maxBy { it.lastEventUpdate }
+
+        if (mostRecentEvent != null) {
+            postNotification(
+                    context,
+                    mostRecentEvent,
+                    Settings(context).notificationSettingsSnapshot
+            )
         }
     }
 

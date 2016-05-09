@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.utils.audioManager
 import com.github.quarck.calnotify.utils.powerManager
@@ -82,11 +83,12 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         // OK ot fire
                         logger.debug("Since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
 
-                        fireReminder(context, settings)
                         context.globalState.reminderLastFireTime = currentTime
 
                         // Should schedule next alarm
                         ReminderAlarm.scheduleAlarmMillis(context, interval)
+
+                        fireReminder(context, settings)
                     }
                 } else {
                     logger.debug("Exceeded max numer of fires, maxFires=$maxFires, numRemindersFired=$numRemindersFired")
@@ -103,6 +105,8 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
 
         logger.debug("Firing reminder")
 
+        EventsManager.fireEventReminder(ctx);
+/*
         val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
         ctx.vibratorService.vibrate(pattern, -1)
 
@@ -123,6 +127,8 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                 e.printStackTrace()
             }
         }
+*/
+
     }
 
     companion object {

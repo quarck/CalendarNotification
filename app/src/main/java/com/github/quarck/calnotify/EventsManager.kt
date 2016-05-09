@@ -220,6 +220,10 @@ object EventsManager {
         DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, id: ${event.eventId}, title: ${event.title}")
     }
 
+    fun fireEventReminder(context: Context) {
+        notificationManager.fireEventReminder(context);
+    }
+
     fun onAppStarted(context: Context?) {
         if (context != null) {
             notificationManager.postEventNotifications(context, true)

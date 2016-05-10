@@ -123,8 +123,13 @@ class Settings(ctx: Context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                showDismissButton, ringtoneURI, vibraOn,
-                ledNotificationOn, headsUpNotification, forwardToPebble)
+                    showDismissButton = showDismissButton,
+                    ringtoneUri = ringtoneURI,
+                    vibraOn = vibraOn,
+                    ledNotificationOn = ledNotificationOn,
+                    headsUpNotification = headsUpNotification,
+                    forwardToPebble = forwardToPebble
+                )
 
     init {
         context = ctx

@@ -273,6 +273,8 @@ class EventNotificationManager : IEventNotificationManager {
         if (notificationSettings.vibraOn) {
             logger.debug("adding vibration");
             builder.setVibrate(longArrayOf(0, Consts.VIBRATION_DURATION));
+        } else {
+            builder.setVibrate(longArrayOf(0));
         }
 
         if (notificationSettings.ledNotificationOn) {

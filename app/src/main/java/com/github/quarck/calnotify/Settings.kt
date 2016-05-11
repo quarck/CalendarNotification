@@ -24,7 +24,6 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
 import android.preference.PreferenceManager
-import com.github.quarck.calnotify.logs.Logger
 
 fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
     if (this != null) {
@@ -53,40 +52,33 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(REMOVE_ORIGINAL_KEY, true)
         set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
 
-    var showDismissButton: Boolean
+    val showDismissButton: Boolean
         get() = prefs.getBoolean(DISMISS_ENABLED_KEY, true)
-        set(value) = prefs.setBoolean(DISMISS_ENABLED_KEY, value)
 
-    var vibraOn: Boolean
+    val vibraOn: Boolean
         get() = prefs.getBoolean(VIBRATION_ENABLED_KEY, true)
-        set(value) = prefs.setBoolean(VIBRATION_ENABLED_KEY, value)
 
-    var ledNotificationOn: Boolean
+    val ledNotificationOn: Boolean
         get() = prefs.getBoolean(LED_ENABLED_KEY, true)
-        set(value) = prefs.setBoolean(LED_ENABLED_KEY, value)
 
     val ledColor: Int
         get() = prefs.getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
 
-    var forwardToPebble: Boolean
+    val forwardToPebble: Boolean
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
-        set(value) = prefs.setBoolean(FORWARD_TO_PEBBLE_KEY, value)
 
-    var headsUpNotification: Boolean
+    val headsUpNotification: Boolean
         get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
-        set(value) = prefs.setBoolean(HEADS_UP_NOTIFICATINO_KEY, value)
 
-    var viewAfterEdit: Boolean
+    val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
-        set(value) = prefs.setBoolean(VIEW_AFTER_EDIT_KEY, value)
 
     var debugTransactionLogEnabled: Boolean
         get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
         set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
 
-    var abortBroadcast: Boolean
+    val abortBroadcast: Boolean
         get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
-        set(value) = prefs.setBoolean(ABORT_BROADCAST_KEY, value)
 
     val snoozePresets: LongArray
         get() {

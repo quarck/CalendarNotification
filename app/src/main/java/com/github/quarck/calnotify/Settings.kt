@@ -41,6 +41,7 @@ data class NotificationSettingsSnapshot
         val ledNotificationOn: Boolean,
         val ledColor: Int,
         val headsUpNotification: Boolean,
+        val wakeScreen: Boolean,
         val forwardToPebble: Boolean
 )
 
@@ -69,6 +70,9 @@ class Settings(ctx: Context) {
 
     val headsUpNotification: Boolean
         get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
+
+    val notificationWakeScreen: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
 
     val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
@@ -126,6 +130,7 @@ class Settings(ctx: Context) {
                     ledNotificationOn = ledNotificationOn,
                     ledColor = ledColor,
                     headsUpNotification = headsUpNotification,
+                    wakeScreen = notificationWakeScreen,
                     forwardToPebble = forwardToPebble
                 )
 
@@ -144,6 +149,7 @@ class Settings(ctx: Context) {
         private const val LED_COLOR_KEY = "notification_led_color"
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
+        private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
 
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
 

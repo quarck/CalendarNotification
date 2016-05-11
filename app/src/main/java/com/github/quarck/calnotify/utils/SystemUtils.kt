@@ -55,6 +55,25 @@ fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit
     }
 }
 
+inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, noinline fn: () -> Unit) {
+
+    var wakeLock = pm.newWakeLock(levelAndFlags, tag);
+    if (wakeLock == null)
+        throw Exception("Failed to acquire wakelock")
+
+    wakeLock.acquire()
+
+    background {
+        try {
+            fn();
+        }
+        finally {
+            wakeLock.release()
+        }
+    }
+}
+
+
 fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: PendingIntent) {
 
     var build = android.os.Build.VERSION.SDK_INT

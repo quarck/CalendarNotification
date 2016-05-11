@@ -20,8 +20,9 @@
 package com.github.quarck.calnotify
 
 object Consts {
+    const val REMINDER_WAKE_LOCK_NAME = "com.github.quarck.calnotify.reminderwakelock"
+    const val SCREEN_WAKE_LOCK_NAME = "com.github.quarck.calnotify.screen.wake.notification"
 
-    const val WAKE_LOCK_NAME = "com.github.quarck.calnotify.reminderwakelock"
     const val MIN_REMINDER_INTERVAL = 60 * 1000
 
     const val DAY_IN_SECONDS: Long = 3600L * 24
@@ -41,6 +42,8 @@ object Consts {
 
     //
     const val VIBRATION_DURATION: Long = 1200;
+    const val WAKE_SCREEN_DURATION = 100L
+
     const val LED_DURATION_ON = 300;
     const val LED_DURATION_OFF = 2000;
     const val DEFAULT_LED_COLOR = 0x7f0000ff;

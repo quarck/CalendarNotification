@@ -25,6 +25,7 @@ package com.github.quarck.calnotify.utils
 // investigating why it is not working
 
 import android.os.AsyncTask
+import android.os.PowerManager
 
 class AsyncOperation(val fn: () -> Unit)
 : AsyncTask<Void?, Void?, Void?>() {
@@ -37,3 +38,4 @@ class AsyncOperation(val fn: () -> Unit)
 inline fun background(noinline fn: () -> Unit) {
     AsyncOperation(fn).execute();
 }
+

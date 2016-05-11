@@ -42,6 +42,12 @@
             android:summary="@string/heads_up_notification_summary"
             android:defaultValue="true" />
 
+        <CheckBoxPreference android:key="notification_wake_screen"
+            android:title="@string/wake_screen_title"
+            android:summary="@string/wake_screen_summary"
+            android:defaultValue="false"
+            />
+
     </PreferenceCategory>
 
     <PreferenceCategory

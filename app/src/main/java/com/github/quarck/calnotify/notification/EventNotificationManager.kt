@@ -26,6 +26,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.NotificationSettingsSnapshot
 import com.github.quarck.calnotify.Settings
@@ -39,6 +40,8 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.ui.ActivityMain
 import com.github.quarck.calnotify.ui.ActivitySnooze
+import com.github.quarck.calnotify.utils.backgroundWakeLocked
+import com.github.quarck.calnotify.utils.powerManager
 
 interface IEventNotificationManager {
     fun onEventAdded(ctx: Context, event: EventRecord);
@@ -73,6 +76,22 @@ class EventNotificationManager : IEventNotificationManager {
         postEventNotifications(ctx, false);
     }
 
+    fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
+
+        if (settings.notificationWakeScreen) {
+            //
+            backgroundWakeLocked(
+                    ctx.powerManager,
+                    PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                    Consts.SCREEN_WAKE_LOCK_NAME)  {
+                // Screen would actually be turned on for a duration of screen timeout set by the user
+                // So don't need to keep wakelock for too long
+                Thread.sleep(Consts.WAKE_SCREEN_DURATION);
+            }
+        }
+
+    }
+
     override fun postEventNotifications(context: Context, force: Boolean) {
         //
         var db = EventsStorage(context)
@@ -90,10 +109,12 @@ class EventNotificationManager : IEventNotificationManager {
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                 }
 
+        var addedNewNotifications = false
+
         if (eventsToUpdate.size <= Consts.MAX_NOTIFICATIONS) {
             //
             hideNumNotificationsCollapsed(context);
-            postRegularEvents(context, db, settings, eventsToUpdate, force)
+            addedNewNotifications = postRegularEvents(context, db, settings, eventsToUpdate, force)
         } else {
             //
             var sortedEvents = eventsToUpdate.sortedBy { it.lastEventUpdate }
@@ -102,10 +123,13 @@ class EventNotificationManager : IEventNotificationManager {
             var older = sortedEvents.take(sortedEvents.size - recent.size)
 
             hideCollapsedNotifications(context, db, older, force);
-            postRegularEvents(context, db, settings, recent, force);
+            addedNewNotifications = postRegularEvents(context, db, settings, recent, force);
 
-            postNumNotificationsCollapsed(context, older);
+            postNumNotificationsCollapsed(context, db, settings, older);
         }
+
+        if (addedNewNotifications)
+            wakeScreenIfRequired(context, settings);
     }
 
     override fun fireEventReminder(context: Context) {
@@ -118,11 +142,16 @@ class EventNotificationManager : IEventNotificationManager {
                         .maxBy { it.lastEventUpdate }
 
         if (mostRecentEvent != null) {
+
+            var settings = Settings(context)
+
             postNotification(
                     context,
                     mostRecentEvent,
-                    Settings(context).notificationSettingsSnapshot
+                    settings.notificationSettingsSnapshot
             )
+
+            wakeScreenIfRequired(context, settings);
         }
     }
 
@@ -150,7 +179,8 @@ class EventNotificationManager : IEventNotificationManager {
             settings: Settings,
             events: List<EventRecord>,
             force: Boolean
-    ) {
+    ) : Boolean {
+
         logger.debug("Posting ${events.size} notifications");
 
         var notificationsSettings = settings.notificationSettingsSnapshot
@@ -199,6 +229,8 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (!wasQuiet)
             context.globalState.notificationLastFireTime = System.currentTimeMillis()
+
+        return !wasQuiet
     }
 
     private fun postNotification(
@@ -345,7 +377,12 @@ class EventNotificationManager : IEventNotificationManager {
         notificationManager.cancel(notificationId);
     }
 
-    private fun postNumNotificationsCollapsed(context: Context, events: List<EventRecord>) {
+    private fun postNumNotificationsCollapsed(
+            context: Context,
+            db: EventsStorage,
+            settings: Settings,
+            events: List<EventRecord>
+    ) {
         logger.debug("Posting 'collapsed view' notification");
 
         var intent = Intent(context, ActivityMain::class.java);
@@ -355,8 +392,6 @@ class EventNotificationManager : IEventNotificationManager {
                 context.getString(com.github.quarck.calnotify.R.string.multiple_events),
                 events.size
         );
-
-        var settings = Settings(context)
 
         val notification =
                 Notification.Builder(context)

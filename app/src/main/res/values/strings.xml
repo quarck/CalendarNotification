@@ -146,4 +146,7 @@
     <string name="snooze_events_for">Snooze events for:</string>
 
     <string name="led_color">LED Color</string>
+    <string name="wake_screen_title">Wake screen</string>
+    <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
+
 </resources>

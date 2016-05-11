@@ -48,7 +48,7 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
             return;
         }
 
-        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.WAKE_LOCK_NAME) {
+        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
             val settings = Settings(context)
 

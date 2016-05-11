@@ -8,4 +8,49 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+
+    <color name="led_clr1">#0000FF</color>
+    <color name="led_clr2">#00FF00</color>
+    <color name="led_clr3">#00FFFF</color>
+    <color name="led_clr4">#FF0000</color>
+    <color name="led_clr5">#FF00FF</color>
+    <color name="led_clr6">#FFFF00</color>
+    <color name="led_clr7">#FFFFFF</color>
+    <color name="led_clr8">#7F00FF</color>
+
+    <color name="led_clr9">#007FFF</color>
+    <color name="led_clr10">#7F7FFF</color>
+    <color name="led_clr11">#00FF7F</color>
+    <color name="led_clr12">#7FFF00</color>
+    <color name="led_clr13">#7FFF7F</color>
+    <color name="led_clr14">#7FFFFF</color>
+    <color name="led_clr15">#FF007F</color>
+    <color name="led_clr16">#FF7F00</color>
+    <color name="led_clr17">#FF7F7F</color>
+    <color name="led_clr18">#FF7FFF</color>
+    <color name="led_clr19">#FFFF7F</color>
+    <color name="led_clr20">#3FFF7F</color> <!-- just to fill the gap -->
+
+    <array name="led_colors">
+        <item>@color/led_clr1</item>
+        <item>@color/led_clr2</item>
+        <item>@color/led_clr3</item>
+        <item>@color/led_clr4</item>
+        <item>@color/led_clr5</item>
+        <item>@color/led_clr6</item>
+        <item>@color/led_clr7</item>
+        <item>@color/led_clr8</item>
+<!--        <item>@color/led_clr9</item>
+        <item>@color/led_clr10</item>
+        <item>@color/led_clr11</item>
+        <item>@color/led_clr12</item>
+        <item>@color/led_clr13</item>
+        <item>@color/led_clr14</item>
+        <item>@color/led_clr15</item>
+        <item>@color/led_clr16</item>
+        <item>@color/led_clr17</item>
+        <item>@color/led_clr18</item>
+        <item>@color/led_clr19</item>
+        <item>@color/led_clr20</item> -->
+    </array>
 </resources>

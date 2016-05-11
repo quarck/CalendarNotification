@@ -43,7 +43,7 @@ object Consts {
     const val VIBRATION_DURATION: Long = 1200;
     const val LED_DURATION_ON = 300;
     const val LED_DURATION_OFF = 2000;
-    const val LED_COLOR = 0x7f0000ff;
+    const val DEFAULT_LED_COLOR = 0x7f0000ff;
 
     const val ALARM_THRESHOULD = 15 * 1000L;
 
@@ -51,5 +51,5 @@ object Consts {
 
     const val MAX_SUPPORTED_PRESETS = 6
 
-    const val DEFAULT_COLOR = 0xff0000ff.toInt()
+    const val DEFAULT_CALENDAR_EVENT_COLOR = 0xff0000ff.toInt()
 }

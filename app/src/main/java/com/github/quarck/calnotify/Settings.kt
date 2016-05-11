@@ -24,6 +24,7 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
 import android.preference.PreferenceManager
+import com.github.quarck.calnotify.logs.Logger
 
 fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
     if (this != null) {
@@ -39,6 +40,7 @@ data class NotificationSettingsSnapshot
         val ringtoneUri: Uri?,
         val vibraOn: Boolean,
         val ledNotificationOn: Boolean,
+        val ledColor: Int,
         val headsUpNotification: Boolean,
         val forwardToPebble: Boolean
 )
@@ -62,6 +64,9 @@ class Settings(ctx: Context) {
     var ledNotificationOn: Boolean
         get() = prefs.getBoolean(LED_ENABLED_KEY, true)
         set(value) = prefs.setBoolean(LED_ENABLED_KEY, value)
+
+    val ledColor: Int
+        get() = prefs.getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
 
     var forwardToPebble: Boolean
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
@@ -127,6 +132,7 @@ class Settings(ctx: Context) {
                     ringtoneUri = ringtoneURI,
                     vibraOn = vibraOn,
                     ledNotificationOn = ledNotificationOn,
+                    ledColor = ledColor,
                     headsUpNotification = headsUpNotification,
                     forwardToPebble = forwardToPebble
                 )
@@ -143,6 +149,7 @@ class Settings(ctx: Context) {
         private const val RINGTONE_KEY = "pref_key_ringtone"
         private const val VIBRATION_ENABLED_KEY = "vibra_on"
         private const val LED_ENABLED_KEY = "notification_led"
+        private const val LED_COLOR_KEY = "notification_led_color"
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
 

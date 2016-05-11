@@ -145,4 +145,5 @@
     <string name="all_events">Snooze all events</string>
     <string name="snooze_events_for">Snooze events for:</string>
 
+    <string name="led_color">LED Color</string>
 </resources>

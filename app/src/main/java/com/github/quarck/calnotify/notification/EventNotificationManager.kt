@@ -279,7 +279,7 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (notificationSettings.ledNotificationOn) {
             logger.debug("Adding leds")
-            builder.setLights(Consts.LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+            builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
         }
 
         var notification = builder.build()
@@ -351,7 +351,12 @@ class EventNotificationManager : IEventNotificationManager {
         var intent = Intent(context, ActivityMain::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        var title = java.lang.String.format(context.getString(com.github.quarck.calnotify.R.string.multiple_events), events.size);
+        var title = java.lang.String.format(
+                context.getString(com.github.quarck.calnotify.R.string.multiple_events),
+                events.size
+        );
+
+        var settings = Settings(context)
 
         val notification =
                 Notification.Builder(context)
@@ -362,7 +367,7 @@ class EventNotificationManager : IEventNotificationManager {
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setLights(Consts.LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+                        .setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
                         .build()
 
         var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

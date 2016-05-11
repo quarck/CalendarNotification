@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory 
         android:title="@string/notification_settings"
         android:key="pref_key_settings">
@@ -14,6 +15,14 @@
             android:summary="@string/notification_light_summary"
             android:title="@string/notification_light_title"
             android:defaultValue="true" />
+
+        <com.thebluealliance.spectrum.SpectrumPreference
+            android:defaultValue="@color/led_clr1"
+            android:key="notification_led_color"
+            android:title="@string/led_color"
+            app:spectrum_colors="@array/led_colors"
+            app:spectrum_outlineWidth="0dp"
+            android:dependency="notification_led" />
 
         <RingtonePreference
             android:key="pref_key_ringtone"

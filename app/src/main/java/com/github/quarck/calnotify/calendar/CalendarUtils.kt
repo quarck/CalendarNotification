@@ -72,7 +72,7 @@ object CalendarUtils {
                         location = location ?: "",
                         lastEventUpdate = System.currentTimeMillis(),
                         displayStatus = EventDisplayStatus.Hidden,
-                        color = color ?: Consts.DEFAULT_COLOR
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
                 );
 
         return Pair(state, event)

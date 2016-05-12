@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import com.github.quarck.calnotify.R
@@ -73,22 +74,26 @@ class ActivityHelpAndFeedback : Activity() {
     companion object {
         var logger = Logger("ActivityHelpAndFeedback")
 
-        var imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
-        var kotlinUri = "https://kotlinlang.org/"
-        var githubUri = "https://github.com/quarck/CalendarNotification/issues"
+        val imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
+        val kotlinUri = "https://kotlinlang.org/"
+        val githubUri = "https://github.com/quarck/CalendarNotification/issues"
 
-        var developerEmail = "s.parshin.sc@gmail.com"
-        var mimeType = "message/rfc822"
-        var emailSubject = "Calendar Notification Plus Feedback"
-        var emailText =
+        val developerEmail = "s.parshin.sc@gmail.com"
+        val mimeType = "message/rfc822"
+        val emailSubject = "Calendar Notification Plus Feedback"
+
+        val emailText: String  by lazy {
+
 """Please describe your problem or suggestion below this text (English/Russian languages only)
-If submitting problem report, please include the following details:
- * Your device model
- * Android version
- * Stock / custom ROM? (leave blank if not sure)
+
+If you are not reporting a problem, you could remove android and hardware details that were automatically added to this message.
+
+Android version: ${Build.VERSION.RELEASE}
+Device: ${Build.MANUFACTURER} ${Build.MODEL}
+Android build: ${Build.DISPLAY}
 
 <type your feedback / request here>
 """
-
+        }
     }
 }

@@ -24,6 +24,7 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
 import android.preference.PreferenceManager
+import com.github.quarck.calnotify.prefs.PreferenceUtils
 
 fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
     if (this != null) {
@@ -86,11 +87,14 @@ class Settings(ctx: Context) {
 
     val snoozePresets: LongArray
         get() {
-            var ret = parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
+            var ret = PreferenceUtils.parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
+
             if (ret == null)
-                ret = parseSnoozePresets(DEFAULT_SNOOZE_PRESET)
+                ret = PreferenceUtils.parseSnoozePresets(DEFAULT_SNOOZE_PRESET)
+
             if (ret == null)
                 ret = Consts.DEFAULT_SNOOZE_PRESETS
+
             return ret;
         }
 
@@ -121,6 +125,7 @@ class Settings(ctx: Context) {
 
     val maxNumerOfReminders: Int
         get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toInt()
+
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
@@ -162,39 +167,8 @@ class Settings(ctx: Context) {
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
-
-
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
         internal const val DEFAULT_REMINDER_INTERVAL = 10
         internal const val DEFAULT_MAX_REMINDERS = "0"
-
-        internal fun parseSnoozePresets(value: String): LongArray? {
-            var ret: LongArray? = null;
-
-            try {
-                ret = value
-                        .split(",")
-                        .map { it.trim() }
-                        .filter { !it.isEmpty() }
-                        .map {
-                            str ->
-                            var unit = str.takeLast(1)
-                            var num = str.dropLast(1).toLong()
-                            var seconds =
-                                    when (unit) {
-                                        "m" -> num * Consts.MINUTE_IN_SECONDS;
-                                        "h" -> num * Consts.HOUR_IN_SECONDS;
-                                        "d" -> num * Consts.DAY_IN_SECONDS;
-                                        else -> throw Exception("Unknown unit ${unit}")
-                                    }
-                            seconds * 1000L
-                        }
-                        .toLongArray()
-            } catch (ex: Exception) {
-                ret = null;
-            }
-
-            return ret;
-        }
     }
 }

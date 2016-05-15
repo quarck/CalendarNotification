@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/check_box_enable_quiet_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/enable_quiet_time"
+        android:padding="@dimen/quiet_hours_elemtns_padding1"
+        />
+
+    <TextView
+        android:id="@+id/text_view_quiet_time_from_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/quiet_time_from"
+        android:padding="@dimen/quiet_hours_elemtns_padding1"
+        />
+
+    <TimePicker
+        android:id="@+id/time_picker_quiet_time_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/quiet_hours_elemtns_padding2"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <TextView
+        android:id="@+id/text_view_quiet_time_to_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/quiet_time_to"
+        android:padding="@dimen/quiet_hours_elemtns_padding1"
+        />
+
+    <TimePicker
+        android:id="@+id/time_picker_quiet_time_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/quiet_hours_elemtns_padding2"
+        android:layout_gravity="center_horizontal"
+        />
+
+</LinearLayout>
+</ScrollView>

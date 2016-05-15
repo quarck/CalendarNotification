@@ -93,6 +93,15 @@
             android:defaultValue="0"
             android:dependency="enable_reminding_key" />
 
+
+
+        <com.github.quarck.calnotify.prefs.QuietHoursPreference
+            android:key="quiet_hours_pref"
+            android:title="Quiet Hours"
+            android:summary="During quiet hours no snoozed event or repeating reminder would fire, prime event notification would still fire"
+            android:defaultValue="0"
+            />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -149,4 +149,11 @@
     <string name="wake_screen_title">Wake screen</string>
     <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
 
+    <string name="error_cannot_parse_pattern">Cannot parse this pattern</string>
+    <string name="quiet_time_from">Quiet time from:</string>
+    <string name="quiet_time_to">Quiet time to:</string>
+    <string name="enable_quiet_time">Enable quiet time</string>
+    <string name="quiet_hours_pref_summary_format" formatted="false">Quiet hours are enabled from %s to %s, you would not hear any snoozed events or repeate reminders during quiet hours, primary (1st) notifications would still be allowed</string>
+    <string name="quiet_hours_pref_disabled">Quiet hours are disabled</string>
+
 </resources>

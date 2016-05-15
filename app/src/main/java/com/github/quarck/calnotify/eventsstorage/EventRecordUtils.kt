@@ -26,7 +26,7 @@ import java.text.DateFormat
 import java.util.*
 
 object EventRecordUtils {
-    val oneDay = 24L * 3600L * 1000L;
+    private const val oneDay = 24L * 3600L * 1000L;
 
     fun dayName(ctx: Context, time: Long, formatter: DateFormat): String {
         var ret: String = "";
@@ -43,41 +43,61 @@ object EventRecordUtils {
     }
 }
 
+fun Calendar.dayEquals(other: Calendar)
+        = this.get(Calendar.YEAR) == other.get(Calendar.YEAR) &&
+            this.get(Calendar.DAY_OF_YEAR) == other.get(Calendar.DAY_OF_YEAR);
+
+fun areDatesOnSameDay(date1: Long, date2: Long): Boolean {
+
+    var cal1 = Calendar.getInstance()
+    var cal2 = Calendar.getInstance()
+
+    cal1.time = Date(date1)
+    cal2.time = Date(date2)
+
+    return cal1.dayEquals(cal2)
+}
+
+
 fun EventRecord.formatText(ctx: Context): String {
     var sb = StringBuilder()
 
     if (this.startTime != 0L) {
+
         var currentTime = System.currentTimeMillis();
 
         var today = Date(currentTime)
         var start = Date(this.startTime)
         var end = Date(this.endTime)
 
-        val oneDay = EventRecordUtils.oneDay;
+        val currentDay = Calendar.getInstance()
+        var startDay = Calendar.getInstance()
+        var endDay = Calendar.getInstance()
 
-        var currentDay: Long = currentTime / oneDay;
-        var startDay: Long = this.startTime / oneDay;
-        var endDay: Long = this.endTime / oneDay;
-
+        currentDay.time = today
+        startDay.time = start
+        endDay.time = end
 
         var dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
         var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
-        if (currentDay != startDay) {
-            if (startDay == endDay) {
+        if (!currentDay.dayEquals(startDay)) {
+
+            if (startDay.dayEquals(endDay))
                 sb.append(EventRecordUtils.dayName(ctx, startTime, dateFormatter));
-            } else {
+            else
                 sb.append(dateFormatter.format(start));
-            }
+
             sb.append(" ");
         }
 
         sb.append(timeFormatter.format(start));
 
-        if (endDay != 0L) {
+        if (endTime != 0L) {
+
             sb.append(" - ");
 
-            if (endDay != startDay) {
+            if (!endDay.dayEquals(startDay)) {
                 sb.append(dateFormatter.format(end))
                 sb.append(" ");
             }
@@ -102,16 +122,23 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
     if (this.startTime != 0L) {
         var currentTime = System.currentTimeMillis();
 
-        val oneDay = EventRecordUtils.oneDay;
-        var currentDay: Long = currentTime / oneDay;
-        var startDay: Long = this.startTime / oneDay;
-        var endDay: Long = this.endTime / oneDay;
+        var today = Date(currentTime)
+        var start = Date(this.startTime)
+        var end = Date(this.endTime)
+
+        val currentDay = Calendar.getInstance()
+        var startDay = Calendar.getInstance()
+        var endDay = Calendar.getInstance()
+
+        currentDay.time = today
+        startDay.time = start
+        endDay.time = end
 
         var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
         sbTime.append(timeFormatter.format(Date(this.startTime)));
 
-        if (endDay != 0L && endDay == startDay) {
+        if (endTime != 0L && endDay.dayEquals(startDay)) {
             sbTime.append(" - ");
             sbTime.append(timeFormatter.format(Date(this.endTime)))
         }
@@ -133,14 +160,15 @@ fun EventRecord.formatSnoozedUntil(ctx: Context): String {
     if (snoozedUntil != 0L) {
         var currentTime = System.currentTimeMillis();
 
-        val oneDay = EventRecordUtils.oneDay;
+        val currentDay = Calendar.getInstance()
+        var snoozedDay = Calendar.getInstance()
 
-        var currentDay: Long = currentTime / oneDay;
-        var snoozedDay: Long = this.snoozedUntil / oneDay;
+        currentDay.time = Date(currentTime)
+        snoozedDay.time = Date(this.snoozedUntil)
 
         var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
-        if (snoozedDay != currentDay) {
+        if (!snoozedDay.dayEquals(currentDay)) {
             sb.append(
                     EventRecordUtils.dayName(
                             ctx,

@@ -27,73 +27,64 @@ import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
 import android.widget.EditText
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.R.id
+import com.github.quarck.calnotify.R.layout
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.vibratorService
 
-class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreference(ctx, attrs) {
-    internal var snoozePresetValue: String? = null
 
-    internal var edit: EditText? = null
+open class VibrationPatternPreference(ctx: Context, attrs: AttributeSet) : DialogPreference(ctx, attrs) {
+    internal var patternValue: String? = null
+
+    internal lateinit var edit: EditText
 
     internal lateinit var context: Context
 
     init {
         context = ctx
 
-        dialogLayoutResource = R.layout.dialog_snooze_presets;
-
+        dialogLayoutResource = layout.dialog_vibration_pattern
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
-
         dialogIcon = null
+    }
+
+    open fun onPatternSelected(newPattern: LongArray) {
+        context.vibratorService.vibrate(newPattern, 1);
     }
 
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        edit = view.find<EditText>(R.id.edit_text_snooze_presets)
-        if (snoozePresetValue != null)
-            if (snoozePresetValue != null)
-                edit?.setText(snoozePresetValue!!)
+        edit = view.find<EditText>(id.editTextVibrationPattern)
+        edit.setText(patternValue)
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {
-        // When the user selects "OK", persist the new value
+
         if (positiveResult) {
-            val value = edit?.text?.toString()
+            val value = edit.text.toString()
 
-            if (value != null) {
-                val presets = PreferenceUtils.parseSnoozePresets(value)
-                if (presets != null) {
-                    if (presets.size == 0) {
-                        snoozePresetValue = Settings.DEFAULT_SNOOZE_PRESET
-                    } else {
-                        snoozePresetValue =
-                                value
-                                        .split(',')
-                                        .map { it.trim() }
-                                        .filter { !it.isEmpty() }
-                                        .joinToString(", ")
-                    }
+            val pattern = PreferenceUtils.parsePattern(value)
 
-                    persistString(snoozePresetValue)
+            if (pattern != null) {
+                patternValue = value
+                persistString(patternValue)
 
-                    if (presets.size > Consts.MAX_SUPPORTED_PRESETS) {
-                        showMessage(R.string.error_too_many_presets)
-                    }
-                } else {
-                    showMessage(R.string.error_cannot_parse_preset)
-                }
+                onPatternSelected(pattern)
+            } else {
+                onInvalidPattern()
             }
         }
     }
 
-    private fun showMessage(id: Int) {
+    fun onInvalidPattern() {
         val builder = AlertDialog.Builder(context)
         builder
-                .setMessage(context.getString(id))
+                .setMessage(context.getString(R.string.error_cannot_parse_pattern))
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.ok) { x, y -> }
 
@@ -102,10 +93,10 @@ class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreferen
 
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
-            snoozePresetValue = this.getPersistedString(Settings.DEFAULT_SNOOZE_PRESET)
+            patternValue = this.getPersistedString("0,1200") // 0,1200 - failback value
         } else if (defaultValue != null && defaultValue is String) {
-            snoozePresetValue = defaultValue
-            persistString(snoozePresetValue)
+            patternValue = defaultValue
+            persistString(patternValue)
         }
     }
 

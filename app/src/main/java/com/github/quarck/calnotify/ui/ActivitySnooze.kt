@@ -36,7 +36,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
-import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -47,8 +46,6 @@ class ActivitySnooze : Activity() {
     var notificationId: Int = -1;
 
     lateinit var snoozePresets: LongArray
-
-    lateinit var storage: EventsStorage
 
     val snoozePresetControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1,
@@ -78,12 +75,10 @@ class ActivitySnooze : Activity() {
         }
 
         // Populate event details
-        storage = EventsStorage(this);
-
         notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
-        var event = storage.getEvent(eventId)
+        var event = EventsStorage(this).use { it.getEvent(eventId) }
 
         if (eventId != -1L && event != null) {
             var title =
@@ -185,12 +180,15 @@ class ActivitySnooze : Activity() {
 
             logger.debug("Snoozing event id ${eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
-            var event = storage.getEvent(eventId)
-            if (event != null) {
-                EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { snz -> snoozedUntil = snz });
-                finish();
-            } else {
-                logger.error("Error: can't get event from DB");
+            EventsStorage(this).use {
+                storage ->
+                var event = storage.getEvent(eventId)
+                if (event != null) {
+                    EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { snz -> snoozedUntil = snz });
+                    finish();
+                } else {
+                    logger.error("Error: can't get event from DB");
+                }
             }
 
         } else {
@@ -203,17 +201,21 @@ class ActivitySnooze : Activity() {
 
                         logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                        var events = storage.events
+                        EventsStorage(this).use {
+                            storage ->
 
-                        // Don't allow events to have exactly the same "snoozedUntil", so to have
-                        // predicted sorting order, so add a tiny (less than 0.1s) adjust to each
-                        // snoozed time
+                            var events = storage.events
 
-                        var snoozeAdjust = 0L
+                            // Don't allow events to have exactly the same "snoozedUntil", so to have
+                            // predicted sorting order, so add a tiny (less than 0.1s) adjust to each
+                            // snoozed time
 
-                        for (event in events) {
-                            EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage, { snz -> snoozedUntil = snz });
-                            ++ snoozeAdjust
+                            var snoozeAdjust = 0L
+
+                            for (event in events) {
+                                EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage, { snz -> snoozedUntil = snz });
+                                ++snoozeAdjust
+                            }
                         }
 
                         finish();
@@ -249,14 +251,16 @@ class ActivitySnooze : Activity() {
     }
 
     fun reschedule(addTime: Long) {
-        var event = storage.getEvent(eventId)
+
+        var event = EventsStorage(this).use { it.getEvent(eventId) }
+
         if (event != null) {
 
             logger.info("Moving event ${event.eventId} by ${addTime/1000L} seconds");
 
             var moved = CalendarUtils.moveEvent(this, event, addTime)
             if (moved) {
-                DebugTransactionLog(this).log("snooze", "move", "Moved event ${event.eventId} by ${addTime/1000L} seconds")
+                logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
                 EventsManager.dismissEvent(this, eventId, notificationId)
 
@@ -268,7 +272,7 @@ class ActivitySnooze : Activity() {
                 // terminate ourselves
                 finish();
             } else {
-                DebugTransactionLog(this).log("snooze", "move", "Failed to move event ${event.eventId} by ${addTime/1000L} seconds")
+                logger.info("snooze: Failed to move event ${event.eventId} by ${addTime/1000L} seconds")
             }
         }
     }

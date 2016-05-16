@@ -31,7 +31,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
@@ -45,7 +44,7 @@ class ActivityTestButtonsAndToDo : Activity() {
         setContentView(R.layout.activity_test_buttons_and_to_do)
 
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n");
+        find<TextView>(R.id.log).text = "-- DISABLED - FOREEVER --"
         find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
         find<ToggleButton>(R.id.remove_original_event).isChecked = settings.removeOriginal
     }
@@ -54,8 +53,8 @@ class ActivityTestButtonsAndToDo : Activity() {
     fun OnDebugLoggingToggle(v: View) {
         if (v is ToggleButton) {
             settings.debugTransactionLogEnabled = v.isChecked;
-            if (!v.isChecked)
-                DebugTransactionLog(this).dropAll();
+  //          if (!v.isChecked)
+//                DebugTransactionLog(this).dropAll();
         }
     }
 
@@ -107,7 +106,7 @@ class ActivityTestButtonsAndToDo : Activity() {
         get() = find<EditText>(R.id.edittext_debug_event_id).text.toString()
 
     fun OnButtonFilterClick(v: View) {
-        find<TextView>(R.id.log).text = DebugTransactionLog(this).getMessages(" - ", "\n\n", filterText);
+        find<TextView>(R.id.log).text = " -- DISABLED --- FOREVER -- "
     }
 
     fun OnButtonViewClick(v: View) {
@@ -121,23 +120,24 @@ class ActivityTestButtonsAndToDo : Activity() {
     }
 
     fun OnButtonTestClick(v: View) {
-        var db = EventsStorage(this)
 
         var first = (v.id == R.id.buttonTest);
 
         var currentTime = System.currentTimeMillis();
 
-        db.addEvent(
-                if (first) 101010101L else currentTime,
-                System.currentTimeMillis(),
-                if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-                currentTime + 3600L * 1000L,
-                currentTime + 2 * 3600L * 1000L,
-                if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
-                System.currentTimeMillis(),
-                EventDisplayStatus.Hidden,
-                0xffFFC107.toInt()
-        )
+        EventsStorage(this).use {
+            it.addEvent(
+                    if (first) 101010101L else currentTime,
+                    System.currentTimeMillis(),
+                    if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
+                    currentTime + 3600L * 1000L,
+                    currentTime + 2 * 3600L * 1000L,
+                    if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
+                    System.currentTimeMillis(),
+                    EventDisplayStatus.Hidden,
+                    0xffFFC107.toInt()
+            )
+        }
 
         cnt++;
 

@@ -27,10 +27,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.Logger
+import java.io.Closeable
 import java.util.*
 
-public class EventsStorage(context: Context)
-: SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class EventsStorage(context: Context)
+: SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), Closeable {
     // Still used by some test code
     fun addEvent(
             eventId: Long,
@@ -109,6 +110,10 @@ public class EventsStorage(context: Context)
 
     val events: List<EventRecord>
         get() = synchronized(EventsStorage::class.java) { return eventsImpl }
+
+    override fun close() {
+        super.close();
+    }
 
     ////////////////////////// Implementations for DB operations //////////////////////
     ///// TODO: move into *Impl class
@@ -274,8 +279,8 @@ public class EventsStorage(context: Context)
 
                 } while (cursor.moveToNext())
 
-                cursor.close()
             }
+            cursor.close()
 
             logger.debug("eventsImpl, returnint ${ret.size} events")
 

@@ -94,38 +94,40 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun postEventNotifications(context: Context, force: Boolean) {
         //
-        var db = EventsStorage(context)
         var settings = Settings(context)
 
         var currentTime = System.currentTimeMillis()
+
+        var addedNewNotifications = false
 
         // events with snoozedUntil == 0 are currently visible ones
         // events with experied snoozedUntil are the ones to beep about
         // everything else should be hidden and waiting for the next alarm
 
-        var eventsToUpdate =
-                db.events.filter {
-                    (it.snoozedUntil == 0L)
-                            || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
-                }
+        EventsStorage(context).use {
+            db ->
+            var eventsToUpdate =
+                    db.events.filter {
+                        (it.snoozedUntil == 0L)
+                                || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
+                    }
 
-        var addedNewNotifications = false
+            if (eventsToUpdate.size <= Consts.MAX_NOTIFICATIONS) {
+                //
+                hideNumNotificationsCollapsed(context);
+                addedNewNotifications = postRegularEvents(context, db, settings, eventsToUpdate, force)
+            } else {
+                //
+                var sortedEvents = eventsToUpdate.sortedBy { it.lastEventUpdate }
 
-        if (eventsToUpdate.size <= Consts.MAX_NOTIFICATIONS) {
-            //
-            hideNumNotificationsCollapsed(context);
-            addedNewNotifications = postRegularEvents(context, db, settings, eventsToUpdate, force)
-        } else {
-            //
-            var sortedEvents = eventsToUpdate.sortedBy { it.lastEventUpdate }
+                var recent = sortedEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
+                var older = sortedEvents.take(sortedEvents.size - recent.size)
 
-            var recent = sortedEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
-            var older = sortedEvents.take(sortedEvents.size - recent.size)
+                hideCollapsedNotifications(context, db, older, force);
+                addedNewNotifications = postRegularEvents(context, db, settings, recent, force);
 
-            hideCollapsedNotifications(context, db, older, force);
-            addedNewNotifications = postRegularEvents(context, db, settings, recent, force);
-
-            postNumNotificationsCollapsed(context, db, settings, older);
+                postNumNotificationsCollapsed(context, db, settings, older);
+            }
         }
 
         if (addedNewNotifications)
@@ -134,12 +136,13 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun fireEventReminder(context: Context) {
 
-        var db = EventsStorage(context)
-
         var mostRecentEvent =
-                db.events
+                EventsStorage(context).use {
+                    db ->
+                    db.events
                         .filter { it.snoozedUntil == 0L }
                         .maxBy { it.lastEventUpdate }
+                }
 
         if (mostRecentEvent != null) {
 

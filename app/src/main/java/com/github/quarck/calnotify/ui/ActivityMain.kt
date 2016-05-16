@@ -37,7 +37,6 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.DebugTransactionLog
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -208,10 +207,12 @@ class ActivityMain : Activity() {
         background {
 
             var events =
-                EventsStorage(this)
-                        .events
+                EventsStorage(this).use {
+                    db ->
+                    db.events
                         .sortedBy { it.snoozedUntil }
                         .toTypedArray()
+                }
 
             runOnUiThread {
                 presenter.setEventsToDisplay(events);
@@ -296,7 +297,7 @@ class ActivityMain : Activity() {
                 logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
 
                 EventsManager.dismissEvent(this, event);
-                DebugTransactionLog(this).log("ActivityMain", "remove", "Event dismissed by user: ${event.title}")
+                logger.info("ActivityMain: Event dismissed by user: ${event.title}")
 
                 presenter.removeAt(position)
 

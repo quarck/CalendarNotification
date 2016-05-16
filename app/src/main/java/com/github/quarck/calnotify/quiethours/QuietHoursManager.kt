@@ -38,6 +38,8 @@ object QuietHoursManager
         var ret: Long = 0
 
         if (!isEnabled(settings))
+
+
 			return 0
 
 		val currentTime = if (time != 0L) time else System.currentTimeMillis()

@@ -141,7 +141,7 @@
     <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
-    <string name="snooze_all_confirmation">Snooze ALL events?</string>
+    <string name="snooze_all_confirmation">Snooze ALL events? Already snoozed would also change snooze time</string>
     <string name="all_events">Snooze all events</string>
     <string name="snooze_events_for">Snooze events for:</string>
 
@@ -153,7 +153,12 @@
     <string name="quiet_time_from">Quiet time from:</string>
     <string name="quiet_time_to">Quiet time to:</string>
     <string name="enable_quiet_time">Enable quiet time</string>
-    <string name="quiet_hours_pref_summary_format" formatted="false">Quiet hours are enabled from %s to %s, you would not hear any snoozed events or repeate reminders during quiet hours, primary (1st) notifications would still be allowed</string>
+    <string name="quiet_hours_pref_summary_format" formatted="false">Quiet hours are enabled from %s to %s, you would not hear any snoozed events or repeate reminders during quiet hours, primary event notifications are still allowed</string>
     <string name="quiet_hours_pref_disabled">Quiet hours are disabled</string>
+
+    <string name="reminders_section">Reminders</string>
+    <string name="quiet_hours_section">Quiet hours settings</string>
+    <string name="quiet_hours">Quiet hours</string>
+    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next reminder would fire after quiet hours at %s</string>
 
 </resources>

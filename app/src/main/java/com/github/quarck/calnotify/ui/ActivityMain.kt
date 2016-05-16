@@ -117,7 +117,7 @@ class ActivityMain : Activity() {
         reloadData()
 
         refreshReminderLastFired()
-        EventsManager.updateReminderAlarm(this)
+        EventsManager.updateAlarms(this)
 
         var hasPermissions = PermissionsManager.hasAllPermissions(this)
 

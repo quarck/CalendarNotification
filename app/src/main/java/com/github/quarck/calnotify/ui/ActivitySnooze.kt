@@ -23,10 +23,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.R
@@ -56,7 +58,6 @@ class ActivitySnooze : Activity() {
             R.id.snooze_view_snooze_present5,
             R.id.snooze_view_snooze_present6
     )
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -178,17 +179,20 @@ class ActivitySnooze : Activity() {
     private fun snoozeEvent(presetIdx: Int) {
         var snoozeDelay = snoozePresets[presetIdx];
 
+        var snoozedUntil = 0L
+
         if (notificationId != -1 && eventId != -1L) {
+
             logger.debug("Snoozing event id ${eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
             var event = storage.getEvent(eventId)
             if (event != null) {
-                EventsManager.snoozeEvent(this, event, snoozeDelay, storage);
-
+                EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { snz -> snoozedUntil = snz });
                 finish();
             } else {
                 logger.error("Error: can't get event from DB");
             }
+
         } else {
 
             AlertDialog.Builder(this)
@@ -208,7 +212,7 @@ class ActivitySnooze : Activity() {
                         var snoozeAdjust = 0L
 
                         for (event in events) {
-                            EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage);
+                            EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage, { snz -> snoozedUntil = snz });
                             ++ snoozeAdjust
                         }
 
@@ -219,6 +223,14 @@ class ActivitySnooze : Activity() {
                     }
                     .create()
                     .show()
+        }
+
+        if (snoozedUntil != 0L) {
+            val msg =
+                    String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
+                            DateUtils.formatDateTime(this, snoozedUntil,
+                                    DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY))
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
     }
 

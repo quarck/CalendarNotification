@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.eventsstorage
 import android.content.Context
 import android.text.format.DateUtils
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.utils.dayEquals
 import java.text.DateFormat
 import java.util.*
 
@@ -42,22 +43,6 @@ object EventRecordUtils {
         return ret;
     }
 }
-
-fun Calendar.dayEquals(other: Calendar)
-        = this.get(Calendar.YEAR) == other.get(Calendar.YEAR) &&
-            this.get(Calendar.DAY_OF_YEAR) == other.get(Calendar.DAY_OF_YEAR);
-
-fun areDatesOnSameDay(date1: Long, date2: Long): Boolean {
-
-    var cal1 = Calendar.getInstance()
-    var cal2 = Calendar.getInstance()
-
-    cal1.time = Date(date1)
-    cal2.time = Date(date2)
-
-    return cal1.dayEquals(cal2)
-}
-
 
 fun EventRecord.formatText(ctx: Context): String {
     var sb = StringBuilder()

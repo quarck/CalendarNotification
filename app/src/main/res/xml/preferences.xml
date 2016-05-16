@@ -69,7 +69,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Reminder Section"
+        android:title="@string/reminders_section"
         android:key="pref_key_reminder"
         >
 
@@ -93,16 +93,19 @@
             android:defaultValue="0"
             android:dependency="enable_reminding_key" />
 
+    </PreferenceCategory>
 
-
+    <PreferenceCategory
+        android:title="@string/quiet_hours_section"
+        android:key="pref_key_reminder"
+        >
         <com.github.quarck.calnotify.prefs.QuietHoursPreference
             android:key="quiet_hours_pref"
-            android:title="Quiet Hours"
-            android:summary="During quiet hours no snoozed event or repeating reminder would fire, prime event notification would still fire"
+            android:title="@string/quiet_hours"
             android:defaultValue="0"
             />
-
     </PreferenceCategory>
+
 
     <PreferenceCategory
         android:title="@string/smartwatch_support"

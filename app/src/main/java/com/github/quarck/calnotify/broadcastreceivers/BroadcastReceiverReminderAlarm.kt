@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
+import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.audioManager
 import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.vibratorService
@@ -65,15 +66,20 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                 val lastFireTime = Math.max(lastNotification, lastReminder);
 
                 val numRemindersFired = (lastFireTime - lastReminder) / interval
-                val maxFires = settings.maxNumerOfReminders
+                val maxFires = settings.maxNumberOfReminders
+
+                val silentUntil = QuietHoursManager.getSilentUntil(settings)
 
                 if (maxFires == 0 || numRemindersFired <= maxFires) {
 
                     val sinceLastFire = currentTime - lastFireTime;
 
-                    if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
-                        val leftMillis = interval - sinceLastFire;
+                    if (silentUntil != 0L) {
+                        logger.debug("Received reminder alarm but we are in a quiet range, postponed until $silentUntil");
+                        ReminderAlarm.scheduleAlarmMillis(context, silentUntil)
+                    } else if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
 
+                        val leftMillis = interval - sinceLastFire;
                         logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
 
                         // Schedule actual time to fire based on how long ago we have fired

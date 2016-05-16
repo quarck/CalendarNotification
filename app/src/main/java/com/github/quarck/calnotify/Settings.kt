@@ -42,13 +42,17 @@ data class NotificationSettingsSnapshot
         val ledNotificationOn: Boolean,
         val ledColor: Int,
         val headsUpNotification: Boolean,
-        val wakeScreen: Boolean,
         val forwardToPebble: Boolean
 )
 
 class Settings(ctx: Context) {
     private var context: Context
     private var prefs: SharedPreferences
+
+    init {
+        context = ctx
+        prefs = PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     var removeOriginal: Boolean
         get() = prefs.getBoolean(REMOVE_ORIGINAL_KEY, true)
@@ -123,8 +127,18 @@ class Settings(ctx: Context) {
     val remindersIntervalMillis: Long
         get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
-    val maxNumerOfReminders: Int
+    val maxNumberOfReminders: Int
         get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toInt()
+
+
+    val quietHoursEnabled: Boolean
+        get() = PreferenceUtils.unpackQuietHoursIsEnabled( prefs.getInt(QUIET_HOURS_KEY, 0) )
+
+    val quietHoursFrom: Pair<Int, Int>
+        get() = PreferenceUtils.unpackQuietHoursFrom( prefs.getInt(QUIET_HOURS_KEY, 0) )
+
+    val quietHoursTo: Pair<Int, Int>
+        get() = PreferenceUtils.unpackQuietHoursTo( prefs.getInt(QUIET_HOURS_KEY, 0) )
 
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
@@ -135,16 +149,12 @@ class Settings(ctx: Context) {
                     ledNotificationOn = ledNotificationOn,
                     ledColor = ledColor,
                     headsUpNotification = headsUpNotification,
-                    wakeScreen = notificationWakeScreen,
                     forwardToPebble = forwardToPebble
                 )
 
-    init {
-        context = ctx
-        prefs = PreferenceManager.getDefaultSharedPreferences(context)
-    }
-
     companion object {
+
+        // Preferences keys
         private const val REMOVE_ORIGINAL_KEY = "remove_original"
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 
@@ -167,6 +177,9 @@ class Settings(ctx: Context) {
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
+        private const val QUIET_HOURS_KEY = "quiet_hours_pref"
+
+        // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
         internal const val DEFAULT_REMINDER_INTERVAL = 10
         internal const val DEFAULT_MAX_REMINDERS = "0"

@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
+import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.ui.ServiceUINotifier
 import com.github.quarck.calnotify.utils.setExactCompat
 
@@ -41,6 +42,7 @@ object EventsManager {
     private val logger = Logger("EventsManager");
 
     private fun scheduleNextAlarmForEvents(context: Context) {
+
         logger.debug("scheduleEventAlarm called");
 
         var nextAlarm =
@@ -56,13 +58,18 @@ object EventsManager {
         var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
         if (nextAlarm != null) {
-            var seconds = (nextAlarm - System.currentTimeMillis()) / 1000L
+            val quietHoursUntil = QuietHoursManager.getSilentUntil(Settings(context), nextAlarm)
 
-            logger.info("Next alarm at ${nextAlarm}, in ${seconds} seconds");
+            if (quietHoursUntil != 0L) {
+                logger.info("Next alarm is moved from $nextAlarm to $quietHoursUntil due to quiet hours");
+                nextAlarm = quietHoursUntil;
+            }
+
+            logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - System.currentTimeMillis()) / 1000L} seconds");
 
             alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
         } else {
-            logger.info("Cancelling alarms");
+            logger.info("No next events, cancelling alarms");
 
             alarmManager.cancel(pendingIntent)
         }
@@ -87,7 +94,8 @@ object EventsManager {
         }
     }
 
-    fun updateReminderAlarm(context: Context) {
+    fun updateAlarms(context: Context) {
+        scheduleNextAlarmForEvents(context)
         scheduleAlarmForReminders(context)
     }
 
@@ -199,12 +207,18 @@ object EventsManager {
         ServiceUINotifier.notifyUI(context, false);
     }
 
-    fun snoozeEvent(context: Context, event: EventRecord, snoozeDelay: Long, eventsStorage: EventsStorage?) {
+    fun snoozeEvent(context: Context,
+                    event: EventRecord,
+                    snoozeDelay: Long,
+                    eventsStorage: EventsStorage?,
+                    onHitQuietHours: (Long) -> Unit
+                    ) {
         var storage = eventsStorage ?: EventsStorage(context)
 
         var currentTime = System.currentTimeMillis()
 
         event.snoozedUntil = currentTime + snoozeDelay;
+
         event.lastEventUpdate = currentTime;
         storage.updateEvent(event);
 
@@ -218,6 +232,10 @@ object EventsManager {
         logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
 
         DebugTransactionLog(context).log("EventsManager", "snooze", "event snoozed for $seconds, id: ${event.eventId}, title: ${event.title}")
+
+        val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), event.snoozedUntil)
+        if (silentUntil != 0L)
+            onHitQuietHours(silentUntil)
     }
 
     fun fireEventReminder(context: Context) {

@@ -229,7 +229,9 @@ class ActivitySnooze : Activity() {
             val msg =
                     String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
                             DateUtils.formatDateTime(this, snoozedUntil,
-                                    DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY))
+                                            DateUtils.FORMAT_SHOW_TIME or
+                                            DateUtils.FORMAT_SHOW_DATE or
+                                            DateUtils.FORMAT_SHOW_WEEKDAY))
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
     }

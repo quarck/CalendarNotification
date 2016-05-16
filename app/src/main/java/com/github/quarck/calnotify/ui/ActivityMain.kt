@@ -117,8 +117,13 @@ class ActivityMain : Activity() {
         reloadData()
 
         refreshReminderLastFired()
-        EventsManager.updateAlarms(this)
 
+        EventsManager.onAppResumed(this)
+
+        checkPermissions()
+    }
+
+    private fun checkPermissions() {
         var hasPermissions = PermissionsManager.hasAllPermissions(this)
 
         find<TextView>(R.id.no_permissions_view).visibility =
@@ -132,12 +137,12 @@ class ActivityMain : Activity() {
                         .setMessage(R.string.application_has_no_access)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
-                                x, y ->
-                                PermissionsManager.requestPermissions(this)
-                            }
+                            x, y ->
+                            PermissionsManager.requestPermissions(this)
+                        }
                         .setNegativeButton(R.string.cancel) {
-                                x, y ->
-                            }
+                            x, y ->
+                        }
                         .create()
                         .show()
             } else {

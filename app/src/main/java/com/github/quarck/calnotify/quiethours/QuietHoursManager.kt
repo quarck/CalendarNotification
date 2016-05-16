@@ -19,16 +19,15 @@
 
 package com.github.quarck.calnotify.quiethours
 
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
 import java.util.*
 
 object QuietHoursManager
 {
     var logger = Logger("QuietPeriodManager")
-
-    private const val MINUTES_IN_HOUR = 60
-    private const val MINUTES_IN_DAY = 24 * 60
 
 	fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
@@ -42,46 +41,33 @@ object QuietHoursManager
         if (!isEnabled(settings))
 			return 0
 
+		val currentTime = if (time != 0L) time else System.currentTimeMillis()
+
 		val cal = Calendar.getInstance()
-        if (time != 0L)
-            cal.time = Date(time)
-
-		val hour = cal.get(Calendar.HOUR_OF_DAY)
-		val minute = cal.get(Calendar.MINUTE)
-
-        val currentTm = hour * MINUTES_IN_HOUR + minute
+		cal.timeInMillis = currentTime
 
 		val from = settings.quietHoursFrom
+		var silentFrom = calendarWithTimeMillisHourAndMinute(currentTime, from.component1(), from.component2())
+
 		val to = settings.quietHoursTo
+		var silentTo = calendarWithTimeMillisHourAndMinute(currentTime, to.component1(), to.component2())
 
-        val fromTm = from.component1() * MINUTES_IN_HOUR + from.component2()
-        var toTm = to.component1() * MINUTES_IN_HOUR + to.component2()
+		if (silentTo.before(silentFrom))
+			silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
+		while (cal.before(silentTo)) {
 
-		logger.debug("have silent period from $from ($fromTm) to $to ($toTm), current tm $currentTm")
+			if (cal.after(silentFrom) && cal.before(silentTo)) {
+				// this hits silent period -- so it should be silent until 'silentTo'
+				ret = silentTo.timeInMillis
+				logger.debug("[Virtual]CurrentTime hits silent period range from $silentFrom to $silentTo, would be silent for ${(ret-currentTime)/1000L} seconds since [virtual]currentTime")
+				break;
+			}
 
-		if (toTm < fromTm)
-			toTm += MINUTES_IN_DAY
-
-		if (inRange(currentTm, fromTm, toTm)
-                || inRange(currentTm + MINUTES_IN_DAY, fromTm, toTm))
-		{
-			val silentLenghtMins = ((toTm + MINUTES_IN_DAY - currentTm) % (MINUTES_IN_DAY)).toLong()
-
-			ret = System.currentTimeMillis() + silentLenghtMins * MINUTES_IN_HOUR * 1000 // convert minutes to milliseconds
-
-            logger.debug("We are in the silent zone until $ret (it is $silentLenghtMins minutes from now)")
-		}
-		else
-		{
-            logger.debug("We are not in the silent mode")
+			silentFrom.roll(Calendar.DAY_OF_MONTH, true)
+			silentTo.roll(Calendar.DAY_OF_MONTH, true)
 		}
 
 		return ret
-	}
-
-	private fun inRange(value: Int, low: Int, high: Int): Boolean
-	{
-		return (low <= value && value <= high)
 	}
 }

@@ -26,3 +26,12 @@ fun Calendar.dayEquals(other: Calendar)
         = this.get(Calendar.YEAR) == other.get(Calendar.YEAR) &&
         this.get(Calendar.DAY_OF_YEAR) == other.get(Calendar.DAY_OF_YEAR);
 
+fun calendarWithTimeMillisHourAndMinute(timeMillis: Long, hour: Int, minute: Int): Calendar {
+
+    var ret = Calendar.getInstance()
+    ret.timeInMillis = timeMillis
+    ret.set(Calendar.HOUR_OF_DAY, hour)
+    ret.set(Calendar.MINUTE, minute)
+
+    return ret
+}

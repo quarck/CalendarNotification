@@ -94,11 +94,6 @@ object EventsManager {
         }
     }
 
-    fun updateAlarms(context: Context) {
-        scheduleNextAlarmForEvents(context)
-        scheduleAlarmForReminders(context)
-    }
-
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).events.filter { it.snoozedUntil == 0L }.any()
 
@@ -245,7 +240,13 @@ object EventsManager {
     fun onAppStarted(context: Context?) {
         if (context != null) {
             notificationManager.postEventNotifications(context, true)
+        }
+    }
+
+    fun onAppResumed(context: Context?) {
+        if (context != null) {
             scheduleNextAlarmForEvents(context)
+            scheduleAlarmForReminders(context)
         }
     }
 

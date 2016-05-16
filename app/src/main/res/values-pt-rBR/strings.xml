@@ -151,8 +151,8 @@
     <string name="quiet_time_from">Quiet time from:</string>
     <string name="quiet_time_to">Quiet time to:</string>
     <string name="enable_quiet_time">Enable quiet time</string>
-    <string name="quiet_hours_pref_summary_format" formatted="false">Quiet hours are enabled from %s to %s, you would not hear any snoozed events or repeate reminders during quiet hours, primary event notifications are still allowed</string>
+    <string name="quiet_hours_pref_summary_format" formatted="false">Quiet hours are enabled from %s to %s, you would not hear any snoozed events or repeat reminders during quiet hours, primary event notifications are still allowed</string>
     <string name="quiet_hours_pref_disabled">Quiet hours are disabled</string>
-    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next reminder would fire after quiet hours at %s</string>
+    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next reminder would fire after quiet hours interval, at %s</string>
 
 </resources>

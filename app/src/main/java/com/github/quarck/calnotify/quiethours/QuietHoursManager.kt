@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.quiethours
 
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
@@ -52,15 +51,22 @@ object QuietHoursManager
 		val to = settings.quietHoursTo
 		var silentTo = calendarWithTimeMillisHourAndMinute(currentTime, to.component1(), to.component2())
 
+		logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
+
+		// Current silent period could have started yesterday, so account for this by rolling it back to one day
+		silentFrom.roll(Calendar.DAY_OF_MONTH, false)
+		silentTo.roll(Calendar.DAY_OF_MONTH, false);
+
+		// Check if "from" is before "to", otherwise add an extra day to "to"
 		if (silentTo.before(silentFrom))
 			silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
-		while (cal.before(silentTo)) {
+		while (silentFrom.before(cal)) {
 
 			if (cal.after(silentFrom) && cal.before(silentTo)) {
 				// this hits silent period -- so it should be silent until 'silentTo'
 				ret = silentTo.timeInMillis
-				logger.debug("[Virtual]CurrentTime hits silent period range from $silentFrom to $silentTo, would be silent for ${(ret-currentTime)/1000L} seconds since [virtual]currentTime")
+				logger.debug("Time hits silent period range, would be silent for ${(ret-currentTime)/1000L} seconds since expected wake up time")
 				break;
 			}
 

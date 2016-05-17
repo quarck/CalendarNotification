@@ -76,14 +76,14 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
 
                     if (silentUntil != 0L) {
                         logger.debug("Received reminder alarm but we are in a quiet range, postponed until $silentUntil");
-                        ReminderAlarm.scheduleAlarmMillis(context, silentUntil)
+                        ReminderAlarm.scheduleAlarmMillisAt(context, silentUntil)
                     } else if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
 
                         val leftMillis = interval - sinceLastFire;
                         logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
 
                         // Schedule actual time to fire based on how long ago we have fired
-                        ReminderAlarm.scheduleAlarmMillis(context, leftMillis)
+                        ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + leftMillis)
 
                     } else {
                         // OK ot fire
@@ -92,7 +92,7 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         context.globalState.reminderLastFireTime = currentTime
 
                         // Should schedule next alarm
-                        ReminderAlarm.scheduleAlarmMillis(context, interval)
+                        ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + interval)
 
                         fireReminder(context, settings)
                     }

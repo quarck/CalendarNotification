@@ -91,7 +91,21 @@ object EventsManager {
 
         if (hasActiveNotifications) {
             ReminderAlarm.cancelAlarm(context); // cancel existing to re-schedule
-            ReminderAlarm.scheduleAlarmMillis(context, Settings(context).remindersIntervalMillis);
+
+            val remindInterval = settings.remindersIntervalMillis
+            var nextFire = System.currentTimeMillis() + remindInterval
+
+            val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
+
+            if (quietUntil != 0L) {
+                logger.info("Reminder alarm moved from $nextFire to $quietUntil (+15s) due to silent period");
+
+                // give a little extra delay, so if events would fire precisely at the quietUntil,
+                // reminders would wait a bit longer
+                nextFire = quietUntil + Consts.ALARM_THRESHOULD
+            }
+
+            ReminderAlarm.scheduleAlarmMillisAt(context, nextFire);
         }
     }
 

@@ -33,9 +33,9 @@ object ReminderAlarm {
 
     private val logger = Logger("ReminderManager");
 
-    fun scheduleAlarmMillis(context: Context, nextMillis: Long) {
+    fun scheduleAlarmMillisAt(context: Context, nextMillis: Long) {
 
-        logger.debug("Setting reminder alarm in  ${nextMillis/1000L} seconds")
+        logger.debug("Setting reminder alarm at ${nextMillis}")
 
         val intent = Intent(context, BroadcastReceiverReminderAlarm::class.java)
 
@@ -43,9 +43,12 @@ object ReminderAlarm {
 
         context.alarmManager.setExactCompat(
                 AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + nextMillis,
+                nextMillis,
                 pendIntent)
     }
+
+//    fun scheduleAlarmMillis(context: Context, nextMillis: Long) =
+//        scheduleAlarmMillisAt(context, System.currentTimeMillis() + nextMillis)
 
     fun cancelAlarm(context: Context) {
 

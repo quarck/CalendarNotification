@@ -169,7 +169,7 @@ class EventsStorage(context: Context)
     }
 
     private fun addEventImpl(event: EventRecord) {
-        logger.debug("addEvent " + event.toString())
+        logger.debug("addEvent " + event.eventId)
 
         if (event.notificationId == 0)
             event.notificationId = nextNotificationId();

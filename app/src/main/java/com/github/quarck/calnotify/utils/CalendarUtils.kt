@@ -34,6 +34,6 @@ fun calendarWithTimeMillisHourAndMinute(timeMillis: Long, hour: Int, minute: Int
     ret.timeInMillis = timeMillis
     ret.set(Calendar.HOUR_OF_DAY, hour)
     ret.set(Calendar.MINUTE, minute)
-
+    ret.set(Calendar.SECOND, 0)
     return ret
 }

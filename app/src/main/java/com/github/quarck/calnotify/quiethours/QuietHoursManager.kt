@@ -24,58 +24,54 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
 import java.util.*
 
-object QuietHoursManager
-{
+object QuietHoursManager {
     var logger = Logger("QuietPeriodManager")
 
-	fun isEnabled(settings: Settings)
+    fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
-	// returns time in millis, when silent period ends, 
-	// or 0 if we are not on silent 
-	fun getSilentUntil(settings: Settings, time: Long = 0L): Long
-	{
+    // returns time in millis, when silent period ends,
+    // or 0 if we are not on silent
+    fun getSilentUntil(settings: Settings, time: Long = 0L): Long {
         var ret: Long = 0
 
         if (!isEnabled(settings))
+            return 0
 
+        val currentTime = if (time != 0L) time else System.currentTimeMillis()
 
-			return 0
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = currentTime
 
-		val currentTime = if (time != 0L) time else System.currentTimeMillis()
+        val from = settings.quietHoursFrom
+        var silentFrom = calendarWithTimeMillisHourAndMinute(currentTime, from.component1(), from.component2())
 
-		val cal = Calendar.getInstance()
-		cal.timeInMillis = currentTime
+        val to = settings.quietHoursTo
+        var silentTo = calendarWithTimeMillisHourAndMinute(currentTime, to.component1(), to.component2())
 
-		val from = settings.quietHoursFrom
-		var silentFrom = calendarWithTimeMillisHourAndMinute(currentTime, from.component1(), from.component2())
+        logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
 
-		val to = settings.quietHoursTo
-		var silentTo = calendarWithTimeMillisHourAndMinute(currentTime, to.component1(), to.component2())
+        // Current silent period could have started yesterday, so account for this by rolling it back to one day
+        silentFrom.roll(Calendar.DAY_OF_MONTH, false)
+        silentTo.roll(Calendar.DAY_OF_MONTH, false);
 
-		logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
+        // Check if "from" is before "to", otherwise add an extra day to "to"
+        if (silentTo.before(silentFrom))
+            silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
-		// Current silent period could have started yesterday, so account for this by rolling it back to one day
-		silentFrom.roll(Calendar.DAY_OF_MONTH, false)
-		silentTo.roll(Calendar.DAY_OF_MONTH, false);
+        while (silentFrom.before(cal)) {
 
-		// Check if "from" is before "to", otherwise add an extra day to "to"
-		if (silentTo.before(silentFrom))
-			silentTo.roll(Calendar.DAY_OF_MONTH, true);
+            if (cal.after(silentFrom) && cal.before(silentTo)) {
+                // this hits silent period -- so it should be silent until 'silentTo'
+                ret = silentTo.timeInMillis
+                logger.debug("Time hits silent period range, would be silent for ${(ret - currentTime) / 1000L} seconds since expected wake up time")
+                break;
+            }
 
-		while (silentFrom.before(cal)) {
+            silentFrom.roll(Calendar.DAY_OF_MONTH, true)
+            silentTo.roll(Calendar.DAY_OF_MONTH, true)
+        }
 
-			if (cal.after(silentFrom) && cal.before(silentTo)) {
-				// this hits silent period -- so it should be silent until 'silentTo'
-				ret = silentTo.timeInMillis
-				logger.debug("Time hits silent period range, would be silent for ${(ret-currentTime)/1000L} seconds since expected wake up time")
-				break;
-			}
-
-			silentFrom.roll(Calendar.DAY_OF_MONTH, true)
-			silentTo.roll(Calendar.DAY_OF_MONTH, true)
-		}
-
-		return ret
-	}
+        return ret
+    }
 }

@@ -130,7 +130,7 @@ object EventsManager {
                         // Here we have a confirmation that event was re-scheduled by user
                         // to some time in the future and that's why original event instance has disappeared
                         // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, event.eventId, event.notificationId, true);
+                        dismissEvent(context, db, event.eventId, event.notificationId, true);
                         var movedSec = (newEvent.startTime - event.startTime) / 1000L
                         logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                     } else {
@@ -250,29 +250,12 @@ object EventsManager {
         }
     }
 
-    fun dismissEvent(context: Context?, event: EventRecord) {
-        if (context != null) {
-            logger.debug("Removing[1] event id ${event.eventId} from DB, and dismissing notification id ${event.notificationId}")
+    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean) {
 
-            EventsStorage(context).use {
-                it.deleteEvent(event.eventId)
-            }
-
-            notificationManager.onEventDismissed(context, event.eventId, event.notificationId);
-
-            scheduleNextAlarmForEvents(context);
-
-            scheduleAlarmForReminders(context);
-        }
-    }
-
-    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
         if (context != null) {
             logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
 
-            EventsStorage(context).use {
-                it.deleteEvent(eventId)
-            }
+            db.deleteEvent(eventId)
 
             notificationManager.onEventDismissed(context, eventId, notificationId);
 
@@ -281,6 +264,22 @@ object EventsManager {
 
             if (notifyActivity)
                 ServiceUINotifier.notifyUI(context, true);
+        }
+    }
+
+    fun dismissEvent(context: Context?, event: EventRecord) {
+        if (context != null) {
+            EventsStorage(context).use {
+                dismissEvent(context, it, event.eventId, event.notificationId, false)
+            }
+        }
+    }
+
+    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
+        if (context != null) {
+            EventsStorage(context).use {
+                dismissEvent(context, it, eventId, notificationId, notifyActivity)
+            }
         }
     }
 }

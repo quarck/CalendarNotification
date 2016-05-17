@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.logs.Logger
 
 class ServiceNotificationActionDismiss : IntentService("ServiceNotificationActionDismiss") {
+
     override fun onHandleIntent(intent: Intent?) {
         logger.debug("onHandleIntent")
 

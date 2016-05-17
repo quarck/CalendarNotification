@@ -37,6 +37,7 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 class ActivityTestButtonsAndToDo : Activity() {
+
     private val settings by lazy { Settings(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +45,7 @@ class ActivityTestButtonsAndToDo : Activity() {
         setContentView(R.layout.activity_test_buttons_and_to_do)
 
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<TextView>(R.id.log).text = "-- DISABLED - FOREEVER --"
+        find<TextView>(R.id.log).text = "-- DISABLED - FOREVER --"
         find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
         find<ToggleButton>(R.id.remove_original_event).isChecked = settings.removeOriginal
     }

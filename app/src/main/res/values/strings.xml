@@ -159,6 +159,6 @@
     <string name="reminders_section">Reminders</string>
     <string name="quiet_hours_section">Quiet hours settings</string>
     <string name="quiet_hours">Quiet hours</string>
-    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next reminder would fire after quiet hours interval, at %s</string>
+    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next reminder would fire after quiet hours interval, on %s</string>
 
 </resources>

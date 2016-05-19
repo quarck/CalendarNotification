@@ -198,16 +198,21 @@ class EventNotificationManager : IEventNotificationManager {
         logger.debug("Posting ${events.size} notifications");
 
         var notificationsSettings = settings.notificationSettingsSnapshot
-        var notificationsSettingsQuiet = notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
 
-        //var isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+        var notificationsSettingsQuiet =
+            notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
 
         var postedNotification = false
         var playedAnySound = false
 
         for (event in events) {
             if (event.snoozedUntil == 0L) {
-                // This should be currently displayed, if snoozedUntil is zero
+                // snooze zero could mean
+                // - this is a new event -- we have to display it, it would have displayStatus == hidden
+                // - this is an old event returning from "collapsed" state
+                // - this is currently potentially displayed event but we are doing "force re-post" to
+                //   ensure all events are displayed (like at boot or after app upgrade
+
                 if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
                     logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
@@ -217,11 +222,13 @@ class EventNotificationManager : IEventNotificationManager {
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
+                        logger.debug("event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
                     } else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
+                        logger.debug("event ${event.eventId}: notification was collapsed, not playing sound");
                         shouldBeQuiet = true
                     } else if (isQuietPeriodActive) {
                         // we are in a silent period, normally we should always be quiet, but there
@@ -229,12 +236,16 @@ class EventNotificationManager : IEventNotificationManager {
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
+                            logger.debug("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
                         } else {
                             // not a primary event -- always silent in silent period
+                            logger.debug("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
                         }
                     }
+
+                    logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
                     postNotification(context, event,
                         if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings)
@@ -251,24 +262,31 @@ class EventNotificationManager : IEventNotificationManager {
             } else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}");
+                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
 
-                postNotification(context, event, notificationsSettings)
+                postNotification(context, event,
+                    if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero also
                 db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal, snoozedUntil = 0);
 
                 postedNotification = true
-                playedAnySound = true
+                playedAnySound = playedAnySound || !isQuietPeriodActive
             }
         }
 
         if (playedAnySound)
             context.globalState.updateNotificationLastFiredTime();
 
-        if (isQuietPeriodActive && settings.quietHoursRemindAfter
+        if (isQuietPeriodActive
+            && !playedAnySound
+            && settings.quietHoursRemindAfter
             && !settings.quietHoursOneTimeReminderEnabled) {
+
+            logger.debug("We've just posted a a 'quiet' notification(s) due to quiet hours and user requested" +
+                " to notify about notifications on the end of quiet period, - arming one-shot reminder for that");
+
             settings.quietHoursOneTimeReminderEnabled = true;
         }
 
@@ -425,7 +443,7 @@ class EventNotificationManager : IEventNotificationManager {
         settings: Settings,
         events: List<EventRecord>
     ) {
-        logger.debug("Posting 'collapsed view' notification");
+        logger.debug("Posting collapsed view notification for ${events.size} events");
 
         var intent = Intent(context, ActivityMain::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
@@ -454,7 +472,7 @@ class EventNotificationManager : IEventNotificationManager {
     }
 
     private fun hideCollapsedEventsNotification(context: Context) {
-        logger.debug("Hiding 'collapsed view' notification");
+        logger.debug("Hiding collapsed view notification");
 
         var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED);

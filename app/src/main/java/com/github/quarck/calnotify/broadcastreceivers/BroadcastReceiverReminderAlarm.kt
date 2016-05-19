@@ -79,68 +79,65 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
                         ReminderAlarm.scheduleAlarmMillisAt(context, silentUntil)
                     } else if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
 
-                        val leftMillis = interval - sinceLastFire;
-                        logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
-
                         // Schedule actual time to fire based on how long ago we have fired
+                        val leftMillis = interval - sinceLastFire;
                         ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + leftMillis)
 
+                        logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
                     } else {
-                        // OK ot fire
-                        logger.debug("Since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
-
-                        context.globalState.reminderLastFireTime = currentTime
-
                         // Should schedule next alarm
                         ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + interval)
+                        // OK ot fire
+                        fireReminder(context, currentTime, settings)
 
-                        fireReminder(context, settings)
+                        logger.debug("Alarm fired, since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
                     }
                 } else {
                     logger.debug("Exceeded max numer of fires, maxFires=$maxFires, numRemindersFired=$numRemindersFired")
-                    // ReminderAlarm.cancelAlarm(context) // no need to cancel - no longer using repeating alarms
                 }
             } else {
                 logger.debug("Reminders are disabled or nothing to remind about, received this by error")
-                // ReminderAlarm.cancelAlarm(context) // no need to cancel - no longer using repeating alarms
             }
         }
     }
 
-    private fun fireReminder(ctx: Context, settings: Settings) {
+    private fun fireReminder(context: Context, currentTime: Long, settings: Settings) {
 
         logger.debug("Firing reminder")
 
-        EventsManager.fireEventReminder(ctx);
+        EventsManager.fireEventReminder(context);
 
         // following will actually write xml to file, so check if it is 'true' at the moment
         // before writing 'false' and so wasting flash memory cycles.
         if (settings.quietHoursOneTimeReminderEnabled)
             settings.quietHoursOneTimeReminderEnabled = false;
         else
-            ctx.globalState.numRemindersFired ++;
-/*
-        val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
-        ctx.vibratorService.vibrate(pattern, -1)
+            context.globalState.numRemindersFired ++;
 
-        if (settings.ringtoneURI != null) {
-            try {
-                val notificationUri = settings.ringtoneURI
+        context.globalState.reminderLastFireTime = currentTime
 
-                val mediaPlayer = MediaPlayer()
+        /*
+                val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
+                ctx.vibratorService.vibrate(pattern, -1)
 
-                mediaPlayer.setDataSource(ctx, notificationUri)
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
-                mediaPlayer.prepare()
-                mediaPlayer.setOnCompletionListener { mp -> mp.release() }
-                mediaPlayer.start()
+                if (settings.ringtoneURI != null) {
+                    try {
+                        val notificationUri = settings.ringtoneURI
 
-            } catch (e: Exception) {
-                logger.debug("Exception while playing notification")
-                e.printStackTrace()
-            }
-        }
-*/
+                        val mediaPlayer = MediaPlayer()
+
+                        mediaPlayer.setDataSource(ctx, notificationUri)
+                        mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
+                        mediaPlayer.prepare()
+                        mediaPlayer.setOnCompletionListener { mp -> mp.release() }
+                        mediaPlayer.start()
+
+                    } catch (e: Exception) {
+                        logger.debug("Exception while playing notification")
+                        e.printStackTrace()
+                    }
+                }
+        */
 
     }
 

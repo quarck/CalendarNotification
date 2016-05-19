@@ -174,7 +174,7 @@ class ActivitySnooze : Activity() {
     private fun snoozeEvent(presetIdx: Int) {
         var snoozeDelay = snoozePresets[presetIdx];
 
-        var snoozedUntil = 0L
+        var quietUntil = 0L
 
         if (notificationId != -1 && eventId != -1L) {
 
@@ -184,7 +184,7 @@ class ActivitySnooze : Activity() {
                 storage ->
                 var event = storage.getEvent(eventId)
                 if (event != null) {
-                    EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { snz -> snoozedUntil = snz });
+                    EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { qt -> quietUntil = qt });
                     finish();
                 } else {
                     logger.error("Error: can't get event from DB");
@@ -206,14 +206,15 @@ class ActivitySnooze : Activity() {
 
                             var events = storage.events
 
-                            // Don't allow events to have exactly the same "snoozedUntil", so to have
+                            // Don't allow events to have exactly the same "quietUntil", so to have
                             // predicted sorting order, so add a tiny (less than 0.1s) adjust to each
                             // snoozed time
 
                             var snoozeAdjust = 0L
 
                             for (event in events) {
-                                EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage, { snz -> snoozedUntil = snz });
+                                EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage,
+                                    { qt -> quietUntil = qt });
                                 ++snoozeAdjust
                             }
                         }
@@ -227,13 +228,12 @@ class ActivitySnooze : Activity() {
                     .show()
         }
 
-        if (snoozedUntil != 0L) {
+        if (quietUntil != 0L) {
             val msg =
                     String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
-                            DateUtils.formatDateTime(this, snoozedUntil,
+                            DateUtils.formatDateTime(this, quietUntil,
                                             DateUtils.FORMAT_SHOW_TIME or
-                                            DateUtils.FORMAT_SHOW_DATE or
-                                            DateUtils.FORMAT_SHOW_WEEKDAY))
+                                            DateUtils.FORMAT_SHOW_DATE))
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
     }

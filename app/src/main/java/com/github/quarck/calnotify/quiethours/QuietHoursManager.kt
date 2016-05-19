@@ -30,6 +30,8 @@ object QuietHoursManager {
     fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
+    fun isQuietPeriod(settings: Settings, time: Long = 0L) = getSilentUntil(settings, time) > 0L
+
     // returns time in millis, when silent period ends,
     // or 0 if we are not on silent
     fun getSilentUntil(settings: Settings, time: Long = 0L): Long {

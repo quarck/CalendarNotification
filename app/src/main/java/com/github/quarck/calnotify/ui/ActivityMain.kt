@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
+import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -40,6 +41,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import java.util.*
@@ -50,6 +52,8 @@ class ActivityMain : Activity() {
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
+    private lateinit var quietHoursLayout: RelativeLayout
+    private lateinit var quietHoursTextView: TextView
 
     private lateinit var adapter: EventListAdapter
     private lateinit var presenter: EventsPresenter
@@ -79,6 +83,9 @@ class ActivityMain : Activity() {
         recyclerView.adapter = adapter;
 
         reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
+
+        quietHoursLayout = find<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
+        quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
     }
 
     public override fun onStart() {
@@ -214,9 +221,21 @@ class ActivityMain : Activity() {
                         .toTypedArray()
                 }
 
+            var quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
+
             runOnUiThread {
                 presenter.setEventsToDisplay(events);
                 onNumEventsUpdated()
+
+                if (quietPeriodUntil > 0L) {
+                    quietHoursTextView.text =
+                        String.format(resources.getString(R.string.quiet_hours_main_activity_status),
+                                DateUtils.formatDateTime(this, quietPeriodUntil,
+                                    DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
+                    quietHoursLayout.visibility = View.VISIBLE;
+                } else {
+                    quietHoursLayout.visibility = View.GONE;
+                }
             }
         }
     }

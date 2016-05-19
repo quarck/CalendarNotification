@@ -5,66 +5,111 @@
     android:padding="0dp"
     tools:context=".ActivityMain" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/activity_main_reload_layout"
+        android:id="@+id/activity_main_bottom_indicators"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
+        android:visibility="visible"
+        android:orientation="vertical"
         >
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_reload"
-            android:id="@+id/activity_main_button_reload"
-            android:visibility="visible"
-            android:textColor="@color/primary"
-            android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
-            android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
-            android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
-            android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-            android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
-            android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:onClick="onReloadButtonClick"
-            />
-
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/activity_main_rationale"
-            android:text="@string/new_events_detected"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/primary_text"
-            android:gravity="center"
-            android:paddingTop="@dimen/activity_main_text_pading_top"
-            android:paddingBottom="@dimen/activity_main_text_pading_bottom"
-            android:paddingStart="@dimen/activity_main_text_pading_start"
-            android:paddingEnd="@dimen/activity_main_text_pading_end"
-            android:paddingRight="@dimen/activity_main_text_pading_end"
-            android:paddingLeft="@dimen/activity_main_text_pading_start"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_toStartOf="@id/activity_main_button_reload"
-            android:layout_toLeftOf="@id/activity_main_button_reload"
-            />
+            android:id="@+id/activity_main_quiet_hours_info_layout"
+            android:visibility="gone"
+            android:background="@color/primary_text"
+            >
 
-    </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_quiet_hours"
+                android:text=""
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/accent"
+                android:gravity="center"
+                android:paddingTop="@dimen/activity_main_text_pading_top"
+                android:paddingBottom="@dimen/activity_main_text_pading_bottom"
+                android:paddingStart="@dimen/activity_main_text_pading_start"
+                android:paddingEnd="@dimen/activity_main_text_pading_end"
+                android:paddingRight="@dimen/activity_main_text_pading_end"
+                android:paddingLeft="@dimen/activity_main_text_pading_start"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_reload_layout"
+            android:visibility="gone"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_reload"
+                android:id="@+id/activity_main_button_reload"
+                android:visibility="visible"
+                android:textColor="@color/primary"
+                android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="onReloadButtonClick"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_rationale"
+                android:text="@string/new_events_detected"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:gravity="center"
+                android:paddingTop="@dimen/activity_main_text_pading_top"
+                android:paddingBottom="@dimen/activity_main_text_pading_bottom"
+                android:paddingStart="@dimen/activity_main_text_pading_start"
+                android:paddingEnd="@dimen/activity_main_text_pading_end"
+                android:paddingRight="@dimen/activity_main_text_pading_end"
+                android:paddingLeft="@dimen/activity_main_text_pading_start"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toStartOf="@id/activity_main_button_reload"
+                android:layout_toLeftOf="@id/activity_main_button_reload"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_events"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/cardview_light_background"
-        android:layout_above="@id/activity_main_reload_layout"/>
+        android:layout_above="@id/activity_main_bottom_indicators"/>
 
     <TextView
         android:id="@+id/empty_view"

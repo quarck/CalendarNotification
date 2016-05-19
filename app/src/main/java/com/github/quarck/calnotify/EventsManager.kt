@@ -76,7 +76,7 @@ object EventsManager {
         }
     }
 
-    private fun scheduleAlarmForReminders(context: Context) {
+    private fun scheduleNextAlarmForReminders(context: Context) {
 
         var settings = Settings(context);
 
@@ -117,7 +117,7 @@ object EventsManager {
         if (context != null) {
             notificationManager.postEventNotifications(context, false, null);
             scheduleNextAlarmForEvents(context);
-            scheduleAlarmForReminders(context);
+            scheduleNextAlarmForReminders(context);
         } else {
             logger.error("onAlarm: context is null");
         }
@@ -176,7 +176,7 @@ object EventsManager {
             var changes = reloadCalendar(context)
             notificationManager.postEventNotifications(context, true, null);
             scheduleNextAlarmForEvents(context);
-            scheduleAlarmForReminders(context);
+            scheduleNextAlarmForReminders(context);
 
             if (changes)
                 ServiceUINotifier.notifyUI(context, false);
@@ -188,7 +188,7 @@ object EventsManager {
             var changes = reloadCalendar(context);
             notificationManager.postEventNotifications(context, true, null);
             scheduleNextAlarmForEvents(context);
-            scheduleAlarmForReminders(context);
+            scheduleNextAlarmForReminders(context);
 
             if (changes)
                 ServiceUINotifier.notifyUI(context, false);
@@ -210,7 +210,7 @@ object EventsManager {
         EventsStorage(context).use { it.addEvent(event) }
         notificationManager.onEventAdded(context, event)
 
-        scheduleAlarmForReminders(context);
+        scheduleNextAlarmForReminders(context);
 
         ServiceUINotifier.notifyUI(context, false);
 
@@ -238,7 +238,7 @@ object EventsManager {
 
         notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
 
-        scheduleAlarmForReminders(context);
+        scheduleNextAlarmForReminders(context);
 
         var seconds = (event.snoozedUntil - currentTime) / 1000
         logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
@@ -261,7 +261,7 @@ object EventsManager {
     fun onAppResumed(context: Context?) {
         if (context != null) {
             scheduleNextAlarmForEvents(context)
-            scheduleAlarmForReminders(context)
+            scheduleNextAlarmForReminders(context)
         }
     }
 
@@ -275,7 +275,7 @@ object EventsManager {
             notificationManager.onEventDismissed(context, eventId, notificationId);
 
             scheduleNextAlarmForEvents(context);
-            scheduleAlarmForReminders(context);
+            scheduleNextAlarmForReminders(context);
 
             if (notifyActivity)
                 ServiceUINotifier.notifyUI(context, true);

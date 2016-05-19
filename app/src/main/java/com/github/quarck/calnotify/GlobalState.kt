@@ -26,6 +26,12 @@ import android.content.Context
 class GlobalState : Application() {
 	var reminderLastFireTime: Long = 0
 	var notificationLastFireTime: Long = 0
+	var numRemindersFired: Int = 0
+
+	fun updateNotificationLastFiredTime() {
+		notificationLastFireTime = System.currentTimeMillis()
+		numRemindersFired = 0
+	}
 }
 
 val Context.globalState: GlobalState

@@ -65,7 +65,7 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
 
                 val lastFireTime = Math.max(lastNotification, lastReminder);
 
-                val numRemindersFired = (lastFireTime - lastReminder) / interval
+                val numRemindersFired = context.globalState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
                 val silentUntil = QuietHoursManager.getSilentUntil(settings)
@@ -117,6 +117,8 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
         // before writing 'false' and so wasting flash memory cycles.
         if (settings.quietHoursOneTimeReminderEnabled)
             settings.quietHoursOneTimeReminderEnabled = false;
+        else
+            ctx.globalState.numRemindersFired ++;
 /*
         val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
         ctx.vibratorService.vibrate(pattern, -1)

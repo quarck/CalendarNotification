@@ -126,9 +126,11 @@ class ActivityTestButtonsAndToDo : Activity() {
 
         var currentTime = System.currentTimeMillis();
 
+        var eventId = if (first) 101010101L else currentTime
+
         EventsStorage(this).use {
             it.addEvent(
-                    if (first) 101010101L else currentTime,
+                    eventId,
                     System.currentTimeMillis(),
                     if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
                     currentTime + 3600L * 1000L,
@@ -142,6 +144,6 @@ class ActivityTestButtonsAndToDo : Activity() {
 
         cnt++;
 
-        EventNotificationManager().postEventNotifications(applicationContext, false);
+        EventNotificationManager().postEventNotifications(applicationContext, false, eventId);
     }
 }

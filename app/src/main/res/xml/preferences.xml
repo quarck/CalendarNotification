@@ -1,6 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory 
+
+    <PreferenceScreen
         android:title="@string/notification_settings"
         android:key="pref_key_settings">
 
@@ -48,9 +49,9 @@
             android:defaultValue="false"
             />
 
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
+    <PreferenceScreen
         android:title="@string/snooze_presets"
         android:key="pref_key_snooze_prs">
 
@@ -66,9 +67,9 @@
             android:summary="@string/view_after_edit_summary"
             android:defaultValue="true" />
 
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
+    <PreferenceScreen
         android:title="@string/reminders_section"
         android:key="pref_key_reminder"
         >
@@ -93,21 +94,51 @@
             android:defaultValue="0"
             android:dependency="enable_reminding_key" />
 
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
+    <PreferenceScreen
         android:title="@string/quiet_hours_section"
         android:key="pref_key_reminder"
         >
-        <com.github.quarck.calnotify.prefs.QuietHoursPreference
-            android:key="quiet_hours_pref"
-            android:title="@string/quiet_hours"
-            android:defaultValue="0"
+        <CheckBoxPreference
+            android:key="enable_quiet_hours"
+            android:title="@string/enable_quiet_time"
+            android:defaultValue="false"
+            android:summary="@string/quiet_hours_summary"
             />
-    </PreferenceCategory>
 
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+            android:key="quiet_hours_from"
+            android:title="@string/quiet_time_from"
+            android:defaultValue="1320"
+            android:dependency="enable_quiet_hours"
+            />
 
-    <PreferenceCategory
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+            android:key="quiet_hours_to"
+            android:title="@string/quiet_time_to"
+            android:defaultValue="360"
+            android:dependency="enable_quiet_hours"
+            />
+
+        <CheckBoxPreference
+            android:key="quiet_hours_mute_primary"
+            android:title="@string/quiet_hours_mute_primary"
+            android:summary="@string/quiet_hours_mute_primary_summary"
+            android:dependency="enable_quiet_hours"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
+            android:key="quiet_hours_remind_after"
+            android:title="@string/quiet_hours_remind_after"
+            android:summary="@string/quiet_hours_remind_after_summary"
+            android:dependency="enable_quiet_hours"
+            android:defaultValue="true"
+            />
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:title="@string/smartwatch_support"
         android:key="pref_key_smartwatch">
 
@@ -117,9 +148,9 @@
             android:summary="@string/forward_to_pebble_summary"
             android:defaultValue="false"/>
 
-    </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceCategory
+    <PreferenceScreen
         android:title="@string/misc_settings"
         android:key="pref_key_misc">
 
@@ -129,7 +160,6 @@
             android:summary="@string/abort_broadcast_summary"
             android:defaultValue="false"/>
 
-    </PreferenceCategory>
-
+    </PreferenceScreen>
 
 </PreferenceScreen>

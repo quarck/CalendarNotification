@@ -38,6 +38,7 @@ import com.github.quarck.calnotify.eventsstorage.formatText
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
+import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.ui.ActivityMain
 import com.github.quarck.calnotify.ui.ActivitySnooze
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
@@ -50,7 +51,7 @@ interface IEventNotificationManager {
 
     fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int);
 
-    fun postEventNotifications(context: Context, force: Boolean);
+    fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?);
 
     fun fireEventReminder(context: Context)
 }
@@ -61,19 +62,19 @@ class EventNotificationManager : IEventNotificationManager {
             ctx: Context,
             event: EventRecord
     ) {
-        postEventNotifications(ctx, false);
+        postEventNotifications(ctx, false, event.eventId);
     }
 
     override fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int) {
         //
         removeNotification(ctx, eventId, notificationId);
-        postEventNotifications(ctx, false);
+        postEventNotifications(ctx, false, null);
     }
 
     override fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int) {
         //
         removeNotification(ctx, eventId, notificationId);
-        postEventNotifications(ctx, false);
+        postEventNotifications(ctx, false, null);
     }
 
     fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
@@ -92,13 +93,13 @@ class EventNotificationManager : IEventNotificationManager {
 
     }
 
-    override fun postEventNotifications(context: Context, force: Boolean) {
+    override fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?) {
         //
         var settings = Settings(context)
 
         var currentTime = System.currentTimeMillis()
 
-        var addedNewNotifications = false
+        var postedAnyNotification = false
 
         // events with snoozedUntil == 0 are currently visible ones
         // events with experied snoozedUntil are the ones to beep about
@@ -115,7 +116,7 @@ class EventNotificationManager : IEventNotificationManager {
             if (eventsToUpdate.size <= Consts.MAX_NOTIFICATIONS) {
                 //
                 hideNumNotificationsCollapsed(context);
-                addedNewNotifications = postRegularEvents(context, db, settings, eventsToUpdate, force)
+                postedAnyNotification = postRegularEvents(context, db, settings, eventsToUpdate, force, primaryEventId)
             } else {
                 //
                 var sortedEvents = eventsToUpdate.sortedBy { it.lastEventUpdate }
@@ -124,13 +125,14 @@ class EventNotificationManager : IEventNotificationManager {
                 var older = sortedEvents.take(sortedEvents.size - recent.size)
 
                 hideCollapsedNotifications(context, db, older, force);
-                addedNewNotifications = postRegularEvents(context, db, settings, recent, force);
+                postedAnyNotification = postRegularEvents(context, db, settings, recent, force, primaryEventId);
 
                 postNumNotificationsCollapsed(context, db, settings, older);
             }
         }
 
-        if (addedNewNotifications)
+        // If this is a new notification -- wake screen when required
+        if (primaryEventId != null || postedAnyNotification)
             wakeScreenIfRequired(context, settings);
     }
 
@@ -181,7 +183,8 @@ class EventNotificationManager : IEventNotificationManager {
             db: EventsStorage,
             settings: Settings,
             events: List<EventRecord>,
-            force: Boolean
+            force: Boolean,
+            primaryEventId: Long?
     ) : Boolean {
 
         logger.debug("Posting ${events.size} notifications");
@@ -189,7 +192,10 @@ class EventNotificationManager : IEventNotificationManager {
         var notificationsSettings = settings.notificationSettingsSnapshot
         var notificationsSettingsQuiet = notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
 
-        var wasQuiet = true
+        var isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+
+        var postedNotification = false
+        var playedAnySound = false
 
         for (event in events) {
             if (event.snoozedUntil == 0L) {
@@ -198,19 +204,38 @@ class EventNotificationManager : IEventNotificationManager {
                     // currently not displayed or forced -- post notifications
                     logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
-                    var settings = notificationsSettings
+                    var shouldBeQuiet = false
 
-                    // If forced or if we are posting notification that was previously posted as collapsed
-                    // - don't play sound
-                    if (force || (event.displayStatus == EventDisplayStatus.DisplayedCollapsed))
-                        settings = notificationsSettingsQuiet
+                    if (force) {
+                        // If forced to re-post all notifications - we only have to actually display notifications
+                        // so not playing sound / vibration here
+                        shouldBeQuiet = true
+                    } else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
+                        // This event was already visible as "collapsed", user just removed some other notification
+                        // and so we automatically expanding some of the events, this one was lucky.
+                        // No sound / vibration should be played here
+                        shouldBeQuiet = true
+                    } else if (isQuietPeriodActive) {
+                        // we are in a silent period, normally we should always be quiet, but there
+                        // are a few exclusions
+                        if (primaryEventId != null && event.eventId == primaryEventId) {
+                            // this is primary event -- play based on use preference for muting
+                            // primary event reminders
+                            shouldBeQuiet = settings.quietHoursMutePrimary
+                        } else {
+                            // not a primary event -- always silent in silent period
+                            shouldBeQuiet = true
+                        }
+                    }
 
-                    postNotification( context, event, settings )
+                    postNotification( context, event,
+                            if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings )
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal);
 
-                    wasQuiet = wasQuiet && force
+                    postedNotification = true
+                    playedAnySound = playedAnySound || !shouldBeQuiet
 
                 } else {
                     logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
@@ -226,14 +251,20 @@ class EventNotificationManager : IEventNotificationManager {
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero also
                 db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal, snoozedUntil = 0);
 
-                wasQuiet = false
+                postedNotification = true
+                playedAnySound = true
             }
         }
 
-        if (!wasQuiet)
+        if (playedAnySound)
             context.globalState.notificationLastFireTime = System.currentTimeMillis()
 
-        return !wasQuiet
+        if (isQuietPeriodActive && settings.quietHoursRemindAfter
+                && !settings.quietHoursOneTimeReminderEnabled) {
+            settings.quietHoursOneTimeReminderEnabled = true;
+        }
+
+        return postedNotification
     }
 
     private fun postNotification(

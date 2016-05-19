@@ -33,18 +33,6 @@ object PreferenceUtils {
     fun unpackTime(tm: Int)
             = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
 
-    fun packQuietHours(enabled: Boolean, from: Pair<Int,Int>, to: Pair<Int, Int>)
-            = (if (enabled) MULTIPLIER*MULTIPLIER else 0) or packTime(from) * MULTIPLIER + packTime(to)
-
-    fun unpackQuietHoursIsEnabled(value: Int)
-            = (value and (MULTIPLIER*MULTIPLIER)) != 0
-
-    fun unpackQuietHoursFrom(value: Int)
-            = unpackTime((value and (MULTIPLIER*MULTIPLIER-1)) / MULTIPLIER)
-
-    fun unpackQuietHoursTo(value: Int)
-            = unpackTime((value and (MULTIPLIER*MULTIPLIER-1)) % MULTIPLIER)
-
     internal fun parseSnoozePresets(value: String): LongArray? {
         var ret: LongArray? = null;
 

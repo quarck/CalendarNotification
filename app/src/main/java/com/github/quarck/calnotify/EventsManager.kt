@@ -58,13 +58,14 @@ object EventsManager {
         var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
         if (nextAlarm != null) {
-            val quietHoursUntil = QuietHoursManager.getSilentUntil(Settings(context), nextAlarm)
+            //val quietHoursUntil = QuietHoursManager.getSilentUntil(Settings(context), nextAlarm)
 
+/*
             if (quietHoursUntil != 0L) {
                 logger.info("Next alarm is moved from $nextAlarm to $quietHoursUntil due to quiet hours");
                 nextAlarm = quietHoursUntil;
             }
-
+*/
             logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - System.currentTimeMillis()) / 1000L} seconds");
 
             alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
@@ -79,7 +80,7 @@ object EventsManager {
 
         var settings = Settings(context);
 
-        if (!settings.remindersEnabled)
+        if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
             return;
 
         val hasActiveNotifications =
@@ -114,7 +115,7 @@ object EventsManager {
 
     fun onAlarm(context: Context?, intent: Intent?) {
         if (context != null) {
-            notificationManager.postEventNotifications(context, false);
+            notificationManager.postEventNotifications(context, false, null);
             scheduleNextAlarmForEvents(context);
             scheduleAlarmForReminders(context);
         } else {
@@ -173,7 +174,7 @@ object EventsManager {
     fun onAppUpdated(context: Context?, intent: Intent?) {
         if (context != null) {
             var changes = reloadCalendar(context)
-            notificationManager.postEventNotifications(context, true);
+            notificationManager.postEventNotifications(context, true, null);
             scheduleNextAlarmForEvents(context);
             scheduleAlarmForReminders(context);
 
@@ -185,7 +186,7 @@ object EventsManager {
     fun onBootComplete(context: Context?, intent: Intent?) {
         if (context != null) {
             var changes = reloadCalendar(context);
-            notificationManager.postEventNotifications(context, true);
+            notificationManager.postEventNotifications(context, true, null);
             scheduleNextAlarmForEvents(context);
             scheduleAlarmForReminders(context);
 
@@ -198,7 +199,7 @@ object EventsManager {
         if (context != null) {
             var changes = reloadCalendar(context)
             if (changes) {
-                notificationManager.postEventNotifications(context, true);
+                notificationManager.postEventNotifications(context, true, null);
                 ServiceUINotifier.notifyUI(context, false);
             }
         }
@@ -253,7 +254,7 @@ object EventsManager {
 
     fun onAppStarted(context: Context?) {
         if (context != null) {
-            notificationManager.postEventNotifications(context, true)
+            notificationManager.postEventNotifications(context, true, null)
         }
     }
 

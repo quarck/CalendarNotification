@@ -112,6 +112,11 @@ class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
         logger.debug("Firing reminder")
 
         EventsManager.fireEventReminder(ctx);
+
+        // following will actually write xml to file, so check if it is 'true' at the moment
+        // before writing 'false' and so wasting flash memory cycles.
+        if (settings.quietHoursOneTimeReminderEnabled)
+            settings.quietHoursOneTimeReminderEnabled = false;
 /*
         val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
         ctx.vibratorService.vibrate(pattern, -1)

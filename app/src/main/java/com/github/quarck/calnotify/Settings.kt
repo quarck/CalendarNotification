@@ -132,14 +132,23 @@ class Settings(ctx: Context) {
 
 
     val quietHoursEnabled: Boolean
-        get() = PreferenceUtils.unpackQuietHoursIsEnabled( prefs.getInt(QUIET_HOURS_KEY, 0) )
+        get() = prefs.getBoolean(ENABLE_QUIET_HOURS_KEY, false)
 
     val quietHoursFrom: Pair<Int, Int>
-        get() = PreferenceUtils.unpackQuietHoursFrom( prefs.getInt(QUIET_HOURS_KEY, 0) )
+        get() = PreferenceUtils.unpackTime( prefs.getInt(QUIET_HOURS_FROM_KEY, 0) )
 
     val quietHoursTo: Pair<Int, Int>
-        get() = PreferenceUtils.unpackQuietHoursTo( prefs.getInt(QUIET_HOURS_KEY, 0) )
+        get() = PreferenceUtils.unpackTime( prefs.getInt(QUIET_HOURS_TO_KEY, 0) )
 
+    val quietHoursMutePrimary: Boolean
+        get() = prefs.getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
+
+    val quietHoursRemindAfter: Boolean
+        get() = prefs.getBoolean(QUIET_HOURS_REMIND_AFTER_KEY, false)
+
+    var quietHoursOneTimeReminderEnabled: Boolean
+        get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, true)
+        set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
@@ -177,7 +186,12 @@ class Settings(ctx: Context) {
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
-        private const val QUIET_HOURS_KEY = "quiet_hours_pref"
+        private const val ENABLE_QUIET_HOURS_KEY = "enable_quiet_hours"
+        private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from"
+        private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
+        private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
+        private const val QUIET_HOURS_REMIND_AFTER_KEY = "quiet_hours_remind_after"
+        private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"

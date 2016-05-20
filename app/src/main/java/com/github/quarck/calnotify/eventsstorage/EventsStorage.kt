@@ -40,7 +40,7 @@ class EventsStorage(context: Context)
 //            description: String,
             startTime: Long, endTime: Long,
             location: String,
-            lastEventUpdate: Long,
+            lastEventVisibility: Long,
             displayStatus: EventDisplayStatus,
             color: Int
     ): EventRecord {
@@ -54,7 +54,7 @@ class EventsStorage(context: Context)
                         startTime = startTime,
                         endTime = endTime,
                         location = location,
-                        lastEventUpdate = lastEventUpdate,
+                        lastEventVisibility = lastEventVisibility,
                         displayStatus = displayStatus,
                         color = color
                 )
@@ -76,7 +76,7 @@ class EventsStorage(context: Context)
                     startTime: Long? = null,
                     endTime: Long? = null,
                     location: String? = null,
-                    lastEventUpdate: Long? = null,
+                    lastEventVisibility: Long? = null,
                     displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
     ) {
@@ -88,7 +88,7 @@ class EventsStorage(context: Context)
                         startTime = startTime ?: event.startTime,
                         endTime = endTime ?: event.endTime,
                         location = location ?: event.location,
-                        lastEventUpdate = lastEventUpdate ?: event.lastEventUpdate,
+                        lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color
                 );
@@ -312,7 +312,7 @@ class EventsStorage(context: Context)
         values.put(KEY_END, event.endTime);
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_FIRE, event.lastEventUpdate);
+        values.put(KEY_LAST_EVENT_FIRE, event.lastEventVisibility);
         values.put(KEY_IS_DISPLAYED, event.displayStatus.code);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_ALERT_TIME, event.alertTime)
@@ -331,7 +331,7 @@ class EventsStorage(context: Context)
                 endTime = cursor.getLong(5),
                 location = cursor.getString(6),
                 snoozedUntil = cursor.getLong(7),
-                lastEventUpdate = cursor.getLong(8),
+                lastEventVisibility = cursor.getLong(8),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
                 color = cursor.getInt(10),
                 alertTime = cursor.getLong(11)

@@ -58,15 +58,15 @@ object EventsManager {
         var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
 
         if (nextAlarm != null) {
-            //val quietHoursUntil = QuietHoursManager.getSilentUntil(Settings(context), nextAlarm)
 
-/*
-            if (quietHoursUntil != 0L) {
-                logger.info("Next alarm is moved from $nextAlarm to $quietHoursUntil due to quiet hours");
-                nextAlarm = quietHoursUntil;
+            var currentTime = System.currentTimeMillis()
+
+            if (nextAlarm < currentTime) {
+                logger.error("CRITICAL: nextAlarm=$nextAlarm is less than currentTime $currentTime");
+                nextAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
             }
-*/
-            logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - System.currentTimeMillis()) / 1000L} seconds");
+
+            logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - currentTime) / 1000L} seconds");
 
             alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
         } else {
@@ -99,7 +99,7 @@ object EventsManager {
             val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
 
             if (quietUntil != 0L) {
-                logger.info("Reminder alarm moved from $nextFire to $quietUntil (+15s) due to silent period");
+                logger.info("Reminder alarm moved from $nextFire to $quietUntil+15s due to silent period");
 
                 // give a little extra delay, so if events would fire precisely at the quietUntil,
                 // reminders would wait a bit longer
@@ -227,17 +227,16 @@ object EventsManager {
         var currentTime = System.currentTimeMillis()
 
         event.snoozedUntil = currentTime + snoozeDelay;
-        event.lastEventUpdate = currentTime;
+        event.lastEventVisibility = currentTime;
 
         if (eventsStorage != null)
             eventsStorage.updateEvent(event)
         else
             EventsStorage(context).use { it.updateEvent(event) }
 
-        scheduleNextAlarmForEvents(context);
-
         notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
 
+        scheduleNextAlarmForEvents(context);
         scheduleNextAlarmForReminders(context);
 
         var seconds = (event.snoozedUntil - currentTime) / 1000

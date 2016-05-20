@@ -90,11 +90,3 @@ fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: Pen
     // Old way
     return this.set(type, triggerAtMillis, operation);
 }
-
-
-fun Context.is24HoursClock(): Boolean {
-
-    val clockType: String? =
-            Settings.System.getString(this.contentResolver, Settings.System.TIME_12_24)
-    return (clockType == null) || (clockType == "24")
-}

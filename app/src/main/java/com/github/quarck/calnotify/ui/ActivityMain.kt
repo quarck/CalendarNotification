@@ -36,6 +36,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventComparator
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
@@ -215,10 +216,7 @@ class ActivityMain : Activity() {
 
             var events =
                 EventsStorage(this).use {
-                    db ->
-                    db.events
-                        .sortedBy { it.snoozedUntil }
-                        .toTypedArray()
+                    db -> db.events.sortedWith( EventComparator(true)).toTypedArray()
                 }
 
             var quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
@@ -231,7 +229,11 @@ class ActivityMain : Activity() {
                     quietHoursTextView.text =
                         String.format(resources.getString(R.string.quiet_hours_main_activity_status),
                                 DateUtils.formatDateTime(this, quietPeriodUntil,
-                                    DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
+                                    if (DateUtils.isToday(quietPeriodUntil))
+                                       DateUtils.FORMAT_SHOW_TIME
+                                    else
+                                        DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
+
                     quietHoursLayout.visibility = View.VISIBLE;
                 } else {
                     quietHoursLayout.visibility = View.GONE;

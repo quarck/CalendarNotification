@@ -167,6 +167,6 @@
     <string name="quiet_hours_remind_after">Reminder after</string>
     <string name="quiet_hours_remind_after_summary">Remind about active events when quiet period is over</string>
 
-    <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active, no reminders until %s</string>
+    <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active\nNo reminders until %s</string>
 
 </resources>

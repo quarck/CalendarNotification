@@ -61,4 +61,5 @@
     <dimen name="dlg_snooze_presets_text_label_padding">16dp</dimen>
     <dimen name="dlg_snooze_presets_input_padding">16dp</dimen>
     <dimen name="textview_widget_status_text_size">16sp</dimen>
+    <dimen name="text_view_main_activity_quiet_hrs_status_padding">7dp</dimen>
 </resources>

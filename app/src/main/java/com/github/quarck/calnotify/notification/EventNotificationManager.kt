@@ -30,10 +30,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.NotificationSettingsSnapshot
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventRecord
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.eventsstorage.formatText
+import com.github.quarck.calnotify.eventsstorage.*
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
@@ -42,6 +39,7 @@ import com.github.quarck.calnotify.ui.ActivityMain
 import com.github.quarck.calnotify.ui.ActivitySnooze
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.powerManager
+import java.util.*
 
 interface IEventNotificationManager {
     fun onEventAdded(ctx: Context, event: EventRecord);
@@ -61,6 +59,13 @@ class EventNotificationManager : IEventNotificationManager {
         ctx: Context,
         event: EventRecord
     ) {
+        EventsStorage(ctx).use {
+            // Update lastEventVisibility - we've just seen this event,
+            // not using threshold when event is just added
+            it.updateEvent(event,
+                lastEventVisibility = System.currentTimeMillis())
+        }
+
         postEventNotifications(ctx, false, event.eventId);
     }
 
@@ -109,18 +114,18 @@ class EventNotificationManager : IEventNotificationManager {
             // events with experied snoozedUntil are the ones to beep about
             // everything else should be hidden and waiting for the next alarm
 
+
             var activeEvents =
                 db.events
                     .filter {
                         (it.snoozedUntil == 0L)
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                     }
-                    .sortedBy { it.lastEventUpdate }
+                    .sortedWith( EventComparator( ignoreSnoozeTime = true ) )
+
 
             var recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
             var olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
-
-            collapseDisplayedNotifications(context, db, olderEvents, settings, force);
 
             postedAnyNotification =
                 postDisplayedEventNotifications(
@@ -129,8 +134,7 @@ class EventNotificationManager : IEventNotificationManager {
                     force, isQuietPeriodActive,
                     primaryEventId)
 
-            if (olderEvents.isEmpty())
-                hideCollapsedEventsNotification(context);
+            collapseDisplayedNotifications(context, db, olderEvents, settings, force);
         }
 
         // If this is a new notification -- wake screen when required
@@ -145,7 +149,8 @@ class EventNotificationManager : IEventNotificationManager {
                 db ->
                 db.events
                     .filter { it.snoozedUntil == 0L }
-                    .maxBy { it.lastEventUpdate }
+                    .sortedWith( EventComparator() )
+                    .firstOrNull()
             }
 
         if (mostRecentEvent != null) {
@@ -168,19 +173,26 @@ class EventNotificationManager : IEventNotificationManager {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
+        var currentTime = System.currentTimeMillis()
+
         for (event in events) {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId);
-
-                event.displayStatus = EventDisplayStatus.DisplayedCollapsed;
-                db.updateEvent(event);
             } else {
-                logger.debug("Skipping hiding of notification id ${event.notificationId}, eventId ${event.eventId} - already hidden");
+                logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed");
             }
+
+            // Do not update lastEventVisibility for collapsing events - it is not actually truly visible
+            db.updateEvent(event,
+                displayStatus = EventDisplayStatus.DisplayedCollapsed,
+                snoozedUntil = 0L);
         }
 
-        postNumNotificationsCollapsed(context, db, settings, events);
+        if (!events.isEmpty())
+            postNumNotificationsCollapsed(context, db, settings, events);
+        else
+            hideCollapsedEventsNotification(context);
     }
 
     // force - if true - would re-post all active notifications. Normally only new notifications are posted to
@@ -268,8 +280,10 @@ class EventNotificationManager : IEventNotificationManager {
                     if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
-                // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero also
-                db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal, snoozedUntil = 0);
+                // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
+                // also update 'lastVisible' time since event just re-appeared
+                db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal,
+                    snoozedUntil = 0, lastEventVisibility = System.currentTimeMillis() );
 
                 postedNotification = true
                 playedAnySound = playedAnySound || !isQuietPeriodActive
@@ -453,16 +467,29 @@ class EventNotificationManager : IEventNotificationManager {
             events.size
         );
 
+        var text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
+
+        var bigText =
+            events
+                .fold( StringBuilder(), { sb, ev -> sb.append("${ev.title}\n")} )
+                .toString()
+
         val notification =
             Notification.Builder(context)
                 .setContentTitle(title)
-                .setContentText(context.getString(com.github.quarck.calnotify.R.string.multiple_events_details))
+                .setContentText(text)
                 .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
-                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setPriority(
+                    if (settings.headsUpNotification)
+                        Notification.PRIORITY_DEFAULT
+                    else
+                        Notification.PRIORITY_LOW )
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+                .setStyle(Notification.BigTextStyle()
+                    .bigText(bigText))
                 .build()
 
         var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

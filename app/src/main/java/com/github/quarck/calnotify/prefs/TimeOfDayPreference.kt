@@ -32,7 +32,6 @@ import android.widget.TimePicker
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.is24HoursClock
 import java.text.DateFormat
 import java.util.*
 
@@ -55,8 +54,7 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         setNegativeButtonText(android.R.string.cancel)
 
         dialogIcon = null
-
-        isTwentyFourHour = context.is24HoursClock()
+        isTwentyFourHour = android.text.format.DateFormat.is24HourFormat(context)//  context.is24HoursClock()
     }
 
     override fun onBindView(view: View) {

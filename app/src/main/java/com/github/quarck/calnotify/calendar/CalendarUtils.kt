@@ -70,7 +70,7 @@ object CalendarUtils {
                         startTime = start,
                         endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
                         location = location ?: "",
-                        lastEventUpdate = System.currentTimeMillis(),
+                        lastEventVisibility = 0L,
                         displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
                 );

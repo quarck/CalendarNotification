@@ -37,7 +37,7 @@ data class EventRecord(
         var startTime: Long,
         var endTime: Long,
         var location: String,
-        var lastEventUpdate: Long,
+        var lastEventVisibility: Long,
         var snoozedUntil: Long = 0,
         var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
         var color: Int = 0
@@ -69,9 +69,6 @@ data class EventRecord(
             color = newEvent.color
             ret = true
         }
-
-        if (ret)
-            lastEventUpdate = System.currentTimeMillis()
 
         return ret
     }

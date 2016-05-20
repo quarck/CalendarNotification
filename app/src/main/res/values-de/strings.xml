@@ -111,6 +111,10 @@
     <string name="quiet_time_to">Quiet time to</string>
     <string name="enable_quiet_time">Enable quiet time</string>
 
+    <string name="reminders_section">Reminders</string>
+    <string name="quiet_hours_section">Quiet hours settings</string>
+    <string name="quiet_hours">Quiet hours</string>
+
     <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next snooze reminder hits quiet time period, no sound or vibration would be played until end of period on %s</string>
     <string name="quiet_hours_summary">Use quiet time to mute all reminders and snoozed event during certain period of time, primary events notifications would still play sound and vibrate (according to settings)</string>
 

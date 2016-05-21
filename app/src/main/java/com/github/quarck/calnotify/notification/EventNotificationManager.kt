@@ -121,8 +121,7 @@ class EventNotificationManager : IEventNotificationManager {
                         (it.snoozedUntil == 0L)
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                     }
-                    .sortedWith( EventComparator( ignoreSnoozeTime = true ) )
-
+                    .sortedBy { it.lastEventVisibility }
 
             var recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
             var olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
@@ -149,8 +148,7 @@ class EventNotificationManager : IEventNotificationManager {
                 db ->
                 db.events
                     .filter { it.snoozedUntil == 0L }
-                    .sortedWith( EventComparator() )
-                    .firstOrNull()
+                    .maxBy { it.lastEventVisibility }
             }
 
         if (mostRecentEvent != null) {

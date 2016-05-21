@@ -26,10 +26,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
+import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
+import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.utils.find
@@ -126,24 +128,26 @@ class ActivityTestButtonsAndToDo : Activity() {
 
         var currentTime = System.currentTimeMillis();
 
-        var eventId = if (first) 101010101L else currentTime
+        var eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
 
-        EventsStorage(this).use {
-            it.addEvent(
-                    eventId,
-                    System.currentTimeMillis(),
-                    if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-                    currentTime + 3600L * 1000L,
-                    currentTime + 2 * 3600L * 1000L,
-                    if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
-                    System.currentTimeMillis(),
-                    EventDisplayStatus.Hidden,
-                    0xffFFC107.toInt()
-            )
-        }
+        var event = EventRecord(
+            eventId,
+            System.currentTimeMillis(),
+            0,
+            if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
+            currentTime + 3600L * 1000L,
+            currentTime + 2 * 3600L * 1000L,
+            if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
+            System.currentTimeMillis(),
+            0L,
+            EventDisplayStatus.Hidden,
+            0xffFFC107.toInt()
+        )
 
         cnt++;
 
-        EventNotificationManager().postEventNotifications(applicationContext, false, eventId);
+        EventsManager.onCalendarEventFired(this, event)
+
+//        EventNotificationManager().postEventNotifications(applicationContext, false, eventId);
     }
 }

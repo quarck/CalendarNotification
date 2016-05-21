@@ -36,7 +36,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventComparator
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
@@ -216,7 +215,7 @@ class ActivityMain : Activity() {
 
             var events =
                 EventsStorage(this).use {
-                    db -> db.events.sortedWith( EventComparator(true)).toTypedArray()
+                    db -> db.events.sortedBy{ it.snoozedUntil }.toTypedArray()
                 }
 
             var quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)

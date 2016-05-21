@@ -16,6 +16,7 @@
         android:id="@+id/card_view_main_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/cardview_light_background"
         >
 
         <RelativeLayout

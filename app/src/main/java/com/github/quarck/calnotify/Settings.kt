@@ -143,9 +143,6 @@ class Settings(ctx: Context) {
     val quietHoursMutePrimary: Boolean
         get() = prefs.getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
-    val quietHoursRemindAfter: Boolean
-        get() = prefs.getBoolean(QUIET_HOURS_REMIND_AFTER_KEY, false)
-
     var quietHoursOneTimeReminderEnabled: Boolean
         get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, true)
         set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
@@ -190,7 +187,6 @@ class Settings(ctx: Context) {
         private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from"
         private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
         private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
-        private const val QUIET_HOURS_REMIND_AFTER_KEY = "quiet_hours_remind_after"
         private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
 
         // Default values

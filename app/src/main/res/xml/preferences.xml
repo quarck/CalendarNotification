@@ -126,13 +126,6 @@
             android:defaultValue="false"
             />
 
-        <CheckBoxPreference
-            android:key="quiet_hours_remind_after"
-            android:title="@string/quiet_hours_remind_after"
-            android:summary="@string/quiet_hours_remind_after_summary"
-            android:dependency="enable_quiet_hours"
-            android:defaultValue="true"
-            />
     </PreferenceScreen>
 
     <PreferenceScreen

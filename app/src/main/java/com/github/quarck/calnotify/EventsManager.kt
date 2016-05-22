@@ -210,6 +210,7 @@ object EventsManager {
         EventsStorage(context).use { it.addEvent(event) }
         notificationManager.onEventAdded(context, event)
 
+        scheduleNextAlarmForEvents(context);
         scheduleNextAlarmForReminders(context);
 
         ServiceUINotifier.notifyUI(context, false);

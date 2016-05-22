@@ -293,7 +293,6 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (isQuietPeriodActive
             && !playedAnySound
-            && settings.quietHoursRemindAfter
             && !settings.quietHoursOneTimeReminderEnabled) {
 
             logger.debug("We've just posted a a 'quiet' notification(s) due to quiet hours and user requested" +

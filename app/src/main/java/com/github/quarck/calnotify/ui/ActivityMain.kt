@@ -215,7 +215,24 @@ class ActivityMain : Activity() {
 
             var events =
                 EventsStorage(this).use {
-                    db -> db.events.sortedBy{ it.snoozedUntil }.toTypedArray()
+
+                    db -> db.events.sortedWith(
+                        Comparator<EventRecord> {
+                            lhs, rhs ->
+
+                            if (lhs.snoozedUntil < rhs.snoozedUntil)
+                                return@Comparator -1;
+                            else if (lhs.snoozedUntil > rhs.snoozedUntil)
+                                return@Comparator 1;
+
+                            if (lhs.lastEventVisibility > rhs.lastEventVisibility)
+                                return@Comparator -1;
+                            else if (lhs.lastEventVisibility < rhs.lastEventVisibility)
+                                return@Comparator 1;
+
+                            return@Comparator 0;
+
+                        }).toTypedArray()
                 }
 
             var quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)

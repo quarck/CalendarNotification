@@ -165,5 +165,6 @@
     <string name="quiet_hours_mute_primary_summary">Mute primary notifications during quiet time, so app becomes completely silent. Primary notification is a very first notification for particular event</string>
 
     <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active\nNo reminders until %s</string>
+    <string name="hits_quiet_period">(hits quiet period)</string>
 
 </resources>

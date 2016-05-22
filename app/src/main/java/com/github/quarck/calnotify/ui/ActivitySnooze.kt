@@ -70,11 +70,16 @@ class ActivitySnooze : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snooze)
 
-        snoozePresets = Settings(this).snoozePresets
+        val settings = Settings(this)
+
+        snoozePresets = settings.snoozePresets
 
         val currentTime = System.currentTimeMillis()
 
-        val settings = Settings(this)
+        val isQuiet =
+            QuietHoursManager.isInsideQuietPeriod(
+                settings,
+                snoozePresets.map{ it -> currentTime + it }.toLongArray() )
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
@@ -85,7 +90,7 @@ class ActivitySnooze : Activity() {
                 view.text = formatPreset(snoozePresets[idx])
                 view.visibility = View.VISIBLE;
 
-                if (QuietHoursManager.isQuietPeriod(settings, currentTime + snoozePresets[idx]))
+                if (isQuiet[idx])
                     quietTimeNotice.visibility = View.VISIBLE
                 else
                     quietTimeNotice.visibility = View.GONE
@@ -93,7 +98,6 @@ class ActivitySnooze : Activity() {
                 view.visibility = View.GONE;
                 quietTimeNotice.visibility = View.GONE
             }
-
         }
 
         // Populate event details

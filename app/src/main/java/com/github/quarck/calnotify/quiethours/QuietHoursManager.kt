@@ -30,9 +30,13 @@ object QuietHoursManager {
     fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
-    fun isQuietPeriod(settings: Settings, time: Long = 0L) = getSilentUntil(settings, time) > 0L
+    fun isInsideQuietPeriod(settings: Settings, time: Long = 0L) =
+        getSilentUntil(settings, time) > 0L
 
-    // returns time in millis, when silent period ends,
+    fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
+        getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
+
+        // returns time in millis, when silent period ends,
     // or 0 if we are not on silent
     fun getSilentUntil(settings: Settings, time: Long = 0L): Long {
         var ret: Long = 0
@@ -76,4 +80,60 @@ object QuietHoursManager {
 
         return ret
     }
+
+    fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
+
+        var ret = LongArray(currentTimes.size)
+
+        if (!isEnabled(settings))
+            return ret
+
+        if (ret.size == 0)
+            return ret
+
+        val cals =
+            Array<Calendar>(ret.size, {
+                idx ->
+                var cal = Calendar.getInstance()
+                cal.timeInMillis = currentTimes[idx]
+                cal
+            })
+
+        val from = settings.quietHoursFrom
+        var silentFrom: Calendar = calendarWithTimeMillisHourAndMinute(currentTimes[0], from.component1(), from.component2())
+
+        val to = settings.quietHoursTo
+        var silentTo = calendarWithTimeMillisHourAndMinute(currentTimes[0], to.component1(), to.component2())
+
+        // Current silent period could have started yesterday, so account for this by rolling it back to one day
+        silentFrom.roll(Calendar.DAY_OF_MONTH, false)
+        silentTo.roll(Calendar.DAY_OF_MONTH, false);
+
+        // Check if "from" is before "to", otherwise add an extra day to "to"
+        if (silentTo.before(silentFrom))
+            silentTo.roll(Calendar.DAY_OF_MONTH, true);
+
+        while (true) {
+            var allPassed = true
+
+            for ( (idx, cal) in cals.withIndex()) {
+
+                if (silentFrom.before(cal))
+                    allPassed = false
+
+                if (cal.after(silentFrom) && cal.before(silentTo))
+                    // this hits silent period -- so it should be silent until 'silentTo'
+                    ret[idx] = silentTo.timeInMillis
+            }
+
+            if (allPassed)
+                break
+
+            silentFrom.roll(Calendar.DAY_OF_MONTH, true)
+            silentTo.roll(Calendar.DAY_OF_MONTH, true)
+        }
+
+        return ret
+    }
+
 }

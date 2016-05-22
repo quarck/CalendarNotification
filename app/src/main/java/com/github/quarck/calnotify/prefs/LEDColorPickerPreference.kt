@@ -88,7 +88,6 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
             var button = view.find<Button>(buttonId)
             button.setOnClickListener { v -> onClick(v) }
 
-
             var parent: ViewParent = button.parent
 
             if (parent is LinearLayout) {

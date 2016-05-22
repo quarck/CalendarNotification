@@ -9,7 +9,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
-    <color name="led_clr1">#0000FF</color>
+    <color name="led_clr1">#0000ff</color>
     <color name="led_clr2">#00FF00</color>
     <color name="led_clr3">#00FFFF</color>
     <color name="led_clr4">#FF0000</color>

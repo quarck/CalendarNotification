@@ -16,13 +16,10 @@
             android:summary="@string/notification_light_summary"
             android:title="@string/notification_light_title"
             android:defaultValue="true" />
-
-        <com.thebluealliance.spectrum.SpectrumPreference
-            android:defaultValue="@color/led_clr1"
+        
+        <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
             android:key="notification_led_color"
             android:title="@string/led_color"
-            app:spectrum_colors="@array/led_colors"
-            app:spectrum_outlineWidth="0dp"
             android:dependency="notification_led" />
 
         <RingtonePreference

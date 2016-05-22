@@ -62,4 +62,8 @@
     <dimen name="dlg_snooze_presets_input_padding">16dp</dimen>
     <dimen name="textview_widget_status_text_size">16sp</dimen>
     <dimen name="text_view_main_activity_quiet_hrs_status_padding">7dp</dimen>
+    <dimen name="color_picker_spacing">3dp</dimen>
+    <dimen name="color_picker_sqr_size">50dp</dimen>
+    <dimen name="color_picker_sqr_size_sm">30dp</dimen>
+    <dimen name="color_picker_sqr_size_pls_sp">56dp</dimen>
 </resources>

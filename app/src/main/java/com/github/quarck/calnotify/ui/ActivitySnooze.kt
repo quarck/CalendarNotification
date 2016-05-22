@@ -38,6 +38,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsUtils
+import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
@@ -54,7 +55,16 @@ class ActivitySnooze : Activity() {
             R.id.snooze_view_snooze_present4,
             R.id.snooze_view_snooze_present5,
             R.id.snooze_view_snooze_present6
-    )
+        )
+
+    val snoozePresentQuietTimeReminderControlIds = intArrayOf(
+            R.id.snooze_view_snooze_present1_quiet_time_notice,
+            R.id.snooze_view_snooze_present2_quiet_time_notice,
+            R.id.snooze_view_snooze_present3_quiet_time_notice,
+            R.id.snooze_view_snooze_present4_quiet_time_notice,
+            R.id.snooze_view_snooze_present5_quiet_time_notice,
+            R.id.snooze_view_snooze_present6_quiet_time_notice
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,15 +72,27 @@ class ActivitySnooze : Activity() {
 
         snoozePresets = Settings(this).snoozePresets
 
+        val currentTime = System.currentTimeMillis()
+
+        val settings = Settings(this)
+
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
             var view = find<TextView>(id);
+            var quietTimeNotice = find<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
 
             if (idx < snoozePresets.size) {
                 view.text = formatPreset(snoozePresets[idx])
                 view.visibility = View.VISIBLE;
-            } else
+
+                if (QuietHoursManager.isQuietPeriod(settings, currentTime + snoozePresets[idx]))
+                    quietTimeNotice.visibility = View.VISIBLE
+                else
+                    quietTimeNotice.visibility = View.GONE
+            } else {
                 view.visibility = View.GONE;
+                quietTimeNotice.visibility = View.GONE
+            }
 
         }
 

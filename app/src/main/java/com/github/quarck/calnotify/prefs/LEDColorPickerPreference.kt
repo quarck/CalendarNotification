@@ -22,28 +22,22 @@ package com.github.quarck.calnotify.prefs
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.preference.DialogPreference
-import android.provider.Settings
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewParent
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
-import java.text.DateFormat
-import java.util.*
 
 class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
     internal var colorValue = 0
-
-    // UI representation
-    internal lateinit var picker: TimePicker
 
     internal var widgetView: View? = null
 
@@ -58,7 +52,8 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
             R.id.button_color_picker_clr7,
             R.id.button_color_picker_clr8 )
 
-    private var highlighters = mutableListOf<Pair<LinearLayout,Int>>()
+    private var originalColors = mutableListOf<Pair<LinearLayout,ColorDrawable>>()
+    private var primaryColor: ColorDrawable? = null
 
     init {
         dialogLayoutResource = R.layout.dialog_color_picker
@@ -81,7 +76,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        highlighters.clear()
+        originalColors.clear()
 
         for (buttonId in colorButtonIds) {
 
@@ -91,38 +86,39 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
             var parent: ViewParent = button.parent
 
             if (parent is LinearLayout) {
-                var backround = parent.background
+                var background = parent.background
 
-                if (backround is ColorDrawable)
-                    highlighters.add(Pair(parent, backround.color))
-            }
-        }
+                if (background is ColorDrawable) {
+                    originalColors.add(Pair(parent, background))
 
-        for (hl in highlighters) {
-            (hl.first.background as ColorDrawable).color = hl.second
-            if ((hl.first.background as ColorDrawable).color == colorValue) {
-                hl.first.background = ColorDrawable(view.resources.getColor(R.color.primary))
+                    if (background.color == colorValue)
+                        parent.background = getPrimaryColor(view)
+                }
             }
         }
 
         updateWidgetView()
     }
 
-    fun onClick(v: View) {
+    private fun getPrimaryColor(v: View): ColorDrawable {
+        if (primaryColor == null)
+            primaryColor = ColorDrawable(v.resources.getColor(R.color.primary))
+        return primaryColor!!
+    }
 
+    fun onClick(v: View) {
         colorValue = Consts.DEFAULT_LED_COLOR
 
         var background = v.background
         if (background is ColorDrawable)
             colorValue =  background.color
 
-        for (hl in highlighters)
-            (hl.first.background as ColorDrawable).color = hl.second
+        for (hl in originalColors)
+            hl.first.background = hl.second
 
         var parent: ViewParent = v.parent
-        if (parent is LinearLayout) {
-            parent.background = ColorDrawable(v.resources.getColor(R.color.primary))
-        }
+        if (parent is LinearLayout)
+            parent.background = getPrimaryColor(v)
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {

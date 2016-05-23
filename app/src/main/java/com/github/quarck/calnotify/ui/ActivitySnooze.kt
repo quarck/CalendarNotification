@@ -66,6 +66,15 @@ class ActivitySnooze : Activity() {
             R.id.snooze_view_snooze_present6_quiet_time_notice
         )
 
+    var baselineIds = intArrayOf (
+        R.id.snooze_view_snooze_present1_quiet_time_notice_baseline,
+        R.id.snooze_view_snooze_present2_quiet_time_notice_baseline,
+        R.id.snooze_view_snooze_present3_quiet_time_notice_baseline,
+        R.id.snooze_view_snooze_present4_quiet_time_notice_baseline,
+        R.id.snooze_view_snooze_present5_quiet_time_notice_baseline,
+        R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snooze)
@@ -83,20 +92,23 @@ class ActivitySnooze : Activity() {
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
-            var view = find<TextView>(id);
+            var snoozeLable = find<TextView>(id);
             var quietTimeNotice = find<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
+            var quietTimeNoticeBaseline = find<TextView>(baselineIds[idx])
 
             if (idx < snoozePresets.size) {
-                view.text = formatPreset(snoozePresets[idx])
-                view.visibility = View.VISIBLE;
+                snoozeLable.text = formatPreset(snoozePresets[idx])
+                snoozeLable.visibility = View.VISIBLE;
+                quietTimeNoticeBaseline.visibility = View.VISIBLE
 
                 if (isQuiet[idx])
                     quietTimeNotice.visibility = View.VISIBLE
                 else
                     quietTimeNotice.visibility = View.GONE
             } else {
-                view.visibility = View.GONE;
+                snoozeLable.visibility = View.GONE;
                 quietTimeNotice.visibility = View.GONE
+                quietTimeNoticeBaseline.visibility = View.GONE
             }
         }
 

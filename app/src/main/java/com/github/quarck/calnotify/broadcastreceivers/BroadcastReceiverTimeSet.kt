@@ -25,7 +25,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.logs.Logger
 
-class TimeChangedReceiver: BroadcastReceiver() {
+class BroadcastReceiverTimeSet: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 

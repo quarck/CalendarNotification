@@ -63,6 +63,7 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".broadcastreceivers.BroadcastReceiverBootComplete"
             android:enabled="true"
@@ -75,6 +76,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
+
         <receiver android:name=".broadcastreceivers.BroadcastReceiverEventReminder">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
@@ -99,6 +101,7 @@
                 <data android:mimeType="vnd.android.cursor.item/calendar_alert_time"/>
             </intent-filter>
         </receiver>
+
         <receiver android:name=".broadcastreceivers.BroadcastReceiverCalendarChanged">
             <intent-filter>
                 <action android:name="android.intent.action.PROVIDER_CHANGED"/>
@@ -107,8 +110,16 @@
                 <data android:host="com.android.calendar"/>
             </intent-filter>
         </receiver>
+
         <receiver android:name=".broadcastreceivers.BroadcastReceiverAlarm"/>
+
         <receiver android:name=".broadcastreceivers.BroadcastReceiverReminderAlarm"/>
+
+        <receiver android:name=".broadcastreceivers.BroadcastReceiverTimeSet">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
 
      </application>
 

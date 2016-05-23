@@ -265,6 +265,13 @@ object EventsManager {
         }
     }
 
+    fun onTimeChanged(context: Context?) {
+        if (context != null) {
+            scheduleNextAlarmForEvents(context)
+            scheduleNextAlarmForReminders(context)
+        }
+    }
+
     fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean) {
 
         if (context != null) {

@@ -80,7 +80,7 @@ object EventsManager {
 
         var settings = Settings(context);
 
-        if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
+        if (!settings.remindersEnabled || !settings.quietHoursOneTimeReminderEnabled)
             return;
 
         val hasActiveNotifications =

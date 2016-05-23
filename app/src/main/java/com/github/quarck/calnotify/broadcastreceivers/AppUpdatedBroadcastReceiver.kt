@@ -25,7 +25,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.logs.Logger
 
-class BroadcastReceiverAppUpdated : BroadcastReceiver() {
+class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");

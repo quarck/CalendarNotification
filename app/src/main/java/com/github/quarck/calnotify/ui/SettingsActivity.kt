@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.preference.PreferenceActivity
 import com.github.quarck.calnotify.R
 
-class ActivitySettings : PreferenceActivity() {
+class SettingsActivity : PreferenceActivity() {
     @SuppressWarnings("deprecation")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,12 +1,12 @@
 //
-//   Calendar Notifications Plus  
+//   Calendar Notifications Plus
 //   Copyright (C) 2016 Sergey Parshin (s.parshin.sc@gmail.com)
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
 //   the Free Software Foundation; either version 3 of the License, or
 //   (at your option) any later version.
-// 
+//
 //   This program is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -25,14 +25,15 @@ import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.logs.Logger
 
-class BroadcastReceiverAlarm : BroadcastReceiver() {
+class TimeSetBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
-        EventsManager.onAlarm(context, intent);
+
+        logger.info("TimeChangedReceiver: onReceive")
+        EventsManager.onTimeChanged(context)
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverAlarm");
+        val logger = Logger("TimeChangedReceiver")
     }
 }
-

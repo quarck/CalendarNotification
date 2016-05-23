@@ -27,7 +27,7 @@ import android.view.View
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
 
-class ActivityHelpAndFeedback : Activity() {
+class HelpAndFeedbackActivity : Activity() {
     private var easterEggCount = 0;
     private var firstClick = 0L;
 
@@ -63,7 +63,7 @@ class ActivityHelpAndFeedback : Activity() {
 
         if (++easterEggCount > 13) {
             if (System.currentTimeMillis() - firstClick < 5000L) {
-                startActivity(Intent(this, ActivityTestButtonsAndToDo::class.java))
+                startActivity(Intent(this, TestButtonsAndToDoActivity::class.java))
             } else {
                 easterEggCount = 0;
                 firstClick = 0L;

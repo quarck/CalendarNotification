@@ -27,10 +27,10 @@ import android.os.IBinder
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.Logger
 
-class ServiceUINotifier : IntentService("ServiceUINotifier") {
+class UINotifierService : IntentService("ServiceUINotifier") {
     inner class ServiceBinder : Binder() {
-        val sevice: ServiceUINotifier
-            get() = this@ServiceUINotifier
+        val sevice: UINotifierService
+            get() = this@UINotifierService
     }
 
     private val binder = ServiceBinder()
@@ -73,7 +73,7 @@ class ServiceUINotifier : IntentService("ServiceUINotifier") {
             logger.debug("notifyUI called, isUserAction=$isUserAction")
 
             if (context != null) {
-                var serviceIntent = Intent(context, ServiceUINotifier::class.java)
+                var serviceIntent = Intent(context, UINotifierService::class.java)
                 serviceIntent.putExtra(Consts.INTENT_IS_USER_ACTION, isUserAction);
                 context.startService(serviceIntent)
             }

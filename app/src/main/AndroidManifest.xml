@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.ActivityMain"
+            android:name=".ui.MainActivity"
             android:label="@string/main_activity_title"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,19 +29,19 @@
         </activity>
 
         <activity
-            android:name=".ui.ActivitySettings"
+            android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
-            android:parentActivityName=".ui.ActivityMain">
+            android:parentActivityName=".ui.MainActivity">
         </activity>
 
         <activity
-            android:name=".ui.ActivityHelpAndFeedback"
+            android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
-            android:parentActivityName=".ui.ActivityMain">
+            android:parentActivityName=".ui.MainActivity">
         </activity>
 
         <activity
-            android:name=".ui.ActivitySnooze"
+            android:name=".ui.SnoozeActivity"
             android:label="@string/title_activity_activity_snooze"
             android:theme="@android:style/Theme.Holo.NoActionBar"
             android:noHistory="true"
@@ -50,22 +50,22 @@
         </activity>
 
         <activity
-            android:name=".ui.ActivityTestButtonsAndToDo"
+            android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do">
         </activity>
 
-        <service android:name=".notification.ServiceNotificationActionDismiss"/>
+        <service android:name=".notification.NotificationActionDismissService"/>
 
-        <service android:name=".ui.ServiceUINotifier"/>
+        <service android:name=".ui.UINotifierService"/>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverAppUpdated">
+        <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".broadcastreceivers.BroadcastReceiverBootComplete"
+            android:name=".broadcastreceivers.BootCompleteBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
@@ -77,7 +77,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverEventReminder">
+        <receiver android:name=".broadcastreceivers.EventReminderBroadcastReceiver">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
 
@@ -102,7 +102,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverCalendarChanged">
+        <receiver android:name=".broadcastreceivers.CalendarChangedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PROVIDER_CHANGED"/>
 
@@ -111,11 +111,11 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverAlarm"/>
+        <receiver android:name=".broadcastreceivers.AlarmBroadcastReceiver"/>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverReminderAlarm"/>
+        <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver"/>
 
-        <receiver android:name=".broadcastreceivers.BroadcastReceiverTimeSet">
+        <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>

@@ -27,7 +27,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.logs.Logger
 
-class BroadcastReceiverEventReminder : BroadcastReceiver() {
+class EventReminderBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null)
             return;

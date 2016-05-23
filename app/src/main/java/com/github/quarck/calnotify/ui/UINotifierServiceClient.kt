@@ -29,13 +29,13 @@ import com.github.quarck.calnotify.logs.Logger
 /**
  * Created by quarck on 14/02/16.
  */
-class ServiceUINotifierClient {
+class UINotifierServiceClient {
     private var isBound: Boolean = false
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             logger.debug("onServiceConnected");
 
-            val binder = service as ServiceUINotifier.ServiceBinder
+            val binder = service as UINotifierService.ServiceBinder
 
             binder.sevice.updateActivity = {
 
@@ -67,7 +67,7 @@ class ServiceUINotifierClient {
         if (!isBound) {
             logger.debug("binding service");
 
-            val intent = Intent(context, ServiceUINotifier::class.java)
+            val intent = Intent(context, UINotifierService::class.java)
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         } else {
             logger.debug("Service is already bound")

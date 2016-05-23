@@ -42,7 +42,7 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
-class ActivitySnooze : Activity() {
+class SnoozeActivity : Activity() {
     var eventId: Long = -1;
     var notificationId: Int = -1;
 

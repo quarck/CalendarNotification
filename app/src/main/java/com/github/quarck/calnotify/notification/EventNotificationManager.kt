@@ -35,8 +35,8 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.ui.ActivityMain
-import com.github.quarck.calnotify.ui.ActivitySnooze
+import com.github.quarck.calnotify.ui.MainActivity
+import com.github.quarck.calnotify.ui.SnoozeActivity
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.powerManager
 import java.util.*
@@ -407,7 +407,7 @@ class EventNotificationManager : IEventNotificationManager {
 
     private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
-        var intent = Intent(ctx, ActivitySnooze::class.java)
+        var intent = Intent(ctx, SnoozeActivity::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
@@ -415,7 +415,7 @@ class EventNotificationManager : IEventNotificationManager {
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
-        var intent = Intent(ctx, ServiceNotificationActionDismiss::class.java)
+        var intent = Intent(ctx, NotificationActionDismissService::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
@@ -456,7 +456,7 @@ class EventNotificationManager : IEventNotificationManager {
     ) {
         logger.debug("Posting collapsed view notification for ${events.size} events");
 
-        var intent = Intent(context, ActivityMain::class.java);
+        var intent = Intent(context, MainActivity::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         var title = java.lang.String.format(

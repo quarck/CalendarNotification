@@ -38,7 +38,7 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
-class ActivityTestButtonsAndToDo : Activity() {
+class TestButtonsAndToDoActivity : Activity() {
 
     private val settings by lazy { Settings(this) }
 
@@ -69,7 +69,7 @@ class ActivityTestButtonsAndToDo : Activity() {
 
 
     fun OnButtonTestActivityClick(v: View) {
-        startActivity(Intent(applicationContext, ActivitySnooze::class.java));
+        startActivity(Intent(applicationContext, SnoozeActivity::class.java));
     }
 
     fun randomTitle(currentTime: Long): String {

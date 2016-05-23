@@ -46,7 +46,7 @@ import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import java.util.*
 
-class ActivityMain : Activity() {
+class MainActivity : Activity() {
     private val settings: Settings by lazy { Settings(this) }
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
@@ -59,7 +59,7 @@ class ActivityMain : Activity() {
     private lateinit var presenter: EventsPresenter
 
 
-    private val svcClient by lazy { ServiceUINotifierClient() }
+    private val svcClient by lazy { UINotifierServiceClient() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,13 +198,13 @@ class ActivityMain : Activity() {
 
         when (item.itemId) {
             R.id.action_snooze_all ->
-                startActivity(Intent(this, ActivitySnooze::class.java))
+                startActivity(Intent(this, SnoozeActivity::class.java))
 
             R.id.action_settings ->
-                startActivity(Intent(this, ActivitySettings::class.java))
+                startActivity(Intent(this, SettingsActivity::class.java))
 
             R.id.action_feedback ->
-                startActivity(Intent(this, ActivityHelpAndFeedback::class.java))
+                startActivity(Intent(this, HelpAndFeedbackActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)
@@ -311,7 +311,7 @@ class ActivityMain : Activity() {
         var event = presenter.getEventAtPosition(position)
         if (event != null) {
             if (event.eventId == eventId) {
-                var intent = Intent(this, ActivitySnooze::class.java)
+                var intent = Intent(this, SnoozeActivity::class.java)
 
                 intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
                 intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);

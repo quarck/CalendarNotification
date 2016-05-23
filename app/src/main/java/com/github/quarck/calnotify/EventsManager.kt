@@ -23,7 +23,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.broadcastreceivers.BroadcastReceiverAlarm
+import com.github.quarck.calnotify.broadcastreceivers.AlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -32,7 +32,7 @@ import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.ui.ServiceUINotifier
+import com.github.quarck.calnotify.ui.UINotifierService
 import com.github.quarck.calnotify.utils.setExactCompat
 
 object EventsManager {
@@ -52,7 +52,7 @@ object EventsManager {
                             .min()
                 };
 
-        var intent = Intent(context, BroadcastReceiverAlarm::class.java);
+        var intent = Intent(context, AlarmBroadcastReceiver::class.java);
         var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
@@ -179,7 +179,7 @@ object EventsManager {
             scheduleNextAlarmForReminders(context);
 
             if (changes)
-                ServiceUINotifier.notifyUI(context, false);
+                UINotifierService.notifyUI(context, false);
         }
     }
 
@@ -191,7 +191,7 @@ object EventsManager {
             scheduleNextAlarmForReminders(context);
 
             if (changes)
-                ServiceUINotifier.notifyUI(context, false);
+                UINotifierService.notifyUI(context, false);
         }
     }
 
@@ -200,7 +200,7 @@ object EventsManager {
             var changes = reloadCalendar(context)
             if (changes) {
                 notificationManager.postEventNotifications(context, true, null);
-                ServiceUINotifier.notifyUI(context, false);
+                UINotifierService.notifyUI(context, false);
             }
         }
     }
@@ -213,7 +213,7 @@ object EventsManager {
         scheduleNextAlarmForEvents(context);
         scheduleNextAlarmForReminders(context);
 
-        ServiceUINotifier.notifyUI(context, false);
+        UINotifierService.notifyUI(context, false);
 
         logger.info("event added: ${event.eventId}");
     }
@@ -285,7 +285,7 @@ object EventsManager {
             scheduleNextAlarmForReminders(context);
 
             if (notifyActivity)
-                ServiceUINotifier.notifyUI(context, true);
+                UINotifierService.notifyUI(context, true);
         }
     }
 

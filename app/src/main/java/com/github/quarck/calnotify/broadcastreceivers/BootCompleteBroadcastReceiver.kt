@@ -25,14 +25,13 @@ import android.content.Intent
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.logs.Logger
 
-class BroadcastReceiverCalendarChanged : BroadcastReceiver() {
-
+class BootCompleteBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
-        EventsManager.onCalendarChanged(context, intent)
+        logger.debug("onReceive");
+        EventsManager.onBootComplete(context, intent)
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverCalendarChanged");
+        private val logger = Logger("BroadcastReceiverBootComplete");
     }
 }

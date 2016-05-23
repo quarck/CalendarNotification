@@ -24,7 +24,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.broadcastreceivers.BroadcastReceiverReminderAlarm
+import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.setExactCompat
@@ -37,7 +37,7 @@ object ReminderAlarm {
 
         logger.debug("Setting reminder alarm at ${nextMillis}")
 
-        val intent = Intent(context, BroadcastReceiverReminderAlarm::class.java)
+        val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
 
         val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -54,7 +54,7 @@ object ReminderAlarm {
 
         logger.debug("Cancelling reminder alarm")
 
-        val intent = Intent(context, BroadcastReceiverReminderAlarm::class.java)
+        val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
         val sender = PendingIntent.getBroadcast(context, 0, intent, 0)
 
         context.alarmManager.cancel(sender)

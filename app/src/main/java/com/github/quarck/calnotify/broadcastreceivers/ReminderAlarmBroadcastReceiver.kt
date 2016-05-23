@@ -39,7 +39,7 @@ import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.vibratorService
 import com.github.quarck.calnotify.utils.wakeLocked
 
-class BroadcastReceiverReminderAlarm : BroadcastReceiver() {
+class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 

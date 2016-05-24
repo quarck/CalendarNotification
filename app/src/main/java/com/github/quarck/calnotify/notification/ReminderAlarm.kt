@@ -46,17 +46,4 @@ object ReminderAlarm {
                 nextMillis,
                 pendIntent)
     }
-
-//    fun scheduleAlarmMillis(context: Context, nextMillis: Long) =
-//        scheduleAlarmMillisAt(context, System.currentTimeMillis() + nextMillis)
-
-    fun cancelAlarm(context: Context) {
-
-        logger.debug("Cancelling reminder alarm")
-
-        val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
-        val sender = PendingIntent.getBroadcast(context, 0, intent, 0)
-
-        context.alarmManager.cancel(sender)
-    }
 }

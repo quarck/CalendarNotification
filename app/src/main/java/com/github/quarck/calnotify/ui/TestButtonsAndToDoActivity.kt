@@ -126,28 +126,31 @@ class TestButtonsAndToDoActivity : Activity() {
 
         var first = (v.id == R.id.buttonTest);
 
-        var currentTime = System.currentTimeMillis();
+        if (first) {
+            settings.quietHoursOneTimeReminderEnabled = true
+            EventsManager.onAppResumed(this)
+        } else {
+            var currentTime = System.currentTimeMillis();
 
-        var eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
+            var eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
 
-        var event = EventRecord(
-            eventId,
-            System.currentTimeMillis(),
-            0,
-            if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-            currentTime + 3600L * 1000L,
-            currentTime + 2 * 3600L * 1000L,
-            if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
-            System.currentTimeMillis(),
-            0L,
-            EventDisplayStatus.Hidden,
-            0xffFFC107.toInt()
-        )
+            var event = EventRecord(
+                eventId,
+                System.currentTimeMillis(),
+                0,
+                if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
+                currentTime + 3600L * 1000L,
+                currentTime + 2 * 3600L * 1000L,
+                if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
+                System.currentTimeMillis(),
+                0L,
+                EventDisplayStatus.Hidden,
+                0xffFFC107.toInt()
+            )
 
-        cnt++;
+            cnt++;
 
-        EventsManager.onCalendarEventFired(this, event)
-
-//        EventNotificationManager().postEventNotifications(applicationContext, false, eventId);
+            EventsManager.onCalendarEventFired(this, event)
+        }
     }
 }

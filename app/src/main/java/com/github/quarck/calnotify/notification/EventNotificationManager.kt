@@ -26,12 +26,9 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.NotificationSettingsSnapshot
-import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.*
-import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -113,7 +110,6 @@ class EventNotificationManager : IEventNotificationManager {
             // events with snoozedUntil == 0 are currently visible ones
             // events with experied snoozedUntil are the ones to beep about
             // everything else should be hidden and waiting for the next alarm
-
 
             var activeEvents =
                 db.events
@@ -292,11 +288,11 @@ class EventNotificationManager : IEventNotificationManager {
             context.globalState.updateNotificationLastFiredTime();
 
         if (isQuietPeriodActive
+            && events.isNotEmpty()
             && !playedAnySound
             && !settings.quietHoursOneTimeReminderEnabled) {
 
-            logger.debug("We've just posted a a 'quiet' notification(s) due to quiet hours and user requested" +
-                " to notify about notifications on the end of quiet period, - arming one-shot reminder for that");
+            logger.debug("Would remind after snooze period");
 
             settings.quietHoursOneTimeReminderEnabled = true;
         }
@@ -325,7 +321,7 @@ class EventNotificationManager : IEventNotificationManager {
         var builder = Notification.Builder(ctx)
             .setContentTitle(event.title)
             .setContentText(notificationText)
-            .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
+            .setSmallIcon(R.drawable.stat_notify_calendar)
             .setPriority(
                 if (notificationSettings.headsUpNotification)
                     Notification.PRIORITY_HIGH
@@ -371,18 +367,23 @@ class EventNotificationManager : IEventNotificationManager {
         if (notificationSettings.ringtoneUri != null) {
             logger.debug("Adding ringtone uri ${notificationSettings.ringtoneUri}");
             builder.setSound(notificationSettings.ringtoneUri)
+        } else {
+            logger.debug("No ringtone for this notification")
         }
 
         if (notificationSettings.vibraOn) {
             logger.debug("adding vibration");
             builder.setVibrate(longArrayOf(0, Consts.VIBRATION_DURATION));
         } else {
+            logger.debug("no vibration")
             builder.setVibrate(longArrayOf(0));
         }
 
         if (notificationSettings.ledNotificationOn) {
             logger.debug("Adding leds")
             builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+        } else {
+            logger.debug("No leds")
         }
 
         var notification = builder.build()

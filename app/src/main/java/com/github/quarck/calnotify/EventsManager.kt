@@ -80,7 +80,7 @@ object EventsManager {
 
         var settings = Settings(context);
 
-        if (!settings.remindersEnabled || !settings.quietHoursOneTimeReminderEnabled)
+        if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
             return;
 
         val hasActiveNotifications =
@@ -91,15 +91,18 @@ object EventsManager {
                 }
 
         if (hasActiveNotifications) {
-            ReminderAlarm.cancelAlarm(context); // cancel existing to re-schedule
 
             val remindInterval = settings.remindersIntervalMillis
             var nextFire = System.currentTimeMillis() + remindInterval
 
+            if (settings.quietHoursOneTimeReminderEnabled)
+                nextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOULD
+
             val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
 
             if (quietUntil != 0L) {
-                logger.info("Reminder alarm moved from $nextFire to $quietUntil+15s due to silent period");
+                logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15}" +
+                    " due to silent period");
 
                 // give a little extra delay, so if events would fire precisely at the quietUntil,
                 // reminders would wait a bit longer
@@ -122,6 +125,7 @@ object EventsManager {
             logger.error("onAlarm: context is null");
         }
     }
+
 
     private fun reloadCalendar(context: Context): Boolean {
         var repostNotifications = false

@@ -51,9 +51,21 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
+            if (!EventsManager.hasActiveEvents(context))
+                return@wakeLocked
+
             val settings = Settings(context)
 
-            if (settings.remindersEnabled && EventsManager.hasActiveEvents(context)) {
+            if (settings.quietHoursOneTimeReminderEnabled) {
+                val silentUntil = QuietHoursManager.getSilentUntil(settings)
+                if (silentUntil == 0L) {
+                    logger.debug("one-shot reminder is enabled and we've left quiet hours - fire reminder")
+                    fireReminder(context, System.currentTimeMillis(), settings)
+                } else {
+                    logger.debug("one-shot reminder is enabled but we are still inside quiet hours - snoozed until $silentUntil")
+                    ReminderAlarm.scheduleAlarmMillisAt(context, silentUntil)
+                }
+            } else if (settings.remindersEnabled) {
 
                 logger.debug("Reminders are enabled and have something to remind about")
 

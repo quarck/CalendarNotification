@@ -144,7 +144,7 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
     var quietHoursOneTimeReminderEnabled: Boolean
-        get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, true)
+        get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
         set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot

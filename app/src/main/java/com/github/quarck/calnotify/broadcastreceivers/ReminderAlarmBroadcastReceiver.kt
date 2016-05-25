@@ -56,60 +56,73 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
             val settings = Settings(context)
 
+            val reminderInterval = settings.remindersIntervalMillis
+            val currentTime = System.currentTimeMillis()
+
+            val silentUntil = QuietHoursManager.getSilentUntil(settings)
+
+            var nextFireAt = 0L
+            var shouldFire = false
+
             if (settings.quietHoursOneTimeReminderEnabled) {
-                val silentUntil = QuietHoursManager.getSilentUntil(settings)
+
                 if (silentUntil == 0L) {
-                    logger.debug("one-shot reminder is enabled and we've left quiet hours - fire reminder")
-                    fireReminder(context, System.currentTimeMillis(), settings)
+                    logger.debug("One-shot enabled, not in quiet hours, firing")
+
+                    shouldFire = true
+
+                    // Check if regular reminders are enabled and schedule reminder if necessary
+                    if (settings.remindersEnabled) {
+                        logger.debug("Regular reminders enabled, arming")
+                        nextFireAt = currentTime + reminderInterval
+                    }
+
                 } else {
-                    logger.debug("one-shot reminder is enabled but we are still inside quiet hours - snoozed until $silentUntil")
-                    ReminderAlarm.scheduleAlarmMillisAt(context, silentUntil)
+                    logger.debug("One-shot enabled, inside quiet hours, postpone until $silentUntil")
+                    nextFireAt = silentUntil
                 }
+
             } else if (settings.remindersEnabled) {
 
-                logger.debug("Reminders are enabled and have something to remind about")
+                logger.debug("Reminders are enabled")
 
-                val currentTime = System.currentTimeMillis()
-
-                val lastReminder = context.globalState.reminderLastFireTime
-                val lastNotification = context.globalState.notificationLastFireTime
-                val interval = settings.remindersIntervalMillis
-
-                val lastFireTime = Math.max(lastNotification, lastReminder);
+                val sinceLastFire =
+                    currentTime - Math.max( context.globalState.notificationLastFireTime,
+                            context.globalState.reminderLastFireTime);
 
                 val numRemindersFired = context.globalState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
-                val silentUntil = QuietHoursManager.getSilentUntil(settings)
-
                 if (maxFires == 0 || numRemindersFired <= maxFires) {
 
-                    val sinceLastFire = currentTime - lastFireTime;
-
                     if (silentUntil != 0L) {
-                        logger.debug("Received reminder alarm but we are in a quiet range, postponed until $silentUntil");
-                        ReminderAlarm.scheduleAlarmMillisAt(context, silentUntil)
-                    } else if (sinceLastFire < interval - Consts.ALARM_THRESHOULD)  {
+                        logger.debug("Reminder postponed until $silentUntil due to quiet hours");
+                        nextFireAt = silentUntil
 
+                    } else if (sinceLastFire < reminderInterval - Consts.ALARM_THRESHOULD)  {
                         // Schedule actual time to fire based on how long ago we have fired
-                        val leftMillis = interval - sinceLastFire;
-                        ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + leftMillis)
+                        val leftMillis = reminderInterval - sinceLastFire;
+                        logger.debug("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOULD}, left: ${leftMillis}");
+                        nextFireAt = currentTime + leftMillis
 
-                        logger.debug("Seen alarm to early: sinceLastFire=${sinceLastFire/1000}, interval=${interval/1000}, thr=${Consts.ALARM_THRESHOULD/1000}, left=${leftMillis/1000}, re-schedule and go back");
                     } else {
-                        // Should schedule next alarm
-                        ReminderAlarm.scheduleAlarmMillisAt(context, currentTime + interval)
-                        // OK ot fire
-                        fireReminder(context, currentTime, settings)
+                        logger.debug("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}")
 
-                        logger.debug("Alarm fired, since last fire: ${sinceLastFire/1000L}, interval ${interval/1000L}")
+                        nextFireAt = currentTime + reminderInterval
+                        shouldFire = true
                     }
                 } else {
-                    logger.debug("Exceeded max numer of fires, maxFires=$maxFires, numRemindersFired=$numRemindersFired")
+                    logger.debug("Exceeded max fires $maxFires, fired $numRemindersFired times")
                 }
             } else {
-                logger.debug("Reminders are disabled or nothing to remind about, received this by error")
+                logger.debug("Reminders are disabled")
             }
+
+            if (nextFireAt != 0L)
+                ReminderAlarm.scheduleAlarmMillisAt(context, nextFireAt)
+
+            if (shouldFire)
+                fireReminder(context, currentTime, settings)
         }
     }
 

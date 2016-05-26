@@ -96,8 +96,42 @@ class EventsStorage(context: Context)
         updateEvent(newEvent)
     }
 
+    fun updateEvents(events: List<EventRecord>,
+                    alertTime: Long? = null,
+                    title: String? = null,
+                    snoozedUntil: Long? = null,
+                    startTime: Long? = null,
+                    endTime: Long? = null,
+                    location: String? = null,
+                    lastEventVisibility: Long? = null,
+                    displayStatus: EventDisplayStatus? = null,
+                    color: Int? = null
+    ) {
+        var newEvents =
+            events.map {
+                event ->
+                event.copy(
+                        alertTime = alertTime ?: event.alertTime,
+                        title = title ?: event.title,
+                        snoozedUntil = snoozedUntil ?: event.snoozedUntil,
+                        startTime = startTime ?: event.startTime,
+                        endTime = endTime ?: event.endTime,
+                        location = location ?: event.location,
+                        lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                        displayStatus = displayStatus ?: event.displayStatus,
+                        color = color ?: event.color )
+                }
+
+        updateEvents(newEvents)
+    }
+
+
+
     fun updateEvent(event: EventRecord)
             = synchronized(EventsStorage::class.java) { updateEventImpl(event) }
+
+    fun updateEvents(events: List<EventRecord>)
+        = synchronized(EventsStorage::class.java) { updateEventsImpl(events) }
 
     fun getEvent(eventId: Long): EventRecord?
             = synchronized(EventsStorage::class.java) { return getEventImpl(eventId) }
@@ -110,6 +144,9 @@ class EventsStorage(context: Context)
 
     val events: List<EventRecord>
         get() = synchronized(EventsStorage::class.java) { return eventsImpl }
+
+    fun getActiveEvents(currentTime: Long, threshold: Long): List<EventRecord>
+        = synchronized(EventsStorage::class.java) { return getActiveEventsImpl(currentTime, threshold) }
 
     override fun close() {
         super.close();
@@ -212,6 +249,23 @@ class EventsStorage(context: Context)
         db.close()
     }
 
+    private fun updateEventsImpl(events: List<EventRecord>) {
+        val db = this.writableDatabase
+
+        logger.debug("Updating ${events.size} events");
+
+        for (event in events) {
+            val values = eventRecordToContentValues(event)
+
+            db.update(TABLE_NAME, // table
+                values, // column/value
+                KEY_EVENTID + " = ?", // selections
+                arrayOf<String>(event.eventId.toString())) // selection args
+        }
+
+        db.close()
+    }
+
     private fun nextNotificationId(): Int {
         var ret = 0;
 
@@ -286,6 +340,35 @@ class EventsStorage(context: Context)
 
             return ret
         }
+
+    fun getActiveEventsImpl(currentTime: Long, threshold: Long): List<EventRecord> {
+
+        val ret = LinkedList<EventRecord>()
+
+        val timePlusThr = currentTime + threshold
+
+        val query = "SELECT * FROM $TABLE_NAME " +
+            "WHERE ($KEY_SNOOZED_UNTIL = 0) OR ($KEY_SNOOZED_UNTIL < $timePlusThr) " +
+            "ORDER BY $KEY_LAST_EVENT_FIRE"
+
+        val db = this.readableDatabase
+
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                ret.add(cursorToEventRecord(cursor))
+            } while (cursor.moveToNext())
+
+        }
+        cursor.close()
+
+        logger.debug("getActiveEventsImpl, returning ${ret.size} events")
+
+        return ret
+    }
+
+
 
     private fun deleteEventImpl(eventId: Long) {
         val db = this.writableDatabase

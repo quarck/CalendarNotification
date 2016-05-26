@@ -191,6 +191,7 @@ object EventsManager {
         if (context != null) {
             var changes = reloadCalendar(context);
             notificationManager.postEventNotifications(context, true, null);
+
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
 
@@ -204,6 +205,10 @@ object EventsManager {
             var changes = reloadCalendar(context)
             if (changes) {
                 notificationManager.postEventNotifications(context, true, null);
+
+                scheduleNextAlarmForEvents(context);
+                scheduleNextAlarmForReminders(context);
+
                 UINotifierService.notifyUI(context, false);
             }
         }

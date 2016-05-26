@@ -111,6 +111,7 @@ class EventNotificationManager : IEventNotificationManager {
             // events with experied snoozedUntil are the ones to beep about
             // everything else should be hidden and waiting for the next alarm
 
+
             var activeEvents =
                 db.events
                     .filter {
@@ -177,10 +178,11 @@ class EventNotificationManager : IEventNotificationManager {
                 logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed");
             }
 
-            // Do not update lastEventVisibility for collapsing events - it is not actually truly visible
-            db.updateEvent(event,
-                displayStatus = EventDisplayStatus.DisplayedCollapsed,
-                snoozedUntil = 0L);
+            if (event.displayStatus != EventDisplayStatus.DisplayedCollapsed || event.snoozedUntil != 0L) {
+                db.updateEvent(event,
+                    displayStatus = EventDisplayStatus.DisplayedCollapsed,
+                    snoozedUntil = 0L)
+            }
         }
 
         if (!events.isEmpty())

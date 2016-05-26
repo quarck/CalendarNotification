@@ -130,6 +130,8 @@ object EventsManager {
     private fun reloadCalendar(context: Context): Boolean {
         var repostNotifications = false
 
+        val notificationStateTracker = context.globalState.notificationStateTracker
+
         EventsStorage(context).use {
             db ->
 
@@ -149,8 +151,8 @@ object EventsManager {
                         // Here we have a confirmation that event was re-scheduled by user
                         // to some time in the future and that's why original event instance has disappeared
                         // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, db, event.eventId, event.notificationId, true);
-                        var movedSec = (newEvent.startTime - event.startTime) / 1000L
+                        dismissEvent(context, db, event.eventId, notificationStateTracker.getNotificationId(event.eventId), true);
+                        val movedSec = (newEvent.startTime - event.startTime) / 1000L
                         logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                     } else {
                         // Here we can't confrim that event was moved into the future.
@@ -244,7 +246,9 @@ object EventsManager {
         else
             EventsStorage(context).use { it.updateEvent(event) }
 
-        notificationManager.onEventSnoozed(context, event.eventId, event.notificationId);
+        val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
+
+        notificationManager.onEventSnoozed(context, event.eventId, notificationStateTracker.getNotificationId(event.eventId));
 
         scheduleNextAlarmForEvents(context);
         scheduleNextAlarmForReminders(context);
@@ -300,8 +304,10 @@ object EventsManager {
 
     fun dismissEvent(context: Context?, event: EventRecord) {
         if (context != null) {
+            val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
+
             EventsStorage(context).use {
-                dismissEvent(context, it, event.eventId, event.notificationId, false)
+                dismissEvent(context, it, event.eventId, notificationStateTracker.getNotificationId(event.eventId), false)
             }
         }
     }

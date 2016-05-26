@@ -137,14 +137,14 @@ class TestButtonsAndToDoActivity : Activity() {
             var event = EventRecord(
                 eventId,
                 System.currentTimeMillis(),
-                0,
+                //0,
                 if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
                 System.currentTimeMillis(),
                 0L,
-                EventDisplayStatus.Hidden,
+                //EventDisplayStatus.Hidden,
                 0xffFFC107.toInt()
             )
 

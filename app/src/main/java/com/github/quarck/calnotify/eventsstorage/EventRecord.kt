@@ -32,14 +32,14 @@ enum class EventDisplayStatus(val code: Int) {
 data class EventRecord(
         val eventId: Long,
         val alertTime: Long,
-        var notificationId: Int,
+        /// var notificationId: Int,
         var title: String,
         var startTime: Long,
         var endTime: Long,
         var location: String,
         var lastEventVisibility: Long,
         var snoozedUntil: Long = 0,
-        var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
+        // var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
         var color: Int = 0
 ) {
     fun updateFrom(newEvent: EventRecord): Boolean {

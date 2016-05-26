@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.utils
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.media.AudioManager
@@ -41,6 +42,9 @@ val Context.powerManager: PowerManager
 
 val Context.vibratorService: Vibrator
     get() = service(Context.VIBRATOR_SERVICE)
+
+val Context.notificationManager: NotificationManager
+    get() = service(Context.NOTIFICATION_SERVICE)
 
 fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit) {
 

@@ -64,14 +64,14 @@ object CalendarUtils {
         var event =
                 EventRecord(
                         eventId = eventId,
-                        notificationId = 0,
+                        //notificationId = 0,
                         alertTime = alarmTime ?: newAlarmTime ?: 0,
                         title = title,
                         startTime = start,
                         endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
                         location = location ?: "",
                         lastEventVisibility = 0L,
-                        displayStatus = EventDisplayStatus.Hidden,
+                        //displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
                 );
 

@@ -22,11 +22,14 @@ package com.github.quarck.calnotify
 
 import android.app.Application
 import android.content.Context
+import com.github.quarck.calnotify.notification.NotificationStateTracker
 
 class GlobalState : Application() {
 	var reminderLastFireTime: Long = 0
 	var notificationLastFireTime: Long = 0
 	var numRemindersFired: Int = 0
+
+	var notificationStateTracker = NotificationStateTracker()
 
 	fun updateNotificationLastFiredTime() {
 		notificationLastFireTime = System.currentTimeMillis()

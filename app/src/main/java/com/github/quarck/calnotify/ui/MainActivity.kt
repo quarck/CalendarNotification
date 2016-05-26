@@ -313,7 +313,8 @@ class MainActivity : Activity() {
             if (event.eventId == eventId) {
                 var intent = Intent(this, SnoozeActivity::class.java)
 
-                intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
+                intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY,
+                    globalState.notificationStateTracker.getNotificationId(event.eventId));
                 intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
 
                 startActivity(intent);
@@ -331,7 +332,7 @@ class MainActivity : Activity() {
         var event = presenter.getEventAtPosition(position)
         if (event != null) {
             if (event.eventId == eventId) {
-                logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+                logger.debug("Removing event id ${event.eventId} from DB and dismissing notification")
 
                 EventsManager.dismissEvent(this, event);
                 logger.info("ActivityMain: Event dismissed by user: ${event.title}")

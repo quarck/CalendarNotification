@@ -47,7 +47,6 @@ class EventsStorage(context: Context)
         var ret =
                 EventRecord(
                         eventId = eventId,
-                        notificationId = 0,
                         alertTime = alertTime,
                         title = title,
 //                        description = description,
@@ -55,7 +54,6 @@ class EventsStorage(context: Context)
                         endTime = endTime,
                         location = location,
                         lastEventVisibility = lastEventVisibility,
-                        displayStatus = displayStatus,
                         color = color
                 )
 
@@ -77,7 +75,6 @@ class EventsStorage(context: Context)
                     endTime: Long? = null,
                     location: String? = null,
                     lastEventVisibility: Long? = null,
-                    displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
     ) {
         var newEvent =
@@ -89,7 +86,6 @@ class EventsStorage(context: Context)
                         endTime = endTime ?: event.endTime,
                         location = location ?: event.location,
                         lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
-                        displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color
                 );
 
@@ -104,7 +100,6 @@ class EventsStorage(context: Context)
                     endTime: Long? = null,
                     location: String? = null,
                     lastEventVisibility: Long? = null,
-                    displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
     ) {
         var newEvents =
@@ -118,7 +113,6 @@ class EventsStorage(context: Context)
                         endTime = endTime ?: event.endTime,
                         location = location ?: event.location,
                         lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
-                        displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color )
                 }
 
@@ -208,9 +202,6 @@ class EventsStorage(context: Context)
     private fun addEventImpl(event: EventRecord) {
         logger.debug("addEvent " + event.eventId)
 
-        if (event.notificationId == 0)
-            event.notificationId = nextNotificationId();
-
         val db = this.writableDatabase
 
         val values = eventRecordToContentValues(event, true)
@@ -226,9 +217,6 @@ class EventsStorage(context: Context)
             db.close()
 
             logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
-
-            // persist original notification id in this case
-            event.notificationId = getEventImpl(event.eventId)?.notificationId ?: event.notificationId;
 
             updateEventImpl(event)
         }
@@ -264,33 +252,6 @@ class EventsStorage(context: Context)
         }
 
         db.close()
-    }
-
-    private fun nextNotificationId(): Int {
-        var ret = 0;
-
-        val db = this.readableDatabase
-
-        val query = "SELECT MAX(${KEY_NOTIFICATIONID}) FROM " + TABLE_NAME
-
-        val cursor = db.rawQuery(query, null)
-
-        if (cursor != null && cursor.moveToFirst()) {
-            try {
-                ret = cursor.getString(0).toInt() + 1
-            } catch (ex: Exception) {
-                ret = 0;
-            }
-        }
-
-        cursor?.close()
-
-        if (ret == 0)
-            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
-
-        logger.debug("nextNotificationId, returning $ret")
-
-        return ret
     }
 
     private fun getEventImpl(eventId: Long): EventRecord? {
@@ -388,7 +349,7 @@ class EventsStorage(context: Context)
         if (includeId)
             values.put(KEY_EVENTID, event.eventId);
 
-        values.put(KEY_NOTIFICATIONID, event.notificationId);
+        values.put(KEY_NOTIFICATIONID, 0);
         values.put(KEY_TITLE, event.title);
         values.put(KEY_DESC, ""); // we have no description anymore
         values.put(KEY_START, event.startTime);
@@ -396,7 +357,7 @@ class EventsStorage(context: Context)
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
         values.put(KEY_LAST_EVENT_FIRE, event.lastEventVisibility);
-        values.put(KEY_IS_DISPLAYED, event.displayStatus.code);
+        values.put(KEY_IS_DISPLAYED, 0);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_ALERT_TIME, event.alertTime)
 
@@ -407,7 +368,7 @@ class EventsStorage(context: Context)
 
         return EventRecord(
                 eventId = cursor.getLong(0),
-                notificationId = cursor.getInt(1),
+//                notificationId = cursor.getInt(1),
                 title = cursor.getString(2),
 //                description = cursor.getString(3),
                 startTime = cursor.getLong(4),
@@ -415,7 +376,7 @@ class EventsStorage(context: Context)
                 location = cursor.getString(6),
                 snoozedUntil = cursor.getLong(7),
                 lastEventVisibility = cursor.getLong(8),
-                displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
+  //              displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
                 color = cursor.getInt(10),
                 alertTime = cursor.getLong(11)
         )

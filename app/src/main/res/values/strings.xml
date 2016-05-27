@@ -8,39 +8,15 @@
     <string name="settings">Settings</string>
     <string name="application_has_no_access">This application needs special permissions to be able to access calendar notifications\n\nPlease grant READ_CALENDAR and WRITE_CALENDAR permissions\n\nWRITE_CALENDAR is required to hide original calendar notification</string>
 
-    <string name="open_settings">Open Settings</string>
     <string name="cancel">Cancel</string>
 
-    <!-- string name="app_updated">App Updated</string -->
     <string name="on">Enabled</string>
     <string name="off">Disabled</string>
 
     <string name="empty" translatable="false"></string>
-    <string name="middle_text_description">Enable the app to make Google Calendar event notifications persistent:</string>
-
-    <string name="expl_text2">This app works by replacing Calendar notification with identical looking persistent notifications that would stay in the status bar until dismissed manually</string>
-
-    <string name="no_calendar_reminders">Please note that only event notifications are handled\nThere is no need to handle reminder notification (they don\'t disappear)</string>
-
-    <string name="why_question_mark">(Why?)</string>
-
-    <string name="why2_question_mark">(Why?)</string>
-
-    <string name="sticky_cal_error_title">Calendar Notification Error</string>
-
-    <string name="sticky_cal_error">Can\'t receive original event information</string>
-
-    <string name="rationale">Why this app?\nThis is because Google Calendar Notification would only stay for about an hour and then they disappear.\nNot everyone likes this behavior.\n\nHow it works?\nThis app would catch all notifications from Google Calendar and will replace them with identical notifications that would open the same event when clicked</string>
-
-    <string name="rationale2">Why reminders are not handled?\nUnfortunately format of the notification is different from regular events and they are less documented\nAt this moment it is safer to don\'t handle them\n\nThere is no need actually - they would stay until marked as \'DONE\'</string>
-
-    <!-- string name="explanationAboutRestart">On some android systems it might require to enable access to notifications again after app was updated. Please click on "Enable" twice (so to disable and enable it back) and app will do all necessary checks to verify if access is required</string -->
 
     <string name="dismiss">Dismiss</string>
     <string name="snooze">Snooze</string>
-
-    <string name="access_lost">Access to notifications lost</string>
-    <string name="reenable_app">Please re-enable access to notifications to enable functionality of the app</string>
 
     <string name="show_dismiss_button">Show \'Dismiss\' button</string>
     <string name="show_dismiss_summary">The \'Dismiss\' action will be displayed with each notification, notification then can only be dismissed with this button</string>
@@ -62,9 +38,6 @@
 
     <string name="help_title">If you found a bug, have a question or want to suggest a feature or give a feedback - please contact developer via email.\n\nPlease don\'t expect instant response. I\'m developing this application in my free time and can only respond when I have time for that</string>
     <string name="email_developer">EMAIL DEVELOPER</string>
-
-    <string name="internal_error">Internal Error</string>
-    <string name="internal_error_text">Please open Calendar and ensure you didn\'t miss any events</string>
 
     <string name="forward_to_pebble">Forward to Pebble</string>
     <string name="forward_to_pebble_summary">If you have Pebble Smart Watch - this will enable app to forward notifications to your Pebble</string>

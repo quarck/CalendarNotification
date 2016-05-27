@@ -44,7 +44,6 @@ import com.github.quarck.calnotify.utils.find
 
 class SnoozeActivity : Activity() {
     var eventId: Long = -1;
-    var notificationId: Int = -1;
 
     lateinit var snoozePresets: LongArray
 
@@ -92,9 +91,9 @@ class SnoozeActivity : Activity() {
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
-            var snoozeLable = find<TextView>(id);
-            var quietTimeNotice = find<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
-            var quietTimeNoticeBaseline = find<TextView>(baselineIds[idx])
+            val snoozeLable = find<TextView>(id);
+            val quietTimeNotice = find<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
+            val quietTimeNoticeBaseline = find<TextView>(baselineIds[idx])
 
             if (idx < snoozePresets.size) {
                 snoozeLable.text = formatPreset(snoozePresets[idx])
@@ -113,37 +112,36 @@ class SnoozeActivity : Activity() {
         }
 
         // Populate event details
-        notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
-        var event = EventsStorage(this).use { it.getEvent(eventId) }
+        val event = EventsStorage(this).use { it.getEvent(eventId) }
 
         if (eventId != -1L && event != null) {
-            var title =
+            val title =
                     if (event.title == "")
                         this.resources.getString(R.string.empty_title)
                     else
                         event.title;
 
-            var (date, time) = event.formatTime(this);
+            val (date, time) = event.formatTime(this);
 
-            var location = event.location;
+            val location = event.location;
             if (location != "") {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
-                var locationView = find<TextView>(R.id.snooze_view_location)
+                val locationView = find<TextView>(R.id.snooze_view_location)
                 locationView.text = location;
                 locationView.setOnClickListener { MapsUtils.openLocation(this, event.location) }
             }
 
             find<TextView>(R.id.snooze_view_title).text = title;
 
-            var dateView = find<TextView>(R.id.snooze_view_event_date)
-            var timeView = find<TextView>(R.id.snooze_view_event_time)
+            val dateView = find<TextView>(R.id.snooze_view_event_date)
+            val timeView = find<TextView>(R.id.snooze_view_event_time)
 
             dateView.text = date;
             timeView.text = time;
 
-            var onClick = View.OnClickListener { CalendarUtils.editCalendarEvent(this, eventId) }
+            val onClick = View.OnClickListener { CalendarUtils.editCalendarEvent(this, eventId) }
 
             dateView.setOnClickListener(onClick)
             timeView.setOnClickListener(onClick)
@@ -154,7 +152,7 @@ class SnoozeActivity : Activity() {
                 color = resources.getColor(R.color.primary)
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
 
-            var isRepeating = CalendarUtils.isRepeatingEvent(this, event)
+            val isRepeating = CalendarUtils.isRepeatingEvent(this, event)
             if (isRepeating != null && !isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
 
@@ -209,70 +207,47 @@ class SnoozeActivity : Activity() {
         CalendarUtils.viewCalendarEvent(this, eventId);
     }
 
-    private fun snoozeEvent(presetIdx: Int) {
-        var snoozeDelay = snoozePresets[presetIdx];
-
-        var quietUntil = 0L
-
-        if (notificationId != -1 && eventId != -1L) {
-
-            logger.debug("Snoozing event id ${eventId}, snoozeDelay=${snoozeDelay / 1000L}")
-
-            EventsStorage(this).use {
-                storage ->
-                var event = storage.getEvent(eventId)
-                if (event != null) {
-                    EventsManager.snoozeEvent(this, event, snoozeDelay, storage, { qt -> quietUntil = qt });
-                    finish();
-                } else {
-                    logger.error("Error: can't get event from DB");
-                }
-            }
-
-        } else {
-
-            AlertDialog.Builder(this)
-                    .setMessage(R.string.snooze_all_confirmation)
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.yes) {
-                        x, y ->
-
-                        logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
-
-                        EventsStorage(this).use {
-                            storage ->
-
-                            var events = storage.events
-
-                            // Don't allow events to have exactly the same "quietUntil", so to have
-                            // predicted sorting order, so add a tiny (less than 0.1s) adjust to each
-                            // snoozed time
-
-                            var snoozeAdjust = 0L
-
-                            for (event in events) {
-                                EventsManager.snoozeEvent(this, event, snoozeDelay + snoozeAdjust, storage,
-                                    { qt -> quietUntil = qt });
-                                ++snoozeAdjust
-                            }
-                        }
-
-                        finish();
-                    }
-                    .setNegativeButton(R.string.cancel) {
-                        x, y ->
-                    }
-                    .create()
-                    .show()
-        }
-
+    private fun toastAboutQuietTime(quietUntil: Long) {
         if (quietUntil != 0L) {
             val msg =
-                    String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
-                            DateUtils.formatDateTime(this, quietUntil,
-                                            DateUtils.FORMAT_SHOW_TIME or
-                                            DateUtils.FORMAT_SHOW_DATE))
+                String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
+                    DateUtils.formatDateTime(this, quietUntil,
+                        DateUtils.FORMAT_SHOW_TIME or
+                            DateUtils.FORMAT_SHOW_DATE))
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private fun snoozeEvent(presetIdx: Int) {
+        val snoozeDelay = snoozePresets[presetIdx];
+
+        if (eventId != -1L) {
+            logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
+
+            val (isQuiet, nextFire) = EventsManager.snoozeEvent(this, eventId, snoozeDelay);
+            if (isQuiet)
+                toastAboutQuietTime(nextFire)
+
+            finish();
+        } else {
+            AlertDialog.Builder(this)
+                .setMessage(R.string.snooze_all_confirmation)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes) {
+                    x, y ->
+
+                    logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
+
+                    val (isQuiet, nextFire) = EventsManager.snoozeAllEvents(this, snoozeDelay);
+                    if (isQuiet)
+                        toastAboutQuietTime(nextFire)
+                    finish();
+                }
+                .setNegativeButton(R.string.cancel) {
+                    x, y ->
+                }
+                .create()
+                .show()
         }
     }
 
@@ -290,22 +265,23 @@ class SnoozeActivity : Activity() {
 
     fun reschedule(addTime: Long) {
 
-        var event = EventsStorage(this).use { it.getEvent(eventId) }
+        val event = EventsStorage(this).use { it.getEvent(eventId) }
 
         if (event != null) {
 
             logger.info("Moving event ${event.eventId} by ${addTime/1000L} seconds");
 
-            var moved = CalendarUtils.moveEvent(this, event, addTime)
+            val moved = CalendarUtils.moveEvent(this, event, addTime)
+
             if (moved) {
+
                 logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                EventsManager.dismissEvent(this, eventId, notificationId)
+                EventsManager.dismissEvent(this, eventId)
 
-                if (Settings(this).viewAfterEdit) {
-                    // Show
+                // Show
+                if (Settings(this).viewAfterEdit)
                     CalendarUtils.viewCalendarEvent(this, event.eventId)
-                }
 
                 // terminate ourselves
                 finish();

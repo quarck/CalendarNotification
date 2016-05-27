@@ -28,24 +28,27 @@ import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.*
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
+import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.eventsstorage.formatText
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivity
-import com.github.quarck.calnotify.utils.audioManager
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.notificationManager
 import com.github.quarck.calnotify.utils.powerManager
-import java.util.*
 
 interface IEventNotificationManager {
     fun onEventAdded(ctx: Context, event: EventRecord);
 
-    fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int);
+    fun onEventDismissed(ctx: Context, eventId: Long);
 
-    fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int);
+    fun onEventSnoozed(ctx: Context, eventId: Long);
+
+    fun onAllEventsSnoozed(ctx: Context)
 
     fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?);
 
@@ -68,16 +71,22 @@ class EventNotificationManager : IEventNotificationManager {
         postEventNotifications(ctx, false, event.eventId);
     }
 
-    override fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int) {
+    override fun onEventDismissed(ctx: Context, eventId: Long) {
         //
+        val notificationId = ctx.globalState.notificationStateTracker.getNotificationId(eventId)
         removeNotification(ctx, eventId, notificationId);
         postEventNotifications(ctx, false, null);
     }
 
-    override fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int) {
+    override fun onEventSnoozed(ctx: Context, eventId: Long) {
         //
+        val notificationId = ctx.globalState.notificationStateTracker.getNotificationId(eventId)
         removeNotification(ctx, eventId, notificationId);
         postEventNotifications(ctx, false, null);
+    }
+
+    override fun onAllEventsSnoozed(ctx: Context) {
+        ctx.notificationManager.cancelAll()
     }
 
     fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
@@ -98,14 +107,17 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?) {
         //
-        var settings = Settings(context)
+        val settings = Settings(context)
 
-        var currentTime = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
 
-        var isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+        val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
 
         var postedAnyNotification = false
 
+        // If our notification id / state tracker is currently empty -- cancel any possible
+        // notifications left from the previous instance of the application, so avoid mis-matches
+        // between ids
         if (context.globalState.notificationStateTracker.isEmpty)
             context.notificationManager.cancelAll()
 
@@ -116,8 +128,7 @@ class EventNotificationManager : IEventNotificationManager {
             // events with experied snoozedUntil are the ones to beep about
             // everything else should be hidden and waiting for the next alarm
 
-
-            var activeEvents =
+            val activeEvents =
                 db.events
                     .filter {
                         (it.snoozedUntil == 0L)
@@ -125,8 +136,8 @@ class EventNotificationManager : IEventNotificationManager {
                     }
                     .sortedBy { it.lastEventVisibility }
 
-            var recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
-            var olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
+            val recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
+            val olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
 
             postedAnyNotification =
                 postDisplayedEventNotifications(
@@ -145,7 +156,7 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun fireEventReminder(context: Context) {
 
-        var mostRecentEvent =
+        val mostRecentEvent =
             EventsStorage(context).use {
                 db ->
                 db.events
@@ -155,7 +166,7 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (mostRecentEvent != null) {
 
-            var settings = Settings(context)
+            val settings = Settings(context)
 
             postNotification(
                 context,
@@ -173,12 +184,10 @@ class EventNotificationManager : IEventNotificationManager {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
-        var currentTime = System.currentTimeMillis()
-
-        val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
+        val notificationStateTracker = context.globalState.notificationStateTracker
 
         for (event in events) {
-            val state = notificationStateTracker[event.eventId]
+            val state = notificationStateTracker[event]
 
             if ((state.displayStatus != EventDisplayStatus.Hidden) || force) {
                 logger.debug("Hiding notification id ${state.notificationId}, eventId ${event.eventId}")
@@ -213,18 +222,18 @@ class EventNotificationManager : IEventNotificationManager {
 
         logger.debug("Posting ${events.size} notifications");
 
-        var notificationsSettings = settings.notificationSettingsSnapshot
+        val notificationsSettings = settings.notificationSettingsSnapshot
 
-        var notificationsSettingsQuiet =
+        val notificationsSettingsQuiet =
             notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
 
         var postedNotification = false
         var playedAnySound = false
 
-        val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
+        val notificationStateTracker = context.globalState.notificationStateTracker
 
         for (event in events) {
-            val state = notificationStateTracker[event.eventId]
+            val state = notificationStateTracker[event]
 
             if (event.snoozedUntil == 0L) {
                 // snooze zero could mean
@@ -319,20 +328,20 @@ class EventNotificationManager : IEventNotificationManager {
         event: EventRecord,
         notificationSettings: NotificationSettingsSnapshot
     ) {
-        var notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        var calendarIntent = CalendarUtils.getCalendarViewIntent(event.eventId);
+        val calendarIntent = CalendarUtils.getCalendarViewIntent(event.eventId);
         //calendarIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         //var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
 
-        var calendarPendingIntent =
+        val calendarPendingIntent =
             TaskStackBuilder.create(ctx)
                 .addNextIntentWithParentStack(calendarIntent)
                 .getPendingIntent(0, 0)//PendingIntent.FLAG_UPDATE_CURRENT);
 
-        var notificationText = event.formatText(ctx);
+        val notificationText = event.formatText(ctx);
 
-        var builder = Notification.Builder(ctx)
+        val builder = Notification.Builder(ctx)
             .setContentTitle(event.title)
             .setContentText(notificationText)
             .setSmallIcon(R.drawable.stat_notify_calendar)
@@ -349,7 +358,7 @@ class EventNotificationManager : IEventNotificationManager {
                 .bigText(notificationText))
             .setWhen(System.currentTimeMillis())
 
-        val state = ctx.globalState.notificationStateTracker[event.eventId]
+        val state = ctx.globalState.notificationStateTracker[event]
 
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${state.notificationId}")
 
@@ -397,13 +406,13 @@ class EventNotificationManager : IEventNotificationManager {
         }
 
         if (notificationSettings.ledNotificationOn) {
-            logger.debug("Adding leds")
+            logger.debug("Adding LED light")
             builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
         } else {
-            logger.debug("No leds")
+            logger.debug("No LED light")
         }
 
-        var notification = builder.build()
+        val notification = builder.build()
 
         try {
             logger.debug(
@@ -425,16 +434,14 @@ class EventNotificationManager : IEventNotificationManager {
 
     private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
-        var intent = Intent(ctx, SnoozeActivity::class.java)
-        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
+        val intent = Intent(ctx, SnoozeActivity::class.java)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
     }
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
-        var intent = Intent(ctx, NotificationActionDismissService::class.java)
-        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId);
+        val intent = Intent(ctx, NotificationActionDismissService::class.java)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
     }
@@ -446,23 +453,16 @@ class EventNotificationManager : IEventNotificationManager {
 
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
-        var pendingIntent =
+        val pendingIntent =
             TaskStackBuilder.create(ctx)
                 .addNextIntentWithParentStack(intent)
                 .getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
-        /*
-                var pendingIntent =
-                        PendingIntent.getActivity(
-                                ctx,
-                                id,
-                                intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT)
-        */
+
         return pendingIntent
     }
 
     private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int) {
-        var notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId);
     }
 
@@ -474,17 +474,17 @@ class EventNotificationManager : IEventNotificationManager {
     ) {
         logger.debug("Posting collapsed view notification for ${events.size} events");
 
-        var intent = Intent(context, MainActivity::class.java);
+        val intent = Intent(context, MainActivity::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        var title = java.lang.String.format(
+        val title = java.lang.String.format(
             context.getString(com.github.quarck.calnotify.R.string.multiple_events),
             events.size
         );
 
-        var text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
+        val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
 
-        var bigText =
+        val bigText =
             events
                 .fold( StringBuilder(), { sb, ev -> sb.append("${ev.title}\n")} )
                 .toString()
@@ -507,17 +507,14 @@ class EventNotificationManager : IEventNotificationManager {
                     .bigText(bigText))
                 .build()
 
-        var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
+        context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 
         context.globalState.updateNotificationLastFiredTime()
     }
 
     private fun hideCollapsedEventsNotification(context: Context) {
         logger.debug("Hiding collapsed view notification");
-
-        var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED);
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED);
     }
 
     companion object {

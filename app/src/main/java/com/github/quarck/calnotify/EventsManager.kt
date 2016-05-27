@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.notification.IEventNotificationManager
 import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.ui.UINotifierService
+import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.setExactCompat
 
 object EventsManager {
@@ -52,14 +53,14 @@ object EventsManager {
                             .min()
                 };
 
-        var intent = Intent(context, AlarmBroadcastReceiver::class.java);
-        var pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = Intent(context, AlarmBroadcastReceiver::class.java);
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
+        val alarmManager = context.alarmManager
 
         if (nextAlarm != null) {
 
-            var currentTime = System.currentTimeMillis()
+            val currentTime = System.currentTimeMillis()
 
             if (nextAlarm < currentTime) {
                 logger.error("CRITICAL: nextAlarm=$nextAlarm is less than currentTime $currentTime");
@@ -78,7 +79,7 @@ object EventsManager {
 
     private fun scheduleNextAlarmForReminders(context: Context) {
 
-        var settings = Settings(context);
+        val settings = Settings(context);
 
         if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
             return;
@@ -101,8 +102,7 @@ object EventsManager {
             val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
 
             if (quietUntil != 0L) {
-                logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15}" +
-                    " due to silent period");
+                logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15} due to silent period");
 
                 // give a little extra delay, so if events would fire precisely at the quietUntil,
                 // reminders would wait a bit longer
@@ -128,14 +128,13 @@ object EventsManager {
 
 
     private fun reloadCalendar(context: Context): Boolean {
-        var repostNotifications = false
 
-        val notificationStateTracker = context.globalState.notificationStateTracker
+        var repostNotifications = false
 
         EventsStorage(context).use {
             db ->
 
-            var events = db.events
+            val events = db.events
 
             for (event in events) {
 
@@ -151,7 +150,7 @@ object EventsManager {
                         // Here we have a confirmation that event was re-scheduled by user
                         // to some time in the future and that's why original event instance has disappeared
                         // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, db, event.eventId, notificationStateTracker.getNotificationId(event.eventId), true);
+                        dismissEvent(context, db, event.eventId, true);
                         val movedSec = (newEvent.startTime - event.startTime) / 1000L
                         logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                     } else {
@@ -179,7 +178,7 @@ object EventsManager {
 
     fun onAppUpdated(context: Context?, intent: Intent?) {
         if (context != null) {
-            var changes = reloadCalendar(context)
+            val changes = reloadCalendar(context)
             notificationManager.postEventNotifications(context, true, null);
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
@@ -191,7 +190,7 @@ object EventsManager {
 
     fun onBootComplete(context: Context?, intent: Intent?) {
         if (context != null) {
-            var changes = reloadCalendar(context);
+            val changes = reloadCalendar(context);
             notificationManager.postEventNotifications(context, true, null);
 
             scheduleNextAlarmForEvents(context);
@@ -204,7 +203,7 @@ object EventsManager {
 
     fun onCalendarChanged(context: Context?, intent: Intent?) {
         if (context != null) {
-            var changes = reloadCalendar(context)
+            val changes = reloadCalendar(context)
             if (changes) {
                 notificationManager.postEventNotifications(context, true, null);
 
@@ -229,36 +228,87 @@ object EventsManager {
         logger.info("event added: ${event.eventId}");
     }
 
-    fun snoozeEvent(context: Context,
-                    event: EventRecord,
-                    snoozeDelay: Long,
-                    eventsStorage: EventsStorage?,
-                    onHitQuietHours: (Long) -> Unit
-                    ) {
+    fun snoozeEvent(context: Context, eventId: Long, snoozeDelay: Long): Pair<Boolean, Long> {
+        var ret = Pair(false, 0L)
 
-        var currentTime = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
 
-        event.snoozedUntil = currentTime + snoozeDelay;
-        event.lastEventVisibility = currentTime;
+        val snoozedEvent =
+            EventsStorage(context).use {
+                db ->
+                val event = db.getEvent(eventId)
 
-        if (eventsStorage != null)
-            eventsStorage.updateEvent(event)
-        else
-            EventsStorage(context).use { it.updateEvent(event) }
+                if (event != null) {
+                    db.updateEvent(event,
+                        snoozedUntil = currentTime + snoozeDelay,
+                        lastEventVisibility = currentTime)
+                } else {
+                    logger.error("Error: can't get event from DB");
+                }
 
-        val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
+                event;
+            }
 
-        notificationManager.onEventSnoozed(context, event.eventId, notificationStateTracker.getNotificationId(event.eventId));
+        if (snoozedEvent != null) {
+            notificationManager.onEventSnoozed(context, snoozedEvent.eventId);
 
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+            scheduleNextAlarmForEvents(context);
+            scheduleNextAlarmForReminders(context);
 
-        var seconds = (event.snoozedUntil - currentTime) / 1000
-        logger.debug("alarm set -  called for ${event.eventId}, for $seconds seconds from now");
+            val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), snoozedEvent.snoozedUntil)
+            if (silentUntil != 0L)
+                ret = Pair(true, silentUntil)
+            else
+                ret = Pair(false, snoozedEvent.snoozedUntil)
+        }
 
-        val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), event.snoozedUntil)
-        if (silentUntil != 0L)
-            onHitQuietHours(silentUntil)
+        return ret
+    }
+
+    fun snoozeAllEvents(context: Context, snoozeDelay: Long): Pair<Boolean, Long> {
+
+        var ret = Pair(false, 0L)
+
+        val currentTime = System.currentTimeMillis()
+
+        val snoozedUntil =
+            EventsStorage(context).use {
+                db ->
+                val events = db.events
+
+                // Don't allow events to have exactly the same "snoozedUntil", so to have
+                // predicted sorting order, so add a tiny (0.001s per event) adjust to each
+                // snoozed time
+
+                var snoozeAdjust = 0
+
+                for (event in events) {
+                    db.updateEvent(event,
+                        snoozedUntil = currentTime + snoozeDelay + snoozeAdjust,
+                        lastEventVisibility = currentTime)
+
+                    ++snoozeAdjust
+                }
+
+                events.lastOrNull()?.snoozedUntil
+            }
+
+        if (snoozedUntil != null) {
+
+            notificationManager.onAllEventsSnoozed(context)
+
+            scheduleNextAlarmForEvents(context);
+            scheduleNextAlarmForReminders(context);
+
+            val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), snoozedUntil)
+            if (silentUntil != 0L)
+                ret = Pair(true, silentUntil)
+            else
+                ret = Pair(false, snoozedUntil)
+        }
+
+
+        return ret
     }
 
     fun fireEventReminder(context: Context) {
@@ -285,14 +335,16 @@ object EventsManager {
         }
     }
 
-    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean) {
+    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notifyActivity: Boolean) {
 
         if (context != null) {
-            logger.debug("Removing event id ${eventId} from DB, and dismissing notification id ${notificationId}")
+            logger.debug("Removing event id $eventId from DB, and dismissing notification")
 
             db.deleteEvent(eventId)
 
-            notificationManager.onEventDismissed(context, eventId, notificationId);
+            notificationManager.onEventDismissed(context, eventId);
+
+            context.globalState.notificationStateTracker.unregisterEvent(eventId)
 
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
@@ -304,18 +356,16 @@ object EventsManager {
 
     fun dismissEvent(context: Context?, event: EventRecord) {
         if (context != null) {
-            val notificationStateTracker = context.globalState.notificationStateTracker // notificationStateTracker.getNotificationId(event.eventId)
-
             EventsStorage(context).use {
-                dismissEvent(context, it, event.eventId, notificationStateTracker.getNotificationId(event.eventId), false)
+                dismissEvent(context, it, event.eventId, false)
             }
         }
     }
 
-    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
+    fun dismissEvent(context: Context?, eventId: Long, notifyActivity: Boolean = true) {
         if (context != null) {
             EventsStorage(context).use {
-                dismissEvent(context, it, eventId, notificationId, notifyActivity)
+                dismissEvent(context, it, eventId, notifyActivity)
             }
         }
     }

@@ -31,21 +31,15 @@ class NotificationState(
 class NotificationStateTracker {
 
     private var byEventId =  mutableMapOf<Long, NotificationState>()
-    private var byNotificationId = mutableMapOf<Int, NotificationState>()
 
     private fun nextNotificationId(): Int {
-
-        val ent = byNotificationId.maxBy { e -> e.key }
-
-        return if (ent != null) ent.key + 1
+        val ent = byEventId.maxBy { e -> e.value.notificationId }
+        return if (ent != null) ent.value.notificationId + 1
                 else Consts.NOTIFICATION_ID_DYNAMIC_FROM
     }
 
     val isEmpty: Boolean
-        get() =
-            synchronized(this) {
-                byEventId.isEmpty() || byNotificationId.isEmpty()
-            }
+        get() = synchronized(this) { byEventId.isEmpty() }
 
     operator fun get(eventId: Long): NotificationState =
         synchronized(this) {
@@ -53,35 +47,18 @@ class NotificationStateTracker {
             if (state == null) {
                 state = NotificationState(nextNotificationId())
                 byEventId.put(eventId, state)
-                byNotificationId.put(state.notificationId, state)
             }
 
             return state;
         }
 
-    fun unregisterEvent(eventId: Long, notificationId: Int) =
+    operator fun get(event: EventRecord) = get(event.eventId)
+
+    fun unregisterEvent(eventId: Long) =
         synchronized(this){
             byEventId.remove(eventId)
-            byNotificationId.remove(notificationId)
-        }
-
-    fun unregisterEvent(event: EventRecord) =
-        synchronized(this){
-            val state = byEventId.get(event.eventId)
-            if (state != null) {
-                byEventId.remove(event.eventId)
-                byNotificationId.remove(state.notificationId)
-            }
         }
 
     fun getNotificationId(eventId: Long) =
         get(eventId).notificationId
-
-    fun getDisplayStatus(eventId: Long) =
-        get(eventId).displayStatus
-
-    fun setDisplayStatus(eventId: Long, displayStatus: EventDisplayStatus) {
-        val state = get(eventId)
-        state.displayStatus = displayStatus
-    }
 }

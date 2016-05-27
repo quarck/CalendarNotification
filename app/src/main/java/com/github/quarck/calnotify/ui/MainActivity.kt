@@ -313,8 +313,6 @@ class MainActivity : Activity() {
             if (event.eventId == eventId) {
                 var intent = Intent(this, SnoozeActivity::class.java)
 
-                intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY,
-                    globalState.notificationStateTracker.getNotificationId(event.eventId));
                 intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
 
                 startActivity(intent);

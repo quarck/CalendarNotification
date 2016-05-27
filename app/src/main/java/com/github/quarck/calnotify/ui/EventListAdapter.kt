@@ -68,31 +68,31 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
             color = ColorDrawable(0)
 
             eventHolder.setOnClickListener {
-                var action = onItemClick;
+                val action = onItemClick;
                 if (action != null)
                     action(itemView, adapterPosition, eventId);
             };
 
             dismiss.setOnClickListener {
-                var action = onItemDismiss;
+                val action = onItemDismiss;
                 if (action != null)
                     action(itemView, adapterPosition, eventId);
             }
 
             change.setOnClickListener {
-                var action = onItemReschedule;
+                val action = onItemReschedule;
                 if (action != null)
                     action(itemView, adapterPosition, eventId);
             }
 
             eventLocation.setOnClickListener {
-                var action = onItemLocation;
+                val action = onItemLocation;
                 if (action != null)
                     action(itemView, adapterPosition, eventId);
             }
 
             var dateTimeLisneter = View.OnClickListener {
-                var action = onItemDateTime;
+                val action = onItemDateTime;
                 if (action != null)
                     action(itemView, adapterPosition, eventId);
             }

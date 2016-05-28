@@ -102,6 +102,9 @@ class Settings(ctx: Context) {
             return ret;
         }
 
+    val showCustomSnoozeAndUntil: Boolean
+        get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
+
     val ringtoneURI: Uri?
         get() {
             var notification: Uri? = null
@@ -173,6 +176,7 @@ class Settings(ctx: Context) {
         private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
 
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
+        private const val SHOW_CUSTOM_SNOOZE_TIMES_KEY = "show_custom_snooze_and_until"
 
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
 

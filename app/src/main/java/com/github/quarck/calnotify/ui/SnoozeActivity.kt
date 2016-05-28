@@ -21,14 +21,12 @@ package com.github.quarck.calnotify.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.R
@@ -41,6 +39,7 @@ import com.github.quarck.calnotify.maps.MapsUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+import java.util.*
 
 class SnoozeActivity : Activity() {
     var eventId: Long = -1;
@@ -110,6 +109,11 @@ class SnoozeActivity : Activity() {
                 quietTimeNoticeBaseline.visibility = View.GONE
             }
         }
+
+        // need to hide these guys
+        val showCustomSnoozeVisibility =  if (settings.showCustomSnoozeAndUntil) View.VISIBLE else View.GONE
+        find<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
+        find<TextView>(R.id.snooze_view_snooze_until).visibility = showCustomSnoozeVisibility
 
         // Populate event details
         eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
@@ -218,8 +222,7 @@ class SnoozeActivity : Activity() {
         }
     }
 
-    private fun snoozeEvent(presetIdx: Int) {
-        val snoozeDelay = snoozePresets[presetIdx];
+    private fun snoozeEvent(snoozeDelay: Long) {
 
         if (eventId != -1L) {
             logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
@@ -257,10 +260,93 @@ class SnoozeActivity : Activity() {
 
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
             if (id == v.id) {
-                snoozeEvent(idx);
+                snoozeEvent(snoozePresets[idx]);
                 break;
             }
         }
+    }
+
+    fun OnButtonCustomSnoozeClick(v: View?) {
+
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_remind_interval, null);
+
+        dialogView.find<TextView>(R.id.textViewRemindIntervalDialogLabel).text =
+            resources.getString(R.string.snooze_for)
+
+        val timePicker = dialogView.find<TimePicker>(R.id.time_picker_remind_interval)
+        timePicker.setIs24HourView(true)
+
+        timePicker.currentHour = 1
+        timePicker.currentMinute = 0
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton(R.string.snooze) {
+                x: DialogInterface?, y: Int ->
+
+                timePicker.clearFocus()
+
+                // grab time from timePicker
+
+                val hours = timePicker.currentHour
+                val minutes = timePicker.currentMinute
+
+                val intervalMilliseconds = (hours * 60 + minutes) * 60L * 1000L
+                snoozeEvent(intervalMilliseconds)
+            }
+            .setNegativeButton(R.string.cancel) {
+                x: DialogInterface?, y: Int ->
+            }
+            .create()
+            .show()
+    }
+
+    fun OnButtonSnoozeUntilClick(v: View?) {
+
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_date_time_picker, null);
+
+        val timePicker = dialogView.find<TimePicker>(R.id.timePickerCustomSnooze)
+        val datePicker = dialogView.find<DatePicker>(R.id.datePickerCustomSnooze)
+        timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton(R.string.snooze) {
+                x: DialogInterface?, y: Int ->
+
+                datePicker.clearFocus()
+                timePicker.clearFocus()
+
+                // grab time from timePicker + date picker
+                val cal = Calendar.getInstance()
+                cal.set(
+                    datePicker.year,
+                    datePicker.month,
+                    datePicker.dayOfMonth,
+                    timePicker.currentHour,
+                    timePicker.currentMinute,
+                    0)
+
+                val snoozeFor = cal.timeInMillis - System.currentTimeMillis() - Consts.ALARM_THRESHOULD
+
+                if (snoozeFor > 0L) {
+                    snoozeEvent(snoozeFor)
+                } else {
+                    // Selected time is in the past
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.selected_time_is_in_the_past)
+                        .setNegativeButton(R.string.cancel) {
+                            x: DialogInterface?, y: Int ->
+                        }
+                        .create()
+                        .show()
+                }
+            }
+            .setNegativeButton(R.string.cancel) {
+                x: DialogInterface?, y: Int ->
+            }
+            .create()
+            .show()
     }
 
     fun reschedule(addTime: Long) {
@@ -310,6 +396,10 @@ class SnoozeActivity : Activity() {
 
     companion object {
         private val logger = Logger("ActivitySnooze");
+
+        const val CUSTOM_SNOOZE_SNOOZE_FOR_IDX = 0
+        const val CUSTOM_SNOOZE_SNOOZE_UNTIL_IDX = 1
+
     }
 
 }

@@ -66,4 +66,6 @@
     <dimen name="color_picker_sqr_size">50dp</dimen>
     <dimen name="color_picker_sqr_size_sm">30dp</dimen>
     <dimen name="color_picker_sqr_size_pls_sp">56dp</dimen>
+    <dimen name="date_time_picker_margin">2dp</dimen>
+    <dimen name="date_time_picker_padding">5dp</dimen>
 </resources>

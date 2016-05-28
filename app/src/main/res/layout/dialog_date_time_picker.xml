@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/snooze_until_string"
+            android:id="@+id/textViewSnoozeUntilDate"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/date_time_picker_margin"
+            android:padding="@dimen/date_time_picker_padding"
+            />
+
+
+        <DatePicker
+            android:id="@+id/datePickerCustomSnooze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:calendarViewShown="false"
+            android:spinnersShown="true"
+            android:layout_margin="@dimen/date_time_picker_margin"
+            android:padding="@dimen/date_time_picker_padding"
+            />
+
+        <TimePicker
+            android:id="@+id/timePickerCustomSnooze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/date_time_picker_margin"
+            android:padding="@dimen/date_time_picker_padding"
+            />
+
+    </LinearLayout>
+</ScrollView>

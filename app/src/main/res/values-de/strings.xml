@@ -108,7 +108,15 @@
     <string name="quiet_hours_mute_primary_summary">Mute primary notifications during quiet time, so app becomes completely silent. Primary notification is a very first notification for particular event</string>
 
     <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active\nNo reminders until %s</string>
-    <string name="hits_quiet_period">(hits quiet period)</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
+    <string name="hits_quiet_period">(hits quiet period)</string>
+    <string name="custom_snooze_entry">Custom</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
 
+    <string name="for_a_custom_time">For a custom period</string>
+    <string name="until_specific_time">Until specific time and date</string>
+    <string name="snooze_for">Snooze for:</string>
+    <string name="selected_time_is_in_the_past"><b>Can\'t snooze:</b><br>selected time is in the past</br></string>
+    <string name="snooze_until_string">Snooze until date / time:</string>
+    <string name="custom_snooze_options_title">Custom snooze options</string>
+    <string name="custom_snooze_options_summary">Show custom snooze options on the snooze activity</string>
 
 </resources>

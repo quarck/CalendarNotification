@@ -45,7 +45,7 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        val pkr = view.find<TimePicker?>(R.id.time_picker_time)
+        val pkr = view.find<TimePicker?>(R.id.time_picker_remind_interval)
         if (pkr != null) {
             pkr.setIs24HourView(true)
             pkr.currentHour = timeValue / 60
@@ -54,9 +54,16 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
         }
     }
 
+    override fun onClick() {
+        super.onClick()
+        picker?.clearFocus()
+    }
+
     override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
+
+            picker.clearFocus()
             timeValue = picker.currentHour * 60 + picker.currentMinute
 
             if (timeValue == 0) {

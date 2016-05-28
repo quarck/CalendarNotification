@@ -64,6 +64,12 @@
             android:summary="@string/view_after_edit_summary"
             android:defaultValue="true" />
 
+        <CheckBoxPreference
+            android:key="show_custom_snooze_and_until"
+            android:title="@string/custom_snooze_options_title"
+            android:summary="@string/custom_snooze_options_summary"
+            android:defaultValue="true" />
+
     </PreferenceScreen>
 
     <PreferenceScreen

@@ -124,28 +124,28 @@ class TestButtonsAndToDoActivity : Activity() {
 
     fun OnButtonTestClick(v: View) {
 
-        var first = (v.id == R.id.buttonTest);
+        val first = (v.id == R.id.buttonTest);
 
         if (first) {
             settings.quietHoursOneTimeReminderEnabled = true
             EventsManager.onAppResumed(this)
         } else {
-            var currentTime = System.currentTimeMillis();
+            val currentTime = System.currentTimeMillis();
 
-            var eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
+            val eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
 
-            var event = EventRecord(
+            val event = EventRecord(
                 eventId,
                 System.currentTimeMillis(),
-                //0,
+                0,
                 if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
-                if ((cnt % 2) == 0) "" else "Connolly st., Dublin, IFSC",
+                if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
                 System.currentTimeMillis(),
                 0L,
-                //EventDisplayStatus.Hidden,
-                0xffFFC107.toInt()
+                EventDisplayStatus.Hidden,
+                0xff660066.toInt()
             )
 
             cnt++;

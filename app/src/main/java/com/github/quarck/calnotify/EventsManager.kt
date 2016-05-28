@@ -25,6 +25,7 @@ import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.broadcastreceivers.AlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
@@ -150,7 +151,7 @@ object EventsManager {
                         // Here we have a confirmation that event was re-scheduled by user
                         // to some time in the future and that's why original event instance has disappeared
                         // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, db, event.eventId, true);
+                        dismissEvent(context, db, event.eventId, event.notificationId, true);
                         val movedSec = (newEvent.startTime - event.startTime) / 1000L
                         logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                     } else {
@@ -218,6 +219,7 @@ object EventsManager {
     fun onCalendarEventFired(context: Context, event: EventRecord) {
 
         EventsStorage(context).use { it.addEvent(event) }
+
         notificationManager.onEventAdded(context, event)
 
         scheduleNextAlarmForEvents(context);
@@ -241,7 +243,8 @@ object EventsManager {
                 if (event != null) {
                     db.updateEvent(event,
                         snoozedUntil = currentTime + snoozeDelay,
-                        lastEventVisibility = currentTime)
+                        lastEventVisibility = currentTime,
+                        displayStatus = EventDisplayStatus.Hidden)
                 } else {
                     logger.error("Error: can't get event from DB");
                 }
@@ -250,7 +253,7 @@ object EventsManager {
             }
 
         if (snoozedEvent != null) {
-            notificationManager.onEventSnoozed(context, snoozedEvent.eventId);
+            notificationManager.onEventSnoozed(context, snoozedEvent.eventId, snoozedEvent.notificationId);
 
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
@@ -335,16 +338,14 @@ object EventsManager {
         }
     }
 
-    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notifyActivity: Boolean) {
+    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean) {
 
         if (context != null) {
             logger.debug("Removing event id $eventId from DB, and dismissing notification")
 
             db.deleteEvent(eventId)
 
-            notificationManager.onEventDismissed(context, eventId);
-
-            context.globalState.notificationStateTracker.unregisterEvent(eventId)
+            notificationManager.onEventDismissed(context, eventId, notificationId);
 
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
@@ -357,15 +358,15 @@ object EventsManager {
     fun dismissEvent(context: Context?, event: EventRecord) {
         if (context != null) {
             EventsStorage(context).use {
-                dismissEvent(context, it, event.eventId, false)
+                dismissEvent(context, it, event.eventId, event.notificationId, false)
             }
         }
     }
 
-    fun dismissEvent(context: Context?, eventId: Long, notifyActivity: Boolean = true) {
+    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
         if (context != null) {
             EventsStorage(context).use {
-                dismissEvent(context, it, eventId, notifyActivity)
+                dismissEvent(context, it, eventId, notificationId, notifyActivity)
             }
         }
     }

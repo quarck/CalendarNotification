@@ -28,15 +28,16 @@ import android.widget.TimePicker
 import android.widget.Toast
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
 
 class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
     internal var timeValue = 0
 
-    internal lateinit var picker: TimePicker
+    internal lateinit var picker: TimeIntervalPickerController
 
     init {
-        dialogLayoutResource = R.layout.dialog_remind_interval
+        dialogLayoutResource = R.layout.dialog_interval_picker
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
         dialogIcon = null
@@ -45,26 +46,21 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        val pkr = view.find<TimePicker?>(R.id.time_picker_remind_interval)
-        if (pkr != null) {
-            pkr.setIs24HourView(true)
-            pkr.currentHour = timeValue / 60
-            pkr.currentMinute = timeValue % 60
-            picker = pkr
-        }
+        picker = TimeIntervalPickerController(view, R.string.remind_interval)
+        picker.intervalMinutes = timeValue
     }
 
     override fun onClick() {
         super.onClick()
-        picker?.clearFocus()
+        picker.clearFocus()
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
-
             picker.clearFocus()
-            timeValue = picker.currentHour * 60 + picker.currentMinute
+
+            timeValue = picker.intervalMinutes
 
             if (timeValue == 0) {
                 timeValue = 1

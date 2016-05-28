@@ -42,7 +42,8 @@ import com.github.quarck.calnotify.utils.find
 import java.util.*
 
 class SnoozeActivity : Activity() {
-    var eventId: Long = -1;
+    var eventId: Long = -1
+    var notificationId: Int = -1
 
     lateinit var snoozePresets: LongArray
 
@@ -116,6 +117,7 @@ class SnoozeActivity : Activity() {
         find<TextView>(R.id.snooze_view_snooze_until).visibility = showCustomSnoozeVisibility
 
         // Populate event details
+        notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
         val event = EventsStorage(this).use { it.getEvent(eventId) }
@@ -224,7 +226,7 @@ class SnoozeActivity : Activity() {
 
     private fun snoozeEvent(snoozeDelay: Long) {
 
-        if (eventId != -1L) {
+        if (notificationId != -1 && eventId != -1L) {
             logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
 
             val (isQuiet, nextFire) = EventsManager.snoozeEvent(this, eventId, snoozeDelay);
@@ -268,30 +270,16 @@ class SnoozeActivity : Activity() {
 
     fun OnButtonCustomSnoozeClick(v: View?) {
 
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_remind_interval, null);
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_interval_picker, null);
 
-        dialogView.find<TextView>(R.id.textViewRemindIntervalDialogLabel).text =
-            resources.getString(R.string.snooze_for)
-
-        val timePicker = dialogView.find<TimePicker>(R.id.time_picker_remind_interval)
-        timePicker.setIs24HourView(true)
-
-        timePicker.currentHour = 1
-        timePicker.currentMinute = 0
+        val dialogController = TimeIntervalPickerController(dialogView, R.string.snooze_for)
 
         AlertDialog.Builder(this)
             .setView(dialogView)
             .setPositiveButton(R.string.snooze) {
                 x: DialogInterface?, y: Int ->
 
-                timePicker.clearFocus()
-
-                // grab time from timePicker
-
-                val hours = timePicker.currentHour
-                val minutes = timePicker.currentMinute
-
-                val intervalMilliseconds = (hours * 60 + minutes) * 60L * 1000L
+                val intervalMilliseconds = dialogController.intervalMilliseconds
                 snoozeEvent(intervalMilliseconds)
             }
             .setNegativeButton(R.string.cancel) {
@@ -363,7 +351,7 @@ class SnoozeActivity : Activity() {
 
                 logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                EventsManager.dismissEvent(this, eventId)
+                EventsManager.dismissEvent(this, eventId, notificationId)
 
                 // Show
                 if (Settings(this).viewAfterEdit)

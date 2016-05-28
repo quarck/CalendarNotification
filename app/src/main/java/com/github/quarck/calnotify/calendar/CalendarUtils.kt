@@ -49,29 +49,29 @@ object CalendarUtils {
             )
 
     private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
-        var eventId: Long? = cursor.getLong(0)
-        var state: Int? = cursor.getInt(1)
-        var title: String? = cursor.getString(2)
-        var start: Long? = cursor.getLong(4)
-        var end: Long? = cursor.getLong(5)
-        var location: String? = cursor.getString(6)
-        var color: Int? = cursor.getInt(7)
-        var newAlarmTime: Long? = cursor.getLong(8)
+        val eventId: Long? = cursor.getLong(0)
+        val state: Int? = cursor.getInt(1)
+        val title: String? = cursor.getString(2)
+        val start: Long? = cursor.getLong(4)
+        val end: Long? = cursor.getLong(5)
+        val location: String? = cursor.getString(6)
+        val color: Int? = cursor.getInt(7)
+        val newAlarmTime: Long? = cursor.getLong(8)
 
         if (eventId == null || state == null || title == null || start == null)
             return Pair(null, null);
 
-        var event =
+        val event =
                 EventRecord(
                         eventId = eventId,
-                        //notificationId = 0,
+                        notificationId = 0,
                         alertTime = alarmTime ?: newAlarmTime ?: 0,
                         title = title,
                         startTime = start,
                         endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
                         location = location ?: "",
                         lastEventVisibility = 0L,
-                        //displayStatus = EventDisplayStatus.Hidden,
+                        displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
                 );
 
@@ -85,11 +85,11 @@ object CalendarUtils {
             return null;
         }
 
-        var ret = arrayListOf<EventRecord>()
+        val ret = arrayListOf<EventRecord>()
 
-        var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
-        var cursor: Cursor? =
+        val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
                         eventFields,
@@ -100,7 +100,7 @@ object CalendarUtils {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                var (state, event) = cursorToEventRecord(cursor, alertTime.toLong());
+                val (state, event) = cursorToEventRecord(cursor, alertTime.toLong());
 
                 if (state != null && event != null) {
                     logger.info("Received event details: ${event.eventId}, st ${state}, from ${event.startTime} to ${event.endTime}")
@@ -132,9 +132,9 @@ object CalendarUtils {
         }
 
         try {
-            var uri = CalendarContract.CalendarAlerts.CONTENT_URI;
+            val uri = CalendarContract.CalendarAlerts.CONTENT_URI;
 
-            var selection =
+            val selection =
                     "(" +
                             "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_FIRED}" +
                             " OR " +
@@ -142,7 +142,7 @@ object CalendarUtils {
                             ")" +
                             " AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
 
-            var dismissValues = ContentValues();
+            val dismissValues = ContentValues();
             dismissValues.put(
                     CalendarContract.CalendarAlerts.STATE,
                     CalendarContract.CalendarAlerts.STATE_DISMISSED
@@ -165,9 +165,9 @@ object CalendarUtils {
 
         var ret: EventRecord? = null
 
-        var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
-        var cursor: Cursor? =
+        val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
                         eventFields,
@@ -178,7 +178,7 @@ object CalendarUtils {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                var (state, event) = cursorToEventRecord(cursor, alertTime);
+                val (state, event) = cursorToEventRecord(cursor, alertTime);
 
                 if (event != null && event.eventId == eventId) {
                     ret = event;
@@ -204,9 +204,9 @@ object CalendarUtils {
 
         var ret: EventRecord? = null
 
-        var selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
+        val selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
 
-        var cursor: Cursor? =
+        val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI,
                         eventFields,
@@ -217,7 +217,7 @@ object CalendarUtils {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                var (state, event) = cursorToEventRecord(cursor, null);
+                val (state, event) = cursorToEventRecord(cursor, null);
 
                 if (event != null && event.eventId == eventId) {
                     ret = event;
@@ -286,9 +286,9 @@ object CalendarUtils {
         //
         var values: ContentValues? = null // values for the new event
 
-        var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
-        var cursor: Cursor? =
+        val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
                         fields,
@@ -300,14 +300,14 @@ object CalendarUtils {
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    var eventId = cursor.getLong(0)
+                    val eventId = cursor.getLong(0)
                     if (eventId != event.eventId)
                         continue;
 
                     values = ContentValues()
 
-                    var title: String = (cursor.getString(1) as String?) ?: throw Exception("Title must not be null")
-                    var calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null");
+                    val title: String = (cursor.getString(1) as String?) ?: throw Exception("Title must not be null")
+                    val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null");
                     var timeZone: String? = cursor.getString(3)
                     var description: String? = cursor.getString(4)
                     var dtStart = (cursor.getLong(5) as Long?) ?: throw Exception("dtStart must not be null")

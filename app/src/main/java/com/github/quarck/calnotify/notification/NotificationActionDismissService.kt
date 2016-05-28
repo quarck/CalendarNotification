@@ -31,13 +31,14 @@ class NotificationActionDismissService : IntentService("ServiceNotificationActio
         logger.debug("onHandleIntent")
 
         if (intent != null) {
+            val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
             val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
-            if (eventId != -1L) {
-                EventsManager.dismissEvent(this, eventId)
+            if (notificationId != -1 && eventId != -1L) {
+                EventsManager.dismissEvent(this, eventId, notificationId)
                 logger.info("ServiceNotificationActionDismiss: event dismissed by user: $eventId")
             } else {
-                logger.error("eventId=${eventId}, or type is null")
+                logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
             }
         } else {
             logger.error("Intent is null!")

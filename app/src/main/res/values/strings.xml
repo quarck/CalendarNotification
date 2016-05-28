@@ -149,4 +149,10 @@
     <string name="custom_snooze_options_title">Custom snooze options</string>
     <string name="custom_snooze_options_summary">Show custom snooze options on the snooze activity</string>
 
+    <string-array name="time_units_plurals">
+        <item>Minutes</item>
+        <item>Hours</item>
+        <item>Days</item>
+    </string-array>
+
 </resources>

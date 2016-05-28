@@ -29,6 +29,7 @@ import android.os.Vibrator
 import android.provider.Settings
 
 
+@Suppress("UNCHECKED_CAST")
 fun<T> Context.service(svc: String) =  getSystemService(svc) as T
 
 val Context.alarmManager: AlarmManager
@@ -48,7 +49,7 @@ val Context.notificationManager: NotificationManager
 
 fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit) {
 
-    var wakeLock = pm.newWakeLock(levelAndFlags, tag);
+    val wakeLock = pm.newWakeLock(levelAndFlags, tag);
     if (wakeLock == null)
         throw Exception("Failed to acquire wakelock")
 
@@ -61,9 +62,10 @@ fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, noinline fn: () -> Unit) {
 
-    var wakeLock = pm.newWakeLock(levelAndFlags, tag);
+    val wakeLock = pm.newWakeLock(levelAndFlags, tag);
     if (wakeLock == null)
         throw Exception("Failed to acquire wakelock")
 
@@ -82,7 +84,7 @@ inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: Strin
 
 fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: PendingIntent) {
 
-    var build = android.os.Build.VERSION.SDK_INT
+    val build = android.os.Build.VERSION.SDK_INT
 
     if (build >= android.os.Build.VERSION_CODES.M) {
         // Marshmallow way of doing this

@@ -33,6 +33,7 @@ object Consts {
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
 
     //
+    const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
     const val INTENT_EVENT_ID_KEY = "eventId";
 
     const val INTENT_IS_USER_ACTION = "causedByUser"

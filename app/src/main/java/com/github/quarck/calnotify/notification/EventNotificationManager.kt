@@ -44,9 +44,9 @@ import com.github.quarck.calnotify.utils.powerManager
 interface IEventNotificationManager {
     fun onEventAdded(ctx: Context, event: EventRecord);
 
-    fun onEventDismissed(ctx: Context, eventId: Long);
+    fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int);
 
-    fun onEventSnoozed(ctx: Context, eventId: Long);
+    fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int);
 
     fun onAllEventsSnoozed(ctx: Context)
 
@@ -71,16 +71,12 @@ class EventNotificationManager : IEventNotificationManager {
         postEventNotifications(ctx, false, event.eventId);
     }
 
-    override fun onEventDismissed(ctx: Context, eventId: Long) {
-        //
-        val notificationId = ctx.globalState.notificationStateTracker.getNotificationId(eventId)
+    override fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int) {
         removeNotification(ctx, eventId, notificationId);
         postEventNotifications(ctx, false, null);
     }
 
-    override fun onEventSnoozed(ctx: Context, eventId: Long) {
-        //
-        val notificationId = ctx.globalState.notificationStateTracker.getNotificationId(eventId)
+    override fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int) {
         removeNotification(ctx, eventId, notificationId);
         postEventNotifications(ctx, false, null);
     }
@@ -107,6 +103,7 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?) {
         //
+
         val settings = Settings(context)
 
         val currentTime = System.currentTimeMillis()
@@ -114,12 +111,6 @@ class EventNotificationManager : IEventNotificationManager {
         val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
 
         var postedAnyNotification = false
-
-        // If our notification id / state tracker is currently empty -- cancel any possible
-        // notifications left from the previous instance of the application, so avoid mis-matches
-        // between ids
-        if (context.globalState.notificationStateTracker.isEmpty)
-            context.notificationManager.cancelAll()
 
         EventsStorage(context).use {
             db ->
@@ -184,22 +175,19 @@ class EventNotificationManager : IEventNotificationManager {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
-        val notificationStateTracker = context.globalState.notificationStateTracker
-
         for (event in events) {
-            val state = notificationStateTracker[event]
-
-            if ((state.displayStatus != EventDisplayStatus.Hidden) || force) {
-                logger.debug("Hiding notification id ${state.notificationId}, eventId ${event.eventId}")
-                removeNotification(context, event.eventId, state.notificationId);
+            if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
+                logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
+                removeNotification(context, event.eventId, event.notificationId);
             } else {
-                logger.debug("Skipping collapsing notification id ${state.notificationId}, eventId ${event.eventId} - already collapsed");
+                logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed");
             }
 
-            state.displayStatus = EventDisplayStatus.DisplayedCollapsed
-
-            if (event.snoozedUntil != 0L)
-                db.updateEvent(event, snoozedUntil = 0L)
+            if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {
+                db.updateEvent(event,
+                    snoozedUntil = 0L,
+                    displayStatus = EventDisplayStatus.DisplayedCollapsed)
+            }
         }
 
         if (!events.isEmpty())
@@ -230,11 +218,7 @@ class EventNotificationManager : IEventNotificationManager {
         var postedNotification = false
         var playedAnySound = false
 
-        val notificationStateTracker = context.globalState.notificationStateTracker
-
         for (event in events) {
-            val state = notificationStateTracker[event]
-
             if (event.snoozedUntil == 0L) {
                 // snooze zero could mean
                 // - this is a new event -- we have to display it, it would have displayStatus == hidden
@@ -242,9 +226,9 @@ class EventNotificationManager : IEventNotificationManager {
                 // - this is currently potentially displayed event but we are doing "force re-post" to
                 //   ensure all events are displayed (like at boot or after app upgrade
 
-                if ((state.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
+                if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
-                    logger.debug("Posting notification id ${state.notificationId}, eventId ${event.eventId}");
+                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
 
                     var shouldBeQuiet = false
 
@@ -253,7 +237,7 @@ class EventNotificationManager : IEventNotificationManager {
                         // so not playing sound / vibration here
                         logger.debug("event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
-                    } else if (state.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
+                    } else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
@@ -280,18 +264,18 @@ class EventNotificationManager : IEventNotificationManager {
                         if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings)
 
                     // Update db to indicate that this event is currently actively displayed
-                    state.displayStatus = EventDisplayStatus.DisplayedNormal;
+                    db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
 
                     postedNotification = true
                     playedAnySound = playedAnySound || !shouldBeQuiet
 
                 } else {
-                    logger.debug("Not re-posting notification id ${state.notificationId}, eventId ${event.eventId} - already on the screen");
+                    logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
                 }
             } else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.debug("Posting snoozed notification id ${state.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
+                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
 
                 postNotification(context, event,
                     if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings)
@@ -299,8 +283,10 @@ class EventNotificationManager : IEventNotificationManager {
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
                 // also update 'lastVisible' time since event just re-appeared
-                state.displayStatus = EventDisplayStatus.DisplayedNormal
-                db.updateEvent(event, snoozedUntil = 0, lastEventVisibility = System.currentTimeMillis() );
+                db.updateEvent(event,
+                    snoozedUntil = 0,
+                    displayStatus = EventDisplayStatus.DisplayedNormal,
+                    lastEventVisibility = System.currentTimeMillis() )
 
                 postedNotification = true
                 playedAnySound = playedAnySound || !isQuietPeriodActive
@@ -358,17 +344,15 @@ class EventNotificationManager : IEventNotificationManager {
                 .bigText(notificationText))
             .setWhen(System.currentTimeMillis())
 
-        val state = ctx.globalState.notificationStateTracker[event]
-
-        logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${state.notificationId}")
+        logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
 
         builder.addAction(
             com.github.quarck.calnotify.R.drawable.ic_update_white_24dp,
             ctx.getString(com.github.quarck.calnotify.R.string.snooze) ?: "SNOOZE",
             pendingActivityIntent(ctx,
-                snoozeIntent(ctx, event.eventId, state.notificationId),
-                state.notificationId * 3 + 0
+                snoozeIntent(ctx, event.eventId, event.notificationId),
+                event.notificationId * 3 + 0
             )
         )
 
@@ -377,15 +361,15 @@ class EventNotificationManager : IEventNotificationManager {
                 com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp,
                 ctx.getString(com.github.quarck.calnotify.R.string.dismiss) ?: "DISMISS",
                 pendingServiceIntent(ctx,
-                    dismissOrDeleteIntent(ctx, event.eventId, state.notificationId),
-                    state.notificationId * 3 + 1
+                    dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
+                    event.notificationId * 3 + 1
                 )
             )
         } else {
             builder.setDeleteIntent(
                 pendingServiceIntent(ctx,
-                    dismissOrDeleteIntent(ctx, event.eventId, state.notificationId),
-                    state.notificationId * 3 + 2
+                    dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
+                    event.notificationId * 3 + 2
                 )
             )
         }
@@ -416,15 +400,15 @@ class EventNotificationManager : IEventNotificationManager {
 
         try {
             logger.debug(
-                "adding: notificationId=${state.notificationId}, notification is ${notification}, stack:")
+                "adding: notificationId=${event.notificationId}, notification is ${notification}, stack:")
 
             notificationManager.notify(
-                state.notificationId,
+                event.notificationId,
                 notification
             )
         } catch (ex: Exception) {
             logger.error(
-                "Exception: ${ex.toString()}, notificationId=${state.notificationId}, notification is ${if (notification != null) 1 else 0}, stack:")
+                "Exception: ${ex.toString()}, notificationId=${event.notificationId}, notification is ${if (notification != null) 1 else 0}, stack:")
             ex.printStackTrace()
         }
 
@@ -435,6 +419,7 @@ class EventNotificationManager : IEventNotificationManager {
     private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
         val intent = Intent(ctx, SnoozeActivity::class.java)
+        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
     }
@@ -442,6 +427,7 @@ class EventNotificationManager : IEventNotificationManager {
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
 
         val intent = Intent(ctx, NotificationActionDismissService::class.java)
+        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
         return intent;
     }

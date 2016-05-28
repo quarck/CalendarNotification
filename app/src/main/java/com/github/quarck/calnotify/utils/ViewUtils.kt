@@ -23,6 +23,9 @@ import android.app.Activity
 import android.view.View
 
 
+@Suppress("UNCHECKED_CAST")
 fun <T> View.find(id: Int) = findViewById(id) as T
+
+@Suppress("UNCHECKED_CAST")
 fun <T> Activity.find(id: Int) = findViewById(id) as T
 

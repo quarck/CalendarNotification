@@ -77,7 +77,6 @@
     <string name="enable_reminders_summary">Wenn aktiviert, würde App wiederholt über aktive Benachrichtigungen erinnern</string>
     <string name="remind_interval">Erinnern Intervall</string>
     <string name="invalid_reminder_interval">Intervall ist nicht Null, zurückgesetzt zu 1 Minute</string>
-    <string name="hh_mm">SS:MM</string>
     <string name="max_reminders">Maximale Erinnerungen</string>
     <string name="max_reminders_summary">Maximale Anzahl der Mahnungen zu feuern, 0 für unbestimmte</string>
     <string name="pebble_notification_title">Calendar</string>
@@ -118,5 +117,11 @@
     <string name="snooze_until_string">Snooze until date / time:</string>
     <string name="custom_snooze_options_title">Custom snooze options</string>
     <string name="custom_snooze_options_summary">Show custom snooze options on the snooze activity</string>
+
+    <string-array name="time_units_plurals">
+        <item>Minutes</item>
+        <item>Hours</item>
+        <item>Days</item>
+    </string-array>
 
 </resources>

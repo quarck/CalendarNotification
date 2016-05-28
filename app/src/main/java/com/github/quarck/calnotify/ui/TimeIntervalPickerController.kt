@@ -27,7 +27,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
-class TimeIntervalPickerController(val view: View, titleId: Int) {
+class TimeIntervalPickerController(val view: View, titleId: Int?) {
 
     lateinit var numberPicker: NumberPicker
     lateinit var timeUnitsSpinners: Spinner
@@ -36,7 +36,11 @@ class TimeIntervalPickerController(val view: View, titleId: Int) {
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
 
-        view.find<TextView>(R.id.textViewTimeIntervalTitle).setText(titleId)
+        val label = view.find<TextView>(R.id.textViewTimeIntervalTitle)
+        if (titleId != null)
+            label.setText(titleId)
+        else
+            label.visibility = View.GONE
 
         timeUnitsSpinners.setSelection(MINUTES_ID)
 

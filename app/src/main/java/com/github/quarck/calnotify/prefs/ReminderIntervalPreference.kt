@@ -46,7 +46,7 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        picker = TimeIntervalPickerController(view, R.string.remind_interval)
+        picker = TimeIntervalPickerController(view, R.string.empty)
         picker.intervalMinutes = timeValue
     }
 

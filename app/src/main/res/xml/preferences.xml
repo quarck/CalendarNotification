@@ -144,6 +144,14 @@
             android:summary="@string/forward_to_pebble_summary"
             android:defaultValue="false"/>
 
+
+        <CheckBoxPreference
+            android:key="pebble_text_in_title"
+            android:title="@string/pebble_event_text_in_the_title"
+            android:summary="@string/pebble_event_text_in_the_title_summary"
+            android:defaultValue="false"
+            android:dependency="forward_to_pebble"/>
+
     </PreferenceScreen>
 
     <PreferenceScreen

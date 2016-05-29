@@ -124,4 +124,7 @@
         <item>Days</item>
     </string-array>
 
+    <string name="pebble_event_text_in_the_title">Event text in the title</string>
+    <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
+
 </resources>

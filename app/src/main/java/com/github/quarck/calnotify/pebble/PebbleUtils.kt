@@ -38,14 +38,19 @@ object PebbleUtils {
     val INTENT_EXTRA_SENDER = "Calendar Notification"
     val INTENT_EXTRA_NOTIFICATION_DATA_KEY = "notificationData"
 
-    fun forwardNotificationToPebble(context: Context, title: String, text: String) {
+    fun forwardNotificationToPebble(context: Context, title: String, text: String, oldFirmware: Boolean) {
 
         val i = Intent(SEND_NOTIFICATION_ACTION)
 
         val data = HashMap<String, String>()
 
-        data.put(JSON_OBJECT_KEY_TITLE, context.resources.getString(R.string.pebble_notification_title))
-        data.put(JSON_OBJECT_KEY_BODY, "${title}\n${text}")
+        if (oldFirmware) {
+            data.put(JSON_OBJECT_KEY_TITLE, title)
+            data.put(JSON_OBJECT_KEY_BODY, text)
+        } else {
+            data.put(JSON_OBJECT_KEY_TITLE, context.resources.getString(R.string.pebble_notification_title))
+            data.put(JSON_OBJECT_KEY_BODY, "${title}\n${text}")
+        }
 
         val jsonData = JSONObject(data)
         val notificationData = JSONArray().put(jsonData).toString()

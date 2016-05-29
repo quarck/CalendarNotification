@@ -413,7 +413,7 @@ class EventNotificationManager : IEventNotificationManager {
         }
 
         if (notificationSettings.forwardToPebble)
-            PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText)
+            PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
     }
 
     private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {

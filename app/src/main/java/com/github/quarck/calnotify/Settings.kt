@@ -42,7 +42,8 @@ data class NotificationSettingsSnapshot
         val ledNotificationOn: Boolean,
         val ledColor: Int,
         val headsUpNotification: Boolean,
-        val forwardToPebble: Boolean
+        val forwardToPebble: Boolean,
+        val pebbleOldFirmware: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -72,6 +73,9 @@ class Settings(ctx: Context) {
 
     val forwardToPebble: Boolean
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
+
+    val pebbleOldFirmware: Boolean
+        get() = prefs.getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
 
     val headsUpNotification: Boolean
         get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
@@ -158,7 +162,8 @@ class Settings(ctx: Context) {
                     ledNotificationOn = ledNotificationOn,
                     ledColor = ledColor,
                     headsUpNotification = headsUpNotification,
-                    forwardToPebble = forwardToPebble
+                    forwardToPebble = forwardToPebble,
+                    pebbleOldFirmware = pebbleOldFirmware
                 )
 
     companion object {
@@ -172,6 +177,7 @@ class Settings(ctx: Context) {
         private const val LED_ENABLED_KEY = "notification_led"
         private const val LED_COLOR_KEY = "notification_led_color"
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
+        private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
         private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
 

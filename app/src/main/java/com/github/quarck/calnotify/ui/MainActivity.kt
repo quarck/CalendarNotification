@@ -111,22 +111,24 @@ class MainActivity : Activity() {
 
         svcClient.bindService(this)
         svcClient.updateActivity = {
-                    isCausedByUser ->
+            isCausedByUser ->
 
-                    if (isCausedByUser) {
-                        reloadData()
-                    } else {
-                        runOnUiThread { reloadLayout.visibility = View.VISIBLE }
-                    }
-                }
+            if (isCausedByUser) {
+                reloadData()
+            } else {
+                runOnUiThread { reloadLayout.visibility = View.VISIBLE }
+            }
+        }
 
         reloadData()
 
         refreshReminderLastFired()
 
-        EventsManager.onAppResumed(this)
-
         checkPermissions()
+
+        background {
+            EventsManager.onAppResumed(this)
+        }
     }
 
     private fun checkPermissions() {

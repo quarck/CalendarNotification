@@ -55,4 +55,8 @@ object Consts {
     const val MAX_SUPPORTED_PRESETS = 6
 
     const val DEFAULT_CALENDAR_EVENT_COLOR = 0xff0000ff.toInt()
+
+    // Only auto-dismisss event notification if we can confirm that event was moved into the future
+    // by at least 1hr
+    const val EVENT_MOVED_THRESHOLD = 60*60*1000L
 }

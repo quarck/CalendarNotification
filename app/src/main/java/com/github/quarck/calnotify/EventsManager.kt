@@ -137,39 +137,47 @@ object EventsManager {
 
             val events = db.events
 
+            val currentTime = System.currentTimeMillis()
+
             for (event in events) {
 
-                var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
+                try {
+                    var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
 
-                if (newEvent == null ) {
+                    if (newEvent == null ) {
+                        newEvent = CalendarUtils.getEvent(context, event.eventId)
 
-                    newEvent = CalendarUtils.getEvent(context, event.eventId)
+                        if (newEvent != null
+                            && (newEvent.startTime - event.startTime > Consts.EVENT_MOVED_THRESHOLD)
+                            && (newEvent.startTime - currentTime > Consts.EVENT_MOVED_THRESHOLD) ) {
+                            // Here we have a confirmation that event was re-scheduled by user
+                            // to some time in the future and that's why original event instance has disappeared
+                            // - we are good to go to dismiss event reminder automatically
+                            dismissEvent(context, db, event.eventId, event.notificationId, true);
+                            val movedSec = (newEvent.startTime - event.startTime) / 1000L
+                            logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
+                        } else {
+                            // Here we can't confrim that event was moved into the future.
+                            // Perhaps it was removed, but this is not what users usually do.
+                            // Leave it for user to remove the notification
+                            logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
+                        }
 
-                    if (newEvent != null
-                            && newEvent.startTime > event.startTime
-                            && newEvent.alertTime >= System.currentTimeMillis()) {
-                        // Here we have a confirmation that event was re-scheduled by user
-                        // to some time in the future and that's why original event instance has disappeared
-                        // - we are good to go to dismiss event reminder automatically
-                        dismissEvent(context, db, event.eventId, event.notificationId, true);
-                        val movedSec = (newEvent.startTime - event.startTime) / 1000L
-                        logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                     } else {
-                        // Here we can't confrim that event was moved into the future.
-                        // Perhaps it was removed, but this is not what users usually do.
-                        // Leave it for user to remove the notification
-                        logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
+                        logger.debug("Event ${event.eventId} is still here");
+
+                        if (event.updateFrom(newEvent)) {
+                            logger.debug("Event was updated, updating our copy");
+
+                            db.updateEvent(
+                                event,
+                                displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
+
+                            repostNotifications = true
+                        }
                     }
-
-                } else {
-                    logger.debug("Event ${event.eventId} is still here");
-
-                    if (event.updateFrom(newEvent)) {
-                        logger.debug("Event was updated, updating our copy");
-
-                        db.updateEvent(event)
-                        repostNotifications = true
-                    }
+                } catch (ex: Exception) {
+                    logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
                 }
             }
         }
@@ -319,15 +327,18 @@ object EventsManager {
     }
 
     fun onAppStarted(context: Context?) {
-        if (context != null) {
-            notificationManager.postEventNotifications(context, true, null)
-        }
     }
 
     fun onAppResumed(context: Context?) {
         if (context != null) {
+            val changes = reloadCalendar(context);
+            notificationManager.postEventNotifications(context, true, null)
+
             scheduleNextAlarmForEvents(context)
             scheduleNextAlarmForReminders(context)
+
+            if (changes)
+                UINotifierService.notifyUI(context, true);
         }
     }
 

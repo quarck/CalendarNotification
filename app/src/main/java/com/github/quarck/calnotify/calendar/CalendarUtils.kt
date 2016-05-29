@@ -36,17 +36,18 @@ object CalendarUtils {
     private val logger = Logger("CalendarUtils");
 
     private val eventFields =
-            arrayOf(
-                    CalendarContract.CalendarAlerts.EVENT_ID,
-                    CalendarContract.CalendarAlerts.STATE,
-                    CalendarContract.CalendarAlerts.TITLE,
-                    CalendarContract.CalendarAlerts.DESCRIPTION,
-                    CalendarContract.CalendarAlerts.DTSTART,
-                    CalendarContract.CalendarAlerts.DTEND,
-                    CalendarContract.Events.EVENT_LOCATION,
-                    CalendarContract.Events.DISPLAY_COLOR,
-                    CalendarContract.CalendarAlerts.ALARM_TIME
-            )
+        arrayOf(
+            CalendarContract.CalendarAlerts.EVENT_ID,
+            CalendarContract.CalendarAlerts.STATE,
+            CalendarContract.CalendarAlerts.TITLE,
+            CalendarContract.CalendarAlerts.DESCRIPTION,
+            CalendarContract.CalendarAlerts.DTSTART,
+            CalendarContract.CalendarAlerts.DTEND,
+            CalendarContract.Events.EVENT_LOCATION,
+            CalendarContract.Events.DISPLAY_COLOR,
+            CalendarContract.CalendarAlerts.ALARM_TIME
+ //           CalendarContract.Events.CALENDAR_ID
+        )
 
     private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
         val eventId: Long? = cursor.getLong(0)
@@ -57,23 +58,25 @@ object CalendarUtils {
         val location: String? = cursor.getString(6)
         val color: Int? = cursor.getInt(7)
         val newAlarmTime: Long? = cursor.getLong(8)
+//        val calendarId: Long? = cursor.getLong(9)
 
         if (eventId == null || state == null || title == null || start == null)
             return Pair(null, null);
 
         val event =
-                EventRecord(
-                        eventId = eventId,
-                        notificationId = 0,
-                        alertTime = alarmTime ?: newAlarmTime ?: 0,
-                        title = title,
-                        startTime = start,
-                        endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
-                        location = location ?: "",
-                        lastEventVisibility = 0L,
-                        displayStatus = EventDisplayStatus.Hidden,
-                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
-                );
+            EventRecord(
+//                calendarId = calendarId ?: 0,
+                eventId = eventId,
+                notificationId = 0,
+                alertTime = alarmTime ?: newAlarmTime ?: 0,
+                title = title,
+                startTime = start,
+                endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                location = location ?: "",
+                lastEventVisibility = 0L,
+                displayStatus = EventDisplayStatus.Hidden,
+                color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+            );
 
         return Pair(state, event)
     }
@@ -204,27 +207,51 @@ object CalendarUtils {
 
         var ret: EventRecord? = null
 
-        val selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
+//        val selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
+
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+
+        val smallEventFields =
+            arrayOf(
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND,
+                CalendarContract.Events.EVENT_LOCATION,
+                CalendarContract.Events.DISPLAY_COLOR
+            )
 
         val cursor: Cursor? =
-                context.contentResolver.query(
-                        CalendarContract.CalendarAlerts.CONTENT_URI,
-                        eventFields,
-                        selection,
-                        arrayOf(eventId.toString()),
-                        null
-                );
+            context.contentResolver.query(
+                uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
+                smallEventFields,
+                null, //selection,
+                null, //arrayOf(eventId.toString()),
+                null
+            );
 
         if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val (state, event) = cursorToEventRecord(cursor, null);
 
-                if (event != null && event.eventId == eventId) {
-                    ret = event;
-                    break;
-                }
+            val title: String? = cursor.getString(0)
+            val start: Long? = cursor.getLong(1)
+            val end: Long? = cursor.getLong(2)
+            val location: String? = cursor.getString(3)
+            val color: Int? = cursor.getInt(4)
 
-            } while (cursor.moveToNext())
+            if (title != null && start != null) {
+                ret =
+                    EventRecord(
+                        eventId = eventId,
+                        notificationId = 0,
+                        alertTime = 0,
+                        title = title,
+                        startTime = start,
+                        endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                        location = location ?: "",
+                        lastEventVisibility = 0L,
+                        displayStatus = EventDisplayStatus.Hidden,
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+                    );
+            }
         } else {
             logger.error("Event $eventId not found")
         }

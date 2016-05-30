@@ -35,6 +35,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -285,7 +286,7 @@ class MainActivity : Activity() {
         var event = presenter.getEventAtPosition(position)
         if (event != null) {
             if (event.eventId == eventId) {
-                CalendarUtils.editCalendarEvent(this, event.eventId)
+                CalendarIntents.editCalendarEvent(this, event.eventId)
             } else {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
             }
@@ -299,7 +300,7 @@ class MainActivity : Activity() {
         var event = presenter.getEventAtPosition(position)
         if (event != null) {
             if (event.eventId == eventId) {
-                CalendarUtils.viewCalendarEvent(this, event.eventId)
+                CalendarIntents.viewCalendarEvent(this, event.eventId)
             } else {
                 Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
             }

@@ -29,6 +29,7 @@ import android.widget.ToggleButton
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
@@ -118,7 +119,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
             var ev = CalendarUtils.getEvent(this, id);
 
-            CalendarUtils.viewCalendarEvent(this, id);
+            CalendarIntents.viewCalendarEvent(this, id);
         }
     }
 
@@ -135,6 +136,7 @@ class TestButtonsAndToDoActivity : Activity() {
             val eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
 
             val event = EventRecord(
+                -1L,
                 eventId,
                 System.currentTimeMillis(),
                 0,

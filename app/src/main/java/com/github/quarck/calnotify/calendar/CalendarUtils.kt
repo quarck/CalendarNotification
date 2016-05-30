@@ -45,8 +45,8 @@ object CalendarUtils {
             CalendarContract.CalendarAlerts.DTEND,
             CalendarContract.Events.EVENT_LOCATION,
             CalendarContract.Events.DISPLAY_COLOR,
-            CalendarContract.CalendarAlerts.ALARM_TIME
- //           CalendarContract.Events.CALENDAR_ID
+            CalendarContract.CalendarAlerts.ALARM_TIME,
+            CalendarContract.Events.CALENDAR_ID
         )
 
     private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
@@ -58,14 +58,14 @@ object CalendarUtils {
         val location: String? = cursor.getString(6)
         val color: Int? = cursor.getInt(7)
         val newAlarmTime: Long? = cursor.getLong(8)
-//        val calendarId: Long? = cursor.getLong(9)
+        val calendarId: Long? = cursor.getLong(9)
 
         if (eventId == null || state == null || title == null || start == null)
             return Pair(null, null);
 
         val event =
             EventRecord(
-//                calendarId = calendarId ?: 0,
+                calendarId = calendarId ?: -1L,
                 eventId = eventId,
                 notificationId = 0,
                 alertTime = alarmTime ?: newAlarmTime ?: 0,
@@ -213,6 +213,7 @@ object CalendarUtils {
 
         val smallEventFields =
             arrayOf(
+                CalendarContract.Events.CALENDAR_ID,
                 CalendarContract.Events.TITLE,
                 CalendarContract.Events.DTSTART,
                 CalendarContract.Events.DTEND,
@@ -231,15 +232,17 @@ object CalendarUtils {
 
         if (cursor != null && cursor.moveToFirst()) {
 
-            val title: String? = cursor.getString(0)
-            val start: Long? = cursor.getLong(1)
-            val end: Long? = cursor.getLong(2)
-            val location: String? = cursor.getString(3)
-            val color: Int? = cursor.getInt(4)
+            val calendarId: Long? = cursor.getLong(0)
+            val title: String? = cursor.getString(1)
+            val start: Long? = cursor.getLong(2)
+            val end: Long? = cursor.getLong(3)
+            val location: String? = cursor.getString(4)
+            val color: Int? = cursor.getInt(5)
 
             if (title != null && start != null) {
                 ret =
                     EventRecord(
+                        calendarId = calendarId ?: -1L,
                         eventId = eventId,
                         notificationId = 0,
                         alertTime = 0,
@@ -531,24 +534,42 @@ object CalendarUtils {
     }
 
 
-    //
-    //
-    fun getCalendarViewIntent(eventId: Long): Intent {
-        var calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
-        return Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);
-    }
+    fun getCalendars(context: Context): List<CalendarRecord> {
 
-    fun getCalendarEditIntent(eventId: Long): Intent {
-        var uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
-        var intent = Intent(Intent.ACTION_VIEW).setData(uri)
-        return intent
-    }
+        val ret = mutableListOf<CalendarRecord>()
 
-    fun viewCalendarEvent(context: Context, eventId: Long) {
-        context.startActivity(getCalendarViewIntent(eventId))
-    }
+        val fields =
+            arrayOf(
+                CalendarContract.Calendars._ID,
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                CalendarContract.Calendars.OWNER_ACCOUNT,
+                CalendarContract.Calendars.ACCOUNT_NAME
+            )
 
-    fun editCalendarEvent(context: Context, eventId: Long) {
-        context.startActivity(getCalendarEditIntent(eventId))
+        val uri = CalendarContract.Calendars.CONTENT_URI
+
+        val cursor = context.contentResolver.query(uri, fields, null, null, null);
+
+        while (cursor != null && cursor.moveToNext()) {
+
+            // Get the field values
+            val calID: Long? = cursor.getLong(0);
+            val displayName: String? = cursor.getString(1);
+            val accountName: String? = cursor.getString(2);
+            val ownerName: String? = cursor.getString(3);
+
+            // Do something with the values...
+
+            ret.add(CalendarRecord(
+                calendarId = calID ?: -1L,
+                owner = ownerName ?: "",
+                accountName = accountName ?: "",
+                name = displayName ?: ""
+            ))
+        }
+
+        cursor?.close()
+
+        return ret
     }
 }

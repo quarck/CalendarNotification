@@ -34,28 +34,30 @@ class EventsStorage(context: Context)
 : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), Closeable {
     // Still used by some test code
     fun addEvent(
-            eventId: Long,
-            alertTime: Long,
-            title: String,
-            startTime: Long, endTime: Long,
-            location: String,
-            lastEventVisibility: Long,
-            displayStatus: EventDisplayStatus,
-            color: Int
+        calendarId: Long,
+        eventId: Long,
+        alertTime: Long,
+        title: String,
+        startTime: Long, endTime: Long,
+        location: String,
+        lastEventVisibility: Long,
+        displayStatus: EventDisplayStatus,
+        color: Int
     ): EventRecord {
         val ret =
-                EventRecord(
-                    eventId = eventId,
-                    notificationId = 0,
-                    alertTime = alertTime,
-                    title = title,
-                    startTime = startTime,
-                    endTime = endTime,
-                    location = location,
-                    lastEventVisibility = lastEventVisibility,
-                    displayStatus = displayStatus,
-                    color = color
-                )
+            EventRecord(
+                calendarId = calendarId,
+                eventId = eventId,
+                notificationId = 0,
+                alertTime = alertTime,
+                title = title,
+                startTime = startTime,
+                endTime = endTime,
+                location = location,
+                lastEventVisibility = lastEventVisibility,
+                displayStatus = displayStatus,
+                color = color
+            )
 
         synchronized (EventsStorage::class.java) {
             addEvent(ret)
@@ -171,7 +173,7 @@ class EventsStorage(context: Context)
                         "${KEY_RESERVED_STR1} TEXT, " +
                         "${KEY_RESERVED_STR2} TEXT, " +
                         "${KEY_RESERVED_STR3} TEXT, " +
-                        "${KEY_RESERVED_INT1} INTEGER, " +
+                        "${KEY_CALENDAR_ID} INTEGER, " +
                         "${KEY_RESERVED_INT2} INTEGER, " +
                         "${KEY_RESERVED_INT3} INTEGER" +
                         " )"
@@ -294,7 +296,7 @@ class EventsStorage(context: Context)
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
-                " ${KEY_EVENTID} = ?", // c. selections
+                " $KEY_EVENTID = ?", // c. selections
                 arrayOf<String>(eventId.toString()), // d. selections args
                 null, // e. group by
                 null, // f. h aving
@@ -318,10 +320,17 @@ class EventsStorage(context: Context)
         get() {
             val ret = LinkedList<EventRecord>()
 
-            val query = "SELECT * FROM " + TABLE_NAME
-
             val db = this.readableDatabase
-            val cursor = db.rawQuery(query, null)
+
+            val cursor = db.query(TABLE_NAME, // a. table
+                SELECT_COLUMNS, // b. column names
+                null, // c. selections
+                null,
+                null, // e. group by
+                null, // f. h aving
+                null, // g. order by
+                null) // h. limit
+
 
             if (cursor.moveToFirst()) {
                 do {
@@ -343,13 +352,16 @@ class EventsStorage(context: Context)
 
         val timePlusThr = currentTime + threshold
 
-        val query = "SELECT * FROM $TABLE_NAME " +
-            "WHERE ($KEY_SNOOZED_UNTIL = 0) OR ($KEY_SNOOZED_UNTIL < $timePlusThr) " +
-            "ORDER BY $KEY_LAST_EVENT_FIRE"
-
         val db = this.readableDatabase
 
-        val cursor = db.rawQuery(query, null)
+        val cursor = db.query(TABLE_NAME, // a. table
+            SELECT_COLUMNS, // b. column names
+            " ($KEY_SNOOZED_UNTIL = 0) OR ($KEY_SNOOZED_UNTIL < ?) ", // c. selections
+            arrayOf<String>(timePlusThr.toString()), // d. selections args
+            "$KEY_LAST_EVENT_FIRE", // e. group by
+            null, // f. h aving
+            null, // g. order by
+            null) // h. limit
 
         if (cursor.moveToFirst()) {
             do {
@@ -384,6 +396,7 @@ class EventsStorage(context: Context)
         if (includeId)
             values.put(KEY_EVENTID, event.eventId);
 
+        values.put(KEY_CALENDAR_ID, event.calendarId)
         values.put(KEY_NOTIFICATIONID, event.notificationId);
         values.put(KEY_TITLE, event.title);
         values.put(KEY_DESC, ""); // we have no description anymore
@@ -402,18 +415,18 @@ class EventsStorage(context: Context)
     private fun cursorToEventRecord(cursor: Cursor): EventRecord {
 
         return EventRecord(
-                eventId = cursor.getLong(0),
-                notificationId = cursor.getInt(1),
-                title = cursor.getString(2),
-//                description = cursor.getString(3),
-                startTime = cursor.getLong(4),
-                endTime = cursor.getLong(5),
-                location = cursor.getString(6),
-                snoozedUntil = cursor.getLong(7),
-                lastEventVisibility = cursor.getLong(8),
-                displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
-                color = cursor.getInt(10),
-                alertTime = cursor.getLong(11)
+            calendarId = (cursor.getLong(0) as Long?) ?: -1L,
+            eventId = cursor.getLong(1),
+            notificationId = cursor.getInt(2),
+            title = cursor.getString(3),
+            startTime = cursor.getLong(4),
+            endTime = cursor.getLong(5),
+            location = cursor.getString(6),
+            snoozedUntil = cursor.getLong(7),
+            lastEventVisibility = cursor.getLong(8),
+            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
+            color = cursor.getInt(10),
+            alertTime = cursor.getLong(11)
         )
     }
 
@@ -428,6 +441,7 @@ class EventsStorage(context: Context)
         private const val TABLE_NAME = "events"
         private const val INDEX_NAME = "eventsIdx"
 
+        private const val KEY_CALENDAR_ID = "i1"
         private const val KEY_EVENTID = "eventId"
         private const val KEY_NOTIFICATIONID = "notificationId"
         private const val KEY_TITLE = "title"
@@ -444,20 +458,22 @@ class EventsStorage(context: Context)
         private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
-        private const val KEY_RESERVED_INT1 = "i1"
         private const val KEY_RESERVED_INT2 = "i2"
         private const val KEY_RESERVED_INT3 = "i3"
 
         private val SELECT_COLUMNS = arrayOf<String>(
-                KEY_EVENTID, KEY_NOTIFICATIONID,
-                KEY_TITLE, KEY_DESC,
-                KEY_START, KEY_END,
-                KEY_LOCATION,
-                KEY_SNOOZED_UNTIL,
-                KEY_LAST_EVENT_FIRE,
-                KEY_IS_DISPLAYED,
-                KEY_COLOR,
-                KEY_ALERT_TIME
+            KEY_CALENDAR_ID,
+            KEY_EVENTID,
+            KEY_NOTIFICATIONID,
+            KEY_TITLE,
+            KEY_START,
+            KEY_END,
+            KEY_LOCATION,
+            KEY_SNOOZED_UNTIL,
+            KEY_LAST_EVENT_FIRE,
+            KEY_IS_DISPLAYED,
+            KEY_COLOR,
+            KEY_ALERT_TIME
         )
     }
 }

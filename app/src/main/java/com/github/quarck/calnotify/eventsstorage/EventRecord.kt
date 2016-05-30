@@ -30,7 +30,7 @@ enum class EventDisplayStatus(val code: Int) {
 }
 
 data class EventRecord(
-//    val calendarId: Long,
+    val calendarId: Long,
     val eventId: Long,
     val alertTime: Long,
     var notificationId: Int,

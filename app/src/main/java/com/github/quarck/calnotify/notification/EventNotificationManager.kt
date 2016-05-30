@@ -27,6 +27,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
@@ -316,7 +317,7 @@ class EventNotificationManager : IEventNotificationManager {
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val calendarIntent = CalendarUtils.getCalendarViewIntent(event.eventId);
+        val calendarIntent = CalendarIntents.getCalendarViewIntent(event.eventId);
         //calendarIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         //var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
 

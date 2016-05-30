@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.EventsManager
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
@@ -147,7 +148,7 @@ class SnoozeActivity : Activity() {
             dateView.text = date;
             timeView.text = time;
 
-            val onClick = View.OnClickListener { CalendarUtils.editCalendarEvent(this, eventId) }
+            val onClick = View.OnClickListener { CalendarIntents.editCalendarEvent(this, eventId) }
 
             dateView.setOnClickListener(onClick)
             timeView.setOnClickListener(onClick)
@@ -210,7 +211,7 @@ class SnoozeActivity : Activity() {
     }
 
     fun OnButtonEventDetailsClick(v: View?) {
-        CalendarUtils.viewCalendarEvent(this, eventId);
+        CalendarIntents.viewCalendarEvent(this, eventId);
     }
 
     private fun toastAboutQuietTime(quietUntil: Long) {
@@ -360,7 +361,7 @@ class SnoozeActivity : Activity() {
 
                 // Show
                 if (Settings(this).viewAfterEdit)
-                    CalendarUtils.viewCalendarEvent(this, event.eventId)
+                    CalendarIntents.viewCalendarEvent(this, event.eventId)
 
                 // terminate ourselves
                 finish();

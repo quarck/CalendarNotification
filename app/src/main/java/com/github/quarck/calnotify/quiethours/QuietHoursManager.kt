@@ -83,6 +83,9 @@ object QuietHoursManager {
 
     fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
+        return currentTimes.map { getSilentUntil(settings, it) }.toLongArray()
+
+/*
         var ret = LongArray(currentTimes.size)
 
         if (!isEnabled(settings))
@@ -114,12 +117,19 @@ object QuietHoursManager {
             silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
         while (true) {
+
             var allPassed = true
+
+            logger.debug("Iterating $silentFrom")
 
             for ( (idx, cal) in cals.withIndex()) {
 
-                if (silentFrom.before(cal))
+                logger.debug("Idx=$idx, cal=$cal")
+
+                if (silentFrom.before(cal)) {
+                    logger.debug("Not passed")
                     allPassed = false
+                }
 
                 if (cal.after(silentFrom) && cal.before(silentTo))
                     // this hits silent period -- so it should be silent until 'silentTo'
@@ -134,6 +144,7 @@ object QuietHoursManager {
         }
 
         return ret
+*/
     }
 
 }

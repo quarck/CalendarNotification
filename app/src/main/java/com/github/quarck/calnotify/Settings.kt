@@ -34,6 +34,14 @@ fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
     }
 }
 
+fun SharedPreferences?.setLong(key: String, value: Long) {
+    if (this != null) {
+        val editor = this.edit()
+        editor.putLong(key, value)
+        editor.commit()
+    }
+}
+
 data class NotificationSettingsSnapshot
 (
         val showDismissButton: Boolean,
@@ -58,6 +66,10 @@ class Settings(ctx: Context) {
     var removeOriginal: Boolean
         get() = prefs.getBoolean(REMOVE_ORIGINAL_KEY, true)
         set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
+
+    var lastCustomSnoozeIntervalMillis: Long
+        get() = prefs.getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
+        set(value) = prefs.setLong(LAST_CUSTOM_INTERVAL_KEY, value)
 
     val showDismissButton: Boolean
         get() = prefs.getBoolean(DISMISS_ENABLED_KEY, true)
@@ -198,6 +210,8 @@ class Settings(ctx: Context) {
         private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
         private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
         private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
+
+        private const val LAST_CUSTOM_INTERVAL_KEY = "last_custom_snooze_interval"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"

@@ -270,9 +270,13 @@ class SnoozeActivity : Activity() {
 
     fun OnButtonCustomSnoozeClick(v: View?) {
 
+        val settings = Settings(this)
+
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_interval_picker, null);
 
         val dialogController = TimeIntervalPickerController(dialogView, R.string.snooze_for)
+
+        dialogController.intervalMinutes = (settings.lastCustomSnoozeIntervalMillis / Consts.MINUTE_IN_SECONDS / 1000L).toInt()
 
         AlertDialog.Builder(this)
             .setView(dialogView)
@@ -280,6 +284,7 @@ class SnoozeActivity : Activity() {
                 x: DialogInterface?, y: Int ->
 
                 val intervalMilliseconds = dialogController.intervalMilliseconds
+                settings.lastCustomSnoozeIntervalMillis = intervalMilliseconds
                 snoozeEvent(intervalMilliseconds)
             }
             .setNegativeButton(R.string.cancel) {

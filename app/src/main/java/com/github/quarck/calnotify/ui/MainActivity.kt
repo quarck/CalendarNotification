@@ -203,8 +203,8 @@ class MainActivity : Activity() {
             R.id.action_snooze_all ->
                 startActivity(Intent(this, SnoozeActivity::class.java))
 
-            R.id.action_calendars ->
-                startActivity(Intent(this, CalendarsActivity::class.java))
+//            R.id.action_calendars ->
+  //              startActivity(Intent(this, CalendarsActivity::class.java))
 
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))

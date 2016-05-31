@@ -8,11 +8,11 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/snooze_all" />
 
-    <item
+    <!-- item
         android:id="@+id/action_calendars"
         android:orderInCategory="110"
         android:showAsAction="never"
-        android:title="@string/title_calendars_activity"/>
+        android:title="@string/title_calendars_activity"/ -->
 
     <item
         android:id="@+id/action_settings"

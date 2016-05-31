@@ -166,6 +166,12 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
         set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
+    fun getCalendarIsHandled(calendarId: Long) =
+        prefs.getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
+
+    fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
+        prefs.setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                     showDismissButton = showDismissButton,
@@ -212,6 +218,8 @@ class Settings(ctx: Context) {
         private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
 
         private const val LAST_CUSTOM_INTERVAL_KEY = "last_custom_snooze_interval"
+
+        private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"

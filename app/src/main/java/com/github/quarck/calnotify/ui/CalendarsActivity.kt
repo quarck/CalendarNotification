@@ -35,6 +35,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.logs.Logger
@@ -43,9 +44,13 @@ import com.github.quarck.calnotify.utils.find
 
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
-class CalendarListEntry(val type: CalendarListEntryType, val headerTitle: String? = null, val calendar: CalendarRecord? = null)
-{
-}
+class CalendarListEntry(
+    val type: CalendarListEntryType,
+    val headerTitle: String? = null,
+    val calendar: CalendarRecord? = null,
+    var isHandled: Boolean = true
+)
+
 
 class CalendarListAdapter(val context: Context, var entries: Array<CalendarListEntry>)
 : RecyclerView.Adapter<CalendarListAdapter.ViewHolder>() {
@@ -53,7 +58,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
     inner class ViewHolder(itemView: View)
     : RecyclerView.ViewHolder(itemView) {
 
-        var calendarId: Long? = null
+        var entry: CalendarListEntry? = null
         lateinit var view: LinearLayout
         lateinit var calendarOwner: TextView
         lateinit var checkboxCalendarName: CheckBox
@@ -71,10 +76,13 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
             checkboxCalendarName.setOnClickListener {
                 view ->
                 val action = onItemChanged
-                val calId = calendarId
+                val ent = entry
 
-                if (action != null && calId != null)
-                    action(view, calId, checkboxCalendarName.isChecked)
+                if (ent != null && ent.calendar != null) {
+                    ent.isHandled = checkboxCalendarName.isChecked
+                    if (action != null)
+                        action(view, ent.calendar.calendarId, ent.isHandled)
+                }
             }
         }
     }
@@ -87,24 +95,24 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
             val entry = entries[position]
 
+            holder.entry = entry
+
             when (entry.type) {
                 CalendarListEntryType.Header -> {
-                    holder.calendarId = null
                     holder.calendarOwner.text = entry.headerTitle
                     holder.calendarOwner.visibility = View.VISIBLE
                     holder.calendarEntryLayout.visibility = View.GONE
                 }
 
                 CalendarListEntryType.Calendar -> {
-                    holder.calendarId = entry.calendar?.calendarId ?: -1L;
                     holder.checkboxCalendarName.text = entry.calendar?.name ?: ""
                     holder.calendarOwner.visibility = View.GONE
                     holder.calendarEntryLayout.visibility = View.VISIBLE
                     holder.colorView.background = ColorDrawable(entry.calendar?.color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR)
+                    holder.checkboxCalendarName.isChecked = entry.isHandled
                 }
 
                 CalendarListEntryType.Divider -> {
-                    holder.calendarId = null
                     holder.calendarEntryLayout.visibility = View.GONE
                     holder.calendarOwner.visibility = View.GONE
                 }
@@ -129,6 +137,8 @@ class CalendarsActivity: Activity() {
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var settings: Settings
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -136,12 +146,15 @@ class CalendarsActivity: Activity() {
 
         setContentView(R.layout.activity_calendars)
 
+        settings = Settings(this)
 
         adapter = CalendarListAdapter(this, arrayOf<CalendarListEntry>())
 
         adapter.onItemChanged = {
             view, calendarId, isEnabled ->
             logger.debug("Item has changed: $calendarId $isEnabled");
+
+            settings.setCalendarIsHandled(calendarId, isEnabled)
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -153,27 +166,55 @@ class CalendarsActivity: Activity() {
     override fun onResume() {
         super.onResume()
 
+        logger.debug("This non-background thing is alive");
+
         background {
+            logger.debug("This background thing is alive");
+
             // load the data here
             val calendars = CalendarUtils.getCalendars(this).toTypedArray()
 
+            logger.debug("Got ${calendars.size} calendars");
+
             val entries = mutableListOf<CalendarListEntry>()
 
+            // Arrange entries by owner calendar
             for (owner in calendars.map { it.owner }.toSet()) {
 
-                entries.add(CalendarListEntry(type= CalendarListEntryType.Header, headerTitle = owner) )
+                logger.debug("Processing owner $owner")
 
+                // Add group title
+                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner) )
+
+                // Add all the calendars for this owner
                 entries.addAll(
                     calendars
                         .filter { it.owner == owner }
-                        .map{ CalendarListEntry(type= CalendarListEntryType.Calendar, calendar=it)})
+                        .sortedBy { it.calendarId }
+                        .map{
+                            CalendarListEntry(
+                                type = CalendarListEntryType.Calendar,
+                                calendar = it,
+                                isHandled = settings.getCalendarIsHandled(it.calendarId))
+                        })
 
-                entries.add(CalendarListEntry(type= CalendarListEntryType.Divider) )
+                logger.debug("Added some, entries.size is ${entries.size}")
+                // Add a divider
+                entries.add(CalendarListEntry(type = CalendarListEntryType.Divider) )
             }
+
+            // remove last divider
+            if (entries[entries.size-1].type == CalendarListEntryType.Divider)
+                entries.removeAt(entries.size-1)
 
             val entriesFinal = entries.toTypedArray()
 
+            logger.debug("total entries.size is ${entriesFinal.size}")
+
             runOnUiThread {
+
+                logger.debug("On UI Thread -- pushing it into UI")
+
                 // update activity finally
                 adapter.entries = entriesFinal
                 adapter.notifyDataSetChanged();

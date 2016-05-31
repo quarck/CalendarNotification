@@ -65,6 +65,8 @@ object QuietHoursManager {
         if (silentTo.before(silentFrom))
             silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
+        var cnt = 0
+
         while (silentFrom.before(cal)) {
 
             if (cal.after(silentFrom) && cal.before(silentTo)) {
@@ -74,8 +76,11 @@ object QuietHoursManager {
                 break;
             }
 
-            silentFrom.roll(Calendar.DAY_OF_MONTH, true)
-            silentTo.roll(Calendar.DAY_OF_MONTH, true)
+            silentFrom.add(Calendar.DATE, 1);
+            silentTo.add(Calendar.DATE, 1);
+
+            if (++cnt > 1000)
+                break;
         }
 
         return ret
@@ -83,9 +88,6 @@ object QuietHoursManager {
 
     fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
-        return currentTimes.map { getSilentUntil(settings, it) }.toLongArray()
-
-/*
         var ret = LongArray(currentTimes.size)
 
         if (!isEnabled(settings))
@@ -116,6 +118,8 @@ object QuietHoursManager {
         if (silentTo.before(silentFrom))
             silentTo.roll(Calendar.DAY_OF_MONTH, true);
 
+        var cnt = 0
+
         while (true) {
 
             var allPassed = true
@@ -139,12 +143,14 @@ object QuietHoursManager {
             if (allPassed)
                 break
 
-            silentFrom.roll(Calendar.DAY_OF_MONTH, true)
-            silentTo.roll(Calendar.DAY_OF_MONTH, true)
+            silentFrom.add(Calendar.DATE, 1);
+            silentTo.add(Calendar.DATE, 1);
+
+            if (++cnt > 1000)
+                break;
         }
 
         return ret
-*/
     }
 
 }

@@ -224,18 +224,29 @@ object EventsManager {
         }
     }
 
-    fun onCalendarEventFired(context: Context, event: EventRecord) {
+    fun onCalendarEventFired(context: Context, event: EventRecord): Boolean {
 
-        EventsStorage(context).use { it.addEvent(event) }
+        var ret = false
 
-        notificationManager.onEventAdded(context, event)
+        if (event.calendarId == -1L || Settings(context).getCalendarIsHandled(event.calendarId)) {
+            EventsStorage(context).use { it.addEvent(event) }
 
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+            notificationManager.onEventAdded(context, event)
 
-        UINotifierService.notifyUI(context, false);
+            scheduleNextAlarmForEvents(context);
+            scheduleNextAlarmForReminders(context);
 
-        logger.info("event added: ${event.eventId}");
+            ret = true
+
+            UINotifierService.notifyUI(context, false);
+
+            logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
+
+        } else {
+            logger.info("Event ${event.eventId} belongs to calendar ${event.calendarId} which is not handled, skipping");
+        }
+
+        return ret
     }
 
     fun snoozeEvent(context: Context, eventId: Long, snoozeDelay: Long): Pair<Boolean, Long> {

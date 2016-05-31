@@ -64,6 +64,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
         lateinit var checkboxCalendarName: CheckBox
         lateinit var colorView: View
         lateinit var calendarEntryLayout: LinearLayout
+        lateinit var spacingView: View
 
         init {
             view = itemView.find<LinearLayout>(R.id.linearLyaoutCalendarView)
@@ -72,6 +73,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
             checkboxCalendarName = view.find<CheckBox>(R.id.checkBoxCalendarSelection)
             colorView = view.find<View>(R.id.viewCalendarColor)
             calendarEntryLayout = view.find<LinearLayout>(R.id.linearLayoutCalendarEntry)
+            spacingView = view.find<View>(R.id.viewCalendarsSpacing)
 
             checkboxCalendarName.setOnClickListener {
                 view ->
@@ -102,6 +104,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
                     holder.calendarOwner.text = entry.headerTitle
                     holder.calendarOwner.visibility = View.VISIBLE
                     holder.calendarEntryLayout.visibility = View.GONE
+                    holder.spacingView.visibility = View.GONE
                 }
 
                 CalendarListEntryType.Calendar -> {
@@ -110,11 +113,13 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
                     holder.calendarEntryLayout.visibility = View.VISIBLE
                     holder.colorView.background = ColorDrawable(entry.calendar?.color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR)
                     holder.checkboxCalendarName.isChecked = entry.isHandled
+                    holder.spacingView.visibility = View.GONE
                 }
 
                 CalendarListEntryType.Divider -> {
                     holder.calendarEntryLayout.visibility = View.GONE
                     holder.calendarOwner.visibility = View.GONE
+                    holder.spacingView.visibility = View.VISIBLE
                 }
             }
         }
@@ -166,22 +171,14 @@ class CalendarsActivity: Activity() {
     override fun onResume() {
         super.onResume()
 
-        logger.debug("This non-background thing is alive");
-
         background {
-            logger.debug("This background thing is alive");
-
             // load the data here
             val calendars = CalendarUtils.getCalendars(this).toTypedArray()
-
-            logger.debug("Got ${calendars.size} calendars");
 
             val entries = mutableListOf<CalendarListEntry>()
 
             // Arrange entries by owner calendar
             for (owner in calendars.map { it.owner }.toSet()) {
-
-                logger.debug("Processing owner $owner")
 
                 // Add group title
                 entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner) )
@@ -198,7 +195,6 @@ class CalendarsActivity: Activity() {
                                 isHandled = settings.getCalendarIsHandled(it.calendarId))
                         })
 
-                logger.debug("Added some, entries.size is ${entries.size}")
                 // Add a divider
                 entries.add(CalendarListEntry(type = CalendarListEntryType.Divider) )
             }
@@ -209,11 +205,7 @@ class CalendarsActivity: Activity() {
 
             val entriesFinal = entries.toTypedArray()
 
-            logger.debug("total entries.size is ${entriesFinal.size}")
-
             runOnUiThread {
-
-                logger.debug("On UI Thread -- pushing it into UI")
 
                 // update activity finally
                 adapter.entries = entriesFinal
@@ -222,12 +214,7 @@ class CalendarsActivity: Activity() {
         }
     }
 
-    private fun onItemChanged(v: View, on: Boolean) {
-        logger.debug("Item has changed");
-    }
-
     companion object {
         val logger = Logger("CalendarsActivity")
     }
-
 }

@@ -49,9 +49,9 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
                 for (event in events) {
                     logger.info("broadcastreceiver: Seen event ${event.eventId} / ${event.title}")
 
-                    EventsManager.onCalendarEventFired(context, event);
+                    val shouldRemove = EventsManager.onCalendarEventFired(context, event);
 
-                    if (removeOriginal) {
+                    if (shouldRemove && removeOriginal) {
                         logger.info("Dismissing original reminder")
 
                         CalendarUtils.dismissNativeEventReminder(context, event.eventId);

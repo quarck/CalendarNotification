@@ -1,6 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <Preference android:title="@string/title_calendars_activity" >
+        <intent
+            android:action="com.github.quarck.calnotify.ui.CalendarsActivity"/>
+    </Preference>
+
     <PreferenceScreen
         android:title="@string/notification_settings"
         android:key="pref_key_settings">

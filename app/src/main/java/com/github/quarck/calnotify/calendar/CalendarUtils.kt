@@ -544,6 +544,7 @@ object CalendarUtils {
                 CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
                 CalendarContract.Calendars.OWNER_ACCOUNT,
                 CalendarContract.Calendars.ACCOUNT_NAME,
+                CalendarContract.Calendars.ACCOUNT_TYPE,
                 CalendarContract.Calendars.CALENDAR_COLOR
             )
 
@@ -558,7 +559,8 @@ object CalendarUtils {
             val displayName: String? = cursor.getString(1);
             val accountName: String? = cursor.getString(2);
             val ownerName: String? = cursor.getString(3);
-            val color: Int? = cursor.getInt(4)
+            val accountType: String? = cursor.getString(4)
+            val color: Int? = cursor.getInt(5)
 
             // Do something with the values...
 
@@ -566,6 +568,7 @@ object CalendarUtils {
                 calendarId = calID ?: -1L,
                 owner = ownerName ?: "",
                 accountName = accountName ?: "",
+                accountType = accountType ?: "",
                 name = displayName ?: "",
                 color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
             ))

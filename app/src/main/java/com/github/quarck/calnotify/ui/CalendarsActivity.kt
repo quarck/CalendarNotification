@@ -178,7 +178,7 @@ class CalendarsActivity: Activity() {
             val entries = mutableListOf<CalendarListEntry>()
 
             // Arrange entries by owner calendar
-            for (owner in calendars.map { it.owner }.toSet()) {
+            for ((owner, type) in calendars.map { Pair(it.owner, it.accountType) }.toSet()) {
 
                 // Add group title
                 entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner) )
@@ -186,7 +186,7 @@ class CalendarsActivity: Activity() {
                 // Add all the calendars for this owner
                 entries.addAll(
                     calendars
-                        .filter { it.owner == owner }
+                        .filter { it.owner == owner && it.accountType == type }
                         .sortedBy { it.calendarId }
                         .map{
                             CalendarListEntry(

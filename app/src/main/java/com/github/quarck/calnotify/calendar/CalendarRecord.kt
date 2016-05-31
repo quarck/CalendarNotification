@@ -24,5 +24,6 @@ data class CalendarRecord(
     val owner: String,
     val accountName: String,
     val name: String,
-    val color: Int
+    val color: Int,
+    val accountType: String
 )

@@ -33,6 +33,7 @@ import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.calendar.CalendarUtils
@@ -40,29 +41,40 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
+enum class CalendarListEntryType {Header, Calendar, Divider }
 
-class CalendarListAdapter(val context: Context, var calendars: Array<CalendarRecord>)
+class CalendarListEntry(val type: CalendarListEntryType, val headerTitle: String? = null, val calendar: CalendarRecord? = null)
+{
+}
+
+class CalendarListAdapter(val context: Context, var entries: Array<CalendarListEntry>)
 : RecyclerView.Adapter<CalendarListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View)
     : RecyclerView.ViewHolder(itemView) {
 
-        var calendarId: Long = -1L
+        var calendarId: Long? = null
         lateinit var view: LinearLayout
         lateinit var calendarOwner: TextView
         lateinit var checkboxCalendarName: CheckBox
+        lateinit var colorView: View
+        lateinit var calendarEntryLayout: LinearLayout
 
         init {
             view = itemView.find<LinearLayout>(R.id.linearLyaoutCalendarView)
 
             calendarOwner = view.find<TextView>(R.id.textViewCalendarOwner)
             checkboxCalendarName = view.find<CheckBox>(R.id.checkBoxCalendarSelection)
+            colorView = view.find<View>(R.id.viewCalendarColor)
+            calendarEntryLayout = view.find<LinearLayout>(R.id.linearLayoutCalendarEntry)
 
             checkboxCalendarName.setOnClickListener {
                 view ->
                 val action = onItemChanged
-                if (action != null)
-                    action(view, calendarId, checkboxCalendarName.isChecked ?: true)
+                val calId = calendarId
+
+                if (action != null && calId != null)
+                    action(view, calId, checkboxCalendarName.isChecked)
             }
         }
     }
@@ -71,14 +83,32 @@ class CalendarListAdapter(val context: Context, var calendars: Array<CalendarRec
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
 
-        if (position >= 0 && position < calendars.size && holder != null) {
+        if (position >= 0 && position < entries.size && holder != null) {
 
-            val calendar = calendars[position]
+            val entry = entries[position]
 
-            holder.calendarOwner.background = ColorDrawable(calendar.color)
-            holder.calendarId = calendar.calendarId
-            holder.checkboxCalendarName.text = calendar.name
-            holder.calendarOwner.text = calendar.owner
+            when (entry.type) {
+                CalendarListEntryType.Header -> {
+                    holder.calendarId = null
+                    holder.calendarOwner.text = entry.headerTitle
+                    holder.calendarOwner.visibility = View.VISIBLE
+                    holder.calendarEntryLayout.visibility = View.GONE
+                }
+
+                CalendarListEntryType.Calendar -> {
+                    holder.calendarId = entry.calendar?.calendarId ?: -1L;
+                    holder.checkboxCalendarName.text = entry.calendar?.name ?: ""
+                    holder.calendarOwner.visibility = View.GONE
+                    holder.calendarEntryLayout.visibility = View.VISIBLE
+                    holder.colorView.background = ColorDrawable(entry.calendar?.color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR)
+                }
+
+                CalendarListEntryType.Divider -> {
+                    holder.calendarId = null
+                    holder.calendarEntryLayout.visibility = View.GONE
+                    holder.calendarOwner.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -88,7 +118,7 @@ class CalendarListAdapter(val context: Context, var calendars: Array<CalendarRec
     }
 
     override fun getItemCount(): Int {
-        return calendars.size;
+        return entries.size;
     }
 }
 
@@ -107,7 +137,7 @@ class CalendarsActivity: Activity() {
         setContentView(R.layout.activity_calendars)
 
 
-        adapter = CalendarListAdapter(this, arrayOf<CalendarRecord>())
+        adapter = CalendarListAdapter(this, arrayOf<CalendarListEntry>())
 
         adapter.onItemChanged = {
             view, calendarId, isEnabled ->
@@ -127,9 +157,25 @@ class CalendarsActivity: Activity() {
             // load the data here
             val calendars = CalendarUtils.getCalendars(this).toTypedArray()
 
+            val entries = mutableListOf<CalendarListEntry>()
+
+            for (owner in calendars.map { it.owner }.toSet()) {
+
+                entries.add(CalendarListEntry(type= CalendarListEntryType.Header, headerTitle = owner) )
+
+                entries.addAll(
+                    calendars
+                        .filter { it.owner == owner }
+                        .map{ CalendarListEntry(type= CalendarListEntryType.Calendar, calendar=it)})
+
+                entries.add(CalendarListEntry(type= CalendarListEntryType.Divider) )
+            }
+
+            val entriesFinal = entries.toTypedArray()
+
             runOnUiThread {
                 // update activity finally
-                adapter.calendars = calendars;
+                adapter.entries = entriesFinal
                 adapter.notifyDataSetChanged();
             }
         }

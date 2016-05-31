@@ -78,7 +78,7 @@ class MainActivity : Activity() {
 
         presenter = EventsPresenter(adapter)
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, VERTICAL)
+        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = find<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
@@ -202,6 +202,9 @@ class MainActivity : Activity() {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(Intent(this, SnoozeActivity::class.java))
+
+            R.id.action_calendars ->
+                startActivity(Intent(this, CalendarsActivity::class.java))
 
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))

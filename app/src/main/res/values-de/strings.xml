@@ -127,4 +127,6 @@
     <string name="pebble_event_text_in_the_title">Event text in the title</string>
     <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
 
+    <string name="title_calendars_activity">Handled Calendars</string>
+
 </resources>

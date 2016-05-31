@@ -19,4 +19,10 @@
 
 package com.github.quarck.calnotify.calendar
 
-data class CalendarRecord(val calendarId: Long, val owner: String, val accountName: String, val name: String)
+data class CalendarRecord(
+    val calendarId: Long,
+    val owner: String,
+    val accountName: String,
+    val name: String,
+    val color: Int
+)

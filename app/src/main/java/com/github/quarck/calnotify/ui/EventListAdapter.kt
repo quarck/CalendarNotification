@@ -35,8 +35,9 @@ import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
-class EventListAdapter(context: Context, var events: Array<EventRecord>)
+class EventListAdapter(val context: Context, var events: Array<EventRecord>)
 : RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
+
     inner class ViewHolder(itemView: View)
     : RecyclerView.ViewHolder(itemView) {
         var eventId: Long = 0;
@@ -103,8 +104,6 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
         }
     }
 
-    internal var context: Context
-
     var onItemClick: ((View, Int, Long) -> Unit)? = null;
     var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
     var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
@@ -116,7 +115,6 @@ class EventListAdapter(context: Context, var events: Array<EventRecord>)
     private val snoozeString: String
 
     init {
-        this.context = context
         primaryColor = context.resources.getColor(R.color.primary)
         changeString = context.resources.getString(R.string.card_view_btn_change);
         snoozeString = context.resources.getString(R.string.card_view_btn_snooze);

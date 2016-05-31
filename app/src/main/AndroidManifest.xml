@@ -50,6 +50,13 @@
         </activity>
 
         <activity
+            android:name=".ui.CalendarsActivity"
+            android:label="@string/title_calendars_activity"
+            android:parentActivityName=".ui.MainActivity">
+            >
+        </activity>
+
+        <activity
             android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do">
         </activity>

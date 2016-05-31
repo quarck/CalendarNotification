@@ -1,4 +1,4 @@
-# CalendarNotification
+# Calendar Notifications Plus
 Android app extending calendar notifications with snooze button and notifications persistance
 
 This app would replace default calendar event notifications, providing snooze functionality and notifications persistence. Reboot is handled, all notifications are restored after reboot. Focus of this app is to keep its operation as transparent as possible, calendar notifications would behave like expected: direct click on notification opens event details in default calendar application, new functionality is provided via actions available for notifications.

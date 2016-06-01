@@ -23,6 +23,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -59,6 +60,7 @@ class MainActivity : Activity() {
     private lateinit var adapter: EventListAdapter
     private lateinit var presenter: EventsPresenter
 
+    private var shouldShowPowerOptimisationWarning = false
 
     private val svcClient by lazy { UINotifierServiceClient() }
 
@@ -87,6 +89,9 @@ class MainActivity : Activity() {
 
         quietHoursLayout = find<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
         quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
+
+        shouldShowPowerOptimisationWarning =
+            (Build.MANUFACTURER.indexOf("samsung", ignoreCase=true) != -1) && !Settings(this).powerOptimisationWarningShown
     }
 
     public override fun onStart() {
@@ -125,11 +130,31 @@ class MainActivity : Activity() {
 
         refreshReminderLastFired()
 
+        if (shouldShowPowerOptimisationWarning)
+            showPowerOptimisationWarning()
+
         checkPermissions()
 
         background {
             EventsManager.onAppResumed(this)
         }
+    }
+
+    private fun showPowerOptimisationWarning() {
+        shouldShowPowerOptimisationWarning = false
+
+        AlertDialog.Builder(this)
+            .setMessage(R.string.power_optimisation_warning)
+            .setCancelable(false)
+            .setPositiveButton(R.string.dismiss) {
+                x, y ->
+            }
+            .setNegativeButton(R.string.never_show_again) {
+                x, y ->
+                Settings(this@MainActivity).powerOptimisationWarningShown = true
+            }
+            .create()
+            .show()
     }
 
     private fun checkPermissions() {

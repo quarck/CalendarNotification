@@ -159,4 +159,7 @@
 
     <string name="title_calendars_activity">Handled Calendars</string>
 
+    <string name="power_optimisation_warning"><b>Important information for Samsung users:</b>\n\nOn many recent devices Samsung have implemented app power optimisation\nIf this optimisation is enabled for Calendar Notifications Plus, event reminders might fire with some delay from expected reminder time\n\nThere is no way for app to check if it is optimized or not so it is recommended to check it manually\n\nDisabling power optimisation for this app would not cause any battery drain\n\nPlease open\nSettings -&gt; Battery -&gt; App power saving details -&gt; Find "Calendar Notifications Plus"\nand set it to \'Disabled\'\n\nThis information does not apply if you are using custom non-TouchWiz based ROM</string>
+    <string name="never_show_again">Don\'t show again</string>
+
 </resources>

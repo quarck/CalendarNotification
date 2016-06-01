@@ -172,6 +172,10 @@ class Settings(ctx: Context) {
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
         prefs.setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
+    var powerOptimisationWarningShown: Boolean
+        get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
+        set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                     showDismissButton = showDismissButton,
@@ -220,6 +224,8 @@ class Settings(ctx: Context) {
         private const val LAST_CUSTOM_INTERVAL_KEY = "last_custom_snooze_interval"
 
         private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
+
+        private const val POWER_OPTIMISATION_WARNING_SHOWN_KEY = "power_warning1_shown"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"

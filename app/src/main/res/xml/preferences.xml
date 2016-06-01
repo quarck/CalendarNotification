@@ -8,7 +8,7 @@
 
     <PreferenceScreen
         android:title="@string/notification_settings"
-        android:key="pref_key_settings">
+        android:key="pref_key_notification_settings">
 
         <CheckBoxPreference
             android:key="pref_key_enable_dismiss_button"
@@ -106,7 +106,7 @@
 
     <PreferenceScreen
         android:title="@string/quiet_hours_section"
-        android:key="pref_key_reminder"
+        android:key="pref_key_quiet_hours"
         >
         <CheckBoxPreference
             android:key="enable_quiet_hours"

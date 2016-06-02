@@ -111,53 +111,5 @@
 
     <string name="heads_up_notification">Notificações Heads-up</string>
     <string name="heads_up_notification_summary">Mostra brevemente o balão de notificação no topo da tela</string>
-    <string name="projectPageOnGitHub">Project page on GitHub</string>
-    <string name="snooze_all">Snooze All</string>
-    <string name="snooze_all_confirmation">Snooze ALL events? Already snoozed would also change snooze time</string>
-    <string name="all_events">Snooze all events</string>
-    <string name="snooze_events_for">Snooze events for:</string>
-    <string name="led_color">LED Color</string>
-    <string name="wake_screen_title">Wake screen</string>
-    <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
-    <string name="error_cannot_parse_pattern">Cannot parse this pattern</string>
-    <string name="quiet_time_from">Quiet time from</string>
-    <string name="quiet_time_to">Quiet time to</string>
-    <string name="enable_quiet_time">Enable quiet time</string>
-
-    <string name="reminders_section">Reminders</string>
-    <string name="quiet_hours_section">Quiet hours settings</string>
-    <string name="quiet_hours">Quiet hours</string>
-
-    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next snooze reminder hits quiet time period, no sound or vibration would be played until end of period on %s</string>
-    <string name="quiet_hours_summary">Use quiet time to mute all reminders and snoozed event during certain period of time, primary events notifications would still play sound and vibrate (according to settings)</string>
-
-    <string name="quiet_hours_mute_primary">Mute primary notifications</string>
-    <string name="quiet_hours_mute_primary_summary">Mute primary notifications during quiet time, so app becomes completely silent. Primary notification is a very first notification for particular event</string>
-
-    <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active\nNo reminders until %s</string>
-    <string name="hits_quiet_period">(hits quiet period)</string>
-    <string name="custom_snooze_entry">Custom</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
-
-    <string name="for_a_custom_time">For a custom period</string>
-    <string name="until_specific_time">Until specific time and date</string>
-    <string name="snooze_for">Snooze for:</string>
-    <string name="selected_time_is_in_the_past"><b>Can\'t snooze:</b><br>selected time is in the past</br></string>
-    <string name="snooze_until_string">Snooze until date / time:</string>
-    <string name="custom_snooze_options_title">Custom snooze options</string>
-    <string name="custom_snooze_options_summary">Show custom snooze options on the snooze activity</string>
-
-    <string-array name="time_units_plurals">
-        <item>Minutes</item>
-        <item>Hours</item>
-        <item>Days</item>
-    </string-array>
-
-    <string name="pebble_event_text_in_the_title">Event text in the title</string>
-    <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
-
-    <string name="title_calendars_activity">Handled Calendars</string>
-
-    <string name="power_optimisation_warning"><b>Important information for Samsung users:</b>\n\nOn many recent devices Samsung have implemented app power optimisation\nIf this optimisation is enabled for Calendar Notifications Plus, event reminders might fire with some delay from expected reminder time\n\nThere is no way for app to check if it is optimized or not so it is recommended to check it manually\n\nDisabling power optimisation for this app would not cause any battery drain\n\nPlease open\nSettings -&gt; Battery -&gt; App power saving details -&gt; Find "Calendar Notifications Plus"\nand set it to \'Disabled\'\n\nThis information does not apply if you are using custom non-TouchWiz based ROM</string>
-    <string name="never_show_again">Don\'t show again</string>
 
 </resources>

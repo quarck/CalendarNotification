@@ -75,7 +75,7 @@
     <string name="notification_settings">Configurações de Notificação</string>
     <string name="snooze_presets">Configurações de adiamento</string>
     <string name="smartwatch_support">Suporte a Smartwatch</string>
-    <string name="dialog_snooze_text_label">Lista das opções de adiamento separadas por vírgulas\n\nValores suportados como \'15m\', \'2h\' or \'3d\'\n\nAté 6 items na lista\n\nDeixe em branco para usar o padrão</string>
+    <!-- string name="dialog_snooze_text_label">Lista das opções de adiamento separadas por vírgulas\n\nValores suportados como \'15m\', \'2h\' or \'3d\'\n\nAté 6 items na lista\n\nDeixe em branco para usar o padrão</string -->
 
     <string name="error_cannot_parse_preset">Desculpe, não foi possível processar sua entrada</string>
     <string name="snooze_presets_title">Opções de Adiamento</string>

@@ -43,9 +43,9 @@ object PreferenceUtils {
                     .filter { !it.isEmpty() }
                     .map {
                         str ->
-                        var unit = str.takeLast(1)
-                        var num = str.dropLast(1).toLong()
-                        var seconds =
+                        val unit = str.takeLast(1)
+                        val num = str.dropLast(1).toLong()
+                        val seconds =
                                 when (unit) {
                                     "m" -> num * Consts.MINUTE_IN_SECONDS;
                                     "h" -> num * Consts.HOUR_IN_SECONDS;

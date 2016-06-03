@@ -260,8 +260,12 @@ object EventsManager {
                 val event = db.getEvent(eventId)
 
                 if (event != null) {
+                    val snoozedUntil =
+                        if (snoozeDelay > 0L) currentTime + snoozeDelay
+                        else event.startTime - Math.abs(snoozeDelay) // same as "event.startTime + snoozeDelay" but a little bit more readable
+
                     db.updateEvent(event,
-                        snoozedUntil = currentTime + snoozeDelay,
+                        snoozedUntil = snoozedUntil,
                         lastEventVisibility = currentTime,
                         displayStatus = EventDisplayStatus.Hidden)
                 } else {

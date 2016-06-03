@@ -13,7 +13,7 @@
     <string name="on">Enabled</string>
     <string name="off">Disabled</string>
 
-    <string name="empty" translatable="false"></string>
+    <string name="empty" translatable="false"/>
 
     <string name="dismiss">Dismiss</string>
     <string name="snooze">Snooze</string>
@@ -79,7 +79,7 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="snooze_presets">Snooze settings</string>
     <string name="smartwatch_support">Smartwatch support</string>
-    <string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
+    <!-- string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string -->
 
     <string name="error_cannot_parse_preset">Sorry, cannot parse your input</string>
     <string name="snooze_presets_title">Snooze Presets</string>
@@ -162,4 +162,8 @@
     <string name="power_optimisation_warning"><b>Important information for Samsung users:</b>\n\nOn many recent devices Samsung have implemented app power optimisation\nIf this optimisation is enabled for Calendar Notifications Plus, event reminders might fire with some delay from expected reminder time\n\nThere is no way for app to check if it is optimized or not so it is recommended to check it manually\n\nDisabling power optimisation for this app would not cause any battery drain\n\nPlease open\nSettings -&gt; Battery -&gt; App power saving details -&gt; Find "Calendar Notifications Plus"\nand set it to \'Disabled\'\n\nThis information does not apply if you are using custom non-TouchWiz based ROM</string>
     <string name="never_show_again">Don\'t show again</string>
 
+
+    <string name="dialog_snooze_text_label_v2">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\' as well as negative values like \'-5m\' ("5 minutes before event")\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
+
+    <string name="before_event">before event</string>
 </resources>

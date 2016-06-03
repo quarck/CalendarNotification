@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.logs.Logger
@@ -47,6 +48,8 @@ class SnoozeActivity : Activity() {
     var notificationId: Int = -1
 
     lateinit var snoozePresets: LongArray
+
+    lateinit var settings: Settings
 
     val snoozePresetControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1,
@@ -79,11 +82,27 @@ class SnoozeActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snooze)
 
-        val settings = Settings(this)
+        val currentTime = System.currentTimeMillis()
+
+        settings = Settings(this)
+
+        // Populate event details
+        notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
+        eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
+
+        val isSnoozeAll = (eventId == -1L)
+
+        // load event if it is not a "snooze all"
+        var event: EventRecord? = null
+        if (!isSnoozeAll)
+            event = EventsStorage(this).use { it.getEvent(eventId) }
 
         snoozePresets = settings.snoozePresets
 
-        val currentTime = System.currentTimeMillis()
+        // remove "XXX minutes before event" snooze presents for "Snooze All" and when
+        // event time has passed already
+        if (isSnoozeAll || event != null && event.startTime < currentTime)
+            snoozePresets = snoozePresets.filter{ it > 0L }.toLongArray()
 
         val isQuiet =
             QuietHoursManager.isInsideQuietPeriod(
@@ -117,13 +136,7 @@ class SnoozeActivity : Activity() {
         find<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
         find<TextView>(R.id.snooze_view_snooze_until).visibility = showCustomSnoozeVisibility
 
-        // Populate event details
-        notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
-        eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
-
-        val event = EventsStorage(this).use { it.getEvent(eventId) }
-
-        if (eventId != -1L && event != null) {
+        if (!isSnoozeAll && event != null) {
             val title =
                     if (event.title == "")
                         this.resources.getString(R.string.empty_title)
@@ -137,7 +150,7 @@ class SnoozeActivity : Activity() {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
                 val locationView = find<TextView>(R.id.snooze_view_location)
                 locationView.text = location;
-                locationView.setOnClickListener { MapsUtils.openLocation(this, event.location) }
+                locationView.setOnClickListener { MapsUtils.openLocation(this, event?.location ?: "") }
             }
 
             find<TextView>(R.id.snooze_view_title).text = title;
@@ -163,7 +176,7 @@ class SnoozeActivity : Activity() {
             if (isRepeating != null && !isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
 
-        } else if (eventId == -1L) { // no eventId passed or -1 passed - it is "Snooze All"
+        } else if (isSnoozeAll) {
 
             find<TextView>(R.id.snooze_view_title).text = this.resources.getString(R.string.all_events);
             find<RelativeLayout>(R.id.layout_snooze_time).visibility = View.GONE
@@ -177,30 +190,22 @@ class SnoozeActivity : Activity() {
     private fun formatPreset(preset: Long): String {
         var num: Long = 0
         var unit: String = ""
-        var presetSeconds = preset / 1000L;
+        val presetSeconds = preset / 1000L;
 
         if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.DAY_IN_SECONDS;
-
-            unit =
-                    if (num > 1)
-                        resources.getString(R.string.days)
-                    else
-                        resources.getString(R.string.day)
+            unit = if (num != 1L) resources.getString(R.string.days) else resources.getString(R.string.day)
         } else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.HOUR_IN_SECONDS;
-            unit =
-                    if (num > 1)
-                        resources.getString(R.string.hours)
-                    else
-                        resources.getString(R.string.hour)
+            unit = if (num != 1L) resources.getString(R.string.hours) else resources.getString(R.string.hour)
         } else {
             num = presetSeconds / Consts.MINUTE_IN_SECONDS;
-            unit =
-                    if (num > 1)
-                        resources.getString(R.string.minutes)
-                    else
-                        resources.getString(R.string.minute)
+            unit = if (num != 1L) resources.getString(R.string.minutes) else resources.getString(R.string.minute)
+        }
+
+        if (num < 0) {
+            val beforeEventString = resources.getString(R.string.before_event)
+            return "${-num} $unit $beforeEventString"
         }
 
         return "$num $unit"
@@ -226,7 +231,6 @@ class SnoozeActivity : Activity() {
     }
 
     private fun snoozeEvent(snoozeDelay: Long) {
-
         if (notificationId != -1 && eventId != -1L) {
             logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
 

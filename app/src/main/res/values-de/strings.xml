@@ -11,7 +11,7 @@
     <string name="change_event_time">Termin verschieben</string>
     <string name="day">Tag</string>
     <string name="days">Tage</string>
-    <string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'\n\nBis zu 6 Einträge unterstützt\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden</string>
+    <!-- string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'\n\nBis zu 6 Einträge unterstützt\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden</string -->
     <string name="email_developer">MAIL AN DEN ENTWICKLER</string>
     <string name="empty_title">(Kein Titel)</string>
     <string name="error_cannot_parse_preset">Entschuldigung, Ihre Eingabe konnte nicht verarbeitet werden</string>

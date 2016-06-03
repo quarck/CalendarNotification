@@ -228,7 +228,7 @@ class Settings(ctx: Context) {
         private const val POWER_OPTIMISATION_WARNING_SHOWN_KEY = "power_warning1_shown"
 
         // Default values
-        internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d"
+        internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
         internal const val DEFAULT_REMINDER_INTERVAL = 10
         internal const val DEFAULT_MAX_REMINDERS = "0"
     }

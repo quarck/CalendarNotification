@@ -342,6 +342,15 @@ object EventsManager {
     }
 
     fun onAppStarted(context: Context?) {
+
+        if (context != null) {
+            val settings = Settings(context)
+
+            if (settings.versionCodeFirstInstalled == 0L) {
+                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0);
+                settings.versionCodeFirstInstalled = pInfo.versionCode.toLong();
+            }
+        }
     }
 
     fun onAppResumed(context: Context?) {

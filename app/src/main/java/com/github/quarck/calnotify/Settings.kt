@@ -176,6 +176,10 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
         set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
 
+    var versionCodeFirstInstalled: Long
+        get() = prefs.getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
+        set(value) = prefs.setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                     showDismissButton = showDismissButton,
@@ -226,6 +230,8 @@ class Settings(ctx: Context) {
         private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
 
         private const val POWER_OPTIMISATION_WARNING_SHOWN_KEY = "power_warning1_shown"
+
+        private const val VERSION_CODE_FIRST_INSTALLED_KEY = "first_installed_ver"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

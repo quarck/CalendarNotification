@@ -46,7 +46,9 @@ object CalendarUtils {
             CalendarContract.Events.EVENT_LOCATION,
             CalendarContract.Events.DISPLAY_COLOR,
             CalendarContract.CalendarAlerts.ALARM_TIME,
-            CalendarContract.Events.CALENDAR_ID
+            CalendarContract.Events.CALENDAR_ID,
+            CalendarContract.CalendarAlerts.BEGIN,
+            CalendarContract.CalendarAlerts.END
         )
 
     private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
@@ -60,6 +62,9 @@ object CalendarUtils {
         val newAlarmTime: Long? = cursor.getLong(8)
         val calendarId: Long? = cursor.getLong(9)
 
+        val instanceStart: Long? = cursor.getLong(10)
+        val instanceEnd: Long? = cursor.getLong(11)
+
         if (eventId == null || state == null || title == null || start == null)
             return Pair(null, null);
 
@@ -72,6 +77,8 @@ object CalendarUtils {
                 title = title,
                 startTime = start,
                 endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                instanceStartTime = instanceStart ?: start,
+                instanceEndTime = instanceEnd ?: (start + Consts.HOUR_IN_SECONDS*1000L),
                 location = location ?: "",
                 lastEventVisibility = 0L,
                 displayStatus = EventDisplayStatus.Hidden,
@@ -249,6 +256,8 @@ object CalendarUtils {
                         title = title,
                         startTime = start,
                         endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                        instanceStartTime = 0L, // unknown
+                        instanceEndTime = 0L, // unknown
                         location = location ?: "",
                         lastEventVisibility = 0L,
                         displayStatus = EventDisplayStatus.Hidden,

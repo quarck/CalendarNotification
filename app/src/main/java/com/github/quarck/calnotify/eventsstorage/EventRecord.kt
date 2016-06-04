@@ -37,6 +37,8 @@ data class EventRecord(
     var title: String,
     var startTime: Long,
     var endTime: Long,
+    var instanceStartTime: Long,
+    var instanceEndTime: Long,
     var location: String,
     var lastEventVisibility: Long,
     var snoozedUntil: Long = 0,
@@ -61,6 +63,16 @@ data class EventRecord(
             ret = true
         }
 
+        if (newEvent.instanceStartTime != 0L && instanceStartTime != newEvent.instanceStartTime) {
+            instanceStartTime = newEvent.instanceStartTime
+            ret = true
+        }
+
+        if (newEvent.instanceEndTime != 0L && instanceEndTime != newEvent.instanceEndTime) {
+            instanceEndTime = newEvent.instanceEndTime
+            ret = true
+        }
+
         if (location != newEvent.location) {
             location = newEvent.location
             ret = true
@@ -73,4 +85,10 @@ data class EventRecord(
 
         return ret
     }
+
+    val instanceStart: Long
+        get() = if (instanceStartTime != 0L) instanceStartTime else startTime
+
+    val instanceEnd: Long
+        get() = if (instanceEndTime != 0L) instanceEndTime else endTime
 }

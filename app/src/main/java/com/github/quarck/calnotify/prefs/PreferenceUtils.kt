@@ -28,33 +28,35 @@ object PreferenceUtils {
 
 
     fun packTime(time: Pair<Int, Int>)
-            = time.component1() * MINUTES_IN_HOUR + time.component2()
+        = time.component1() * MINUTES_IN_HOUR + time.component2()
 
     fun unpackTime(tm: Int)
-            = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
+        = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
 
     internal fun parseSnoozePresets(value: String): LongArray? {
-        var ret: LongArray? = null;
+        val ret: LongArray?
 
         try {
             ret = value
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { !it.isEmpty() }
-                    .map {
-                        str ->
-                        val unit = str.takeLast(1)
-                        val num = str.dropLast(1).toLong()
-                        val seconds =
-                                when (unit) {
-                                    "m" -> num * Consts.MINUTE_IN_SECONDS;
-                                    "h" -> num * Consts.HOUR_IN_SECONDS;
-                                    "d" -> num * Consts.DAY_IN_SECONDS;
-                                    else -> throw Exception("Unknown unit ${unit}")
-                                }
-                        seconds * 1000L
-                    }
-                    .toLongArray()
+                .split(",")
+                .map { it.trim() }
+                .filter { !it.isEmpty() }
+                .map {
+                    str ->
+
+                    val unit = str.takeLast(1)
+                    val num = str.dropLast(1).toLong()
+                    val seconds =
+                            when (unit) {
+                                "m" -> num * Consts.MINUTE_IN_SECONDS;
+                                "h" -> num * Consts.HOUR_IN_SECONDS;
+                                "d" -> num * Consts.DAY_IN_SECONDS;
+                                else -> throw Exception("Unknown unit ${unit}")
+                            }
+                    seconds * 1000L
+                }
+                .filter { it != 0L } // Remove zeroes as they are ambiguous
+                .toLongArray()
         } catch (ex: Exception) {
             ret = null;
         }
@@ -64,7 +66,7 @@ object PreferenceUtils {
 
     fun parsePattern(pattern: String): LongArray? {
 
-        var ret: LongArray?
+        val ret: LongArray?
 
         try {
             ret = pattern

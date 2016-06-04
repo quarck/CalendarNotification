@@ -32,42 +32,9 @@ import java.util.*
 
 class EventsStorage(context: Context)
 : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), Closeable {
-    // Still used by some test code
-    fun addEvent(
-        calendarId: Long,
-        eventId: Long,
-        alertTime: Long,
-        title: String,
-        startTime: Long, endTime: Long,
-        location: String,
-        lastEventVisibility: Long,
-        displayStatus: EventDisplayStatus,
-        color: Int
-    ): EventRecord {
-        val ret =
-            EventRecord(
-                calendarId = calendarId,
-                eventId = eventId,
-                notificationId = 0,
-                alertTime = alertTime,
-                title = title,
-                startTime = startTime,
-                endTime = endTime,
-                location = location,
-                lastEventVisibility = lastEventVisibility,
-                displayStatus = displayStatus,
-                color = color
-            )
-
-        synchronized (EventsStorage::class.java) {
-            addEvent(ret)
-        }
-
-        return ret
-    }
 
     fun addEvent(event: EventRecord)
-            = synchronized (EventsStorage::class.java) { addEventImpl(event) }
+        = synchronized (EventsStorage::class.java) { addEventImpl(event) }
 
     fun updateEvent(event: EventRecord,
                     alertTime: Long? = null,
@@ -75,23 +42,27 @@ class EventsStorage(context: Context)
                     snoozedUntil: Long? = null,
                     startTime: Long? = null,
                     endTime: Long? = null,
+                    instanceStartTime: Long? = null,
+                    instanceEndTime: Long? = null,
                     location: String? = null,
                     lastEventVisibility: Long? = null,
                     displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
     ) {
         val newEvent =
-                event.copy(
-                    alertTime = alertTime ?: event.alertTime,
-                    title = title ?: event.title,
-                    snoozedUntil = snoozedUntil ?: event.snoozedUntil,
-                    startTime = startTime ?: event.startTime,
-                    endTime = endTime ?: event.endTime,
-                    location = location ?: event.location,
-                    lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
-                    displayStatus = displayStatus ?: event.displayStatus,
-                    color = color ?: event.color
-                );
+            event.copy(
+                alertTime = alertTime ?: event.alertTime,
+                title = title ?: event.title,
+                snoozedUntil = snoozedUntil ?: event.snoozedUntil,
+                startTime = startTime ?: event.startTime,
+                endTime = endTime ?: event.endTime,
+                instanceStartTime = instanceStartTime ?: event.instanceStartTime,
+                instanceEndTime = instanceEndTime ?: event.instanceEndTime,
+                location = location ?: event.location,
+                lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                displayStatus = displayStatus ?: event.displayStatus,
+                color = color ?: event.color
+            );
 
         updateEvent(newEvent)
     }
@@ -102,6 +73,8 @@ class EventsStorage(context: Context)
                      snoozedUntil: Long? = null,
                      startTime: Long? = null,
                      endTime: Long? = null,
+                     instanceStartTime: Long? = null,
+                     instanceEndTime: Long? = null,
                      location: String? = null,
                      lastEventVisibility: Long? = null,
                      displayStatus: EventDisplayStatus? = null,
@@ -116,6 +89,8 @@ class EventsStorage(context: Context)
                     snoozedUntil = snoozedUntil ?: event.snoozedUntil,
                     startTime = startTime ?: event.startTime,
                     endTime = endTime ?: event.endTime,
+                    instanceStartTime = instanceStartTime ?: event.instanceStartTime,
+                    instanceEndTime = instanceEndTime ?: event.instanceEndTime,
                     location = location ?: event.location,
                     lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
                     displayStatus = displayStatus ?: event.displayStatus,
@@ -174,8 +149,8 @@ class EventsStorage(context: Context)
                         "${KEY_RESERVED_STR2} TEXT, " +
                         "${KEY_RESERVED_STR3} TEXT, " +
                         "${KEY_CALENDAR_ID} INTEGER, " +
-                        "${KEY_RESERVED_INT2} INTEGER, " +
-                        "${KEY_RESERVED_INT3} INTEGER" +
+                        "${KEY_INSTANCE_START} INTEGER, " +
+                        "${KEY_INSTANCE_END} INTEGER" +
                         " )"
 
         logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
@@ -402,6 +377,8 @@ class EventsStorage(context: Context)
         values.put(KEY_DESC, ""); // we have no description anymore
         values.put(KEY_START, event.startTime);
         values.put(KEY_END, event.endTime);
+        values.put(KEY_INSTANCE_START, event.instanceStartTime);
+        values.put(KEY_INSTANCE_END, event.instanceEndTime);
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
         values.put(KEY_LAST_EVENT_FIRE, event.lastEventVisibility);
@@ -421,12 +398,14 @@ class EventsStorage(context: Context)
             title = cursor.getString(3),
             startTime = cursor.getLong(4),
             endTime = cursor.getLong(5),
-            location = cursor.getString(6),
-            snoozedUntil = cursor.getLong(7),
-            lastEventVisibility = cursor.getLong(8),
-            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(9)),
-            color = cursor.getInt(10),
-            alertTime = cursor.getLong(11)
+            instanceStartTime = cursor.getLong(6),
+            instanceEndTime =  cursor.getLong(7),
+            location = cursor.getString(8),
+            snoozedUntil = cursor.getLong(9),
+            lastEventVisibility = cursor.getLong(10),
+            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(11)),
+            color = cursor.getInt(12),
+            alertTime = cursor.getLong(13)
         )
     }
 
@@ -448,6 +427,8 @@ class EventsStorage(context: Context)
         private const val KEY_DESC = "description"
         private const val KEY_START = "start"
         private const val KEY_END = "end"
+        private const val KEY_INSTANCE_START = "i2"
+        private const val KEY_INSTANCE_END = "i3"
         private const val KEY_LOCATION = "location"
         private const val KEY_SNOOZED_UNTIL = "snoozeUntil"
         private const val KEY_IS_DISPLAYED = "displayed"
@@ -458,8 +439,6 @@ class EventsStorage(context: Context)
         private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
-        private const val KEY_RESERVED_INT2 = "i2"
-        private const val KEY_RESERVED_INT3 = "i3"
 
         private val SELECT_COLUMNS = arrayOf<String>(
             KEY_CALENDAR_ID,
@@ -468,6 +447,8 @@ class EventsStorage(context: Context)
             KEY_TITLE,
             KEY_START,
             KEY_END,
+            KEY_INSTANCE_START,
+            KEY_INSTANCE_END,
             KEY_LOCATION,
             KEY_SNOOZED_UNTIL,
             KEY_LAST_EVENT_FIRE,

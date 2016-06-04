@@ -157,12 +157,11 @@ object EventsManager {
                             val movedSec = (newEvent.startTime - event.startTime) / 1000L
                             logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                         } else {
-                            // Here we can't confrim that event was moved into the future.
+                            // Here we can't confirm that event was moved into the future.
                             // Perhaps it was removed, but this is not what users usually do.
                             // Leave it for user to remove the notification
                             logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
                         }
-
                     } else {
                         logger.debug("Event ${event.eventId} is still here");
 
@@ -262,7 +261,7 @@ object EventsManager {
                 if (event != null) {
                     val snoozedUntil =
                         if (snoozeDelay > 0L) currentTime + snoozeDelay
-                        else event.startTime - Math.abs(snoozeDelay) // same as "event.startTime + snoozeDelay" but a little bit more readable
+                        else event.instanceStart - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
                     db.updateEvent(event,
                         snoozedUntil = snoozedUntil,

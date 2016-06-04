@@ -45,31 +45,31 @@ object EventRecordUtils {
 }
 
 fun EventRecord.formatText(ctx: Context): String {
-    var sb = StringBuilder()
+    val sb = StringBuilder()
 
-    if (this.startTime != 0L) {
+    if (this.instanceStart != 0L) {
 
-        var currentTime = System.currentTimeMillis();
+        val currentTime = System.currentTimeMillis();
 
-        var today = Date(currentTime)
-        var start = Date(this.startTime)
-        var end = Date(this.endTime)
+        val today = Date(currentTime)
+        val start = Date(this.instanceStart)
+        val end = Date(this.instanceEnd)
 
         val currentDay = Calendar.getInstance()
-        var startDay = Calendar.getInstance()
-        var endDay = Calendar.getInstance()
+        val startDay = Calendar.getInstance()
+        val endDay = Calendar.getInstance()
 
         currentDay.time = today
         startDay.time = start
         endDay.time = end
 
-        var dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
-        var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+        val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
+        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
         if (!currentDay.dayEquals(startDay)) {
 
             if (startDay.dayEquals(endDay))
-                sb.append(EventRecordUtils.dayName(ctx, startTime, dateFormatter));
+                sb.append(EventRecordUtils.dayName(ctx, instanceStart, dateFormatter));
             else
                 sb.append(dateFormatter.format(start));
 
@@ -101,37 +101,37 @@ fun EventRecord.formatText(ctx: Context): String {
 }
 
 fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
-    var sbDay = StringBuilder()
-    var sbTime = StringBuilder();
+    val sbDay = StringBuilder()
+    val sbTime = StringBuilder();
 
-    if (this.startTime != 0L) {
-        var currentTime = System.currentTimeMillis();
+    if (this.instanceStart != 0L) {
+        val currentTime = System.currentTimeMillis();
 
-        var today = Date(currentTime)
-        var start = Date(this.startTime)
-        var end = Date(this.endTime)
+        val today = Date(currentTime)
+        val start = Date(this.instanceStart)
+        val end = Date(this.instanceEnd)
 
         val currentDay = Calendar.getInstance()
-        var startDay = Calendar.getInstance()
-        var endDay = Calendar.getInstance()
+        val startDay = Calendar.getInstance()
+        val endDay = Calendar.getInstance()
 
         currentDay.time = today
         startDay.time = start
         endDay.time = end
 
-        var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
-        sbTime.append(timeFormatter.format(Date(this.startTime)));
+        sbTime.append(timeFormatter.format(Date(this.instanceStart)));
 
         if (endTime != 0L && endDay.dayEquals(startDay)) {
             sbTime.append(" - ");
-            sbTime.append(timeFormatter.format(Date(this.endTime)))
+            sbTime.append(timeFormatter.format(Date(this.instanceEnd)))
         }
 
         sbDay.append(
                 EventRecordUtils.dayName(
                         ctx,
-                        startTime, DateFormat.getDateInstance(DateFormat.FULL)
+                        instanceStart, DateFormat.getDateInstance(DateFormat.FULL)
                 )
         );
     }

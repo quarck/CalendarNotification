@@ -165,5 +165,5 @@
 
     <string name="dialog_snooze_text_label_v2">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\' as well as negative values like \'-5m\' ("5 minutes before event")\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
 
-    <string name="before_event">before event</string>
+    <string name="before_event">before</string>
 </resources>

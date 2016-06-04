@@ -99,9 +99,9 @@ class SnoozeActivity : Activity() {
 
         snoozePresets = settings.snoozePresets
 
-        // remove "XXX minutes before event" snooze presents for "Snooze All" and when
-        // event time has passed already
-        if (isSnoozeAll || event != null && event.startTime < currentTime)
+        // remove "MM minutes before event" snooze presents for "Snooze All"
+        // and when event time has passed already
+        if (isSnoozeAll || event != null && event.instanceStart < currentTime)
             snoozePresets = snoozePresets.filter{ it > 0L }.toLongArray()
 
         val isQuiet =

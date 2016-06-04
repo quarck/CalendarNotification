@@ -143,6 +143,8 @@ class TestButtonsAndToDoActivity : Activity() {
                 if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
+                currentTime + 3600L * 1000L,
+                currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
                 System.currentTimeMillis(),
                 0L,

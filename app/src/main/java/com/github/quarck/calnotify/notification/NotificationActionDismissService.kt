@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.notification
 import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
 
 class NotificationActionDismissService : IntentService("ServiceNotificationActionDismiss") {
@@ -35,7 +35,7 @@ class NotificationActionDismissService : IntentService("ServiceNotificationActio
             val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
             if (notificationId != -1 && eventId != -1L) {
-                EventsManager.dismissEvent(this, eventId, notificationId)
+                ApplicationController.dismissEvent(this, eventId, notificationId)
                 logger.info("ServiceNotificationActionDismiss: event dismissed by user: $eventId")
             } else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")

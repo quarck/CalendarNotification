@@ -61,9 +61,9 @@ class UINotifierServiceClient {
         }
     }
 
-    public var updateActivity: ((Boolean) -> Unit)? = null
+    var updateActivity: ((Boolean) -> Unit)? = null
 
-    fun bindService(context: Context) {
+    fun bindService(context: Context, updateAct: ((Boolean) -> Unit)) {
         if (!isBound) {
             logger.debug("binding service");
 
@@ -72,6 +72,8 @@ class UINotifierServiceClient {
         } else {
             logger.debug("Service is already bound")
         }
+
+        updateActivity = updateAct
     }
 
     fun unbindService(context: Context) {

@@ -37,7 +37,7 @@ import com.github.quarck.calnotify.ui.UINotifierService
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.setExactCompat
 
-object EventsManager {
+object ApplicationController {
     private val notificationManager: IEventNotificationManager = EventNotificationManager()
 
     private val logger = Logger("EventsManager");

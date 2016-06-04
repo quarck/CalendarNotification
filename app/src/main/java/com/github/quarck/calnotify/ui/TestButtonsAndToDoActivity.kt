@@ -26,7 +26,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
@@ -129,7 +129,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
         if (first) {
             settings.quietHoursOneTimeReminderEnabled = true
-            EventsManager.onAppResumed(this)
+            ApplicationController.onAppResumed(this)
         } else {
             val currentTime = System.currentTimeMillis();
 
@@ -154,7 +154,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
             cnt++;
 
-            EventsManager.onCalendarEventFired(this, event)
+            ApplicationController.onCalendarEventFired(this, event)
         }
     }
 }

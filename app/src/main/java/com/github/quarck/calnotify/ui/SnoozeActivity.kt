@@ -28,7 +28,7 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
@@ -37,7 +37,7 @@ import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.maps.MapsUtils
+import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
@@ -152,7 +152,7 @@ class SnoozeActivity : Activity() {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
                 val locationView = find<TextView>(R.id.snooze_view_location)
                 locationView.text = location;
-                locationView.setOnClickListener { MapsUtils.openLocation(this, event?.location ?: "") }
+                locationView.setOnClickListener { MapsIntents.openLocation(this, event?.location ?: "") }
             }
 
             find<TextView>(R.id.snooze_view_title).text = title;
@@ -236,7 +236,7 @@ class SnoozeActivity : Activity() {
         if (notificationId != -1 && eventId != -1L) {
             logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
 
-            val (isQuiet, nextFire) = EventsManager.snoozeEvent(this, eventId, snoozeDelay);
+            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, eventId, snoozeDelay);
             if (isQuiet)
                 toastAboutQuietTime(nextFire)
 
@@ -250,7 +250,7 @@ class SnoozeActivity : Activity() {
 
                     logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                    val (isQuiet, nextFire) = EventsManager.snoozeAllEvents(this, snoozeDelay);
+                    val (isQuiet, nextFire) = ApplicationController.snoozeAllEvents(this, snoozeDelay);
                     if (isQuiet)
                         toastAboutQuietTime(nextFire)
                     finish();
@@ -363,7 +363,7 @@ class SnoozeActivity : Activity() {
 
                 logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                EventsManager.dismissEvent(this, eventId, notificationId)
+                ApplicationController.dismissEvent(this, eventId, notificationId)
 
                 // Show
                 if (Settings(this).viewAfterEdit)

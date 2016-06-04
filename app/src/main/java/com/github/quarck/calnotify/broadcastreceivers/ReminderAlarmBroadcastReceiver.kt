@@ -27,7 +27,7 @@ import android.media.MediaPlayer
 import android.os.PowerManager
 import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
@@ -51,7 +51,7 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
-            if (!EventsManager.hasActiveEvents(context))
+            if (!ApplicationController.hasActiveEvents(context))
                 return@wakeLocked
 
             val settings = Settings(context)
@@ -130,7 +130,7 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
         logger.debug("Firing reminder")
 
-        EventsManager.fireEventReminder(context);
+        ApplicationController.fireEventReminder(context);
 
         // following will actually write xml to file, so check if it is 'true' at the moment
         // before writing 'false' and so wasting flash memory cycles.

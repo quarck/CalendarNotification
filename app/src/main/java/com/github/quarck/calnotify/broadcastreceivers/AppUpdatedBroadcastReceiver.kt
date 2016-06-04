@@ -22,14 +22,14 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
 
 class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");
-        EventsManager.onAppUpdated(context, intent)
+        ApplicationController.onAppUpdated(context, intent)
     }
 
     companion object {

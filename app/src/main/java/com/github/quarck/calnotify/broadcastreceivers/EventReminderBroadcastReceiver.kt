@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.EventsManager
+import com.github.quarck.calnotify.ApplicationController
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.logs.Logger
@@ -49,7 +49,7 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
                 for (event in events) {
                     logger.info("broadcastreceiver: Seen event ${event.eventId} / ${event.title}")
 
-                    val shouldRemove = EventsManager.onCalendarEventFired(context, event);
+                    val shouldRemove = ApplicationController.onCalendarEventFired(context, event);
 
                     if (shouldRemove && removeOriginal) {
                         logger.info("Dismissing original reminder")

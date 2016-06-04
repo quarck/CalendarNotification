@@ -41,14 +41,14 @@ import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.maps.MapsUtils
+import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import java.util.*
 
-class MainActivity : Activity() {
+class MainActivity : Activity(), EventListCallback {
     private val settings: Settings by lazy { Settings(this) }
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
@@ -58,7 +58,6 @@ class MainActivity : Activity() {
     private lateinit var quietHoursTextView: TextView
 
     private lateinit var adapter: EventListAdapter
-    private lateinit var presenter: EventsPresenter
 
     private var shouldShowPowerOptimisationWarning = false
 
@@ -71,14 +70,7 @@ class MainActivity : Activity() {
 
         setContentView(R.layout.activity_main)
 
-        adapter = EventListAdapter(this, arrayOf<EventRecord>())
-        adapter.onItemReschedule = { v, p, e -> onItemReschedule(v, p, e); }
-        adapter.onItemDismiss = { v, p, e -> onItemDismiss(v, p, e); }
-        adapter.onItemClick = { v, p, e -> onItemClick(v, p, e); }
-        adapter.onItemLocation = { v, p, e -> onItemLocation(v, p, e); }
-        adapter.onItemDateTime = { v, p, e -> onItemDateTime(v, p, e); }
-
-        presenter = EventsPresenter(adapter)
+        adapter = EventListAdapter(this, R.layout.event_card, this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = find<RecyclerView>(R.id.list_events)
@@ -91,14 +83,15 @@ class MainActivity : Activity() {
         quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
 
         shouldShowPowerOptimisationWarning =
-            (Build.MANUFACTURER.indexOf("samsung", ignoreCase=true) != -1) && !Settings(this).powerOptimisationWarningShown
+            (Build.MANUFACTURER.indexOf(Consts.SAMSUNG_KEYWORD, ignoreCase=true) != -1) &&
+                !Settings(this).powerOptimisationWarningShown
     }
 
     public override fun onStart() {
         logger.debug("onStart()")
         super.onStart()
 
-        EventsManager.onAppStarted(applicationContext);
+        ApplicationController.onAppStarted(applicationContext);
     }
 
     private fun refreshReminderLastFired() {
@@ -115,15 +108,13 @@ class MainActivity : Activity() {
         logger.debug("onResume")
         super.onResume()
 
-        svcClient.bindService(this)
-        svcClient.updateActivity = {
-            isCausedByUser ->
-
-            if (isCausedByUser) {
+        svcClient.bindService(this) {
+            // Service callback on data update
+            causedByUser ->
+            if (causedByUser)
                 reloadData()
-            } else {
+            else
                 runOnUiThread { reloadLayout.visibility = View.VISIBLE }
-            }
         }
 
         reloadData()
@@ -136,7 +127,7 @@ class MainActivity : Activity() {
         checkPermissions()
 
         background {
-            EventsManager.onAppResumed(this)
+            ApplicationController.onAppResumed(this)
         }
     }
 
@@ -158,27 +149,26 @@ class MainActivity : Activity() {
     }
 
     private fun checkPermissions() {
-        var hasPermissions = PermissionsManager.hasAllPermissions(this)
+        val hasPermissions = PermissionsManager.hasAllPermissions(this)
 
         find<TextView>(R.id.no_permissions_view).visibility =
                 if (hasPermissions) View.GONE else View.VISIBLE;
 
         if (!hasPermissions) {
-
             if (PermissionsManager.shouldShowRationale(this)) {
 
                 AlertDialog.Builder(this)
-                        .setMessage(R.string.application_has_no_access)
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.ok) {
-                            x, y ->
-                            PermissionsManager.requestPermissions(this)
-                        }
-                        .setNegativeButton(R.string.cancel) {
-                            x, y ->
-                        }
-                        .create()
-                        .show()
+                    .setMessage(R.string.application_has_no_access)
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.ok) {
+                        x, y ->
+                        PermissionsManager.requestPermissions(this)
+                    }
+                    .setNegativeButton(R.string.cancel) {
+                        x, y ->
+                    }
+                    .create()
+                    .show()
             } else {
                 PermissionsManager.requestPermissions(this)
             }
@@ -196,8 +186,7 @@ class MainActivity : Activity() {
                 granted = false
         }
 
-        find<TextView>(R.id.no_permissions_view).visibility =
-                if (granted) View.GONE else View.VISIBLE;
+        find<TextView>(R.id.no_permissions_view).visibility = if (granted) View.GONE else View.VISIBLE;
     }
 
     public override fun onPause() {
@@ -213,9 +202,9 @@ class MainActivity : Activity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
 
-        var menuItem = menu.findItem(R.id.action_snooze_all)
+        val menuItem = menu.findItem(R.id.action_snooze_all)
         if (menuItem != null)
-            menuItem.isEnabled = presenter.size > 0
+            menuItem.isEnabled = adapter.itemCount > 0
 
         return true
     }
@@ -241,7 +230,7 @@ class MainActivity : Activity() {
     private fun reloadData() {
         background {
 
-            var events =
+            val events =
                 EventsStorage(this).use {
 
                     db -> db.events.sortedWith(
@@ -263,10 +252,10 @@ class MainActivity : Activity() {
                         }).toTypedArray()
                 }
 
-            var quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
+            val quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
 
             runOnUiThread {
-                presenter.setEventsToDisplay(events);
+                adapter.setEventsToDisplay(events);
                 onNumEventsUpdated()
 
                 if (quietPeriodUntil > 0L) {
@@ -292,100 +281,74 @@ class MainActivity : Activity() {
         refreshReminderLastFired()
     }
 
-    private fun onItemLocation(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemLocation, pos=$position, eventId=$eventId");
-
-        var event = presenter.getEventAtPosition(position)
-        if (event != null) {
-            if (event.eventId == eventId) {
-                MapsUtils.openLocation(this, event.location)
-            } else {
-                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-            }
-        }
+    private fun onNumEventsUpdated() {
+        val hasEvents = adapter.itemCount > 0
+        find<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
+        this.invalidateOptionsMenu();
     }
 
-    private fun onItemDateTime(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemDateTime, pos=$position, eventId=$eventId");
 
-        var event = presenter.getEventAtPosition(position)
-        if (event != null) {
-            if (event.eventId == eventId) {
-                CalendarIntents.editCalendarEvent(this, event.eventId)
-            } else {
-                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-            }
-        }
-        refreshReminderLastFired()
-    }
-
-    private fun onItemClick(v: View, position: Int, eventId: Long) {
+    override fun onItemClick(v: View, position: Int, eventId: Long) {
         logger.debug("onItemClick, pos=$position, eventId=$eventId");
 
-        var event = presenter.getEventAtPosition(position)
-        if (event != null) {
-            if (event.eventId == eventId) {
-                CalendarIntents.viewCalendarEvent(this, event.eventId)
-            } else {
-                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-            }
-        }
+        val event = adapter.getEventAtPosition(position, eventId)
+        if (event != null)
+            CalendarIntents.viewCalendarEvent(this, event.eventId)
+
         refreshReminderLastFired()
     }
 
-    private fun onItemReschedule(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemReschedule, pos=$position, eventId=$eventId");
-
-        var event = presenter.getEventAtPosition(position)
-        if (event != null) {
-            if (event.eventId == eventId) {
-                var intent = Intent(this, SnoozeActivity::class.java)
-
-                intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId);
-                intent.putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId);
-
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-                logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
-            }
-        }
-        refreshReminderLastFired()
-    }
-
-    private fun onItemDismiss(v: View, position: Int, eventId: Long) {
+    override fun onItemDismiss(v: View, position: Int, eventId: Long) {
         logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
 
-        var event = presenter.getEventAtPosition(position)
+        val event = adapter.getEventAtPosition(position, eventId)
+
         if (event != null) {
-            if (event.eventId == eventId) {
-                logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-
-                EventsManager.dismissEvent(this, event);
-                logger.info("ActivityMain: Event dismissed by user: ${event.title}")
-
-                presenter.removeAt(position)
-
-                onNumEventsUpdated()
-
-            } else {
-                Toast.makeText(this, "ERROR: Sanity check failed, id mismatch", Toast.LENGTH_LONG).show();
-                logger.error("Sanity check failed: id mismatch for event at position, expected id ${event.eventId}");
-            }
+            logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+            ApplicationController.dismissEvent(this, event);
+            adapter.removeAt(position)
+            onNumEventsUpdated()
         }
         refreshReminderLastFired()
     }
 
-    private fun onNumEventsUpdated() {
+    override fun onItemSnooze(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemSnooze, pos=$position, eventId=$eventId");
 
-        var hasEvents = presenter.size > 0
+        val event = adapter.getEventAtPosition(position, eventId)
 
-        find<TextView>(R.id.empty_view).visibility =
-                if (hasEvents) View.GONE else View.VISIBLE;
-
-        this.invalidateOptionsMenu();
-
+        if (event != null) {
+            startActivity(
+                Intent(this, SnoozeActivity::class.java)
+                    .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
+                    .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId))
+        }
+        refreshReminderLastFired()
     }
+
+    override fun onItemLocation(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemLocation, pos=$position, eventId=$eventId");
+
+        val event = adapter.getEventAtPosition(position, eventId)
+
+        if (event != null)
+            MapsIntents.openLocation(this, event.location)
+
+        refreshReminderLastFired()
+    }
+
+    override fun onItemDateTime(v: View, position: Int, eventId: Long) {
+        logger.debug("onItemDateTime, pos=$position, eventId=$eventId");
+
+        val event = adapter.getEventAtPosition(position, eventId)
+
+        if (event != null)
+            CalendarIntents.editCalendarEvent(this, event.eventId)
+
+        refreshReminderLastFired()
+    }
+
+
 
     companion object {
         private val logger = Logger("ActivityMain")

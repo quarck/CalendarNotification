@@ -35,7 +35,19 @@ import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
-class EventListAdapter(val context: Context, var events: Array<EventRecord>)
+interface EventListCallback {
+    fun onItemClick(v: View, pos: Int, eventId: Long): Unit
+    fun onItemDismiss(v: View, pos: Int, eventId: Long): Unit
+    fun onItemSnooze(v: View, pos: Int, eventId: Long): Unit
+    fun onItemLocation(v: View, pos: Int, eventId: Long): Unit
+    fun onItemDateTime(v: View, pos: Int, eventId: Long): Unit
+}
+
+class EventListAdapter(
+    val context: Context,
+    val cardVewResourceId: Int,
+    val callback: EventListCallback)
+
 : RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View)
@@ -69,33 +81,23 @@ class EventListAdapter(val context: Context, var events: Array<EventRecord>)
             color = ColorDrawable(0)
 
             eventHolder.setOnClickListener {
-                val action = onItemClick;
-                if (action != null)
-                    action(itemView, adapterPosition, eventId);
+                callback.onItemClick(itemView, adapterPosition, eventId);
             };
 
             dismiss.setOnClickListener {
-                val action = onItemDismiss;
-                if (action != null)
-                    action(itemView, adapterPosition, eventId);
+                callback.onItemDismiss(itemView, adapterPosition, eventId);
             }
 
             change.setOnClickListener {
-                val action = onItemReschedule;
-                if (action != null)
-                    action(itemView, adapterPosition, eventId);
+                callback.onItemSnooze(itemView, adapterPosition, eventId);
             }
 
             eventLocation.setOnClickListener {
-                val action = onItemLocation;
-                if (action != null)
-                    action(itemView, adapterPosition, eventId);
+                callback.onItemLocation(itemView, adapterPosition, eventId);
             }
 
-            var dateTimeLisneter = View.OnClickListener {
-                val action = onItemDateTime;
-                if (action != null)
-                    action(itemView, adapterPosition, eventId);
+            val dateTimeLisneter = View.OnClickListener {
+                callback.onItemDateTime(itemView, adapterPosition, eventId);
             }
 
             eventDate.setOnClickListener(dateTimeLisneter)
@@ -104,11 +106,8 @@ class EventListAdapter(val context: Context, var events: Array<EventRecord>)
         }
     }
 
-    var onItemClick: ((View, Int, Long) -> Unit)? = null;
-    var onItemDismiss: ((View, Int, Long) -> Unit)? = null;
-    var onItemReschedule: ((View, Int, Long) -> Unit)? = null;
-    var onItemLocation: ((View, Int, Long) -> Unit)? = null;
-    var onItemDateTime: ((View, Int, Long) -> Unit)? = null;
+
+    private var events = arrayOf<EventRecord>();
 
     private val primaryColor: Int
     private val changeString: String
@@ -122,11 +121,11 @@ class EventListAdapter(val context: Context, var events: Array<EventRecord>)
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         if (position >= 0 && position < events.size && holder != null) {
-            var event = events[position]
+            val event = events[position]
 
-            holder.eventTitle?.text = event.title
+            holder.eventTitle.text = event.title
 
-            var (date, time) = event.formatTime(context)
+            val (date, time) = event.formatTime(context)
 
             holder.eventDate.text = date
             holder.eventTime.text = time
@@ -158,11 +157,38 @@ class EventListAdapter(val context: Context, var events: Array<EventRecord>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
-        var view = LayoutInflater.from(parent?.context).inflate(R.layout.event_card, parent, false);
+        val view = LayoutInflater.from(parent?.context).inflate(cardVewResourceId, parent, false);
         return ViewHolder(view);
     }
 
-    override fun getItemCount(): Int {
-        return events.size;
-    }
+    override fun getItemCount(): Int = events.size
+
+    fun setEventsToDisplay(newEvents: Array<EventRecord>)
+        = synchronized(this) {
+            events = newEvents;
+            notifyDataSetChanged();
+        }
+
+    fun getEventAtPosition(position: Int): EventRecord?
+        = synchronized(this) {
+            if (position >= 0 && position < events.size)
+                events[position];
+            else
+                null
+        }
+
+    fun getEventAtPosition(position: Int, expectedEventId: Long): EventRecord?
+        = synchronized(this) {
+            if (position >= 0 && position < events.size && events[position].eventId == expectedEventId)
+                events[position];
+            else
+                null
+        }
+
+
+    fun removeAt(position: Int)
+        = synchronized(this) {
+            events = events.filterIndexed { idx, ev -> idx != position }.toTypedArray()
+            notifyItemRemoved(position)
+        }
 }

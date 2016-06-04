@@ -78,7 +78,7 @@ fun EventRecord.formatText(ctx: Context): String {
 
         sb.append(timeFormatter.format(start));
 
-        if (endTime != 0L) {
+        if (instanceEnd != 0L) {
 
             sb.append(" - ");
 
@@ -123,7 +123,7 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
 
         sbTime.append(timeFormatter.format(Date(this.instanceStart)));
 
-        if (endTime != 0L && endDay.dayEquals(startDay)) {
+        if (this.instanceEnd != 0L && endDay.dayEquals(startDay)) {
             sbTime.append(" - ");
             sbTime.append(timeFormatter.format(Date(this.instanceEnd)))
         }

@@ -134,7 +134,9 @@ class SnoozeActivity : Activity() {
         // need to hide these guys
         val showCustomSnoozeVisibility =  if (settings.showCustomSnoozeAndUntil) View.VISIBLE else View.GONE
         find<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
-        find<TextView>(R.id.snooze_view_snooze_until).visibility = showCustomSnoozeVisibility
+        val snoozeCustom = find<TextView?>(R.id.snooze_view_snooze_until)
+        if (snoozeCustom != null)
+            snoozeCustom.visibility = showCustomSnoozeVisibility
 
         if (!isSnoozeAll && event != null) {
             val title =

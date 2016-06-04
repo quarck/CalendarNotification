@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/linearLyaoutCalendarView"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewCalendarOwner"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="__CALENDAR_OWNER__"
+        android:textColor="@color/primary_text"
+        android:padding="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayoutCalendarEntry">
+
+        <View
+            android:id="@+id/viewCalendarColor"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="#ff0000"
+            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="_CHECK BOX_"
+            android:id="@+id/checkBoxCalendarSelection"
+            android:textColor="@color/primary_text"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:id="@+id/viewCalendarsSpacing"
+        android:visibility="gone" />
+
+</LinearLayout>

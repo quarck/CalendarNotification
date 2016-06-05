@@ -23,4 +23,10 @@
         android:title="@string/help_feedback"
         />
 
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="1000"
+        android:showAsAction="never"
+        android:title="@string/menu_about" />
+
 </menu>

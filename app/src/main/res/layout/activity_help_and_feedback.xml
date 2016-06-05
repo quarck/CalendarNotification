@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityHelpAndFeedback"
+    tools:context=".ui.HelpAndFeedbackActivity"
     >
 
 <RelativeLayout
@@ -39,102 +39,6 @@
         android:background="?android:attr/selectableItemBackground"
         android:layout_below="@id/help_and_feedback_text_view"
         />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:id="@+id/space_one_o_one"
-        android:layout_below="@id/buttonEmailDeveloper"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/space_one_o_one"
-        android:id="@+id/layout_app_icon_credit"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/app_icon_credit"
-            android:id="@+id/textViewCreditsLbl"
-            android:textColor="@color/primary_text"
-            android:paddingLeft="@dimen/activity_help_credits_padding_left"
-            android:paddingStart="@dimen/activity_help_credits_padding_left"
-            android:paddingRight="@dimen/activity_help_credits_padding_right"
-            android:paddingEnd="@dimen/activity_help_credits_padding_right"
-            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
-            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/credits_icon_author"
-            android:id="@+id/textViewCredits"
-            android:onClick="OnTextViewCreditsClick"
-            android:textColor="@color/primary_dark"
-            android:clickable="true"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_kotlin"
-        android:layout_below="@id/layout_app_icon_credit"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/app_created_with"
-            android:id="@+id/textViewKotlinLbl"
-            android:textColor="@color/primary_text"
-            android:paddingLeft="@dimen/activity_help_credits_padding_left"
-            android:paddingStart="@dimen/activity_help_credits_padding_left"
-            android:paddingRight="@dimen/activity_help_credits_padding_right"
-            android:paddingEnd="@dimen/activity_help_credits_padding_right"
-            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
-            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/kotlin_language"
-            android:id="@+id/textViewKotlin"
-            android:layout_marginBottom="6dp"
-            android:onClick="OnTextViewKotlinClick"
-            android:textColor="@color/primary_dark"
-            android:clickable="true"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout_gihub"
-        android:layout_below="@id/layout_kotlin"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/projectPageOnGitHub"
-            android:id="@+id/textViewGitHub"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="12dp"
-            android:onClick="OnTextViewGitHubClick"
-            android:textColor="@color/primary_dark"
-            android:clickable="true"/>
-    </LinearLayout>
-
-
 
 </RelativeLayout>
 </ScrollView>

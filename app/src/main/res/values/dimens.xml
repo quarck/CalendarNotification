@@ -56,6 +56,7 @@
     <dimen name="activity_main_text_pading_start">16dp</dimen>
     <dimen name="activity_main_text_pading_end">16dp</dimen>
     <dimen name="activity_help_credits_padding_left">0dp</dimen>
+    <dimen name="activity_help_credits_padding_translators_left">20dp</dimen>
     <dimen name="activity_help_credits_padding_right">16dp</dimen>
     <dimen name="activity_help_credits_padding_vertical">6dp</dimen>
     <dimen name="dlg_snooze_presets_text_label_padding">16dp</dimen>

@@ -39,12 +39,6 @@ class HelpAndFeedbackActivity : Activity() {
         logger.debug("onCreate")
     }
 
-    fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
-
-    fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
-
-    fun OnTextViewGitHubClick(v: View) = startActivity(Intent.parseUri(githubUri, 0))
-
     fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
@@ -73,10 +67,6 @@ class HelpAndFeedbackActivity : Activity() {
 
     companion object {
         var logger = Logger("ActivityHelpAndFeedback")
-
-        val imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
-        val kotlinUri = "https://kotlinlang.org/"
-        val githubUri = "https://github.com/quarck/CalendarNotification/issues"
 
         val developerEmail = "s.parshin.sc@gmail.com"
         val mimeType = "message/rfc822"

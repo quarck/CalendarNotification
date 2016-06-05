@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.github.quarck.calnotify"
-          xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.github.quarck.calnotify"
           android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -25,46 +25,45 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
             android:parentActivityName=".ui.MainActivity">
         </activity>
-
         <activity
             android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
             android:parentActivityName=".ui.MainActivity">
         </activity>
-
         <activity
             android:name=".ui.SnoozeActivity"
-            android:label="@string/title_activity_activity_snooze"
-            android:theme="@android:style/Theme.Holo.NoActionBar"
-            android:noHistory="true"
             android:excludeFromRecents="true"
-            >
+            android:label="@string/title_activity_activity_snooze"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
-
         <activity
             android:name=".ui.CalendarsActivity"
             android:label="@string/title_calendars_activity"
             android:parentActivityName=".ui.SettingsActivity">
             >
             <intent-filter>
-                <action android:name="com.github.quarck.calnotify.ui.CalendarsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.github.quarck.calnotify.ui.CalendarsActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do">
         </activity>
+        <activity
+            android:name=".ui.AboutActivity"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:label="@string/menu_about"
+            />
 
         <service android:name=".notification.NotificationActionDismissService"/>
-
         <service android:name=".ui.UINotifierService"/>
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
@@ -72,7 +71,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".broadcastreceivers.BootCompleteBroadcastReceiver"
             android:enabled="true"
@@ -85,7 +83,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".broadcastreceivers.EventReminderBroadcastReceiver">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER"/>
@@ -110,7 +107,6 @@
                 <data android:mimeType="vnd.android.cursor.item/calendar_alert_time"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".broadcastreceivers.CalendarChangedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PROVIDER_CHANGED"/>
@@ -119,17 +115,14 @@
                 <data android:host="com.android.calendar"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name=".broadcastreceivers.AlarmBroadcastReceiver"/>
-
         <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver"/>
-
         <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_SET"/>
             </intent-filter>
         </receiver>
 
-     </application>
+    </application>
 
 </manifest>

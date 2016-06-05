@@ -166,4 +166,13 @@
     <string name="dialog_snooze_text_label_v2">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\' as well as negative values like \'-5m\' ("5 minutes before event")\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
 
     <string name="before_event">before</string>
+    <string name="menu_about">About</string>
+    <string name="translation_contributors">Translation contributors:</string>
+
+    <!-- NOTE for translators: 'gplv3_notice' is a part of standard GPLv3 notice text. Most likely there is already official version of this text translated to your language -->
+    <string name="gplv3_notice">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
+
+    <string name="gplv3_src_comment">\nFull text of GPLv3 license as well as full source code for this program can be found on the:</string>
+    <string name="credits">Credits:</string>
+    <string name="app_icon">App Icon:</string>
 </resources>

@@ -222,6 +222,9 @@ class MainActivity : Activity(), EventListCallback {
 
             R.id.action_feedback ->
                 startActivity(Intent(this, HelpAndFeedbackActivity::class.java))
+
+            R.id.action_about ->
+                startActivity(Intent(this, AboutActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

@@ -42,6 +42,16 @@ object ApplicationController {
 
     private val logger = Logger("EventsManager");
 
+
+    private var settings: Settings? = null
+    private fun getSettings(ctx: Context): Settings {
+        synchronized(this) {
+            if (settings == null)
+                settings = Settings(ctx)
+        }
+        return settings!!
+    }
+
     private fun scheduleNextAlarmForEvents(context: Context) {
 
         logger.debug("scheduleEventAlarm called");
@@ -80,7 +90,7 @@ object ApplicationController {
 
     private fun scheduleNextAlarmForReminders(context: Context) {
 
-        val settings = Settings(context);
+        val settings = getSettings(context);
 
         if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
             return;
@@ -227,7 +237,7 @@ object ApplicationController {
 
         var ret = false
 
-        if (event.calendarId == -1L || Settings(context).getCalendarIsHandled(event.calendarId)) {
+        if (event.calendarId == -1L || getSettings(context).getCalendarIsHandled(event.calendarId)) {
             EventsStorage(context).use { it.addEvent(event) }
 
             notificationManager.onEventAdded(context, event)
@@ -280,7 +290,7 @@ object ApplicationController {
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
 
-            val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), snoozedEvent.snoozedUntil)
+            val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
             if (silentUntil != 0L)
                 ret = Pair(true, silentUntil)
             else
@@ -325,7 +335,7 @@ object ApplicationController {
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
 
-            val silentUntil = QuietHoursManager.getSilentUntil(Settings(context), snoozedUntil)
+            val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedUntil)
             if (silentUntil != 0L)
                 ret = Pair(true, silentUntil)
             else
@@ -343,7 +353,7 @@ object ApplicationController {
     fun onAppStarted(context: Context?) {
 
         if (context != null) {
-            val settings = Settings(context)
+            val settings = getSettings(context)
 
             if (settings.versionCodeFirstInstalled == 0L) {
                 val pInfo = context.packageManager.getPackageInfo(context.packageName, 0);

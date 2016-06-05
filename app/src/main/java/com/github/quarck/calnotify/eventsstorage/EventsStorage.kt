@@ -101,19 +101,19 @@ class EventsStorage(context: Context)
     }
 
     fun updateEvent(event: EventRecord)
-            = synchronized(EventsStorage::class.java) { updateEventImpl(event) }
+        = synchronized(EventsStorage::class.java) { updateEventImpl(event) }
 
     fun updateEvents(events: List<EventRecord>)
         = synchronized(EventsStorage::class.java) { updateEventsImpl(events) }
 
     fun getEvent(eventId: Long): EventRecord?
-            = synchronized(EventsStorage::class.java) { return getEventImpl(eventId) }
+        = synchronized(EventsStorage::class.java) { return getEventImpl(eventId) }
 
     fun deleteEvent(eventId: Long)
-            = synchronized(EventsStorage::class.java) { deleteEventImpl(eventId) }
+        = synchronized(EventsStorage::class.java) { deleteEventImpl(eventId) }
 
     fun deleteEvent(ev: EventRecord)
-            = synchronized(EventsStorage::class.java) { deleteEventImpl(ev.eventId) }
+        = synchronized(EventsStorage::class.java) { deleteEventImpl(ev.eventId) }
 
     val events: List<EventRecord>
         get() = synchronized(EventsStorage::class.java) { return eventsImpl }
@@ -129,29 +129,29 @@ class EventsStorage(context: Context)
     ///// TODO: move into *Impl class
 
     override fun onCreate(db: SQLiteDatabase) {
-        var CREATE_PKG_TABLE =
-                "CREATE " +
-                        "TABLE ${TABLE_NAME} " +
-                        "( " +
-                        "${KEY_EVENTID} INTEGER PRIMARY KEY, " +
-                        "${KEY_NOTIFICATIONID} INTEGER, " +
-                        "${KEY_TITLE} TEXT, " +
-                        "${KEY_DESC} TEXT, " +
-                        "${KEY_START} INTEGER, " +
-                        "${KEY_END} INTEGER, " +
-                        "${KEY_LOCATION} LOCATION, " +
-                        "${KEY_SNOOZED_UNTIL} INTEGER, " +
-                        "${KEY_LAST_EVENT_FIRE} INTEGER, " +
-                        "${KEY_IS_DISPLAYED} INTEGER, " +
-                        "${KEY_COLOR} INTEGER, " +
-                        "${KEY_ALERT_TIME} INTEGER, " +
-                        "${KEY_RESERVED_STR1} TEXT, " +
-                        "${KEY_RESERVED_STR2} TEXT, " +
-                        "${KEY_RESERVED_STR3} TEXT, " +
-                        "${KEY_CALENDAR_ID} INTEGER, " +
-                        "${KEY_INSTANCE_START} INTEGER, " +
-                        "${KEY_INSTANCE_END} INTEGER" +
-                        " )"
+        val CREATE_PKG_TABLE =
+            "CREATE " +
+                "TABLE ${TABLE_NAME} " +
+                "( " +
+                "${KEY_EVENTID} INTEGER PRIMARY KEY, " +
+                "${KEY_NOTIFICATIONID} INTEGER, " +
+                "${KEY_TITLE} TEXT, " +
+                "${KEY_DESC} TEXT, " +
+                "${KEY_START} INTEGER, " +
+                "${KEY_END} INTEGER, " +
+                "${KEY_LOCATION} LOCATION, " +
+                "${KEY_SNOOZED_UNTIL} INTEGER, " +
+                "${KEY_LAST_EVENT_FIRE} INTEGER, " +
+                "${KEY_IS_DISPLAYED} INTEGER, " +
+                "${KEY_COLOR} INTEGER, " +
+                "${KEY_ALERT_TIME} INTEGER, " +
+                "${KEY_RESERVED_STR1} TEXT, " +
+                "${KEY_RESERVED_STR2} TEXT, " +
+                "${KEY_RESERVED_STR3} TEXT, " +
+                "${KEY_CALENDAR_ID} INTEGER, " +
+                "${KEY_INSTANCE_START} INTEGER, " +
+                "${KEY_INSTANCE_END} INTEGER" +
+                " )"
 
         logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
@@ -190,8 +190,8 @@ class EventsStorage(context: Context)
 
         try {
             db.insertOrThrow(TABLE_NAME, // table
-                    null, // nullColumnHack
-                    values) // key/value -> keys = column names/ values = column
+                null, // nullColumnHack
+                values) // key/value -> keys = column names/ values = column
             // values
             db.close()
         } catch (ex: SQLiteConstraintException) {
@@ -242,9 +242,9 @@ class EventsStorage(context: Context)
         logger.debug("Updating event, eventId=${event.eventId}");
 
         db.update(TABLE_NAME, // table
-                values, // column/value
-                KEY_EVENTID + " = ?", // selections
-                arrayOf<String>(event.eventId.toString())) // selection args
+            values, // column/value
+            KEY_EVENTID + " = ?", // selections
+            arrayOf<String>(event.eventId.toString())) // selection args
 
         db.close()
     }
@@ -270,13 +270,13 @@ class EventsStorage(context: Context)
         val db = this.readableDatabase
 
         val cursor = db.query(TABLE_NAME, // a. table
-                SELECT_COLUMNS, // b. column names
-                " $KEY_EVENTID = ?", // c. selections
-                arrayOf<String>(eventId.toString()), // d. selections args
-                null, // e. group by
-                null, // f. h aving
-                null, // g. order by
-                null) // h. limit
+            SELECT_COLUMNS, // b. column names
+            " $KEY_EVENTID = ?", // c. selections
+            arrayOf<String>(eventId.toString()), // d. selections args
+            null, // e. group by
+            null, // f. h aving
+            null, // g. order by
+            null) // h. limit
 
         var event: EventRecord? = null
 
@@ -312,7 +312,6 @@ class EventsStorage(context: Context)
                     ret.add(cursorToEventRecord(cursor))
 
                 } while (cursor.moveToNext())
-
             }
             cursor.close()
 
@@ -357,8 +356,8 @@ class EventsStorage(context: Context)
         val db = this.writableDatabase
 
         db.delete(TABLE_NAME, // table name
-                KEY_EVENTID + " = ?", // selections
-                arrayOf(eventId.toString())) // selections args
+            KEY_EVENTID + " = ?", // selections
+            arrayOf(eventId.toString())) // selections args
 
         db.close()
 

@@ -58,12 +58,12 @@ object QuietHoursManager {
         logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.roll(Calendar.DAY_OF_MONTH, false)
-        silentTo.roll(Calendar.DAY_OF_MONTH, false);
+        silentFrom.add(Calendar.DATE, -1);
+        silentTo.add(Calendar.DATE, -1);
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.roll(Calendar.DAY_OF_MONTH, true);
+            silentTo.add(Calendar.DATE, 1);
 
         var cnt = 0
 
@@ -111,12 +111,12 @@ object QuietHoursManager {
         var silentTo = calendarWithTimeMillisHourAndMinute(currentTimes[0], to.component1(), to.component2())
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.roll(Calendar.DAY_OF_MONTH, false)
-        silentTo.roll(Calendar.DAY_OF_MONTH, false);
+        silentFrom.add(Calendar.DATE, -1);
+        silentTo.add(Calendar.DATE, -1);
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.roll(Calendar.DAY_OF_MONTH, true);
+            silentTo.add(Calendar.DATE, 1);
 
         var cnt = 0
 

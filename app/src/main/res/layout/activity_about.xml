@@ -250,7 +250,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary_text"
-            android:text="(c) Sergey Parshin, 2016"
+            android:text="App created by Sergey Parshin"
             android:layout_gravity="center_horizontal"
             />
 

@@ -48,4 +48,10 @@ object UndoManager {
         = synchronized(this) {
             record = null
         }
+
+    fun onUndoTimeout()
+        = synchronized(this) {
+            if (System.currentTimeMillis() - dismissedTime > Consts.UNDO_TIMEOUT - 2000L) // some safety check
+               record = null
+        }
 }

@@ -47,6 +47,7 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : Activity(), EventListCallback {
     private val settings: Settings by lazy { Settings(this) }
@@ -63,6 +64,8 @@ class MainActivity : Activity(), EventListCallback {
     private var shouldShowPowerOptimisationWarning = false
 
     private val svcClient by lazy { UINotifierServiceClient() }
+
+    private var undoTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -199,6 +202,9 @@ class MainActivity : Activity(), EventListCallback {
 
         svcClient.unbindService(this)
 
+        undoTimer?.cancel()
+        undoTimer = null
+
         refreshReminderLastFired()
 
         ApplicationController.onAppPause(this)
@@ -299,7 +305,21 @@ class MainActivity : Activity(), EventListCallback {
     }
 
     private fun updateUndoVisibility() {
-        undoLayout.visibility = if (ApplicationController.canUndo) View.VISIBLE else View.GONE
+
+        val canUndo = ApplicationController.canUndo
+        undoLayout.visibility = if (canUndo) View.VISIBLE else View.GONE
+
+        if (canUndo) {
+            if (undoTimer == null)
+                undoTimer = Timer()
+
+            undoTimer?.schedule(Consts.UNDO_TIMEOUT) {
+                ApplicationController.onUndoTimeout()
+                runOnUiThread {
+                    undoLayout.visibility = if (ApplicationController.canUndo) View.VISIBLE else View.GONE
+                }
+            }
+        }
     }
 
     private fun onNumEventsUpdated() {

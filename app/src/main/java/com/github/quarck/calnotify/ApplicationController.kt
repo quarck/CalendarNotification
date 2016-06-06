@@ -437,4 +437,7 @@ object ApplicationController {
 
     val canUndo: Boolean
         get() = !UndoManager.empty && (System.currentTimeMillis() - UndoManager.dismissedTime < Consts.UNDO_TIMEOUT)
+
+    fun onUndoTimeout()
+        = UndoManager.onUndoTimeout()
 }

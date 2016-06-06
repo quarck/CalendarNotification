@@ -83,7 +83,7 @@
                 android:text="@string/new_events_detected"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/primary_text"
-                android:gravity="center"
+                android:gravity="left"
                 android:paddingTop="@dimen/activity_main_text_pading_top"
                 android:paddingBottom="@dimen/activity_main_text_pading_bottom"
                 android:paddingStart="@dimen/activity_main_text_pading_start"
@@ -93,6 +93,60 @@
                 android:background="?android:attr/selectableItemBackground"
                 android:layout_toStartOf="@id/activity_main_button_reload"
                 android:layout_toLeftOf="@id/activity_main_button_reload"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_undo_layout"
+            android:visibility="gone"
+            android:background="@color/primary_text"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/undo"
+                android:id="@+id/activity_main_button_undo"
+                android:visibility="visible"
+                android:textColor="@color/accent"
+                android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="onUndoButtonClick"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_undo_text"
+                android:text="@string/event_dismissed"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/icons"
+                android:gravity="left"
+                android:paddingTop="@dimen/activity_main_text_pading_top"
+                android:paddingBottom="@dimen/activity_main_text_pading_bottom"
+                android:paddingStart="@dimen/activity_main_text_pading_start"
+                android:paddingEnd="@dimen/activity_main_text_pading_end"
+                android:paddingRight="@dimen/activity_main_text_pading_end"
+                android:paddingLeft="@dimen/activity_main_text_pading_start"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toStartOf="@id/activity_main_button_undo"
+                android:layout_toLeftOf="@id/activity_main_button_undo"
                 />
 
         </RelativeLayout>

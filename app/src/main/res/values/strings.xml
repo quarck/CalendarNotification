@@ -175,4 +175,6 @@
     <string name="gplv3_src_comment">\nFull text of GPLv3 license as well as full source code for this program can be found on the:</string>
     <string name="credits">Credits:</string>
     <string name="app_icon">App Icon:</string>
+    <string name="undo">UNDO</string>
+    <string name="event_dismissed">Event dismissed</string>
 </resources>

@@ -26,19 +26,26 @@ object UndoManager {
 
     private var record: EventRecord? = null
 
-    fun onEventDismissed(event: EventRecord)
+    var dismissedTime: Long = 0
+
+    fun push(event: EventRecord)
         = synchronized(this) {
             record = event
+            dismissedTime = System.currentTimeMillis()
         }
 
-    fun onUndoPerformed()
+    fun pop()
         = synchronized(this){
+            val ret = record
             record = null
+            ret
         }
 
     val empty: Boolean
         get() = synchronized(this) { record == null }
 
-    val entry: EventRecord?
-        get() = record
+    fun clear()
+        = synchronized(this) {
+            record = null
+        }
 }

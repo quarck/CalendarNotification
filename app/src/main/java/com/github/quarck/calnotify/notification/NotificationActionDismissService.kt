@@ -35,7 +35,7 @@ class NotificationActionDismissService : IntentService("ServiceNotificationActio
             val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
             if (notificationId != -1 && eventId != -1L) {
-                ApplicationController.dismissEvent(this, eventId, notificationId)
+                ApplicationController.dismissEvent(this, eventId, notificationId, enableUndo = false)
                 logger.info("ServiceNotificationActionDismiss: event dismissed by user: $eventId")
             } else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")

@@ -28,7 +28,6 @@ import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -45,23 +44,22 @@ import com.github.quarck.calnotify.utils.powerManager
 interface IEventNotificationManager {
     fun onEventAdded(ctx: Context, event: EventRecord);
 
-    fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int);
+    fun onEventDismissed(context: Context, eventId: Long, notificationId: Int);
 
-    fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int);
+    fun onEventSnoozed(context: Context, eventId: Long, notificationId: Int);
 
-    fun onAllEventsSnoozed(ctx: Context)
+    fun onAllEventsSnoozed(context: Context)
 
     fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?);
 
     fun fireEventReminder(context: Context)
+
+    fun onEventRestored(context: Context, event: EventRecord)
 }
 
 class EventNotificationManager : IEventNotificationManager {
 
-    override fun onEventAdded(
-        ctx: Context,
-        event: EventRecord
-    ) {
+    override fun onEventAdded(ctx: Context, event: EventRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
             // not using threshold when event is just added
@@ -72,20 +70,32 @@ class EventNotificationManager : IEventNotificationManager {
         postEventNotifications(ctx, false, event.eventId);
     }
 
-    override fun onEventDismissed(ctx: Context, eventId: Long, notificationId: Int) {
-        removeNotification(ctx, eventId, notificationId);
-        postEventNotifications(ctx, false, null);
+    override fun onEventRestored(context: Context, event: EventRecord) {
+        EventsStorage(context).use {
+            it.updateEvent(event,
+                // do not update last event visibility, so preserve original sorting order in the activity
+                // lastEventVisibility = System.currentTimeMillis(),
+                displayStatus = EventDisplayStatus.Hidden)
+        }
+
+        postEventNotifications(context, true, event.eventId);
     }
 
-    override fun onEventSnoozed(ctx: Context, eventId: Long, notificationId: Int) {
-        removeNotification(ctx, eventId, notificationId);
-        postEventNotifications(ctx, false, null);
+    override fun onEventDismissed(context: Context, eventId: Long, notificationId: Int) {
+        removeNotification(context, eventId, notificationId);
+        postEventNotifications(context, false, null);
     }
 
-    override fun onAllEventsSnoozed(ctx: Context) {
-        ctx.notificationManager.cancelAll()
+    override fun onEventSnoozed(context: Context, eventId: Long, notificationId: Int) {
+        removeNotification(context, eventId, notificationId);
+        postEventNotifications(context, false, null);
     }
 
+    override fun onAllEventsSnoozed(context: Context) {
+        context.notificationManager.cancelAll()
+    }
+
+    @Suppress("DEPRECATION")
     fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
 
         if (settings.notificationWakeScreen) {
@@ -310,6 +320,7 @@ class EventNotificationManager : IEventNotificationManager {
         return postedNotification
     }
 
+    @Suppress("DEPRECATION")
     private fun postNotification(
         ctx: Context,
         event: EventRecord,
@@ -400,16 +411,14 @@ class EventNotificationManager : IEventNotificationManager {
         val notification = builder.build()
 
         try {
-            logger.debug(
-                "adding: notificationId=${event.notificationId}, notification is ${notification}, stack:")
+            logger.debug("adding: notificationId=${event.notificationId}")
 
             notificationManager.notify(
                 event.notificationId,
                 notification
             )
         } catch (ex: Exception) {
-            logger.error(
-                "Exception: ${ex.toString()}, notificationId=${event.notificationId}, notification is ${if (notification != null) 1 else 0}, stack:")
+            logger.error("Exception: ${ex.toString()}, notificationId=${event.notificationId}, stack:")
             ex.printStackTrace()
         }
 
@@ -448,11 +457,13 @@ class EventNotificationManager : IEventNotificationManager {
         return pendingIntent
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId);
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun postNumNotificationsCollapsed(
         context: Context,
         db: EventsStorage,

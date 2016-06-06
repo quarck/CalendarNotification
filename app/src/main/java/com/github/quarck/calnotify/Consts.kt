@@ -61,4 +61,6 @@ object Consts {
     const val EVENT_MOVED_THRESHOLD = 60*60*1000L
 
     const val SAMSUNG_KEYWORD = "samsung"
+
+    const val UNDO_TIMEOUT = 60 * 1000L
 }

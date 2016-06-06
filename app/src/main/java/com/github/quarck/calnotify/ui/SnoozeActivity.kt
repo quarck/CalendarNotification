@@ -363,7 +363,7 @@ class SnoozeActivity : Activity() {
 
                 logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                ApplicationController.dismissEvent(this, eventId, notificationId)
+                ApplicationController.dismissEvent(this, eventId, notificationId, enableUndo = false)
 
                 // Show
                 if (Settings(this).viewAfterEdit)

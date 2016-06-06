@@ -163,7 +163,7 @@ object ApplicationController {
                             // Here we have a confirmation that event was re-scheduled by user
                             // to some time in the future and that's why original event instance has disappeared
                             // - we are good to go to dismiss event reminder automatically
-                            dismissEvent(context, db, event.eventId, event.notificationId, true);
+                            dismissEvent(context, db, event.eventId, event.notificationId, notifyActivity = true, enableUndo = false);
                             val movedSec = (newEvent.startTime - event.startTime) / 1000L
                             logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
                         } else {
@@ -375,6 +375,10 @@ object ApplicationController {
         }
     }
 
+    fun onAppPause(context: Context?) {
+        UndoManager.clear()
+    }
+
     fun onTimeChanged(context: Context?) {
         if (context != null) {
             scheduleNextAlarmForEvents(context)
@@ -382,10 +386,16 @@ object ApplicationController {
         }
     }
 
-    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean) {
+    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
 
         if (context != null) {
             logger.debug("Removing event id $eventId from DB, and dismissing notification")
+
+            if (enableUndo) {
+                val event = db.getEvent(eventId)
+                if (event != null)
+                    UndoManager.push(event)
+            }
 
             db.deleteEvent(eventId)
 
@@ -399,19 +409,32 @@ object ApplicationController {
         }
     }
 
-    fun dismissEvent(context: Context?, event: EventRecord) {
+    fun dismissEvent(context: Context?, event: EventRecord, enableUndo: Boolean = false) {
         if (context != null) {
             EventsStorage(context).use {
-                dismissEvent(context, it, event.eventId, event.notificationId, false)
+                if (enableUndo)
+                    UndoManager.push(event)
+                dismissEvent(context, it, event.eventId, event.notificationId, false, false)
             }
         }
     }
 
-    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true) {
+    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
         if (context != null) {
             EventsStorage(context).use {
-                dismissEvent(context, it, eventId, notificationId, notifyActivity)
+                dismissEvent(context, it, eventId, notificationId, notifyActivity, enableUndo)
             }
         }
     }
+
+    fun undoDismiss(context: Context) {
+        val event = UndoManager.pop()
+        if (event != null) {
+            EventsStorage(context).use { it.addEvent(event) }
+            notificationManager.onEventRestored(context, event)
+        }
+    }
+
+    val canUndo: Boolean
+        get() = !UndoManager.empty && (System.currentTimeMillis() - UndoManager.dismissedTime < Consts.UNDO_TIMEOUT)
 }

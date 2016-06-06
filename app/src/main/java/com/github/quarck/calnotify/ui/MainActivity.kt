@@ -54,6 +54,7 @@ class MainActivity : Activity(), EventListCallback {
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
+    private lateinit var undoLayout: RelativeLayout
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
 
@@ -81,6 +82,8 @@ class MainActivity : Activity(), EventListCallback {
 
         quietHoursLayout = find<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
         quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
+
+        undoLayout = find<RelativeLayout>(R.id.activity_main_undo_layout)
 
         shouldShowPowerOptimisationWarning =
             (Build.MANUFACTURER.indexOf(Consts.SAMSUNG_KEYWORD, ignoreCase=true) != -1) &&
@@ -118,6 +121,8 @@ class MainActivity : Activity(), EventListCallback {
         }
 
         reloadData()
+
+        updateUndoVisibility()
 
         refreshReminderLastFired()
 
@@ -195,6 +200,8 @@ class MainActivity : Activity(), EventListCallback {
         svcClient.unbindService(this)
 
         refreshReminderLastFired()
+
+        ApplicationController.onAppPause(this)
 
         super.onPause()
     }
@@ -278,13 +285,25 @@ class MainActivity : Activity(), EventListCallback {
         }
     }
 
+    fun onUndoButtonClick(v: View) {
+        ApplicationController.undoDismiss(this);
+        updateUndoVisibility()
+        refreshReminderLastFired()
+        reloadData()
+    }
+
     fun onReloadButtonClick(v: View) {
         reloadLayout.visibility = View.GONE;
         reloadData();
         refreshReminderLastFired()
     }
 
+    private fun updateUndoVisibility() {
+        undoLayout.visibility = if (ApplicationController.canUndo) View.VISIBLE else View.GONE
+    }
+
     private fun onNumEventsUpdated() {
+        updateUndoVisibility()
         val hasEvents = adapter.itemCount > 0
         find<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
         this.invalidateOptionsMenu();
@@ -308,7 +327,7 @@ class MainActivity : Activity(), EventListCallback {
 
         if (event != null) {
             logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, event);
+            ApplicationController.dismissEvent(this, event, enableUndo=true);
             adapter.removeAt(position)
             onNumEventsUpdated()
         }

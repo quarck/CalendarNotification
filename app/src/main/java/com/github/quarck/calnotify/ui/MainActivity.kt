@@ -290,7 +290,7 @@ class MainActivity : Activity(), EventListCallback {
             }
         }
     }
-
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onUndoButtonClick(v: View) {
         ApplicationController.undoDismiss(this);
         updateUndoVisibility()
@@ -298,6 +298,7 @@ class MainActivity : Activity(), EventListCallback {
         reloadData()
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onReloadButtonClick(v: View) {
         reloadLayout.visibility = View.GONE;
         reloadData();

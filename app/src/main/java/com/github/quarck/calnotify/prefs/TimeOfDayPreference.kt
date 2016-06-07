@@ -65,6 +65,7 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         updateWidgetView()
     }
 
+    @Suppress("DEPRECATION")
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
@@ -77,6 +78,7 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         updateWidgetView()
     }
 
+    @Suppress("DEPRECATION")
     override fun onDialogClosed(positiveResult: Boolean) {
 
         // When the user selects "OK", persist the new value
@@ -87,15 +89,16 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         }
     }
 
+    @Suppress("DEPRECATION")
     fun formatTime(time: Pair<Int, Int>): String {
-        var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-        var date = Date(1, 1, 1, time.component1(), time.component2(), 0)
+        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+        val date = Date(1, 1, 1, time.component1(), time.component2(), 0)
         return timeFormatter.format(date)
     }
 
     fun updateWidgetView() {
 
-        var wv = widgetView
+        val wv = widgetView
         if (wv != null)
             wv.text = formatTime(timeValue)
     }

@@ -39,18 +39,22 @@ class HelpAndFeedbackActivity : Activity() {
         logger.debug("onCreate")
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
-        var email = Intent(Intent.ACTION_SEND);
-        email.putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail));
-        email.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-        email.putExtra(Intent.EXTRA_TEXT, emailText);
-        email.setType(mimeType);
+        val email =
+            Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail))
+                .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+                .putExtra(Intent.EXTRA_TEXT, emailText)
+                .setType(mimeType)
+
         startActivity(email);
     }
 
-    public fun OnButtonEasterEgg(v: View) {
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonEasterEgg(v: View) {
         if (easterEggCount == 0) {
             firstClick = System.currentTimeMillis();
         }

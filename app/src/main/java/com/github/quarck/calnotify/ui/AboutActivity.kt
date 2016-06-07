@@ -43,10 +43,13 @@ class AboutActivity : Activity() {
 
     }
 
+    @Suppress("UNUSED_PARAMETER", "unused")
     fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
 
+    @Suppress("UNUSED_PARAMETER", "unused")
     fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
 
+    @Suppress("UNUSED_PARAMETER", "unused")
     fun OnTextViewGitHubClick(v: View) = startActivity(Intent.parseUri(githubUri, 0))
 
     companion object {

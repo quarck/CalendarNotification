@@ -36,13 +36,14 @@ import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
 interface EventListCallback {
-    fun onItemClick(v: View, pos: Int, eventId: Long): Unit
-    fun onItemDismiss(v: View, pos: Int, eventId: Long): Unit
-    fun onItemSnooze(v: View, pos: Int, eventId: Long): Unit
-    fun onItemLocation(v: View, pos: Int, eventId: Long): Unit
-    fun onItemDateTime(v: View, pos: Int, eventId: Long): Unit
+    fun onItemClick(v: View, position: Int, eventId: Long): Unit
+    fun onItemDismiss(v: View, position: Int, eventId: Long): Unit
+    fun onItemSnooze(v: View, position: Int, eventId: Long): Unit
+    fun onItemLocation(v: View, position: Int, eventId: Long): Unit
+    fun onItemDateTime(v: View, position: Int, eventId: Long): Unit
 }
 
+@Suppress("DEPRECATION")
 class EventListAdapter(
     val context: Context,
     val cardVewResourceId: Int,

@@ -21,7 +21,7 @@ package com.github.quarck.calnotify.utils
 
 fun String.toLongOrNull(): Long? {
 
-    var ret: Long? = null
+    val ret: Long?
 
     try {
         ret = this.toLong()
@@ -32,9 +32,10 @@ fun String.toLongOrNull(): Long? {
     return ret;
 }
 
+@Suppress("unused")
 fun String.toIntOrNull(): Int? {
 
-    var ret: Int? = null
+    val ret: Int?
 
     try {
         ret = this.toInt()

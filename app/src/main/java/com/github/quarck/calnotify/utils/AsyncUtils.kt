@@ -35,6 +35,7 @@ class AsyncOperation(val fn: () -> Unit)
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun background(noinline fn: () -> Unit) {
     AsyncOperation(fn).execute();
 }

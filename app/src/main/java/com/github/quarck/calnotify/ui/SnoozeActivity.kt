@@ -78,6 +78,7 @@ class SnoozeActivity : Activity() {
         R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
     )
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snooze)
@@ -190,8 +191,8 @@ class SnoozeActivity : Activity() {
     }
 
     private fun formatPreset(preset: Long): String {
-        var num: Long = 0
-        var unit: String = ""
+        val num: Long
+        val unit: String
         val presetSeconds = preset / 1000L;
 
         if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
@@ -213,10 +214,12 @@ class SnoozeActivity : Activity() {
         return "$num $unit"
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onButtonCancelClick(v: View?) {
         finish();
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEventDetailsClick(v: View?) {
         CalendarIntents.viewCalendarEvent(this, eventId);
     }
@@ -275,6 +278,7 @@ class SnoozeActivity : Activity() {
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonCustomSnoozeClick(v: View?) {
 
         val settings = Settings(this)
@@ -301,6 +305,7 @@ class SnoozeActivity : Activity() {
             .show()
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER", "DEPRECATION")
     fun OnButtonSnoozeUntilClick(v: View?) {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_date_time_picker, null);
@@ -391,6 +396,7 @@ class SnoozeActivity : Activity() {
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonRescheduleCustomClick(v: View?) {
     }
 

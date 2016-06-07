@@ -127,6 +127,8 @@ object ApplicationController {
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
+
+    @Suppress("UNUSED_PARAMETER")
     fun onAlarm(context: Context?, intent: Intent?) {
         if (context != null) {
             notificationManager.postEventNotifications(context, false, null);
@@ -194,6 +196,7 @@ object ApplicationController {
         return repostNotifications
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onAppUpdated(context: Context?, intent: Intent?) {
         if (context != null) {
             val changes = reloadCalendar(context)
@@ -206,6 +209,7 @@ object ApplicationController {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onBootComplete(context: Context?, intent: Intent?) {
         if (context != null) {
             val changes = reloadCalendar(context);
@@ -219,6 +223,7 @@ object ApplicationController {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onCalendarChanged(context: Context?, intent: Intent?) {
         if (context != null) {
             val changes = reloadCalendar(context)
@@ -375,6 +380,7 @@ object ApplicationController {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onAppPause(context: Context?) {
         UndoManager.clear()
     }

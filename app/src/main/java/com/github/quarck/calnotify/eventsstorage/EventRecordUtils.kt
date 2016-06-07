@@ -30,7 +30,7 @@ object EventRecordUtils {
     private const val oneDay = 24L * 3600L * 1000L;
 
     fun dayName(ctx: Context, time: Long, formatter: DateFormat): String {
-        var ret: String = "";
+        val ret: String;
 
         if (DateUtils.isToday(time)) {
             ret = ctx.resources.getString(R.string.today);

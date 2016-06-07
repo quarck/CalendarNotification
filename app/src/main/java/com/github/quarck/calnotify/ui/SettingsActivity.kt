@@ -29,8 +29,8 @@ import android.widget.LinearLayout
 import com.github.quarck.calnotify.R
 
 class SettingsActivity : PreferenceActivity() {
-    @SuppressWarnings("deprecation")
 
+    @Suppress("DEPRECATION")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)

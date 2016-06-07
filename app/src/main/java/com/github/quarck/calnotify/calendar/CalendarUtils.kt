@@ -166,6 +166,7 @@ object CalendarUtils {
         }
     }
 
+    @Suppress("UNUSED_VARIABLE")
     fun getEvent(context: Context, eventId: Long, alertTime: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {

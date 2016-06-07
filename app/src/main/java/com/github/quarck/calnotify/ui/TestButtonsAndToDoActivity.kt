@@ -54,6 +54,7 @@ class TestButtonsAndToDoActivity : Activity() {
     }
 
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnDebugLoggingToggle(v: View) {
         if (v is ToggleButton) {
             settings.debugTransactionLogEnabled = v.isChecked;
@@ -62,6 +63,7 @@ class TestButtonsAndToDoActivity : Activity() {
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnRemoveOriginalEventToggle(v: View) {
         if (v is ToggleButton) {
             settings.removeOriginal = v.isChecked
@@ -69,6 +71,7 @@ class TestButtonsAndToDoActivity : Activity() {
     }
 
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonTestActivityClick(v: View) {
         startActivity(Intent(applicationContext, SnoozeActivity::class.java));
     }
@@ -85,14 +88,14 @@ class TestButtonsAndToDoActivity : Activity() {
                 "fix Cyrillic display",
                 "in a", "major", "distro", "DE (like Debian and GNOME)", "and adopt that")
 
-        var sb = StringBuilder();
-        var r = Random(currentTime);
+        val sb = StringBuilder();
+        val r = Random(currentTime);
 
-        var len = r.nextInt(30);
+        val len = r.nextInt(30);
 
         var prev = -1;
         for (i in 0..len) {
-            var new = 0;
+            var new: Int
             do {
                 new = r.nextInt(dict.size)
             } while (new == prev);
@@ -109,20 +112,23 @@ class TestButtonsAndToDoActivity : Activity() {
     private val filterText: String
         get() = find<EditText>(R.id.edittext_debug_event_id).text.toString()
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonFilterClick(v: View) {
         find<TextView>(R.id.log).text = " -- DISABLED --- FOREVER -- "
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonViewClick(v: View) {
-        var id = filterText.toLongOrNull()
+        val id = filterText.toLongOrNull()
         if (id != null) {
 
-            var ev = CalendarUtils.getEvent(this, id);
+            // var ev = CalendarUtils.getEvent(this, id);
 
             CalendarIntents.viewCalendarEvent(this, id);
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonTestClick(v: View) {
 
         val first = (v.id == R.id.buttonTest);

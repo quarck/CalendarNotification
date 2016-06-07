@@ -69,6 +69,23 @@ class HelpAndFeedbackActivity : Activity() {
         }
     }
 
+    val emailText: String  by lazy {
+
+        val pInfo = packageManager.getPackageInfo(packageName, 0);
+
+        """Please describe your problem or suggestion below this text (English/Russian languages only)
+
+If you are not reporting a problem, you could remove android and hardware details that were automatically added to this message.
+
+Android version: ${Build.VERSION.RELEASE}
+Device: ${Build.MANUFACTURER} ${Build.MODEL}
+Android build: ${Build.DISPLAY}
+App version: ${pInfo.versionName} (${pInfo.versionCode})
+
+<type your feedback / request here>
+"""
+    }
+
     companion object {
         var logger = Logger("ActivityHelpAndFeedback")
 
@@ -76,18 +93,5 @@ class HelpAndFeedbackActivity : Activity() {
         val mimeType = "message/rfc822"
         val emailSubject = "Calendar Notification Plus Feedback"
 
-        val emailText: String  by lazy {
-
-"""Please describe your problem or suggestion below this text (English/Russian languages only)
-
-If you are not reporting a problem, you could remove android and hardware details that were automatically added to this message.
-
-Android version: ${Build.VERSION.RELEASE}
-Device: ${Build.MANUFACTURER} ${Build.MODEL}
-Android build: ${Build.DISPLAY}
-
-<type your feedback / request here>
-"""
-        }
     }
 }

@@ -28,7 +28,8 @@ import com.github.quarck.calnotify.logs.Logger
 class BootCompleteBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");
-        ApplicationController.onBootComplete(context, intent)
+        if (context != null)
+            ApplicationController.onBootComplete(context)
     }
 
     companion object {

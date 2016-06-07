@@ -28,8 +28,9 @@ import com.github.quarck.calnotify.logs.Logger
 class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive: ${intent?.toUri(Intent.URI_INTENT_SCHEME) ?: ""}")
-        ApplicationController.onCalendarChanged(context, intent)
+        logger.debug("onReceive")
+        if (context != null)
+            ApplicationController.onCalendarChanged(context)
     }
 
     companion object {

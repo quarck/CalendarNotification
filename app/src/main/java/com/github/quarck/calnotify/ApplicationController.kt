@@ -124,19 +124,87 @@ object ApplicationController {
         }
     }
 
+    private fun rescheduleAlarms(context: Context) {
+
+        if (true) {
+            logger.debug("scheduleEventAlarm called");
+
+            var nextAlarm =
+                EventsStorage(context).use {
+                    it.events
+                        .filter { it.snoozedUntil != 0L }
+                        .map { it.snoozedUntil }
+                        .min()
+                };
+
+            val intent = Intent(context, AlarmBroadcastReceiver::class.java);
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val alarmManager = context.alarmManager
+
+            if (nextAlarm != null) {
+
+                val currentTime = System.currentTimeMillis()
+
+                if (nextAlarm < currentTime) {
+                    logger.error("CRITICAL: nextAlarm=$nextAlarm is less than currentTime $currentTime");
+                    nextAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
+                }
+
+                logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - currentTime) / 1000L} seconds");
+
+                alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
+            } else {
+                logger.info("No next events, cancelling alarms");
+
+                alarmManager.cancel(pendingIntent)
+            }
+        }
+
+        if (true) {
+            val settings = getSettings(context);
+
+            if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
+
+                val hasActiveNotifications =
+                    EventsStorage(context).use {
+                        it.events
+                            .filter { it.snoozedUntil == 0L }
+                            .any()
+                    }
+
+                if (hasActiveNotifications) {
+
+                    val remindInterval = settings.remindersIntervalMillis
+                    var nextFire = System.currentTimeMillis() + remindInterval
+
+                    if (settings.quietHoursOneTimeReminderEnabled)
+                        nextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOULD
+
+                    val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
+
+                    if (quietUntil != 0L) {
+                        logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15} due to silent period");
+
+                        // give a little extra delay, so if events would fire precisely at the quietUntil,
+                        // reminders would wait a bit longer
+                        nextFire = quietUntil + Consts.ALARM_THRESHOULD
+                    }
+
+                    ReminderAlarm.scheduleAlarmMillisAt(context, nextFire);
+                }
+
+            }
+        }
+    }
+
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onAlarm(context: Context?, intent: Intent?) {
-        if (context != null) {
-            notificationManager.postEventNotifications(context, false, null);
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
-        } else {
-            logger.error("onAlarm: context is null");
-        }
+    fun onEventAlarm(context: Context) {
+        notificationManager.postEventNotifications(context, false, null);
+        scheduleNextAlarmForEvents(context);
+        scheduleNextAlarmForReminders(context);
     }
 
 
@@ -196,45 +264,38 @@ object ApplicationController {
         return repostNotifications
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onAppUpdated(context: Context?, intent: Intent?) {
-        if (context != null) {
-            val changes = reloadCalendar(context)
+    fun onAppUpdated(context: Context) {
+
+        val changes = reloadCalendar(context)
+        notificationManager.postEventNotifications(context, true, null);
+        scheduleNextAlarmForEvents(context);
+        scheduleNextAlarmForReminders(context);
+
+        if (changes)
+            UINotifierService.notifyUI(context, false);
+    }
+
+    fun onBootComplete(context: Context) {
+        val changes = reloadCalendar(context);
+        notificationManager.postEventNotifications(context, true, null);
+
+        scheduleNextAlarmForEvents(context);
+        scheduleNextAlarmForReminders(context);
+
+        if (changes)
+            UINotifierService.notifyUI(context, false);
+    }
+
+    fun onCalendarChanged(context: Context) {
+
+        val changes = reloadCalendar(context)
+        if (changes) {
             notificationManager.postEventNotifications(context, true, null);
+
             scheduleNextAlarmForEvents(context);
             scheduleNextAlarmForReminders(context);
 
-            if (changes)
-                UINotifierService.notifyUI(context, false);
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onBootComplete(context: Context?, intent: Intent?) {
-        if (context != null) {
-            val changes = reloadCalendar(context);
-            notificationManager.postEventNotifications(context, true, null);
-
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
-
-            if (changes)
-                UINotifierService.notifyUI(context, false);
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onCalendarChanged(context: Context?, intent: Intent?) {
-        if (context != null) {
-            val changes = reloadCalendar(context)
-            if (changes) {
-                notificationManager.postEventNotifications(context, true, null);
-
-                scheduleNextAlarmForEvents(context);
-                scheduleNextAlarmForReminders(context);
-
-                UINotifierService.notifyUI(context, false);
-            }
+            UINotifierService.notifyUI(context, false);
         }
     }
 
@@ -381,55 +442,47 @@ object ApplicationController {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun onAppPause(context: Context?) {
+    fun onAppPause(context: Context) {
         UndoManager.clear()
     }
 
-    fun onTimeChanged(context: Context?) {
-        if (context != null) {
-            scheduleNextAlarmForEvents(context)
-            scheduleNextAlarmForReminders(context)
+    fun onTimeChanged(context: Context) {
+        scheduleNextAlarmForEvents(context)
+        scheduleNextAlarmForReminders(context)
+    }
+
+    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
+
+        logger.debug("Removing event id $eventId from DB, and dismissing notification")
+
+        if (enableUndo) {
+            val event = db.getEvent(eventId)
+            if (event != null)
+                UndoManager.push(event)
+        }
+
+        db.deleteEvent(eventId)
+
+        notificationManager.onEventDismissed(context, eventId, notificationId);
+
+        scheduleNextAlarmForEvents(context);
+        scheduleNextAlarmForReminders(context);
+
+        if (notifyActivity)
+            UINotifierService.notifyUI(context, true);
+    }
+
+    fun dismissEvent(context: Context, event: EventRecord, enableUndo: Boolean = false) {
+        EventsStorage(context).use {
+            if (enableUndo)
+                UndoManager.push(event)
+            dismissEvent(context, it, event.eventId, event.notificationId, false, false)
         }
     }
 
-    fun dismissEvent(context: Context?, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
-
-        if (context != null) {
-            logger.debug("Removing event id $eventId from DB, and dismissing notification")
-
-            if (enableUndo) {
-                val event = db.getEvent(eventId)
-                if (event != null)
-                    UndoManager.push(event)
-            }
-
-            db.deleteEvent(eventId)
-
-            notificationManager.onEventDismissed(context, eventId, notificationId);
-
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
-
-            if (notifyActivity)
-                UINotifierService.notifyUI(context, true);
-        }
-    }
-
-    fun dismissEvent(context: Context?, event: EventRecord, enableUndo: Boolean = false) {
-        if (context != null) {
-            EventsStorage(context).use {
-                if (enableUndo)
-                    UndoManager.push(event)
-                dismissEvent(context, it, event.eventId, event.notificationId, false, false)
-            }
-        }
-    }
-
-    fun dismissEvent(context: Context?, eventId: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
-        if (context != null) {
-            EventsStorage(context).use {
-                dismissEvent(context, it, eventId, notificationId, notifyActivity, enableUndo)
-            }
+    fun dismissEvent(context: Context, eventId: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
+        EventsStorage(context).use {
+            dismissEvent(context, it, eventId, notificationId, notifyActivity, enableUndo)
         }
     }
 

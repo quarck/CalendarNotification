@@ -28,9 +28,9 @@ import com.github.quarck.calnotify.logs.Logger
 class TimeSetBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-
-        logger.info("TimeChangedReceiver: onReceive")
-        ApplicationController.onTimeChanged(context)
+        logger.info("onReceive")
+        if (context != null)
+            ApplicationController.onTimeChanged(context)
     }
 
     companion object {

@@ -29,7 +29,8 @@ class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");
-        ApplicationController.onAppUpdated(context, intent)
+        if (context != null)
+            ApplicationController.onAppUpdated(context)
     }
 
     companion object {

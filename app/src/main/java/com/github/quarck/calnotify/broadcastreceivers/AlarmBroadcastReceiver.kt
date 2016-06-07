@@ -28,7 +28,8 @@ import com.github.quarck.calnotify.logs.Logger
 class AlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");
-        ApplicationController.onAlarm(context, intent);
+        if (context != null)
+            ApplicationController.onEventAlarm(context);
     }
 
     companion object {

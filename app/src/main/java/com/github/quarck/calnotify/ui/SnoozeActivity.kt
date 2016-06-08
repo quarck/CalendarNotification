@@ -89,13 +89,14 @@ class SnoozeActivity : Activity() {
         // Populate event details
         // val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
+        val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
 
         val isSnoozeAll = (eventId == -1L)
 
         // load event if it is not a "snooze all"
         //var event: EventRecord? = null
         if (!isSnoozeAll)
-            event = EventsStorage(this).use { it.getEvent(eventId) }
+            event = EventsStorage(this).use { it.getEvent(eventId, instanceStartTime) }
 
         val ev = event // so we can check it only once for null
 
@@ -247,7 +248,7 @@ class SnoozeActivity : Activity() {
         if (ev != null) {
             logger.debug("Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
-            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, ev.eventId, snoozeDelay);
+            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
             if (isQuiet)
                 toastAboutQuietTime(nextFire)
 
@@ -377,7 +378,7 @@ class SnoozeActivity : Activity() {
 
                 logger.info("snooze: Moved event ${ev.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                ApplicationController.dismissEvent(this, ev.eventId, ev.notificationId, enableUndo = false)
+                ApplicationController.dismissEvent(this, ev.eventId, ev.instanceStartTime, ev.notificationId, enableUndo = false)
 
                 // Show
                 if (Settings(this).viewAfterEdit)

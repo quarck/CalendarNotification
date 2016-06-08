@@ -35,6 +35,7 @@ object Consts {
     //
     const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
     const val INTENT_EVENT_ID_KEY = "eventId";
+    const val INTENT_INSTANCE_START_TIME_KEY = "instanceStartTime"
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 

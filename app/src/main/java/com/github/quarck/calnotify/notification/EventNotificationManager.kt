@@ -363,7 +363,7 @@ class EventNotificationManager : IEventNotificationManager {
             com.github.quarck.calnotify.R.drawable.ic_update_white_24dp,
             ctx.getString(com.github.quarck.calnotify.R.string.snooze) ?: "SNOOZE",
             pendingActivityIntent(ctx,
-                snoozeIntent(ctx, event.eventId, event.notificationId),
+                snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
                 event.notificationId * 3 + 0
             )
         )
@@ -373,14 +373,14 @@ class EventNotificationManager : IEventNotificationManager {
                 com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp,
                 ctx.getString(com.github.quarck.calnotify.R.string.dismiss) ?: "DISMISS",
                 pendingServiceIntent(ctx,
-                    dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
+                    dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
                     event.notificationId * 3 + 1
                 )
             )
         } else {
             builder.setDeleteIntent(
                 pendingServiceIntent(ctx,
-                    dismissOrDeleteIntent(ctx, event.eventId, event.notificationId),
+                    dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
                     event.notificationId * 3 + 2
                 )
             )
@@ -426,19 +426,21 @@ class EventNotificationManager : IEventNotificationManager {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
     }
 
-    private fun snoozeIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
+    private fun snoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
         val intent = Intent(ctx, SnoozeActivity::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
-        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
+        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
+        intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
         return intent;
     }
 
-    private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, notificationId: Int): Intent {
+    private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
         val intent = Intent(ctx, NotificationActionDismissService::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
-        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId);
+        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
+        intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
         return intent;
     }
 

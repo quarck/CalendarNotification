@@ -177,7 +177,7 @@ object ApplicationController {
         return ret
     }
 
-    fun snoozeEvent(context: Context, eventId: Long, snoozeDelay: Long): Pair<Boolean, Long> {
+    fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): Pair<Boolean, Long> {
         var ret = Pair(false, 0L)
 
         val currentTime = System.currentTimeMillis()
@@ -185,7 +185,7 @@ object ApplicationController {
         val snoozedEvent =
             EventsStorage(context).use {
                 db ->
-                val event = db.getEvent(eventId)
+                val event = db.getEvent(eventId, instanceStartTime)
 
                 if (event != null) {
                     val snoozedUntil =
@@ -300,12 +300,12 @@ object ApplicationController {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
-    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
+    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
 
         logger.debug("Removing event id $eventId from DB, and dismissing notification")
 
         if (enableUndo) {
-            val event = db.getEvent(eventId)
+            val event = db.getEvent(eventId, instanceStartTime)
             if (event != null)
                 undoManager.push(event)
         }
@@ -324,13 +324,13 @@ object ApplicationController {
         EventsStorage(context).use {
             if (enableUndo)
                 undoManager.push(event)
-            dismissEvent(context, it, event.eventId, event.notificationId, false, false)
+            dismissEvent(context, it, event.eventId, event.instanceStartTime, event.notificationId, false, false)
         }
     }
 
-    fun dismissEvent(context: Context, eventId: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
+    fun dismissEvent(context: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
         EventsStorage(context).use {
-            dismissEvent(context, it, eventId, notificationId, notifyActivity, enableUndo)
+            dismissEvent(context, it, eventId, instanceStartTime, notificationId, notifyActivity, enableUndo)
         }
     }
 

@@ -365,7 +365,8 @@ class MainActivity : Activity(), EventListCallback {
             startActivity(
                 Intent(this, SnoozeActivity::class.java)
                     .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
-                    .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId))
+                    .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
+                    .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime))
         }
         refreshReminderLastFired()
     }

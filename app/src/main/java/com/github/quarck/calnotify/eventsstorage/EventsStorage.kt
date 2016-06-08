@@ -106,8 +106,8 @@ class EventsStorage(context: Context)
     fun updateEvents(events: List<EventRecord>)
         = synchronized(EventsStorage::class.java) { updateEventsImpl(events) }
 
-    fun getEvent(eventId: Long): EventRecord?
-        = synchronized(EventsStorage::class.java) { return getEventImpl(eventId) }
+    fun getEvent(eventId: Long, instanceStartTime: Long): EventRecord?
+        = synchronized(EventsStorage::class.java) { return getEventImpl(eventId, instanceStartTime) }
 
     fun deleteEvent(eventId: Long)
         = synchronized(EventsStorage::class.java) { deleteEventImpl(eventId) }
@@ -201,7 +201,7 @@ class EventsStorage(context: Context)
             logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
 
             // persist original notification id in this case
-            event.notificationId = getEventImpl(event.eventId)?.notificationId ?: event.notificationId;
+            event.notificationId = getEventImpl(event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
 
             updateEventImpl(event)
         }
@@ -266,15 +266,27 @@ class EventsStorage(context: Context)
         db.close()
     }
 
-    private fun getEventImpl(eventId: Long): EventRecord? {
+    private fun getEventImpl(eventId: Long, instanceStartTime: Long): EventRecord? {
         val db = this.readableDatabase
+
+        val selection =
+            if (instanceStartTime != 0L)
+                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
+            else
+                " $KEY_EVENTID = ?"
+
+        val selectionArgs =
+            if (instanceStartTime != 0L)
+                arrayOf(eventId.toString(), instanceStartTime.toString())
+            else
+                arrayOf(eventId.toString())
 
         val cursor = db.query(TABLE_NAME, // a. table
             SELECT_COLUMNS, // b. column names
-            " $KEY_EVENTID = ?", // c. selections
-            arrayOf<String>(eventId.toString()), // d. selections args
+            selection, // c. selections
+            selectionArgs, // d. selections args
             null, // e. group by
-            null, // f. h aving
+            null, // f. having
             null, // g. order by
             null) // h. limit
 

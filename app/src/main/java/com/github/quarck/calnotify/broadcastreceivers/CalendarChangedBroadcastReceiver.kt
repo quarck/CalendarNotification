@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
 
 class CalendarChangedBroadcastReceiver : BroadcastReceiver() {

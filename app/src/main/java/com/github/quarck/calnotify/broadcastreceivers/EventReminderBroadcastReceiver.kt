@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.logs.Logger
@@ -43,7 +43,7 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
         var alertTime: String? = uri.lastPathSegment;
 
         if (alertTime != null) {
-            var events = CalendarUtils.getFiredEventsDetails(context, alertTime)
+            var events = CalendarUtils.getInstancesByAlertTime(context, alertTime)
 
             if (events != null) {
                 for (event in events) {

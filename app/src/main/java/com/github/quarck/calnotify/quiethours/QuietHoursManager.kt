@@ -24,21 +24,21 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
 import java.util.*
 
-object QuietHoursManager {
+object QuietHoursManager: QuietHoursManagerInterface {
     var logger = Logger("QuietPeriodManager")
 
-    fun isEnabled(settings: Settings)
+    private fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
-    fun isInsideQuietPeriod(settings: Settings, time: Long = 0L) =
+    override fun isInsideQuietPeriod(settings: Settings, time: Long) =
         getSilentUntil(settings, time) > 0L
 
-    fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
+    override fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
         getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
 
-        // returns time in millis, when silent period ends,
+    // returns time in millis, when silent period ends,
     // or 0 if we are not on silent
-    fun getSilentUntil(settings: Settings, time: Long = 0L): Long {
+    override fun getSilentUntil(settings: Settings, time: Long): Long {
         var ret: Long = 0
 
         if (!isEnabled(settings))
@@ -86,7 +86,7 @@ object QuietHoursManager {
         return ret
     }
 
-    fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
+    override fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
         var ret = LongArray(currentTimes.size)
 

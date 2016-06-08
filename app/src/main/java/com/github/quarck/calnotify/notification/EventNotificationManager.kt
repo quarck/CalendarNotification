@@ -328,14 +328,14 @@ class EventNotificationManager : IEventNotificationManager {
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val calendarIntent = CalendarIntents.getCalendarViewIntent(event.eventId);
+        val calendarIntent = CalendarIntents.getCalendarViewIntent(event.eventId, event.instanceStartTime, event.instanceEndTime);
         //calendarIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         //var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
 
         val calendarPendingIntent =
             TaskStackBuilder.create(ctx)
                 .addNextIntentWithParentStack(calendarIntent)
-                .getPendingIntent(0, 0)//PendingIntent.FLAG_UPDATE_CURRENT);
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notificationText = event.formatText(ctx);
 

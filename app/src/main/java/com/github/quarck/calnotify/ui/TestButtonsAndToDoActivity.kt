@@ -26,7 +26,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
@@ -124,7 +124,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
             // var ev = CalendarUtils.getEvent(this, id);
 
-            CalendarIntents.viewCalendarEvent(this, id);
+            CalendarIntents.viewCalendarEvent(this, id, 0L, 0L);
         }
     }
 

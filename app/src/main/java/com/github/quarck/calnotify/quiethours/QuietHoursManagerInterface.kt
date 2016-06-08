@@ -17,23 +17,20 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.broadcastreceivers
+package com.github.quarck.calnotify.quiethours
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
+import java.util.*
 
-class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
+interface QuietHoursManagerInterface {
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
-        if (context != null)
-            ApplicationController.onAppUpdated(context)
-    }
+    fun isInsideQuietPeriod(settings: Settings, time: Long = 0L): Boolean
 
-    companion object {
-        private val logger = Logger("BroadcastReceiverAppUpdated");
-    }
+    fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray): BooleanArray
+
+    fun getSilentUntil(settings: Settings, time: Long = 0L): Long
+
+    fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray
 }

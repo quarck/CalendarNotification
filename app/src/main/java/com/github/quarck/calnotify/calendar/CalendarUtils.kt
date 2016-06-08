@@ -55,8 +55,8 @@ object CalendarUtils {
         val eventId: Long? = cursor.getLong(0)
         val state: Int? = cursor.getInt(1)
         val title: String? = cursor.getString(2)
-        val start: Long? = cursor.getLong(4)
-        val end: Long? = cursor.getLong(5)
+        val startTime: Long? = cursor.getLong(4)
+        val endTime: Long? = cursor.getLong(5)
         val location: String? = cursor.getString(6)
         val color: Int? = cursor.getInt(7)
         val newAlarmTime: Long? = cursor.getLong(8)
@@ -65,7 +65,7 @@ object CalendarUtils {
         val instanceStart: Long? = cursor.getLong(10)
         val instanceEnd: Long? = cursor.getLong(11)
 
-        if (eventId == null || state == null || title == null || start == null)
+        if (eventId == null || state == null || title == null || startTime == null)
             return Pair(null, null);
 
         val event =
@@ -75,10 +75,10 @@ object CalendarUtils {
                 notificationId = 0,
                 alertTime = alarmTime ?: newAlarmTime ?: 0,
                 title = title,
-                startTime = start,
-                endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
-                instanceStartTime = instanceStart ?: start,
-                instanceEndTime = instanceEnd ?: (start + Consts.HOUR_IN_SECONDS*1000L),
+                startTime = startTime,
+                endTime = endTime ?: 0L,
+                instanceStartTime = instanceStart ?: 0L,
+                instanceEndTime = instanceEnd ?: 0L,
                 location = location ?: "",
                 lastEventVisibility = 0L,
                 displayStatus = EventDisplayStatus.Hidden,
@@ -88,7 +88,7 @@ object CalendarUtils {
         return Pair(state, event)
     }
 
-    fun getFiredEventsDetails(context: Context, alertTime: String): List<EventRecord>? {
+    fun getInstancesByAlertTime(context: Context, alertTime: String): List<EventRecord>? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getFiredEventsDetails failed due to not sufficient permissions");
@@ -167,7 +167,7 @@ object CalendarUtils {
     }
 
     @Suppress("UNUSED_VARIABLE")
-    fun getEvent(context: Context, eventId: Long, alertTime: Long): EventRecord? {
+    fun getEventInstance(context: Context, eventId: Long, alertTime: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEvent failed due to not sufficient permissions");
@@ -458,15 +458,15 @@ object CalendarUtils {
             return null;
         }
 
-        var fields = arrayOf(
+        val fields = arrayOf(
                 CalendarContract.CalendarAlerts.EVENT_ID,
                 CalendarContract.Events.RRULE,
                 CalendarContract.Events.RDATE
         )
 
-        var selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
-        var cursor: Cursor? =
+        val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
                         fields,
@@ -477,12 +477,12 @@ object CalendarUtils {
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    var eventId = cursor.getLong(0)
+                    val eventId = cursor.getLong(0)
                     if (eventId != event.eventId)
                         continue;
 
-                    var rRule: String? = cursor.getString(1);
-                    var rDate: String? = cursor.getString(2);
+                    val rRule: String? = cursor.getString(1);
+                    val rDate: String? = cursor.getString(2);
 
                     if (rRule != null && rRule.length > 0)
                         ret = true;
@@ -497,6 +497,8 @@ object CalendarUtils {
         } catch (ex: Exception) {
             ret = null
         }
+
+        cursor?.close()
 
         return ret;
     }

@@ -47,13 +47,13 @@ object EventRecordUtils {
 fun EventRecord.formatText(ctx: Context): String {
     val sb = StringBuilder()
 
-    if (this.instanceStart != 0L) {
+    if (this.displayedStartTime != 0L) {
 
         val currentTime = System.currentTimeMillis();
 
         val today = Date(currentTime)
-        val start = Date(this.instanceStart)
-        val end = Date(this.instanceEnd)
+        val start = Date(this.displayedStartTime)
+        val end = Date(this.displayedEndTime)
 
         val currentDay = Calendar.getInstance()
         val startDay = Calendar.getInstance()
@@ -69,7 +69,7 @@ fun EventRecord.formatText(ctx: Context): String {
         if (!currentDay.dayEquals(startDay)) {
 
             if (startDay.dayEquals(endDay))
-                sb.append(EventRecordUtils.dayName(ctx, instanceStart, dateFormatter));
+                sb.append(EventRecordUtils.dayName(ctx, displayedStartTime, dateFormatter));
             else
                 sb.append(dateFormatter.format(start));
 
@@ -78,7 +78,7 @@ fun EventRecord.formatText(ctx: Context): String {
 
         sb.append(timeFormatter.format(start));
 
-        if (instanceEnd != 0L) {
+        if (displayedEndTime != 0L) {
 
             sb.append(" - ");
 
@@ -104,12 +104,12 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
     val sbDay = StringBuilder()
     val sbTime = StringBuilder();
 
-    if (this.instanceStart != 0L) {
+    if (this.displayedStartTime != 0L) {
         val currentTime = System.currentTimeMillis();
 
         val today = Date(currentTime)
-        val start = Date(this.instanceStart)
-        val end = Date(this.instanceEnd)
+        val start = Date(this.displayedStartTime)
+        val end = Date(this.displayedEndTime)
 
         val currentDay = Calendar.getInstance()
         val startDay = Calendar.getInstance()
@@ -121,17 +121,17 @@ fun EventRecord.formatTime(ctx: Context): Pair<String, String> {
 
         val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
-        sbTime.append(timeFormatter.format(Date(this.instanceStart)));
+        sbTime.append(timeFormatter.format(Date(this.displayedStartTime)));
 
-        if (this.instanceEnd != 0L && endDay.dayEquals(startDay)) {
+        if (this.displayedEndTime != 0L && endDay.dayEquals(startDay)) {
             sbTime.append(" - ");
-            sbTime.append(timeFormatter.format(Date(this.instanceEnd)))
+            sbTime.append(timeFormatter.format(Date(this.displayedEndTime)))
         }
 
         sbDay.append(
                 EventRecordUtils.dayName(
                         ctx,
-                        instanceStart, DateFormat.getDateInstance(DateFormat.FULL)
+                    displayedStartTime, DateFormat.getDateInstance(DateFormat.FULL)
                 )
         );
     }

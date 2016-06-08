@@ -28,7 +28,7 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
@@ -44,8 +44,7 @@ import com.github.quarck.calnotify.utils.find
 import java.util.*
 
 class SnoozeActivity : Activity() {
-    var eventId: Long = -1
-    var notificationId: Int = -1
+    var event: EventRecord? = null
 
     lateinit var snoozePresets: LongArray
 
@@ -88,21 +87,23 @@ class SnoozeActivity : Activity() {
         settings = Settings(this)
 
         // Populate event details
-        notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
-        eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
+        // val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
+        val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
 
         val isSnoozeAll = (eventId == -1L)
 
         // load event if it is not a "snooze all"
-        var event: EventRecord? = null
+        //var event: EventRecord? = null
         if (!isSnoozeAll)
             event = EventsStorage(this).use { it.getEvent(eventId) }
+
+        val ev = event // so we can check it only once for null
 
         snoozePresets = settings.snoozePresets
 
         // remove "MM minutes before event" snooze presents for "Snooze All"
         // and when event time has passed already
-        if (isSnoozeAll || event != null && event.instanceStart < currentTime)
+        if (isSnoozeAll || ev != null && ev.displayedStartTime < currentTime)
             snoozePresets = snoozePresets.filter{ it > 0L }.toLongArray()
 
         val isQuiet =
@@ -139,16 +140,17 @@ class SnoozeActivity : Activity() {
         if (snoozeCustom != null)
             snoozeCustom.visibility = showCustomSnoozeVisibility
 
-        if (!isSnoozeAll && event != null) {
+        if (!isSnoozeAll && ev != null) {
+
             val title =
-                    if (event.title == "")
+                    if (ev.title == "")
                         this.resources.getString(R.string.empty_title)
                     else
-                        event.title;
+                        ev.title;
 
-            val (date, time) = event.formatTime(this);
+            val (date, time) = ev.formatTime(this);
 
-            val location = event.location;
+            val location = ev.location;
             if (location != "") {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
                 val locationView = find<TextView>(R.id.snooze_view_location)
@@ -164,18 +166,21 @@ class SnoozeActivity : Activity() {
             dateView.text = date;
             timeView.text = time;
 
-            val onClick = View.OnClickListener { CalendarIntents.editCalendarEvent(this, eventId) }
+            val onClick =
+                View.OnClickListener {
+                    CalendarIntents.viewCalendarEvent(this, eventId, ev.instanceStartTime, ev.instanceEndTime)
+                }
 
             dateView.setOnClickListener(onClick)
             timeView.setOnClickListener(onClick)
 
 
-            var color: Int = event.color.adjustCalendarColor();
+            var color: Int = ev.color.adjustCalendarColor();
             if (color == 0)
                 color = resources.getColor(R.color.primary)
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
 
-            val isRepeating = CalendarUtils.isRepeatingEvent(this, event)
+            val isRepeating = CalendarUtils.isRepeatingEvent(this, ev)
             if (isRepeating != null && !isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
 
@@ -221,7 +226,9 @@ class SnoozeActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEventDetailsClick(v: View?) {
-        CalendarIntents.viewCalendarEvent(this, eventId);
+        val ev = event
+        if (ev != null)
+            CalendarIntents.viewCalendarEvent(this, ev.eventId, ev.instanceStartTime, ev.instanceEndTime);
     }
 
     private fun toastAboutQuietTime(quietUntil: Long) {
@@ -236,10 +243,11 @@ class SnoozeActivity : Activity() {
     }
 
     private fun snoozeEvent(snoozeDelay: Long) {
-        if (notificationId != -1 && eventId != -1L) {
-            logger.debug("Snoozing event id $eventId, snoozeDelay=${snoozeDelay / 1000L}")
+        val ev = event
+        if (ev != null) {
+            logger.debug("Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
-            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, eventId, snoozeDelay);
+            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, ev.eventId, snoozeDelay);
             if (isQuiet)
                 toastAboutQuietTime(nextFire)
 
@@ -266,6 +274,7 @@ class SnoozeActivity : Activity() {
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonSnoozeClick(v: View?) {
         if (v == null)
             return
@@ -356,32 +365,33 @@ class SnoozeActivity : Activity() {
 
     fun reschedule(addTime: Long) {
 
-        val event = EventsStorage(this).use { it.getEvent(eventId) }
+        val ev = event
 
-        if (event != null) {
+        if (ev != null) {
 
-            logger.info("Moving event ${event.eventId} by ${addTime/1000L} seconds");
+            logger.info("Moving event ${ev.eventId} by ${addTime/1000L} seconds");
 
-            val moved = CalendarUtils.moveEvent(this, event, addTime)
+            val moved = CalendarUtils.moveEvent(this, ev, addTime)
 
             if (moved) {
 
-                logger.info("snooze: Moved event ${event.eventId} by ${addTime/1000L} seconds")
+                logger.info("snooze: Moved event ${ev.eventId} by ${addTime/1000L} seconds")
                 // Dismiss
-                ApplicationController.dismissEvent(this, eventId, notificationId, enableUndo = false)
+                ApplicationController.dismissEvent(this, ev.eventId, ev.notificationId, enableUndo = false)
 
                 // Show
                 if (Settings(this).viewAfterEdit)
-                    CalendarIntents.viewCalendarEvent(this, event.eventId)
+                    CalendarIntents.viewCalendarEvent(this, ev.eventId, 0L, 0L)
 
                 // terminate ourselves
                 finish();
             } else {
-                logger.info("snooze: Failed to move event ${event.eventId} by ${addTime/1000L} seconds")
+                logger.info("snooze: Failed to move event ${ev.eventId} by ${addTime/1000L} seconds")
             }
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonRescheduleClick(v: View?) {
         if (v == null)
             return

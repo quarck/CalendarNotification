@@ -36,6 +36,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventRecord
@@ -307,7 +308,7 @@ class MainActivity : Activity(), EventListCallback {
 
     private fun updateUndoVisibility() {
 
-        val canUndo = ApplicationController.canUndo
+        val canUndo = ApplicationController.undoManager.canUndo
         undoLayout.visibility = if (canUndo) View.VISIBLE else View.GONE
 
         if (canUndo) {
@@ -315,9 +316,9 @@ class MainActivity : Activity(), EventListCallback {
                 undoTimer = Timer()
 
             undoTimer?.schedule(Consts.UNDO_TIMEOUT) {
-                ApplicationController.onUndoTimeout()
+                ApplicationController.undoManager.clearIfTimeout()
                 runOnUiThread {
-                    undoLayout.visibility = if (ApplicationController.canUndo) View.VISIBLE else View.GONE
+                    undoLayout.visibility = if (ApplicationController.undoManager.canUndo) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -336,7 +337,7 @@ class MainActivity : Activity(), EventListCallback {
 
         val event = adapter.getEventAtPosition(position, eventId)
         if (event != null)
-            CalendarIntents.viewCalendarEvent(this, event.eventId)
+            CalendarIntents.viewCalendarEvent(this, event.eventId, event.instanceStartTime, event.instanceEndTime)
 
         refreshReminderLastFired()
     }
@@ -386,7 +387,7 @@ class MainActivity : Activity(), EventListCallback {
         val event = adapter.getEventAtPosition(position, eventId)
 
         if (event != null)
-            CalendarIntents.editCalendarEvent(this, event.eventId)
+            CalendarIntents.viewCalendarEvent(this, event.eventId, event.instanceStartTime, event.instanceEndTime)
 
         refreshReminderLastFired()
     }

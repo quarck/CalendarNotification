@@ -132,7 +132,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
 
     fun updateWidgetView() {
 
-        var wv = widgetView
+        val wv = widgetView
         if (wv != null)
            wv.background = ColorDrawable(colorValue)
     }

@@ -23,27 +23,39 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.logs.Logger
 
 
 object CalendarIntents {
-    //
-    //
-    fun getCalendarViewIntent(eventId: Long): Intent {
-        val calendarIntentUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
-        return Intent(Intent.ACTION_VIEW).setData(calendarIntentUri);
-    }
 
-    fun getCalendarEditIntent(eventId: Long): Intent {
+    val logger = Logger("CalendarIntents")
+
+    private fun intentForAction(action: String, eventId: Long,
+                                instanceBeginTime: Long, instanceEndTime: Long): Intent {
+
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
-        val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+        val intent = Intent(action).setData(uri)
+
+        if (instanceBeginTime != 0L &&
+            instanceEndTime != 0L &&
+            instanceBeginTime < instanceEndTime) {
+            // only add if it is a valid instance start / end time, and we need both
+            logger.debug("Adding instance start / end for event $eventId, start: $instanceBeginTime, end: $instanceEndTime");
+            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, instanceBeginTime)
+            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, instanceEndTime)
+        }
         return intent
     }
 
-    fun viewCalendarEvent(context: Context, eventId: Long) {
-        context.startActivity(getCalendarViewIntent(eventId))
-    }
+    fun getCalendarViewIntent(eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
+        = intentForAction(Intent.ACTION_VIEW, eventId, instanceBeginTime, instanceEndTime)
 
-    fun editCalendarEvent(context: Context, eventId: Long) {
-        context.startActivity(getCalendarEditIntent(eventId))
-    }
+    fun getCalendarEditIntent(eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
+        = intentForAction(Intent.ACTION_EDIT, eventId, instanceBeginTime, instanceEndTime)
+
+    fun viewCalendarEvent(context: Context, eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
+        = context.startActivity(getCalendarViewIntent(eventId, instanceBeginTime, instanceEndTime))
+
+    fun editCalendarEvent(context: Context, eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
+        = context.startActivity(getCalendarEditIntent(eventId, instanceBeginTime, instanceEndTime))
 }

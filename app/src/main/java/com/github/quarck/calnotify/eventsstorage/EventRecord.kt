@@ -63,12 +63,12 @@ data class EventRecord(
             ret = true
         }
 
-        if (newEvent.instanceStartTime != 0L && instanceStartTime != newEvent.instanceStartTime) {
+        if (instanceStartTime != newEvent.instanceStartTime) {
             instanceStartTime = newEvent.instanceStartTime
             ret = true
         }
 
-        if (newEvent.instanceEndTime != 0L && instanceEndTime != newEvent.instanceEndTime) {
+        if (instanceEndTime != newEvent.instanceEndTime) {
             instanceEndTime = newEvent.instanceEndTime
             ret = true
         }
@@ -86,9 +86,9 @@ data class EventRecord(
         return ret
     }
 
-    val instanceStart: Long
+    val displayedStartTime: Long
         get() = if (instanceStartTime != 0L) instanceStartTime else startTime
 
-    val instanceEnd: Long
+    val displayedEndTime: Long
         get() = if (instanceEndTime != 0L) instanceEndTime else endTime
 }

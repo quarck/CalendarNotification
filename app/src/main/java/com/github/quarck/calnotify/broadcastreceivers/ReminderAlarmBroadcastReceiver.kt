@@ -27,7 +27,7 @@ import android.media.MediaPlayer
 import android.os.PowerManager
 import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger

@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.notification
 import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
 
 class NotificationActionDismissService : IntentService("ServiceNotificationActionDismiss") {

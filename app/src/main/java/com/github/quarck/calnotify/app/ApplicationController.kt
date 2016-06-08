@@ -17,13 +17,11 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.app
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import com.github.quarck.calnotify.broadcastreceivers.AlarmBroadcastReceiver
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventRecord
@@ -31,11 +29,9 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
-import com.github.quarck.calnotify.notification.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.ui.UINotifierService
-import com.github.quarck.calnotify.utils.alarmManager
-import com.github.quarck.calnotify.utils.setExactCompat
 
 object ApplicationController {
     private val notificationManager: IEventNotificationManager = EventNotificationManager()
@@ -52,159 +48,19 @@ object ApplicationController {
         return settings!!
     }
 
-    private fun scheduleNextAlarmForEvents(context: Context) {
+    val undoManager: UndoManagerInterface = UndoManager
 
-        logger.debug("scheduleEventAlarm called");
+    val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
 
-        var nextAlarm =
-                EventsStorage(context).use {
-                    it.events
-                            .filter { it.snoozedUntil != 0L }
-                            .map { it.snoozedUntil }
-                            .min()
-                };
+    val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
 
-        val intent = Intent(context, AlarmBroadcastReceiver::class.java);
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val alarmManager = context.alarmManager
-
-        if (nextAlarm != null) {
-
-            val currentTime = System.currentTimeMillis()
-
-            if (nextAlarm < currentTime) {
-                logger.error("CRITICAL: nextAlarm=$nextAlarm is less than currentTime $currentTime");
-                nextAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
-            }
-
-            logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - currentTime) / 1000L} seconds");
-
-            alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
-        } else {
-            logger.info("No next events, cancelling alarms");
-
-            alarmManager.cancel(pendingIntent)
-        }
-    }
-
-    private fun scheduleNextAlarmForReminders(context: Context) {
-
-        val settings = getSettings(context);
-
-        if (!settings.remindersEnabled && !settings.quietHoursOneTimeReminderEnabled)
-            return;
-
-        val hasActiveNotifications =
-                EventsStorage(context).use {
-                    it.events
-                            .filter { it.snoozedUntil == 0L }
-                            .any()
-                }
-
-        if (hasActiveNotifications) {
-
-            val remindInterval = settings.remindersIntervalMillis
-            var nextFire = System.currentTimeMillis() + remindInterval
-
-            if (settings.quietHoursOneTimeReminderEnabled)
-                nextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOULD
-
-            val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
-
-            if (quietUntil != 0L) {
-                logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15} due to silent period");
-
-                // give a little extra delay, so if events would fire precisely at the quietUntil,
-                // reminders would wait a bit longer
-                nextFire = quietUntil + Consts.ALARM_THRESHOULD
-            }
-
-            ReminderAlarm.scheduleAlarmMillisAt(context, nextFire);
-        }
-    }
-
-    private fun rescheduleAlarms(context: Context) {
-
-        if (true) {
-            logger.debug("scheduleEventAlarm called");
-
-            var nextAlarm =
-                EventsStorage(context).use {
-                    it.events
-                        .filter { it.snoozedUntil != 0L }
-                        .map { it.snoozedUntil }
-                        .min()
-                };
-
-            val intent = Intent(context, AlarmBroadcastReceiver::class.java);
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-            val alarmManager = context.alarmManager
-
-            if (nextAlarm != null) {
-
-                val currentTime = System.currentTimeMillis()
-
-                if (nextAlarm < currentTime) {
-                    logger.error("CRITICAL: nextAlarm=$nextAlarm is less than currentTime $currentTime");
-                    nextAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
-                }
-
-                logger.info("Scheduling next alarm at ${nextAlarm}, in ${(nextAlarm - currentTime) / 1000L} seconds");
-
-                alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextAlarm, pendingIntent);
-            } else {
-                logger.info("No next events, cancelling alarms");
-
-                alarmManager.cancel(pendingIntent)
-            }
-        }
-
-        if (true) {
-            val settings = getSettings(context);
-
-            if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
-
-                val hasActiveNotifications =
-                    EventsStorage(context).use {
-                        it.events
-                            .filter { it.snoozedUntil == 0L }
-                            .any()
-                    }
-
-                if (hasActiveNotifications) {
-
-                    val remindInterval = settings.remindersIntervalMillis
-                    var nextFire = System.currentTimeMillis() + remindInterval
-
-                    if (settings.quietHoursOneTimeReminderEnabled)
-                        nextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOULD
-
-                    val quietUntil = QuietHoursManager.getSilentUntil(settings, nextFire)
-
-                    if (quietUntil != 0L) {
-                        logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15} due to silent period");
-
-                        // give a little extra delay, so if events would fire precisely at the quietUntil,
-                        // reminders would wait a bit longer
-                        nextFire = quietUntil + Consts.ALARM_THRESHOULD
-                    }
-
-                    ReminderAlarm.scheduleAlarmMillisAt(context, nextFire);
-                }
-
-            }
-        }
-    }
 
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
     fun onEventAlarm(context: Context) {
         notificationManager.postEventNotifications(context, false, null);
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
 
@@ -222,26 +78,26 @@ object ApplicationController {
             for (event in events) {
 
                 try {
-                    var newEvent = CalendarUtils.getEvent(context, event.eventId, event.alertTime)
+                    var newEvent = CalendarUtils.getEventInstance(context, event.eventId, event.alertTime)
 
                     if (newEvent == null ) {
                         newEvent = CalendarUtils.getEvent(context, event.eventId)
 
-                        if (newEvent != null
-                            && (newEvent.startTime - event.startTime > Consts.EVENT_MOVED_THRESHOLD)
-                            && (newEvent.startTime - currentTime > Consts.EVENT_MOVED_THRESHOLD) ) {
-                            // Here we have a confirmation that event was re-scheduled by user
-                            // to some time in the future and that's why original event instance has disappeared
-                            // - we are good to go to dismiss event reminder automatically
-                            dismissEvent(context, db, event.eventId, event.notificationId, notifyActivity = true, enableUndo = false);
-                            val movedSec = (newEvent.startTime - event.startTime) / 1000L
-                            logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
-                        } else {
-                            // Here we can't confirm that event was moved into the future.
-                            // Perhaps it was removed, but this is not what users usually do.
-                            // Leave it for user to remove the notification
-                            logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
-                        }
+//                        if (newEvent != null
+//                            && (newEvent.startTime - event.startTime > Consts.EVENT_MOVED_THRESHOLD)
+//                            && (newEvent.startTime - currentTime > Consts.EVENT_MOVED_THRESHOLD) ) {
+//                            // Here we have a confirmation that event was re-scheduled by user
+//                            // to some time in the future and that's why original event instance has disappeared
+//                            // - we are good to go to dismiss event reminder automatically
+//                            dismissEvent(context, db, event.eventId, event.notificationId, notifyActivity = true, enableUndo = false);
+//                            val movedSec = (newEvent.startTime - event.startTime) / 1000L
+//                            logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
+//                        } else {
+//                            // Here we can't confirm that event was moved into the future.
+//                            // Perhaps it was removed, but this is not what users usually do.
+//                            // Leave it for user to remove the notification
+//                            logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
+//                        }
                     } else {
                         logger.debug("Event ${event.eventId} is still here");
 
@@ -268,8 +124,8 @@ object ApplicationController {
 
         val changes = reloadCalendar(context)
         notificationManager.postEventNotifications(context, true, null);
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
         if (changes)
             UINotifierService.notifyUI(context, false);
@@ -279,8 +135,7 @@ object ApplicationController {
         val changes = reloadCalendar(context);
         notificationManager.postEventNotifications(context, true, null);
 
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
         if (changes)
             UINotifierService.notifyUI(context, false);
@@ -292,8 +147,7 @@ object ApplicationController {
         if (changes) {
             notificationManager.postEventNotifications(context, true, null);
 
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             UINotifierService.notifyUI(context, false);
         }
@@ -308,8 +162,7 @@ object ApplicationController {
 
             notificationManager.onEventAdded(context, event)
 
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             ret = true
 
@@ -337,7 +190,7 @@ object ApplicationController {
                 if (event != null) {
                     val snoozedUntil =
                         if (snoozeDelay > 0L) currentTime + snoozeDelay
-                        else event.instanceStart - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
+                        else event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
                     db.updateEvent(event,
                         snoozedUntil = snoozedUntil,
@@ -353,8 +206,7 @@ object ApplicationController {
         if (snoozedEvent != null) {
             notificationManager.onEventSnoozed(context, snoozedEvent.eventId, snoozedEvent.notificationId);
 
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
             if (silentUntil != 0L)
@@ -398,8 +250,7 @@ object ApplicationController {
 
             notificationManager.onAllEventsSnoozed(context)
 
-            scheduleNextAlarmForEvents(context);
-            scheduleNextAlarmForReminders(context);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedUntil)
             if (silentUntil != 0L)
@@ -433,8 +284,7 @@ object ApplicationController {
             val changes = reloadCalendar(context);
             notificationManager.postEventNotifications(context, true, null)
 
-            scheduleNextAlarmForEvents(context)
-            scheduleNextAlarmForReminders(context)
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             if (changes)
                 UINotifierService.notifyUI(context, true);
@@ -443,12 +293,11 @@ object ApplicationController {
 
     @Suppress("UNUSED_PARAMETER")
     fun onAppPause(context: Context) {
-        UndoManager.clear()
+        undoManager.clear()
     }
 
     fun onTimeChanged(context: Context) {
-        scheduleNextAlarmForEvents(context)
-        scheduleNextAlarmForReminders(context)
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
     fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
@@ -458,15 +307,14 @@ object ApplicationController {
         if (enableUndo) {
             val event = db.getEvent(eventId)
             if (event != null)
-                UndoManager.push(event)
+                undoManager.push(event)
         }
 
         db.deleteEvent(eventId)
 
         notificationManager.onEventDismissed(context, eventId, notificationId);
 
-        scheduleNextAlarmForEvents(context);
-        scheduleNextAlarmForReminders(context);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
         if (notifyActivity)
             UINotifierService.notifyUI(context, true);
@@ -475,7 +323,7 @@ object ApplicationController {
     fun dismissEvent(context: Context, event: EventRecord, enableUndo: Boolean = false) {
         EventsStorage(context).use {
             if (enableUndo)
-                UndoManager.push(event)
+                undoManager.push(event)
             dismissEvent(context, it, event.eventId, event.notificationId, false, false)
         }
     }
@@ -487,16 +335,10 @@ object ApplicationController {
     }
 
     fun undoDismiss(context: Context) {
-        val event = UndoManager.pop()
+        val event = undoManager.pop()
         if (event != null) {
             EventsStorage(context).use { it.addEvent(event) }
             notificationManager.onEventRestored(context, event)
         }
     }
-
-    val canUndo: Boolean
-        get() = !UndoManager.empty && (System.currentTimeMillis() - UndoManager.dismissedTime < Consts.UNDO_TIMEOUT)
-
-    fun onUndoTimeout()
-        = UndoManager.onUndoTimeout()
 }

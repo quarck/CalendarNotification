@@ -17,23 +17,12 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.broadcastreceivers
+package com.github.quarck.calnotify.app
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 
-class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
-        if (context != null)
-            ApplicationController.onAppUpdated(context)
-    }
-
-    companion object {
-        private val logger = Logger("BroadcastReceiverAppUpdated");
-    }
+interface AlarmSchedulerInterface {
+    fun rescheduleAlarms(context: Context, settings: Settings, quietHoursManager: QuietHoursManagerInterface)
 }

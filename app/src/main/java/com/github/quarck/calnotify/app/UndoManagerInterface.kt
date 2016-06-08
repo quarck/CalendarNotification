@@ -17,41 +17,16 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-
-package com.github.quarck.calnotify
+package com.github.quarck.calnotify.app
 
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 
-object UndoManager {
 
-    private var record: EventRecord? = null
-
-    var dismissedTime: Long = 0
+interface UndoManagerInterface {
 
     fun push(event: EventRecord)
-        = synchronized(this) {
-            record = event
-            dismissedTime = System.currentTimeMillis()
-        }
-
-    fun pop()
-        = synchronized(this){
-            val ret = record
-            record = null
-            ret
-        }
-
-    val empty: Boolean
-        get() = synchronized(this) { record == null }
-
+    fun pop(): EventRecord?
     fun clear()
-        = synchronized(this) {
-            record = null
-        }
-
-    fun onUndoTimeout()
-        = synchronized(this) {
-            if (System.currentTimeMillis() - dismissedTime > Consts.UNDO_TIMEOUT - 2000L) // some safety check
-               record = null
-        }
+    fun clearIfTimeout()
+    val canUndo: Boolean get
 }

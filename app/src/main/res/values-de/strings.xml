@@ -31,7 +31,6 @@
     <string name="new_events_detected">Neuladen, um neue Termine zu sehen</string>
     <string name="next_week_same_day">Um eine Woche verschieben</string>
     <string name="no_calendar_permissions_main">Die Anwendung hat keinen Zugriff auf Ihren Kalender</string>
-    <string name="no_events_to_display">Keine Termine </string>
     <string name="notification_light_title">Benachrichtungs-LED</string>
     <string name="notification_settings">Benachrichtungs-Einstellungen</string>
     <string name="off">Deaktiviert</string>

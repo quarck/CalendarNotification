@@ -89,7 +89,6 @@
     <string name="hour">hora</string>
     <string name="minutes">minutos</string>
     <string name="minute">minuto</string>
-    <string name="no_events_to_display">Nenhum evento</string>
     <string name="no_calendar_permissions_main">Aplicação não possuí permissões de calendário</string>
     <string name="view_after_edit">Visualizar depois de editar</string>
     <string name="view_after_edit_summary">Ative para vizualizar automaticamente o evento após alterar sua data utilizando a opção de Adiar</string>

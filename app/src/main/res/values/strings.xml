@@ -93,7 +93,7 @@
     <string name="hour">hour</string>
     <string name="minutes">minutes</string>
     <string name="minute">minute</string>
-    <string name="no_events_to_display">No events to display</string>
+    <string name="no_events_to_display">No events to display\nActive and snoozed events would appear here</string>
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
     <string name="view_after_edit">View after edit</string>
     <string name="view_after_edit_summary">Enable to automatically view event in the calendar after changing event time using Snooze activity</string>

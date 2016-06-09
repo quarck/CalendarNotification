@@ -308,7 +308,7 @@ object ApplicationController {
                 undoManager.push(event)
         }
 
-        db.deleteEvent(eventId)
+        db.deleteEvent(eventId, instanceStartTime)
 
         notificationManager.onEventDismissed(context, eventId, notificationId);
 

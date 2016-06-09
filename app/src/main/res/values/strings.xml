@@ -177,4 +177,6 @@
     <string name="app_icon">App Icon:</string>
     <string name="undo">UNDO</string>
     <string name="event_dismissed">Event dismissed</string>
+
+    <string name="moved_to_string">Event rescheduled to</string>
 </resources>

@@ -109,7 +109,7 @@ class EventsStorage(context: Context)
                     lastEventVisibility: Long? = null,
                     displayStatus: EventDisplayStatus? = null,
                     color: Int? = null
-    ) {
+    ): EventInstanceRecord {
         val newEvent =
             event.copy(
                 alertTime = alertTime ?: event.alertTime,
@@ -126,6 +126,8 @@ class EventsStorage(context: Context)
             );
 
         updateEvent(newEvent)
+
+        return newEvent
     }
 
     @Suppress("unused")

@@ -175,22 +175,23 @@ object ApplicationController {
         return ret
     }
 
-    fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): Pair<Boolean, Long> {
-        var ret = Pair(false, 0L)
+    fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
+
+        var ret: SnoozeResult? = null
 
         val currentTime = System.currentTimeMillis()
 
         val snoozedEvent =
             EventsStorage(context).use {
                 db ->
-                val event = db.getEvent(eventId, instanceStartTime)
+                var event = db.getEvent(eventId, instanceStartTime)
 
                 if (event != null) {
                     val snoozedUntil =
                         if (snoozeDelay > 0L) currentTime + snoozeDelay
                         else event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
-                    db.updateEvent(event,
+                    event = db.updateEvent(event,
                         snoozedUntil = snoozedUntil,
                         lastEventVisibility = currentTime,
                         displayStatus = EventDisplayStatus.Hidden)
@@ -207,18 +208,16 @@ object ApplicationController {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
-            if (silentUntil != 0L)
-                ret = Pair(true, silentUntil)
-            else
-                ret = Pair(false, snoozedEvent.snoozedUntil)
+
+            ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil, silentUntil)
         }
 
         return ret
     }
 
-    fun snoozeAllEvents(context: Context, snoozeDelay: Long): Pair<Boolean, Long> {
+    fun snoozeAllEvents(context: Context, snoozeDelay: Long): SnoozeResult? {
 
-        var ret = Pair(false, 0L)
+        var ret: SnoozeResult? = null
 
         val currentTime = System.currentTimeMillis()
 
@@ -251,12 +250,9 @@ object ApplicationController {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedUntil)
-            if (silentUntil != 0L)
-                ret = Pair(true, silentUntil)
-            else
-                ret = Pair(false, snoozedUntil)
-        }
 
+            ret = SnoozeResult(SnoozeType.Snoozed, snoozedUntil, silentUntil)
+        }
 
         return ret
     }

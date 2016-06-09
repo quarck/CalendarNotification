@@ -533,6 +533,11 @@ object CalendarUtils {
 
             ret = updated > 0
 
+            if (ret) {
+                event.startTime = newStartTime
+                event.endTime = newEndTime
+            }
+
         } catch (ex: Exception) {
             logger.error("Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
         }

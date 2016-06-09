@@ -31,6 +31,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.SnoozeResult
+import com.github.quarck.calnotify.app.SnoozeType
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
@@ -233,15 +235,33 @@ class SnoozeActivity : Activity() {
             CalendarIntents.viewCalendarEvent(this, ev.eventId, ev.instanceStartTime, ev.instanceEndTime);
     }
 
-    private fun toastAboutQuietTime(quietUntil: Long) {
-        if (quietUntil != 0L) {
-            val msg =
-                String.format(resources.getString(R.string.snoozed_time_inside_quiet_hours),
-                    DateUtils.formatDateTime(this, quietUntil,
-                        DateUtils.FORMAT_SHOW_TIME or
-                            DateUtils.FORMAT_SHOW_DATE))
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    private fun dateToStr(time: Long)
+        = DateUtils.formatDateTime(this, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
+
+    private fun toastAboutSnoozeResult(res: SnoozeResult) {
+
+        var msg = ""
+
+        if (res.type == SnoozeType.Snoozed) {
+            if (res.quietUntil != 0L) {
+
+                val dateTime = dateToStr(res.quietUntil)
+                val quietUntilFmt = resources.getString(R.string.snoozed_time_inside_quiet_hours)
+                msg = String.format(quietUntilFmt, dateTime)
+            } else {
+
+                val dateTime = dateToStr(res.snoozedUntil)
+                val snoozedUntil = resources.getString(R.string.snoozed_until_string)
+                msg = "$snoozedUntil $dateTime"
+            }
+        } else if (res.type == SnoozeType.Moved) {
+            val dateTime = dateToStr(res.snoozedUntil)
+            val snoozedUntil = resources.getString(R.string.moved_to_string)
+            msg ="$snoozedUntil $dateTime"
         }
+
+        if (msg != "")
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     private fun snoozeEvent(snoozeDelay: Long) {
@@ -249,9 +269,9 @@ class SnoozeActivity : Activity() {
         if (ev != null) {
             logger.debug("Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
-            val (isQuiet, nextFire) = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
-            if (isQuiet)
-                toastAboutQuietTime(nextFire)
+            val result = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
+            if (result != null)
+                toastAboutSnoozeResult(result)
 
             finish();
         } else {
@@ -263,9 +283,9 @@ class SnoozeActivity : Activity() {
 
                     logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                    val (isQuiet, nextFire) = ApplicationController.snoozeAllEvents(this, snoozeDelay);
-                    if (isQuiet)
-                        toastAboutQuietTime(nextFire)
+                    val result = ApplicationController.snoozeAllEvents(this, snoozeDelay);
+                    if (result != null)
+                        toastAboutSnoozeResult(result)
                     finish();
                 }
                 .setNegativeButton(R.string.cancel) {
@@ -384,6 +404,8 @@ class SnoozeActivity : Activity() {
                 // Show
                 if (Settings(this).viewAfterEdit)
                     CalendarIntents.viewCalendarEvent(this, ev.eventId, 0L, 0L)
+                else
+                    toastAboutSnoozeResult(SnoozeResult(SnoozeType.Moved, ev.startTime, 0L))
 
                 // terminate ourselves
                 finish();

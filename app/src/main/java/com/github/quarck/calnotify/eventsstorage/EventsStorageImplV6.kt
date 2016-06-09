@@ -74,7 +74,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
     }
 
-    override fun addEventImpl(event: EventRecord) {
+    override fun addEventImpl(event: EventInstanceRecord) {
         logger.debug("addEvent " + event.eventId)
 
         val db = helper.writableDatabase
@@ -129,7 +129,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         return ret
     }
 
-    override fun updateEventImpl(event: EventRecord) {
+    override fun updateEventImpl(event: EventInstanceRecord) {
         val db = helper.writableDatabase
 
         val values = eventRecordToContentValues(event)
@@ -144,7 +144,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         db.close()
     }
 
-    override fun updateEventsImpl(events: List<EventRecord>) {
+    override fun updateEventsImpl(events: List<EventInstanceRecord>) {
         val db = helper.writableDatabase
 
         logger.debug("Updating ${events.size} events");
@@ -161,7 +161,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         db.close()
     }
 
-    override fun getEventImpl(eventId: Long, instanceStartTime: Long): EventRecord? {
+    override fun getEventImpl(eventId: Long, instanceStartTime: Long): EventInstanceRecord? {
         val db = helper.readableDatabase
 
         val selection =
@@ -185,7 +185,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
             null, // g. order by
             null) // h. limit
 
-        var event: EventRecord? = null
+        var event: EventInstanceRecord? = null
 
         if (cursor != null) {
             if (cursor.moveToFirst())
@@ -197,9 +197,9 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         return event
     }
 
-    override val eventsImpl: List<EventRecord>
+    override val eventsImpl: List<EventInstanceRecord>
         get() {
-            val ret = LinkedList<EventRecord>()
+            val ret = LinkedList<EventInstanceRecord>()
 
             val db = helper.readableDatabase
 
@@ -226,9 +226,9 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
             return ret
         }
 
-    override fun getActiveEventsImpl(currentTime: Long, threshold: Long): List<EventRecord> {
+    override fun getActiveEventsImpl(currentTime: Long, threshold: Long): List<EventInstanceRecord> {
 
-        val ret = LinkedList<EventRecord>()
+        val ret = LinkedList<EventInstanceRecord>()
 
         val timePlusThr = currentTime + threshold
 
@@ -268,7 +268,7 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         logger.debug("deleteNotification ${eventId}")
     }
 
-    private fun eventRecordToContentValues(event: EventRecord, includeId: Boolean = false): ContentValues {
+    private fun eventRecordToContentValues(event: EventInstanceRecord, includeId: Boolean = false): ContentValues {
         val values = ContentValues();
 
         if (includeId)
@@ -292,9 +292,9 @@ class EventsStorageImplV6(val context: Context, val helper: SQLiteOpenHelper)
         return values;
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): EventRecord {
+    private fun cursorToEventRecord(cursor: Cursor): EventInstanceRecord {
 
-        return EventRecord(
+        return EventInstanceRecord(
             calendarId = (cursor.getLong(0) as Long?) ?: -1L,
             eventId = cursor.getLong(1),
             notificationId = cursor.getInt(2),

@@ -24,18 +24,18 @@ import android.database.sqlite.SQLiteDatabase
 interface EventsStorageImplInterface {
     fun createDb(db: SQLiteDatabase)
 
-    fun addEventImpl(event: EventRecord)
+    fun addEventImpl(event: EventInstanceRecord)
 
-    fun updateEventImpl(event: EventRecord)
+    fun updateEventImpl(event: EventInstanceRecord)
 
-    fun updateEventsImpl(events: List<EventRecord>)
+    fun updateEventsImpl(events: List<EventInstanceRecord>)
 
-    fun getEventImpl(eventId: Long, instanceStartTime: Long): EventRecord?
+    fun getEventImpl(eventId: Long, instanceStartTime: Long): EventInstanceRecord?
 
-    val eventsImpl: List<EventRecord>
+    val eventsImpl: List<EventInstanceRecord>
         get
 
-    fun getActiveEventsImpl(currentTime: Long, threshold: Long): List<EventRecord>
+    fun getActiveEventsImpl(currentTime: Long, threshold: Long): List<EventInstanceRecord>
 
     fun deleteEventImpl(eventId: Long)
 

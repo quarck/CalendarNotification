@@ -57,10 +57,10 @@ class EventsStorage(context: Context)
     }
 
 
-    fun addEvent(event: EventRecord)
+    fun addEvent(event: EventInstanceRecord)
         = synchronized (EventsStorage::class.java) { impl.addEventImpl(event) }
 
-    fun updateEvent(event: EventRecord,
+    fun updateEvent(event: EventInstanceRecord,
                     alertTime: Long? = null,
                     title: String? = null,
                     snoozedUntil: Long? = null,
@@ -91,7 +91,7 @@ class EventsStorage(context: Context)
         updateEvent(newEvent)
     }
 
-    fun updateEvents(events: List<EventRecord>,
+    fun updateEvents(events: List<EventInstanceRecord>,
                      alertTime: Long? = null,
                      title: String? = null,
                      snoozedUntil: Long? = null,
@@ -124,25 +124,25 @@ class EventsStorage(context: Context)
         updateEvents(newEvents)
     }
 
-    fun updateEvent(event: EventRecord)
+    fun updateEvent(event: EventInstanceRecord)
         = synchronized(EventsStorage::class.java) { impl.updateEventImpl(event) }
 
-    fun updateEvents(events: List<EventRecord>)
+    fun updateEvents(events: List<EventInstanceRecord>)
         = synchronized(EventsStorage::class.java) { impl.updateEventsImpl(events) }
 
-    fun getEvent(eventId: Long, instanceStartTime: Long): EventRecord?
+    fun getEvent(eventId: Long, instanceStartTime: Long): EventInstanceRecord?
         = synchronized(EventsStorage::class.java) { return impl.getEventImpl(eventId, instanceStartTime) }
 
     fun deleteEvent(eventId: Long)
         = synchronized(EventsStorage::class.java) { impl.deleteEventImpl(eventId) }
 
-    fun deleteEvent(ev: EventRecord)
+    fun deleteEvent(ev: EventInstanceRecord)
         = synchronized(EventsStorage::class.java) { impl.deleteEventImpl(ev.eventId) }
 
-    val events: List<EventRecord>
+    val events: List<EventInstanceRecord>
         get() = synchronized(EventsStorage::class.java) { return impl.eventsImpl }
 
-    fun getActiveEvents(currentTime: Long, threshold: Long): List<EventRecord>
+    fun getActiveEvents(currentTime: Long, threshold: Long): List<EventInstanceRecord>
         = synchronized(EventsStorage::class.java) { return impl.getActiveEventsImpl(currentTime, threshold) }
 
     override fun close() {

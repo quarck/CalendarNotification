@@ -32,7 +32,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.utils.find
@@ -141,7 +141,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
             val eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
 
-            val event = EventRecord(
+            val event = EventInstanceRecord(
                 -1L,
                 eventId,
                 System.currentTimeMillis(),

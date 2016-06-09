@@ -23,9 +23,7 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventRecord
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.eventsstorage.*
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
@@ -78,10 +76,10 @@ object ApplicationController {
             for (event in events) {
 
                 try {
-                    var newEvent = CalendarUtils.getEventInstance(context, event.eventId, event.alertTime)
+                    val newEvent = CalendarUtils.getEventInstance(context, event.eventId, event.alertTime)
 
                     if (newEvent == null ) {
-                        newEvent = CalendarUtils.getEvent(context, event.eventId)
+                        //newEvent = CalendarUtils.getEvent(context, event.eventId)
 
 //                        if (newEvent != null
 //                            && (newEvent.startTime - event.startTime > Consts.EVENT_MOVED_THRESHOLD)
@@ -153,7 +151,7 @@ object ApplicationController {
         }
     }
 
-    fun onCalendarEventFired(context: Context, event: EventRecord): Boolean {
+    fun onCalendarEventFired(context: Context, event: EventInstanceRecord): Boolean {
 
         var ret = false
 
@@ -320,7 +318,7 @@ object ApplicationController {
             UINotifierService.notifyUI(context, true);
     }
 
-    fun dismissEvent(context: Context, event: EventRecord, enableUndo: Boolean = false) {
+    fun dismissEvent(context: Context, event: EventInstanceRecord, enableUndo: Boolean = false) {
         EventsStorage(context).use {
             if (enableUndo)
                 undoManager.push(event)

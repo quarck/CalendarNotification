@@ -19,13 +19,13 @@
 
 package com.github.quarck.calnotify.app
 
-import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
 
 
 interface UndoManagerInterface {
 
-    fun push(event: EventRecord)
-    fun pop(): EventRecord?
+    fun push(event: EventInstanceRecord)
+    fun pop(): EventInstanceRecord?
     fun clear()
     fun clearIfTimeout()
     val canUndo: Boolean get

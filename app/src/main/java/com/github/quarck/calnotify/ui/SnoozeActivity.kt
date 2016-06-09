@@ -33,8 +33,9 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.eventsstorage.displayedStartTime
 import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
@@ -44,7 +45,7 @@ import com.github.quarck.calnotify.utils.find
 import java.util.*
 
 class SnoozeActivity : Activity() {
-    var event: EventRecord? = null
+    var event: EventInstanceRecord? = null
 
     lateinit var snoozePresets: LongArray
 

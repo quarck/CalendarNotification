@@ -29,7 +29,7 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventRecord
+import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.formatText
 import com.github.quarck.calnotify.logs.Logger
@@ -42,7 +42,7 @@ import com.github.quarck.calnotify.utils.notificationManager
 import com.github.quarck.calnotify.utils.powerManager
 
 interface IEventNotificationManager {
-    fun onEventAdded(ctx: Context, event: EventRecord);
+    fun onEventAdded(ctx: Context, event: EventInstanceRecord);
 
     fun onEventDismissed(context: Context, eventId: Long, notificationId: Int);
 
@@ -54,12 +54,12 @@ interface IEventNotificationManager {
 
     fun fireEventReminder(context: Context)
 
-    fun onEventRestored(context: Context, event: EventRecord)
+    fun onEventRestored(context: Context, event: EventInstanceRecord)
 }
 
 class EventNotificationManager : IEventNotificationManager {
 
-    override fun onEventAdded(ctx: Context, event: EventRecord) {
+    override fun onEventAdded(ctx: Context, event: EventInstanceRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
             // not using threshold when event is just added
@@ -70,7 +70,7 @@ class EventNotificationManager : IEventNotificationManager {
         postEventNotifications(ctx, false, event.eventId);
     }
 
-    override fun onEventRestored(context: Context, event: EventRecord) {
+    override fun onEventRestored(context: Context, event: EventInstanceRecord) {
         EventsStorage(context).use {
             it.updateEvent(event,
                 // do not update last event visibility, so preserve original sorting order in the activity
@@ -182,7 +182,7 @@ class EventNotificationManager : IEventNotificationManager {
 
     private fun collapseDisplayedNotifications(
         context: Context, db: EventsStorage,
-        events: List<EventRecord>, settings: Settings, force: Boolean ) {
+        events: List<EventInstanceRecord>, settings: Settings, force: Boolean ) {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
@@ -213,7 +213,7 @@ class EventNotificationManager : IEventNotificationManager {
         context: Context,
         db: EventsStorage,
         settings: Settings,
-        events: List<EventRecord>,
+        events: List<EventInstanceRecord>,
         force: Boolean,
         isQuietPeriodActive: Boolean,
         primaryEventId: Long?
@@ -323,7 +323,7 @@ class EventNotificationManager : IEventNotificationManager {
     @Suppress("DEPRECATION")
     private fun postNotification(
         ctx: Context,
-        event: EventRecord,
+        event: EventInstanceRecord,
         notificationSettings: NotificationSettingsSnapshot
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -470,7 +470,7 @@ class EventNotificationManager : IEventNotificationManager {
         context: Context,
         db: EventsStorage,
         settings: Settings,
-        events: List<EventRecord>
+        events: List<EventInstanceRecord>
     ) {
         logger.debug("Posting collapsed view notification for ${events.size} events");
 

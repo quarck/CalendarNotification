@@ -27,6 +27,7 @@ import android.database.Cursor
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
+import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
 import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -51,7 +52,7 @@ object CalendarUtils {
             CalendarContract.CalendarAlerts.END
         )
 
-    private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventRecord?> {
+    private fun cursorToEventRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventInstanceRecord?> {
         val eventId: Long? = cursor.getLong(0)
         val state: Int? = cursor.getInt(1)
         val title: String? = cursor.getString(2)
@@ -69,7 +70,7 @@ object CalendarUtils {
             return Pair(null, null);
 
         val event =
-            EventRecord(
+            EventInstanceRecord(
                 calendarId = calendarId ?: -1L,
                 eventId = eventId,
                 notificationId = 0,
@@ -88,14 +89,14 @@ object CalendarUtils {
         return Pair(state, event)
     }
 
-    fun getInstancesByAlertTime(context: Context, alertTime: String): List<EventRecord>? {
+    fun getInstancesByAlertTime(context: Context, alertTime: String): List<EventInstanceRecord>? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getFiredEventsDetails failed due to not sufficient permissions");
             return null;
         }
 
-        val ret = arrayListOf<EventRecord>()
+        val ret = arrayListOf<EventInstanceRecord>()
 
         val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
@@ -167,14 +168,14 @@ object CalendarUtils {
     }
 
     @Suppress("UNUSED_VARIABLE")
-    fun getEventInstance(context: Context, eventId: Long, alertTime: Long): EventRecord? {
+    fun getEventInstance(context: Context, eventId: Long, alertTime: Long): EventInstanceRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEvent failed due to not sufficient permissions");
             return null;
         }
 
-        var ret: EventRecord? = null
+        var ret: EventInstanceRecord? = null
 
         val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
@@ -252,16 +253,10 @@ object CalendarUtils {
                     EventRecord(
                         calendarId = calendarId ?: -1L,
                         eventId = eventId,
-                        notificationId = 0,
-                        alertTime = 0,
                         title = title,
                         startTime = start,
-                        endTime = end ?: (start + Consts.HOUR_IN_SECONDS*1000L),
-                        instanceStartTime = 0L, // unknown
-                        instanceEndTime = 0L, // unknown
+                        endTime = end ?: 0L,
                         location = location ?: "",
-                        lastEventVisibility = 0L,
-                        displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
                     );
             }
@@ -280,7 +275,7 @@ object CalendarUtils {
     //
     // Returns event ID of the new event, or -1 on error
     //
-    fun cloneAndMoveEvent(context: Context, event: EventRecord, addTime: Long): Long {
+    fun cloneAndMoveEvent(context: Context, event: EventInstanceRecord, addTime: Long): Long {
 
         var ret = -1L;
 
@@ -444,7 +439,7 @@ object CalendarUtils {
         return ret;
     }
 
-    fun isRepeatingEvent(context: Context, event: EventRecord): Boolean? {
+    fun isRepeatingEvent(context: Context, event: EventInstanceRecord): Boolean? {
         var ret: Boolean? = null
 
         if (!PermissionsManager.hasReadCalendar(context)
@@ -503,7 +498,7 @@ object CalendarUtils {
         return ret;
     }
 
-    fun moveEvent(context: Context, event: EventRecord, addTime: Long): Boolean {
+    fun moveEvent(context: Context, event: EventInstanceRecord, addTime: Long): Boolean {
 
         var ret = false;
 

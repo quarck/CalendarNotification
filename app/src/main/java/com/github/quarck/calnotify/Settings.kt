@@ -50,6 +50,7 @@ data class NotificationSettingsSnapshot
         val vibrationPattern: LongArray,
         val ledNotificationOn: Boolean,
         val ledColor: Int,
+        val ledPattern: IntArray,
         val headsUpNotification: Boolean,
         val forwardToPebble: Boolean,
         val pebbleOldFirmware: Boolean
@@ -91,6 +92,13 @@ class Settings(ctx: Context) {
 
     val ledColor: Int
         get() = prefs.getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
+
+    val ledPattern: IntArray
+        get() =
+            prefs.getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
+                .split(",")
+                .map { it.toInt() }
+                .toIntArray()
 
     val forwardToPebble: Boolean
         get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
@@ -197,6 +205,7 @@ class Settings(ctx: Context) {
             vibrationPattern = vibrationPattern,
             ledNotificationOn = ledNotificationOn,
             ledColor = ledColor,
+            ledPattern = ledPattern,
             headsUpNotification = headsUpNotification,
             forwardToPebble = forwardToPebble,
             pebbleOldFirmware = pebbleOldFirmware
@@ -213,6 +222,8 @@ class Settings(ctx: Context) {
         const val VIBRATION_PATTERN_KEY = "pref_vibration_pattern"
         private const val LED_ENABLED_KEY = "notification_led"
         private const val LED_COLOR_KEY = "notification_led_color"
+        private const val LED_PATTERN_KEY = "notification_led_v2pattern"
+
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"

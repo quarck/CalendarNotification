@@ -180,4 +180,11 @@
 
     <string name="moved_to_string">Event rescheduled to</string>
     <string name="vibration_pattern">Vibration pattern</string>
+    <string name="_100ms">100ms</string>
+    <string name="_2500ms">2500ms</string>
+    <string name="led_on_time">LED On Time:</string>
+    <string name="led_off_time">LED Off Time:</string>
+    <string name="led_pattern">LED Pattern</string>
+
+    <string name="milliseconds_suffix">ms</string>
 </resources>

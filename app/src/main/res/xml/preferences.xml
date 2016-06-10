@@ -27,6 +27,12 @@
             android:title="@string/led_color"
             android:dependency="notification_led" />
 
+        <com.github.quarck.calnotify.prefs.LEDPatternPreference
+            android:key="notification_led_v2pattern"
+            android:title="@string/led_pattern"
+            android:dependency="notification_led"
+            android:defaultValue="300,2000"/>
+
         <RingtonePreference
             android:key="pref_key_ringtone"
             android:summary="@string/ringtone_selection_summary"

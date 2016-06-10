@@ -78,6 +78,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
 
         originalColors.clear()
 
+        colorValue = this.getPersistedInt(0)
         for (buttonId in colorButtonIds) {
 
             var button = view.find<Button>(buttonId)

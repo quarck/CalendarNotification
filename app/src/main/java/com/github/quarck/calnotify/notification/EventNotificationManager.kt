@@ -403,7 +403,10 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (notificationSettings.ledNotificationOn) {
             logger.debug("Adding LED light")
-            builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+            if (notificationSettings.ledPattern.size == 2)
+                builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1]);
+            else
+                builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
         } else {
             logger.debug("No LED light")
         }
@@ -489,7 +492,7 @@ class EventNotificationManager : IEventNotificationManager {
                 .fold( StringBuilder(), { sb, ev -> sb.append("${ev.title}\n")} )
                 .toString()
 
-        val notification =
+        val builder =
             Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -502,10 +505,16 @@ class EventNotificationManager : IEventNotificationManager {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
-                .setStyle(Notification.BigTextStyle()
-                    .bigText(bigText))
-                .build()
+                .setStyle(Notification.BigTextStyle().bigText(bigText))
+
+        if (settings.ledNotificationOn) {
+            if (settings.ledPattern.size == 2)
+                builder.setLights(settings.ledColor, settings.ledPattern[0], settings.ledPattern[1]);
+            else
+                builder.setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+        }
+
+        val notification = builder.build()
 
         context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 

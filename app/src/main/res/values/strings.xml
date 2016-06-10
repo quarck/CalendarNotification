@@ -113,7 +113,9 @@
     <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
-    <string name="snooze_all_confirmation">Snooze ALL events? Already snoozed would also change snooze time</string>
+    <string name="change_all">Change All</string>
+    <string name="snooze_all_confirmation">Snooze ALL events?\nAlready snoozed would also change snooze time unless snoozed to longer period</string>
+    <string name="change_all_notification">This will change snooze time for all events\nContinue?</string>
     <string name="all_events">Snooze all events</string>
     <string name="snooze_events_for">Snooze events for:</string>
 

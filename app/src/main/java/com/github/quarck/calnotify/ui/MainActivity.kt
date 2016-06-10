@@ -217,8 +217,12 @@ class MainActivity : Activity(), EventListCallback {
         menuInflater.inflate(R.menu.main, menu)
 
         val menuItem = menu.findItem(R.id.action_snooze_all)
-        if (menuItem != null)
+        if (menuItem != null) {
             menuItem.isEnabled = adapter.itemCount > 0
+            menuItem.title =
+                resources.getString(
+                    if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
+        }
 
         return true
     }
@@ -229,7 +233,9 @@ class MainActivity : Activity(), EventListCallback {
 
         when (item.itemId) {
             R.id.action_snooze_all ->
-                startActivity(Intent(this, SnoozeActivity::class.java))
+                startActivity(
+                    Intent(this, SnoozeActivity::class.java)
+                        .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents))
 
             R.id.action_settings ->
                 startActivity(Intent(this, SettingsActivity::class.java))

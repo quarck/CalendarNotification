@@ -53,6 +53,8 @@ class SnoozeActivity : Activity() {
 
     lateinit var settings: Settings
 
+    var snoozeAllIsChange = false
+
     val snoozePresetControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1,
             R.id.snooze_view_snooze_present2,
@@ -93,6 +95,8 @@ class SnoozeActivity : Activity() {
         // val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
         val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
+
+        snoozeAllIsChange = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, false)
 
         val isSnoozeAll = (eventId == -1L)
 
@@ -276,14 +280,18 @@ class SnoozeActivity : Activity() {
             finish();
         } else {
             AlertDialog.Builder(this)
-                .setMessage(R.string.snooze_all_confirmation)
+                .setMessage(
+                    if (snoozeAllIsChange)
+                        R.string.change_all_notification
+                    else
+                        R.string.snooze_all_confirmation)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes) {
                     x, y ->
 
-                    logger.debug("Snoozing all events, snoozeDelay=${snoozeDelay / 1000L}")
+                    logger.debug("Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                    val result = ApplicationController.snoozeAllEvents(this, snoozeDelay);
+                    val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
                     if (result != null)
                         toastAboutSnoozeResult(result)
                     finish();

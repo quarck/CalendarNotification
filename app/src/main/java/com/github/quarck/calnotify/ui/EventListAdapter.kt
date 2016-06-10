@@ -164,6 +164,9 @@ class EventListAdapter(
 
     override fun getItemCount(): Int = events.size
 
+    val hasActiveEvents: Boolean
+        get() = events.any { it.snoozedUntil == 0L }
+
     fun setEventsToDisplay(newEvents: Array<EventInstanceRecord>)
         = synchronized(this) {
             events = newEvents;

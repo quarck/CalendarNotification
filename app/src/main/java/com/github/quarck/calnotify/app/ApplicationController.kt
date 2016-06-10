@@ -215,35 +215,40 @@ object ApplicationController {
         return ret
     }
 
-    fun snoozeAllEvents(context: Context, snoozeDelay: Long): SnoozeResult? {
+    fun snoozeAllEvents(context: Context, snoozeDelay: Long, isChange: Boolean): SnoozeResult? {
 
         var ret: SnoozeResult? = null
 
         val currentTime = System.currentTimeMillis()
 
-        val snoozedUntil =
-            EventsStorage(context).use {
-                db ->
-                val events = db.events
+        var snoozedUntil = 0L
 
-                // Don't allow events to have exactly the same "snoozedUntil", so to have
-                // predicted sorting order, so add a tiny (0.001s per event) adjust to each
-                // snoozed time
+        EventsStorage(context).use {
+            db ->
+            val events = db.events
 
-                var snoozeAdjust = 0
+            // Don't allow events to have exactly the same "snoozedUntil", so to have
+            // predicted sorting order, so add a tiny (0.001s per event) adjust to each
+            // snoozed time
 
-                for (event in events) {
+            var snoozeAdjust = 0
+
+            for (event in events) {
+
+                val newSnoozeUntil = currentTime + snoozeDelay + snoozeAdjust
+
+                if (isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil) {
                     db.updateEvent(event,
-                        snoozedUntil = currentTime + snoozeDelay + snoozeAdjust,
+                        snoozedUntil = newSnoozeUntil,
                         lastEventVisibility = currentTime)
-
                     ++snoozeAdjust
+
+                    snoozedUntil = newSnoozeUntil
                 }
-
-                events.lastOrNull()?.snoozedUntil
             }
+        }
 
-        if (snoozedUntil != null) {
+        if (snoozedUntil != 0L) {
 
             notificationManager.onAllEventsSnoozed(context)
 

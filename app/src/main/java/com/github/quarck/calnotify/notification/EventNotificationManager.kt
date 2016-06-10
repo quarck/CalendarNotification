@@ -27,6 +27,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
 import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
@@ -114,7 +115,6 @@ class EventNotificationManager : IEventNotificationManager {
 
     override fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?) {
         //
-
         val settings = Settings(context)
 
         val currentTime = System.currentTimeMillis()
@@ -329,13 +329,13 @@ class EventNotificationManager : IEventNotificationManager {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val calendarIntent = CalendarIntents.getCalendarViewIntent(event.eventId, event.instanceStartTime, event.instanceEndTime);
-        //calendarIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
-        //var calendarPendingIntent = PendingIntent.getActivity(ctx, 0, calendarIntent, 0)
 
         val calendarPendingIntent =
             TaskStackBuilder.create(ctx)
                 .addNextIntentWithParentStack(calendarIntent)
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+                .getPendingIntent(
+                    event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
+                    PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notificationText = event.formatText(ctx);
 
@@ -360,28 +360,28 @@ class EventNotificationManager : IEventNotificationManager {
 
 
         builder.addAction(
-            com.github.quarck.calnotify.R.drawable.ic_update_white_24dp,
+            R.drawable.ic_update_white_24dp,
             ctx.getString(com.github.quarck.calnotify.R.string.snooze) ?: "SNOOZE",
             pendingActivityIntent(ctx,
                 snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                event.notificationId * 3 + 0
+                event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
             )
         )
 
         if (notificationSettings.showDismissButton) {
             builder.addAction(
-                com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp,
+                R.drawable.ic_clear_white_24dp,
                 ctx.getString(com.github.quarck.calnotify.R.string.dismiss) ?: "DISMISS",
                 pendingServiceIntent(ctx,
                     dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                    event.notificationId * 3 + 1
+                    event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DISMISS_OFFSET
                 )
             )
         } else {
             builder.setDeleteIntent(
                 pendingServiceIntent(ctx,
                     dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                    event.notificationId * 3 + 2
+                    event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DELETE_OFFSET
                 )
             )
         }
@@ -519,5 +519,12 @@ class EventNotificationManager : IEventNotificationManager {
 
     companion object {
         private val logger = Logger("EventNotificationManager")
+
+        const val EVENT_CODE_SNOOOZE_OFFSET = 0
+        const val EVENT_CODE_DISMISS_OFFSET = 1
+        const val EVENT_CODE_DELETE_OFFSET = 2
+        const val EVENT_CODE_OPEN_OFFSET = 3
+        const val EVENT_CODES_TOTAL = 4
+
     }
 }

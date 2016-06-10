@@ -47,7 +47,7 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
 
             if (events != null) {
                 for (event in events) {
-                    logger.info("broadcastreceiver: Seen event ${event.eventId} / ${event.title}")
+                    logger.info("broadcastreceiver: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                     val shouldRemove = ApplicationController.onCalendarEventFired(context, event);
 

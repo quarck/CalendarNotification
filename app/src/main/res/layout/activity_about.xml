@@ -157,7 +157,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="(github.com/a-ira)"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/secondary_text"
             android:paddingLeft="@dimen/activity_help_credits_padding_left"
             android:paddingStart="@dimen/activity_help_credits_padding_left"
             android:paddingRight="@dimen/activity_help_credits_padding_right"
@@ -191,7 +191,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="(github/mikolaiguetschow)"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/secondary_text"
             android:paddingLeft="@dimen/activity_help_credits_padding_left"
             android:paddingStart="@dimen/activity_help_credits_padding_left"
             android:paddingRight="@dimen/activity_help_credits_padding_right"
@@ -250,7 +250,15 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary_text"
-            android:text="App created by Sergey Parshin"
+            android:text="(c) 2016 Sergey Parshin"
+            android:layout_gravity="center_horizontal"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/secondary_text"
+            android:text="(s.parshin.sc@gmail.com)"
             android:layout_gravity="center_horizontal"
             />
 

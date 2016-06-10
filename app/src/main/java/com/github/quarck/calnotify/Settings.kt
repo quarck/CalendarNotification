@@ -47,6 +47,7 @@ data class NotificationSettingsSnapshot
         val showDismissButton: Boolean,
         val ringtoneUri: Uri?,
         val vibraOn: Boolean,
+        val vibrationPattern: LongArray,
         val ledNotificationOn: Boolean,
         val ledColor: Int,
         val headsUpNotification: Boolean,
@@ -76,6 +77,14 @@ class Settings(ctx: Context) {
 
     val vibraOn: Boolean
         get() = prefs.getBoolean(VIBRATION_ENABLED_KEY, true)
+
+    val vibrationPattern: LongArray
+        get() {
+            val idx = prefs.getString(VIBRATION_PATTERN_KEY, "0").toInt()
+
+            val patterns = Consts.VIBRATION_PATTERNS
+            return if (idx < patterns.size && idx >= 0) patterns[idx] else patterns[0]
+        }
 
     val ledNotificationOn: Boolean
         get() = prefs.getBoolean(LED_ENABLED_KEY, true)
@@ -182,15 +191,16 @@ class Settings(ctx: Context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                    showDismissButton = showDismissButton,
-                    ringtoneUri = ringtoneURI,
-                    vibraOn = vibraOn,
-                    ledNotificationOn = ledNotificationOn,
-                    ledColor = ledColor,
-                    headsUpNotification = headsUpNotification,
-                    forwardToPebble = forwardToPebble,
-                    pebbleOldFirmware = pebbleOldFirmware
-                )
+            showDismissButton = showDismissButton,
+            ringtoneUri = ringtoneURI,
+            vibraOn = vibraOn,
+            vibrationPattern = vibrationPattern,
+            ledNotificationOn = ledNotificationOn,
+            ledColor = ledColor,
+            headsUpNotification = headsUpNotification,
+            forwardToPebble = forwardToPebble,
+            pebbleOldFirmware = pebbleOldFirmware
+        )
 
     companion object {
 
@@ -200,6 +210,7 @@ class Settings(ctx: Context) {
 
         private const val RINGTONE_KEY = "pref_key_ringtone"
         private const val VIBRATION_ENABLED_KEY = "vibra_on"
+        const val VIBRATION_PATTERN_KEY = "pref_vibration_pattern"
         private const val LED_ENABLED_KEY = "notification_led"
         private const val LED_COLOR_KEY = "notification_led_color"
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"

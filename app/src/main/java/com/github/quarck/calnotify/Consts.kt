@@ -25,6 +25,7 @@ object Consts {
 
     const val MIN_REMINDER_INTERVAL = 60 * 1000
 
+
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val HOUR_IN_SECONDS: Long = 3600L
     const val MINUTE_IN_SECONDS: Long = 60L;
@@ -39,10 +40,21 @@ object Consts {
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 
+    // max number of notifications displayed on the screen at all the times
     const val MAX_NOTIFICATIONS = 8;
 
     //
-    const val VIBRATION_DURATION: Long = 1200;
+    private const val VIBRATION_DURATION: Long = 1200;
+    val VIBRATION_PATTERNS by lazy {
+        arrayOf(
+            longArrayOf(0, VIBRATION_DURATION), // Single long
+            longArrayOf(0, 2*VIBRATION_DURATION),
+            longArrayOf(0, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4),
+            longArrayOf(0, VIBRATION_DURATION, VIBRATION_DURATION/3, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4),
+            longArrayOf(0, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4, VIBRATION_DURATION/5, VIBRATION_DURATION/4, VIBRATION_DURATION/3, VIBRATION_DURATION)
+        )
+    }
+
     const val WAKE_SCREEN_DURATION = 100L
 
     const val LED_DURATION_ON = 300;

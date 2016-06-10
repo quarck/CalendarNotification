@@ -395,7 +395,7 @@ class EventNotificationManager : IEventNotificationManager {
 
         if (notificationSettings.vibraOn) {
             logger.debug("adding vibration");
-            builder.setVibrate(longArrayOf(0, Consts.VIBRATION_DURATION));
+            builder.setVibrate(notificationSettings.vibrationPattern);
         } else {
             logger.debug("no vibration")
             builder.setVibrate(longArrayOf(0));

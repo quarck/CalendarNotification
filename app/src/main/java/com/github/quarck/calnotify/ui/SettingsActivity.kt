@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceScreen
@@ -27,8 +28,10 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.utils.vibratorService
 
-class SettingsActivity : PreferenceActivity() {
+class SettingsActivity : PreferenceActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Suppress("DEPRECATION")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +73,25 @@ class SettingsActivity : PreferenceActivity() {
                 }
                 true
             })
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onResume() {
+        super.onResume();
+        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onPause() {
+        super.onPause();
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+        if (key != null && key == Settings.VIBRATION_PATTERN_KEY) {
+            val newPattern = Settings(this).vibrationPattern
+            this.vibratorService.vibrate(newPattern, -1);
         }
     }
 

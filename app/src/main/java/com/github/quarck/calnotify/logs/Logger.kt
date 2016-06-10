@@ -20,12 +20,20 @@
 package com.github.quarck.calnotify.logs
 
 import android.util.Log
+import com.github.quarck.calnotify.Consts
 
-class Logger(val tag: String) {
+class Logger(tag: String) {
 
-    fun debug(message: String) = Log.d(tag, message)
+    private val fullTag: String;
 
-    fun info(message: String) = Log.i(tag, message)
+    init  {
+        fullTag = Consts.LOG_PREFIX + tag;
+    }
 
-    fun error(message: String) = Log.e(tag, message)
+
+    fun debug(message: String) = Log.d(fullTag, message)
+
+    fun info(message: String) = Log.i(fullTag, message)
+
+    fun error(message: String) = Log.e(fullTag, message)
 }

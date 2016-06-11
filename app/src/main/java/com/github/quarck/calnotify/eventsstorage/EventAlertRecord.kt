@@ -39,10 +39,11 @@ data class EventRecord(
     var color: Int = 0
 )
 
-data class EventInstanceRecord(
+data class EventAlertRecord(
     val calendarId: Long,
     val eventId: Long,
-    val alertTime: Long,
+    var isRepeating: Boolean,
+    var alertTime: Long,
     var notificationId: Int,
     var title: String,
     var startTime: Long,
@@ -57,7 +58,7 @@ data class EventInstanceRecord(
 )
 
 
-fun EventInstanceRecord.updateFrom(newEvent: EventInstanceRecord): Boolean {
+fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
     var ret = false
 
     if (title != newEvent.title) {
@@ -65,44 +66,8 @@ fun EventInstanceRecord.updateFrom(newEvent: EventInstanceRecord): Boolean {
         ret = true
     }
 
-    if (startTime != newEvent.startTime) {
-        startTime = newEvent.startTime
-        ret = true
-    }
-
-    if (endTime != newEvent.endTime) {
-        endTime = newEvent.endTime
-        ret = true
-    }
-
-    if (instanceStartTime != newEvent.instanceStartTime) {
-        instanceStartTime = newEvent.instanceStartTime
-        ret = true
-    }
-
-    if (instanceEndTime != newEvent.instanceEndTime) {
-        instanceEndTime = newEvent.instanceEndTime
-        ret = true
-    }
-
-    if (location != newEvent.location) {
-        location = newEvent.location
-        ret = true
-    }
-
-    if (color != newEvent.color) {
-        color = newEvent.color
-        ret = true
-    }
-
-    return ret
-}
-
-fun EventInstanceRecord.updateFrom(newEvent: EventRecord): Boolean {
-    var ret = false
-
-    if (title != newEvent.title) {
-        title = newEvent.title
+    if (alertTime != newEvent.alertTime) {
+        alertTime = newEvent.alertTime
         ret = true
     }
 
@@ -126,11 +91,42 @@ fun EventInstanceRecord.updateFrom(newEvent: EventRecord): Boolean {
         ret = true
     }
 
+    if (isRepeating != newEvent.isRepeating) { // only for upgrading from prev versions of DB
+        isRepeating = newEvent.isRepeating
+        ret = true
+    }
+
     return ret
 }
 
-val EventInstanceRecord.displayedStartTime: Long
+fun EventAlertRecord.updateFrom(newEvent: EventRecord): Boolean {
+    var ret = false
+
+    if (title != newEvent.title) {
+        title = newEvent.title
+        ret = true
+    }
+
+    if (startTime != newEvent.startTime) {
+        startTime = newEvent.startTime
+        ret = true
+    }
+
+    if (endTime != newEvent.endTime) {
+        endTime = newEvent.endTime
+        ret = true
+    }
+
+    if (color != newEvent.color) {
+        color = newEvent.color
+        ret = true
+    }
+
+    return ret
+}
+
+val EventAlertRecord.displayedStartTime: Long
     get() = if (instanceStartTime != 0L) instanceStartTime else startTime
 
-val EventInstanceRecord.displayedEndTime: Long
+val EventAlertRecord.displayedEndTime: Long
     get() = if (instanceEndTime != 0L) instanceEndTime else endTime

@@ -44,7 +44,7 @@ object EventRecordUtils {
     }
 }
 
-fun EventInstanceRecord.formatText(ctx: Context): String {
+fun EventAlertRecord.formatText(ctx: Context): String {
     val sb = StringBuilder()
 
     if (this.displayedStartTime != 0L) {
@@ -100,7 +100,7 @@ fun EventInstanceRecord.formatText(ctx: Context): String {
     return sb.toString()
 }
 
-fun EventInstanceRecord.formatTime(ctx: Context): Pair<String, String> {
+fun EventAlertRecord.formatTime(ctx: Context): Pair<String, String> {
     val sbDay = StringBuilder()
     val sbTime = StringBuilder();
 
@@ -139,7 +139,7 @@ fun EventInstanceRecord.formatTime(ctx: Context): Pair<String, String> {
     return Pair(sbDay.toString(), sbTime.toString());
 }
 
-fun EventInstanceRecord.formatSnoozedUntil(ctx: Context): String {
+fun EventAlertRecord.formatSnoozedUntil(ctx: Context): String {
     var sb = StringBuilder();
 
     if (snoozedUntil != 0L) {

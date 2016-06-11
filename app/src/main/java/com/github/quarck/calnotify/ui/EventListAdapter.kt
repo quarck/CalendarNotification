@@ -29,7 +29,7 @@ import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
+import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.formatSnoozedUntil
 import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -108,7 +108,7 @@ class EventListAdapter(
     }
 
 
-    private var events = arrayOf<EventInstanceRecord>();
+    private var events = arrayOf<EventAlertRecord>();
 
     private val primaryColor: Int
     private val changeString: String
@@ -167,13 +167,13 @@ class EventListAdapter(
     val hasActiveEvents: Boolean
         get() = events.any { it.snoozedUntil == 0L }
 
-    fun setEventsToDisplay(newEvents: Array<EventInstanceRecord>)
+    fun setEventsToDisplay(newEvents: Array<EventAlertRecord>)
         = synchronized(this) {
             events = newEvents;
             notifyDataSetChanged();
         }
 
-    fun getEventAtPosition(position: Int): EventInstanceRecord?
+    fun getEventAtPosition(position: Int): EventAlertRecord?
         = synchronized(this) {
             if (position >= 0 && position < events.size)
                 events[position];
@@ -181,7 +181,7 @@ class EventListAdapter(
                 null
         }
 
-    fun getEventAtPosition(position: Int, expectedEventId: Long): EventInstanceRecord?
+    fun getEventAtPosition(position: Int, expectedEventId: Long): EventAlertRecord?
         = synchronized(this) {
             if (position >= 0 && position < events.size && events[position].eventId == expectedEventId)
                 events[position];

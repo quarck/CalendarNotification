@@ -24,7 +24,7 @@ import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
 
 class EventReminderBroadcastReceiver : BroadcastReceiver() {
@@ -34,39 +34,40 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
 
         var shouldAbortBroadcast = false;
 
-        var removeOriginal = Settings(context).removeOriginal
+        val removeOriginal = Settings(context).removeOriginal
 
         logger.debug("Event reminder received, ${intent.data}, ${intent.action}");
 
-        var uri = intent.data;
+        val uri = intent.data;
 
-        var alertTime: String? = uri.lastPathSegment;
+        val alertTime: String? = uri.lastPathSegment;
 
         if (alertTime != null) {
-            var events = CalendarUtils.getInstancesByAlertTime(context, alertTime)
+            try {
+                val events = CalendarProvider.getAlertByTime(context, alertTime.toLong())
 
-            if (events != null) {
                 for (event in events) {
-                    logger.info("broadcastreceiver: Seen event ${event.eventId} / ${event.instanceStartTime}")
+                    logger.info("Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                     val shouldRemove = ApplicationController.onCalendarEventFired(context, event);
 
                     if (shouldRemove && removeOriginal) {
                         logger.info("Dismissing original reminder")
 
-                        CalendarUtils.dismissNativeEventReminder(context, event.eventId);
+                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
                         shouldAbortBroadcast = true;
                     }
                 }
-            } else {
-                logger.info("broadcastreceiver: ERROR: Fired but no events")
+
+            } catch (ex: Exception) {
+                logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
             }
         } else {
-            logger.error("broadcastreceiver ERROR alertTime is null!")
+            logger.error("ERROR alertTime is null!")
         }
 
         if (shouldAbortBroadcast && Settings(context).abortBroadcast) {
-            logger.info("broadcastreceiver: Aborting broadcast")
+            logger.info("Aborting broadcast")
             abortBroadcast();
         }
     }

@@ -38,8 +38,8 @@ import android.widget.Toast
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
+import com.github.quarck.calnotify.calendar.CalendarProvider
+import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
@@ -257,7 +257,7 @@ class MainActivity : Activity(), EventListCallback {
                 EventsStorage(this).use {
 
                     db -> db.events.sortedWith(
-                        Comparator<EventInstanceRecord> {
+                        Comparator<EventAlertRecord> {
                             lhs, rhs ->
 
                             if (lhs.snoozedUntil < rhs.snoozedUntil)

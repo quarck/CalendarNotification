@@ -37,7 +37,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.calendar.CalendarUtils
+import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
@@ -173,7 +173,7 @@ class CalendarsActivity: Activity() {
 
         background {
             // load the data here
-            val calendars = CalendarUtils.getCalendars(this).toTypedArray()
+            val calendars = CalendarProvider.getCalendars(this).toTypedArray()
 
             val entries = mutableListOf<CalendarListEntry>()
 

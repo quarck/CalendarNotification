@@ -19,14 +19,9 @@
 
 package com.github.quarck.calnotify.app
 
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import android.content.Context
+import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 
-
-interface UndoManagerInterface {
-
-    fun push(event: EventAlertRecord)
-    fun pop(): EventAlertRecord?
-    fun clear()
-    fun clearIfTimeout()
-    val canUndo: Boolean get
+interface CalendarReloadManagerInterface {
+    fun reloadCalendar(context: Context, db: EventsStorageInterface): Boolean
 }

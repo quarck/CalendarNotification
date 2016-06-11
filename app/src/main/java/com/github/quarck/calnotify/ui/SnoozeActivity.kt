@@ -34,8 +34,8 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.SnoozeResult
 import com.github.quarck.calnotify.app.SnoozeType
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
+import com.github.quarck.calnotify.calendar.CalendarProvider
+import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.displayedStartTime
 import com.github.quarck.calnotify.eventsstorage.formatTime
@@ -47,7 +47,7 @@ import com.github.quarck.calnotify.utils.find
 import java.util.*
 
 class SnoozeActivity : Activity() {
-    var event: EventInstanceRecord? = null
+    var event: EventAlertRecord? = null
 
     lateinit var snoozePresets: LongArray
 
@@ -188,8 +188,7 @@ class SnoozeActivity : Activity() {
                 color = resources.getColor(R.color.primary)
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
 
-            val isRepeating = CalendarUtils.isRepeatingEvent(this, ev)
-            if (isRepeating != null && !isRepeating)
+            if (!ev.isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
 
         } else if (isSnoozeAll) {
@@ -401,7 +400,7 @@ class SnoozeActivity : Activity() {
 
             logger.info("Moving event ${ev.eventId} by ${addTime/1000L} seconds");
 
-            val moved = CalendarUtils.moveEvent(this, ev, addTime)
+            val moved = CalendarProvider.moveEvent(this, ev, addTime)
 
             if (moved) {
 

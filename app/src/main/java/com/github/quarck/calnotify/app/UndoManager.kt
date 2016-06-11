@@ -21,15 +21,15 @@
 package com.github.quarck.calnotify.app
 
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.eventsstorage.EventInstanceRecord
+import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
 
 object UndoManager: UndoManagerInterface {
 
-    private var record: EventInstanceRecord? = null
+    private var record: EventAlertRecord? = null
 
     private var dismissedTime: Long = 0
 
-    override fun push(event: EventInstanceRecord)
+    override fun push(event: EventAlertRecord)
         = synchronized(this) {
             record = event
             dismissedTime = System.currentTimeMillis()

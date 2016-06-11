@@ -20,10 +20,11 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarUtils
-import com.github.quarck.calnotify.eventsstorage.*
+import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
+import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.eventsstorage.displayedStartTime
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.IEventNotificationManager
@@ -52,6 +53,8 @@ object ApplicationController {
 
     val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
 
+    val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
+
 
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
@@ -62,65 +65,9 @@ object ApplicationController {
     }
 
 
-    private fun reloadCalendar(context: Context): Boolean {
-
-        var repostNotifications = false
-
-        EventsStorage(context).use {
-            db ->
-
-            val events = db.events
-
-            val currentTime = System.currentTimeMillis()
-
-            for (event in events) {
-
-                try {
-                    val newEvent = CalendarUtils.getEventInstance(context, event.eventId, event.alertTime)
-
-                    if (newEvent == null ) {
-                        //newEvent = CalendarUtils.getEvent(context, event.eventId)
-
-//                        if (newEvent != null
-//                            && (newEvent.startTime - event.startTime > Consts.EVENT_MOVED_THRESHOLD)
-//                            && (newEvent.startTime - currentTime > Consts.EVENT_MOVED_THRESHOLD) ) {
-//                            // Here we have a confirmation that event was re-scheduled by user
-//                            // to some time in the future and that's why original event instance has disappeared
-//                            // - we are good to go to dismiss event reminder automatically
-//                            dismissEvent(context, db, event.eventId, event.notificationId, notifyActivity = true, enableUndo = false);
-//                            val movedSec = (newEvent.startTime - event.startTime) / 1000L
-//                            logger.debug("Event ${event.eventId} disappeared, event was moved further by $movedSec seconds");
-//                        } else {
-//                            // Here we can't confirm that event was moved into the future.
-//                            // Perhaps it was removed, but this is not what users usually do.
-//                            // Leave it for user to remove the notification
-//                            logger.debug("Event ${event.eventId} disappeared, but can't confirm it has been rescheduled. Not removing");
-//                        }
-                    } else {
-                        logger.debug("Event ${event.eventId} is still here");
-
-                        if (event.updateFrom(newEvent)) {
-                            logger.debug("Event was updated, updating our copy");
-
-                            db.updateEvent(
-                                event,
-                                displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
-
-                            repostNotifications = true
-                        }
-                    }
-                } catch (ex: Exception) {
-                    logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
-                }
-            }
-        }
-
-        return repostNotifications
-    }
-
     fun onAppUpdated(context: Context) {
 
-        val changes = reloadCalendar(context)
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) }
         notificationManager.postEventNotifications(context, true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -130,7 +77,7 @@ object ApplicationController {
     }
 
     fun onBootComplete(context: Context) {
-        val changes = reloadCalendar(context);
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) };
         notificationManager.postEventNotifications(context, true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -141,7 +88,7 @@ object ApplicationController {
 
     fun onCalendarChanged(context: Context) {
 
-        val changes = reloadCalendar(context)
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) }
         if (changes) {
             notificationManager.postEventNotifications(context, true, null);
 
@@ -151,14 +98,42 @@ object ApplicationController {
         }
     }
 
-    fun onCalendarEventFired(context: Context, event: EventInstanceRecord): Boolean {
+    fun onCalendarEventFired(context: Context, event: EventAlertRecord): Boolean {
 
         var ret = false
 
         if (event.calendarId == -1L || getSettings(context).getCalendarIsHandled(event.calendarId)) {
-            EventsStorage(context).use { it.addEvent(event) }
 
-            notificationManager.onEventAdded(context, event)
+            EventsStorage(context).use {
+                db ->
+
+                if (event.isRepeating) {
+                    // repeating event - always simply add
+                    db.addEvent(event)
+                    notificationManager.onEventAdded(context, event)
+                } else {
+                    // non-repeating event - make sure we don't create two records with the same eventId
+                    val oldEvents
+
+                        = db.getEventInstances(event.eventId)
+
+                    logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+
+                    try {
+                        // delete old instances for the same event id (should be only one, but who knows)
+                        for (oldEvent in oldEvents) {
+                            db.deleteEvent(oldEvent)
+                            notificationManager.onEventDismissed(context, oldEvent.eventId, oldEvent.notificationId)
+                        }
+                    } catch (ex: Exception) {
+                        logger.error("exception while removing old events: ${ex.message}");
+                    }
+
+                    // add newly fired event
+                    db.addEvent(event)
+                    notificationManager.onEventAdded(context, event)
+                }
+            }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -188,8 +163,10 @@ object ApplicationController {
 
                 if (event != null) {
                     val snoozedUntil =
-                        if (snoozeDelay > 0L) currentTime + snoozeDelay
-                        else event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
+                        if (snoozeDelay > 0L)
+                            currentTime + snoozeDelay
+                        else
+                            event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
                     event = db.updateEvent(event,
                         snoozedUntil = snoozedUntil,
@@ -280,7 +257,7 @@ object ApplicationController {
 
     fun onAppResumed(context: Context?) {
         if (context != null) {
-            val changes = reloadCalendar(context);
+            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) };
             notificationManager.postEventNotifications(context, true, null)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -319,7 +296,7 @@ object ApplicationController {
             UINotifierService.notifyUI(context, true);
     }
 
-    fun dismissEvent(context: Context, event: EventInstanceRecord, enableUndo: Boolean = false) {
+    fun dismissEvent(context: Context, event: EventAlertRecord, enableUndo: Boolean = false) {
         EventsStorage(context).use {
             if (enableUndo)
                 undoManager.push(event)

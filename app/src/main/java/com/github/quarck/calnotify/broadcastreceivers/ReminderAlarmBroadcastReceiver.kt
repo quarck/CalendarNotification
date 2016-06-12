@@ -32,7 +32,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.notification.ReminderAlarm
+import com.github.quarck.calnotify.app.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.audioManager
 import com.github.quarck.calnotify.utils.powerManager

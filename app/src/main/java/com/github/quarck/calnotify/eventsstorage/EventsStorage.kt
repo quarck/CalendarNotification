@@ -22,6 +22,8 @@ package com.github.quarck.calnotify.eventsstorage
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 

@@ -21,7 +21,7 @@
 package com.github.quarck.calnotify.app
 
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 object UndoManager: UndoManagerInterface {
 

@@ -17,11 +17,14 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.eventsstorage
+package com.github.quarck.calnotify.textutils
 
 import android.content.Context
 import android.text.format.DateUtils
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.displayedEndTime
+import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.utils.dayEquals
 import java.text.DateFormat
 import java.util.*

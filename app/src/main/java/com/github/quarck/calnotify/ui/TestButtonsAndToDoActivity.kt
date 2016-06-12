@@ -26,15 +26,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.notification.EventNotificationManager
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
@@ -77,31 +74,34 @@ class TestButtonsAndToDoActivity : Activity() {
     }
 
     fun randomTitle(currentTime: Long): String {
-        var dict = arrayOf("hello", "world", "item", "remove", "code", "is", "bug",
-                "memory", "leak", "detected", "avoid", "refactoring",
-                "China", "keeps", "pretending", "to do", "this", "too", "because",
-                "of", "misplaced", "nationalism", "ignoring", "the", "fact",
-                "that", "pretty", "much", "all", "OS", "development",
-                "takes", "place", "in the", "USA",
-                "You want", "to move", "to Linux", "Russia?",
-                "Then maybe", "you should", "actually",
-                "fix Cyrillic display",
-                "in a", "major", "distro", "DE (like Debian and GNOME)", "and adopt that")
+
+        val wikipediaQuote =
+            """ Some predictions of general relativity differ significantly from those of classical
+            physics, especially concerning the passage of time, the geometry of space, the motion of
+            bodies in free fall, and the propagation of light. Examples of such differences include
+            gravitational time dilation, gravitational lensing, the gravitational redshift of light,
+            and the gravitational time delay. The predictions of general relativity have been
+            confirmed in all observations and experiments to date. Although general relativity is
+            not the only relativistic theory of gravity, it is the simplest theory that is consistent
+            with experimental data. However, unanswered questions remain, the most fundamental being
+            how general relativity can be reconciled with the laws of quantum physics to produce a
+            complete and self-consistent theory of quantum gravity."""
+
+        val dict =
+            wikipediaQuote.split(' ', '\r', '\n', '\t').filter { !it.isEmpty() }
 
         val sb = StringBuilder();
         val r = Random(currentTime);
 
-        val len = r.nextInt(30);
+        val len = r.nextInt(10);
 
         var prev = -1;
         for (i in 0..len) {
             var new: Int
-            do {
-                new = r.nextInt(dict.size)
-            } while (new == prev);
-            sb.append(dict[new]);
+            do { new = r.nextInt(dict.size) } while (new == prev)
+            sb.append(dict[new])
             sb.append(" ")
-            prev = new;
+            prev = new
         }
 
         return sb.toString();

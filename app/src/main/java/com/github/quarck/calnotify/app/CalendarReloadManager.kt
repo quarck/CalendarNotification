@@ -20,7 +20,7 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
-import com.github.quarck.calnotify.calendar.CalendarProvider
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.*
 import com.github.quarck.calnotify.logs.Logger
 
@@ -28,7 +28,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
     val logger = Logger("CalendarReloadManager")
 
-    override fun reloadCalendar(context: Context, db: EventsStorageInterface): Boolean {
+    override fun reloadCalendar(context: Context, db: EventsStorageInterface, calendar: CalendarProviderInterface): Boolean {
 
         logger.debug("Reloading calendar")
 
@@ -39,7 +39,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         for (event in db.events) {
             try {
                 rePostNotifications =  rePostNotifications ||
-                    reloadCalendarEvent(context, db, event, currentTime)
+                    reloadCalendarEvent(context, db, calendar, event, currentTime)
 
             } catch (ex: Exception) {
                 logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
@@ -51,23 +51,25 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
     fun reloadCalendarEvent(
         context: Context, db: EventsStorageInterface,
+        calendarProvider: CalendarProviderInterface,
         event: EventAlertRecord, currentTime: Long): Boolean {
 
         logger.debug("reloading event ${event.eventId} / ${event.instanceStartTime}")
 
-        val newEventInstance = CalendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
+        val newEventInstance = calendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
 
         val rePostNotifications =
             if (newEventInstance != null )
-                reloadCalendarEventInstanceFound(context, db, event, newEventInstance, currentTime)
+                reloadCalendarEventInstanceFound(context, db, calendarProvider, event, newEventInstance, currentTime)
             else
-                reloadCalendarEventInstanceNotFound(context, db, event, currentTime)
+                reloadCalendarEventInstanceNotFound(context, db, calendarProvider, event, currentTime)
 
         return rePostNotifications
     }
 
     fun reloadCalendarEventInstanceFound(
         context: Context, db: EventsStorageInterface,
+        calendar: CalendarProviderInterface,
         event: EventAlertRecord, newEventAlert: EventAlertRecord,
         currentTime: Long): Boolean {
 
@@ -124,9 +126,9 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         return rePostNotifications
     }
 
-
     fun reloadCalendarEventInstanceNotFound(
         context: Context, db: EventsStorageInterface,
+        calendar: CalendarProviderInterface,
         event: EventAlertRecord,
         currentTime: Long): Boolean {
 
@@ -136,23 +138,24 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         if (!event.isRepeating) {
 
-            val instances = CalendarProvider.getEventAlerts(context, event.eventId, event.alertTime, 2)
+            val instances = calendar.getEventAlerts(context, event.eventId, event.alertTime, 2)
 
             if (instances.size == 1) {
                 logger.debug("Non-repeating event ${event.eventId} was found at new alert time ${instances[0].alertTime}, instance start ${instances[0].instanceStartTime}");
-                rePostNotifications = reloadCalendarEventInstanceFound(context, db, event, instances[0], currentTime)
+                rePostNotifications = reloadCalendarEventInstanceFound(context, db, calendar, event, instances[0], currentTime)
             } else {
                 logger.debug("No instances of event ${event.eventId} were found in the future")
 
                 // Try loading at least basic params from "event"
-                val newEvent = CalendarProvider.getEvent(context, event.eventId)
+                val newEvent = calendar.getEvent(context, event.eventId)
                 if (newEvent != null) {
-                    if (event.updateFrom(newEvent)) {
-                        logger.debug("Event ${event.eventId} for lost instance ${event.instanceStartTime} was updated, new start time ${newEvent.startTime}");
+                    val newAlertTime = newEvent.nextAlarmTime(currentTime)
+                    if (event.updateFrom(newEvent) || event.alertTime != newAlertTime) {
+                        logger.debug("Event ${event.eventId} for lost instance ${event.instanceStartTime} was updated, new start time ${newEvent.startTime}, alert time ${event.alertTime} -> $newAlertTime");
+                        event.alertTime = newAlertTime
                         event.displayStatus = EventDisplayStatus.Hidden
                         db.updateEventAndInstanceTimes(event, newEvent.startTime, newEvent.endTime)
                         rePostNotifications = true
-
                     } else {
                         logger.debug("Event instance ${event.eventId} / ${event.instanceStartTime} disappeared, actual event is still exactly the same");
                     }

@@ -21,22 +21,18 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.eventsstorage.displayedStartTime
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.notification.IEventNotificationManager
+import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
+import com.github.quarck.calnotify.ui.SnoozeActivity
 import com.github.quarck.calnotify.ui.UINotifierService
 
 object ApplicationController {
-    private val notificationManager: IEventNotificationManager = EventNotificationManager()
-
     private val logger = Logger("EventsManager");
-
 
     private var settings: Settings? = null
     private fun getSettings(ctx: Context): Settings {
@@ -47,14 +43,17 @@ object ApplicationController {
         return settings!!
     }
 
+    private val notificationManager: EventNotificationManagerInterface = EventNotificationManager()
+
     val undoManager: UndoManagerInterface = UndoManager
 
-    val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
+    private val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
 
-    val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
+    private val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
 
-    val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
+    private val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
 
+    private val calendarProvider: CalendarProviderInterface = CalendarProvider
 
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
@@ -67,7 +66,7 @@ object ApplicationController {
 
     fun onAppUpdated(context: Context) {
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) }
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
         notificationManager.postEventNotifications(context, true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -77,7 +76,7 @@ object ApplicationController {
     }
 
     fun onBootComplete(context: Context) {
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) };
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
         notificationManager.postEventNotifications(context, true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -88,7 +87,7 @@ object ApplicationController {
 
     fun onCalendarChanged(context: Context) {
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) }
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
         if (changes) {
             notificationManager.postEventNotifications(context, true, null);
 
@@ -257,7 +256,7 @@ object ApplicationController {
 
     fun onAppResumed(context: Context?) {
         if (context != null) {
-            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it) };
+            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
             notificationManager.postEventNotifications(context, true, null)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -316,5 +315,17 @@ object ApplicationController {
             EventsStorage(context).use { it.addEvent(event) }
             notificationManager.onEventRestored(context, event)
         }
+    }
+
+    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
+
+        val moved = calendarProvider.moveEvent(context, event, addTime)
+
+        if (moved) {
+            logger.info("moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
+            dismissEvent(context, event.eventId, event.instanceStartTime, event.notificationId, enableUndo = false)
+        }
+
+        return moved
     }
 }

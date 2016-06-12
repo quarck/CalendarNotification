@@ -17,12 +17,33 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
+
 package com.github.quarck.calnotify.app
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
-import com.github.quarck.calnotify.calendar.CalendarProviderInterface
-import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
+import android.content.Intent
+import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
+import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.alarmManager
+import com.github.quarck.calnotify.utils.setExactCompat
 
-interface CalendarReloadManagerInterface {
-    fun reloadCalendar(context: Context, db: EventsStorageInterface, calendar: CalendarProviderInterface): Boolean
+object ReminderAlarm {
+
+    private val logger = Logger("ReminderManager");
+
+    fun scheduleAlarmMillisAt(context: Context, nextMillis: Long) {
+
+        logger.debug("Setting reminder alarm at ${nextMillis}")
+
+        val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
+
+        val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        context.alarmManager.setExactCompat(
+                AlarmManager.RTC_WAKEUP,
+                nextMillis,
+                pendIntent)
+    }
 }

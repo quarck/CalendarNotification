@@ -29,10 +29,10 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.eventsstorage.formatText
+import com.github.quarck.calnotify.textutils.formatText
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -42,23 +42,7 @@ import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.notificationManager
 import com.github.quarck.calnotify.utils.powerManager
 
-interface IEventNotificationManager {
-    fun onEventAdded(ctx: Context, event: EventAlertRecord);
-
-    fun onEventDismissed(context: Context, eventId: Long, notificationId: Int);
-
-    fun onEventSnoozed(context: Context, eventId: Long, notificationId: Int);
-
-    fun onAllEventsSnoozed(context: Context)
-
-    fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?);
-
-    fun fireEventReminder(context: Context)
-
-    fun onEventRestored(context: Context, event: EventAlertRecord)
-}
-
-class EventNotificationManager : IEventNotificationManager {
+class EventNotificationManager : EventNotificationManagerInterface {
 
     override fun onEventAdded(ctx: Context, event: EventAlertRecord) {
         EventsStorage(ctx).use {

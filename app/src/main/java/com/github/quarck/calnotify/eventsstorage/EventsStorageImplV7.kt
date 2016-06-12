@@ -25,6 +25,8 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
@@ -294,7 +296,7 @@ class EventsStorageImplV7()
             startTime = cursor.getLong(5),
             endTime = cursor.getLong(6),
             instanceStartTime = cursor.getLong(7),
-            instanceEndTime =  cursor.getLong(8),
+            instanceEndTime = cursor.getLong(8),
             location = cursor.getString(9),
             snoozedUntil = cursor.getLong(10),
             lastEventVisibility = cursor.getLong(11),

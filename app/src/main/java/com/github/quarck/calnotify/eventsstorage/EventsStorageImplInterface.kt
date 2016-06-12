@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.eventsstorage
 
 import android.database.sqlite.SQLiteDatabase
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 interface EventsStorageImplInterface {
     fun createDb(db: SQLiteDatabase)

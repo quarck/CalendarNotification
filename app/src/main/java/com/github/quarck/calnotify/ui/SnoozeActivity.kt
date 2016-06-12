@@ -28,20 +28,19 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.SnoozeResult
 import com.github.quarck.calnotify.app.SnoozeType
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.eventsstorage.displayedStartTime
-import com.github.quarck.calnotify.eventsstorage.formatTime
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import java.util.*
@@ -397,17 +396,11 @@ class SnoozeActivity : Activity() {
         val ev = event
 
         if (ev != null) {
-
             logger.info("Moving event ${ev.eventId} by ${addTime/1000L} seconds");
 
-            val moved = CalendarProvider.moveEvent(this, ev, addTime)
+            val moved = ApplicationController.moveEvent(this, ev, addTime)
 
             if (moved) {
-
-                logger.info("snooze: Moved event ${ev.eventId} by ${addTime/1000L} seconds")
-                // Dismiss
-                ApplicationController.dismissEvent(this, ev.eventId, ev.instanceStartTime, ev.notificationId, enableUndo = false)
-
                 // Show
                 if (Settings(this).viewAfterEdit)
                     CalendarIntents.viewCalendarEvent(this, ev.eventId, 0L, 0L)

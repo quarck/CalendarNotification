@@ -29,9 +29,9 @@ import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
-import com.github.quarck.calnotify.eventsstorage.formatSnoozedUntil
-import com.github.quarck.calnotify.eventsstorage.formatTime
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.textutils.formatSnoozedUntil
+import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 

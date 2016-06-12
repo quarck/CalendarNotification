@@ -17,27 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.eventsstorage
-
-enum class EventDisplayStatus(val code: Int) {
-    Hidden(0),
-    DisplayedNormal(1),
-    DisplayedCollapsed(2);
-
-    companion object {
-        fun fromInt(v: Int) = EventDisplayStatus.values()[v]
-    }
-}
-
-data class EventRecord(
-    val calendarId: Long,
-    val eventId: Long,
-    var title: String,
-    var startTime: Long,
-    var endTime: Long,
-    var location: String,
-    var color: Int = 0
-)
+package com.github.quarck.calnotify.calendar
 
 data class EventAlertRecord(
     val calendarId: Long,

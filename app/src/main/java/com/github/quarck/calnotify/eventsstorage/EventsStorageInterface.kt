@@ -19,6 +19,9 @@
 
 package com.github.quarck.calnotify.eventsstorage
 
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
+
 interface EventsStorageInterface {
 
     fun addEvent(event: EventAlertRecord)

@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.broadcastreceivers.AlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.notification.ReminderAlarm
+import com.github.quarck.calnotify.app.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.utils.alarmManager

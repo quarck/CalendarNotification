@@ -22,18 +22,13 @@ package com.github.quarck.calnotify.calendar
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.eventsstorage.EventDisplayStatus
-import com.github.quarck.calnotify.eventsstorage.EventAlertRecord
-import com.github.quarck.calnotify.eventsstorage.EventRecord
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
-import java.util.*
 
-object CalendarProvider {
+object CalendarProvider: CalendarProviderInterface {
     private val logger = Logger("CalendarUtils");
 
     private val alertFields =
@@ -91,11 +86,11 @@ object CalendarProvider {
         return Pair(state, event)
     }
 
-    fun getAlertByTime(context: Context, alertTime: Long): List<EventAlertRecord> {
+    override fun getAlertByTime(context: Context, alertTime: Long): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getFiredEventsDetails failed due to not sufficient permissions");
-            return listOf<EventAlertRecord>();
+            return listOf();
         }
 
         val ret = arrayListOf<EventAlertRecord>()
@@ -116,7 +111,7 @@ object CalendarProvider {
                 val (state, event) = cursorToAlertRecord(cursor, alertTime.toLong());
 
                 if (state != null && event != null) {
-                    logger.info("Received event details: ${event.eventId}, st ${state}, from ${event.startTime} to ${event.endTime}")
+                    logger.info("Received event details: ${event.eventId}, st $state, from ${event.startTime} to ${event.endTime}")
 
                     if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
                         ret.add(event)
@@ -142,7 +137,7 @@ object CalendarProvider {
         return ret
     }
 
-    fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
+    override fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEvent failed due to not sufficient permissions");
@@ -164,7 +159,8 @@ object CalendarProvider {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                val (state, event) = cursorToAlertRecord(cursor, alertTime);
+                val eventPair = cursorToAlertRecord(cursor, alertTime)
+                val event = eventPair.component2()
 
                 if (event != null && event.eventId == eventId) {
                     ret = event;
@@ -184,11 +180,11 @@ object CalendarProvider {
         return ret
     }
 
-    fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
+    override fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEventInstances failed due to not sufficient permissions");
-            return listOf<EventAlertRecord>();
+            return listOf();
         }
 
         val ret = arrayListOf<EventAlertRecord>()
@@ -209,12 +205,12 @@ object CalendarProvider {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                val (state, event) = cursorToAlertRecord(cursor, null)
+                val eventPair = cursorToAlertRecord(cursor, null)
+                val event = eventPair.component2()
 
                 if (event != null && event.eventId == eventId) {
                     ret.add(event)
                     ++ totalEntries
-
                     if (totalEntries >= maxEntries)
                         break;
                 }
@@ -235,7 +231,49 @@ object CalendarProvider {
         return ret
     }
 
-    fun getEvent(context: Context, eventId: Long): EventRecord? {
+    override fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
+
+        val ret = mutableListOf<EventReminderRecord>()
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            logger.error("getEvent failed due to not sufficient permissions");
+            return ret;
+        }
+
+        val fields = arrayOf(
+            CalendarContract.Reminders.MINUTES,
+            CalendarContract.Reminders.METHOD )
+
+        val selection = "${CalendarContract.Reminders.EVENT_ID} = ?"
+
+        val selectionArgs = arrayOf(eventId.toString())
+
+        val cursor = context.contentResolver.query(
+            CalendarContract.Reminders.CONTENT_URI,
+            fields,
+            selection,
+            selectionArgs,
+            null);
+
+        while (cursor != null && cursor.moveToNext()) {
+            //
+            val minutes: Long? = cursor.getLong(0)
+            val method: Int? = cursor.getInt(1)
+
+            if (minutes != null && minutes != -1L && method != null) {
+                ret.add(
+                    EventReminderRecord(
+                        minutes * Consts.MINUTE_IN_SECONDS * 1000L,
+                        method))
+            }
+        }
+
+        cursor?.close()
+
+        return ret
+    }
+
+    override fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEvent failed due to not sufficient permissions");
@@ -244,11 +282,9 @@ object CalendarProvider {
 
         var ret: EventRecord? = null
 
-//        val selection = CalendarContract.CalendarAlerts.EVENT_ID + "= ?";
-
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
-        val smallEventFields =
+        val fields =
             arrayOf(
                 CalendarContract.Events.CALENDAR_ID,
                 CalendarContract.Events.TITLE,
@@ -261,7 +297,7 @@ object CalendarProvider {
         val cursor: Cursor? =
             context.contentResolver.query(
                 uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
-                smallEventFields,
+                fields,
                 null, //selection,
                 null, //arrayOf(eventId.toString()),
                 null
@@ -285,7 +321,8 @@ object CalendarProvider {
                         startTime = start,
                         endTime = end ?: 0L,
                         location = location ?: "",
-                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                        reminders = listOf<EventReminderRecord>() // stub for now
                     );
             }
         } else {
@@ -294,10 +331,17 @@ object CalendarProvider {
 
         cursor?.close()
 
+        try {
+            if (ret != null)
+                ret.reminders = getEventReminders(context, eventId)
+        } catch (ex: Exception) {
+            logger.error("Exception while trying to read reminders for $eventId: ${ex.message}")
+        }
+
         return ret
     }
 
-    fun dismissNativeEventAlert(context: Context, eventId: Long) {
+    override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
         if (!PermissionsManager.hasWriteCalendar(context)) {
             logger.error("getFiredEventsDetails failed due to not sufficient permissions");
@@ -329,14 +373,13 @@ object CalendarProvider {
         }
     }
 
-    /*
     //
     // Reschedule works by creating a new event with exactly the same contents but for the new date / time
     // Original notification is dismissed after that
     //
     // Returns event ID of the new event, or -1 on error
     //
-    fun cloneAndMoveEvent(context: Context, event: EventInstanceRecord, addTime: Long): Long {
+    override fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long {
 
         var ret = -1L;
 
@@ -353,7 +396,7 @@ object CalendarProvider {
             return -1;
         }
 
-        var fields = arrayOf(
+        val fields = arrayOf(
                 CalendarContract.CalendarAlerts.EVENT_ID,
                 CalendarContract.Events.TITLE,
                 CalendarContract.Events.CALENDAR_ID,
@@ -371,10 +414,8 @@ object CalendarProvider {
                 CalendarContract.Events.EVENT_END_TIMEZONE,
                 CalendarContract.Events.HAS_EXTENDED_PROPERTIES,
                 CalendarContract.Events.ORGANIZER,
-                CalendarContract.Events.IS_ORGANIZER,
                 CalendarContract.Events.CUSTOM_APP_PACKAGE,
-                CalendarContract.Events.CUSTOM_APP_URI,
-                CalendarContract.Events.UID_2445
+                CalendarContract.Events.CUSTOM_APP_URI
         )
 
         //
@@ -404,25 +445,23 @@ object CalendarProvider {
 
                     val title: String = (cursor.getString(1) as String?) ?: throw Exception("Title must not be null")
                     val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null");
-                    var timeZone: String? = cursor.getString(3)
-                    var description: String? = cursor.getString(4)
-                    var dtStart = (cursor.getLong(5) as Long?) ?: throw Exception("dtStart must not be null")
-                    var dtEnd = (cursor.getLong(6) as Long?) ?: throw Exception("dtEnd must not be null")
-                    var location: String? = cursor.getString(7)
-                    var color: Int? = cursor.getInt(8)
-                    var accessLevel: Int? = cursor.getInt(9)
-                    var availability: Int? = cursor.getInt(10)
-                    var hasAlarm: Int? = cursor.getInt(11)
-                    var allDay: Int? = cursor.getInt(12)
+                    val timeZone: String? = cursor.getString(3)
+                    val description: String? = cursor.getString(4)
+                    val dtStart = (cursor.getLong(5) as Long?) ?: throw Exception("dtStart must not be null")
+                    val dtEnd = (cursor.getLong(6) as Long?) ?: throw Exception("dtEnd must not be null")
+                    val location: String? = cursor.getString(7)
+                    val color: Int? = cursor.getInt(8)
+                    val accessLevel: Int? = cursor.getInt(9)
+                    val availability: Int? = cursor.getInt(10)
+                    val hasAlarm: Int? = cursor.getInt(11)
+                    val allDay: Int? = cursor.getInt(12)
 
-                    var duration: String? = cursor.getString(13) // CalendarContract.Events.DURATION
-                    var eventEndTimeZone: String? = cursor.getString(14) // CalendarContract.Events.EVENT_END_TIMEZONE
-                    var hasExtProp: Long? = cursor.getLong(15) // CalendarContract.Events.HAS_EXTENDED_PROPERTIES
-                    var organizer: String? = cursor.getString(16) // CalendarContract.Events.ORGANIZER
-                    var isOrganizer: String? = cursor.getString(17) // CalendarContract.Events.IS_ORGANIZER
-                    var customAppPackage: String? = cursor.getString(18) // CalendarContract.Events.CUSTOM_APP_PACKAGE
-                    var appUri: String? = cursor.getString(19) // CalendarContract.Events.CUSTOM_APP_URI
-                    var uid2445: String? = cursor.getString(20) // CalendarContract.Events.UID_2445
+                    val duration: String? = cursor.getString(13) // CalendarContract.Events.DURATION
+                    val eventEndTimeZone: String? = cursor.getString(14) // CalendarContract.Events.EVENT_END_TIMEZONE
+                    val hasExtProp: Long? = cursor.getLong(15) // CalendarContract.Events.HAS_EXTENDED_PROPERTIES
+                    val organizer: String? = cursor.getString(16) // CalendarContract.Events.ORGANIZER
+                    val customAppPackage: String? = cursor.getString(17) // CalendarContract.Events.CUSTOM_APP_PACKAGE
+                    val appUri: String? = cursor.getString(18) // CalendarContract.Events.CUSTOM_APP_URI
 
                     values.put(CalendarContract.Events.TITLE, title);
                     values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
@@ -452,27 +491,15 @@ object CalendarProvider {
                         values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp);
                     if (organizer != null)
                         values.put(CalendarContract.Events.ORGANIZER, organizer);
-                    if (isOrganizer != null)
-                        values.put(CalendarContract.Events.IS_ORGANIZER, isOrganizer);
                     if (customAppPackage != null)
                         values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage);
                     if (appUri != null)
                         values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri);
-                    if (uid2445 != null)
-                        values.put(CalendarContract.Events.UID_2445, uid2445);
 
                     values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
                     values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
-                    logger.debug(
-                            "Capturd information so far: title: $title, id: $calendarId, color: $color, timeZone: " +
-                                    "$timeZone, desc: $description, dtStart: $dtStart, dtEnd: $dtEnd, " +
-                                    "accessLevel: $accessLevel, availability: $availability, hasAlarm: $hasAlarm, " +
-                                    "duration: $duration, eventEndTimeZone: $eventEndTimeZone, hasExtProp: $hasExtProp, " +
-                                    "organizer: $organizer, isOrg: $isOrganizer, pkg: $customAppPackage, uri: $appUri, " +
-                                    "uid: $uid2445"
-                    );
-
+                    logger.debug("Event details for calendarId: $calendarId / eventId: $eventId captured")
                     break;
 
                 } while (cursor.moveToNext())
@@ -487,9 +514,10 @@ object CalendarProvider {
 
         if (values != null) {
             try {
-                var uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+
                 // get the event ID that is the last element in the Uri
-                ret = uri.getLastPathSegment().toLong()
+                ret = uri.lastPathSegment.toLong()
             } catch (ex: Exception) {
                 logger.error("Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
             }
@@ -497,9 +525,20 @@ object CalendarProvider {
             logger.error("Calendar event wasn't found");
         }
 
+        if (ret != -1L) {
+            // Now copy reminders
+            val reminders = getEventReminders(context, event.eventId)
+            for (reminder in reminders) {
+                val reminderValues = ContentValues()
+                reminderValues.put(CalendarContract.Reminders.MINUTES, reminder.millisecondsBefore / Consts.MINUTE_IN_SECONDS / 1000L)
+                reminderValues.put(CalendarContract.Reminders.EVENT_ID, event.eventId)
+                reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
+                context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
+            }
+        }
+
         return ret;
     }
-    */
 
     private fun isRepeatingEvent(context: Context, event: EventAlertRecord): Boolean? {
         var ret: Boolean? = null
@@ -554,7 +593,7 @@ object CalendarProvider {
         return ret;
     }
 
-    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
+    override fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 
         var ret = false;
 
@@ -601,7 +640,7 @@ object CalendarProvider {
         return ret;
     }
 
-    fun getCalendars(context: Context): List<CalendarRecord> {
+    override fun getCalendars(context: Context): List<CalendarRecord> {
 
         val ret = mutableListOf<CalendarRecord>()
 

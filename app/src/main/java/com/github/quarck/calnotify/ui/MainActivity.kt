@@ -30,6 +30,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -68,6 +69,9 @@ class MainActivity : Activity(), EventListCallback {
 
     private var undoTimer: Timer? = null
 
+    private var undoSenseHistoricY: Float? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -81,6 +85,20 @@ class MainActivity : Activity(), EventListCallback {
         recyclerView = find<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
+
+        recyclerView.setOnTouchListener {
+            view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP ->
+                    if (undoSenseHistoricY == null) {
+                        undoSenseHistoricY = motionEvent.y
+                    } else if (Math.abs((undoSenseHistoricY ?: 0.0f) - motionEvent.y) > Consts.UNDO_PROMPT_DISAPPEAR_SENSITIVITY) {
+                        undoSenseHistoricY = null
+                        hideUndoDismiss()
+                    }
+            }
+            return@setOnTouchListener false
+        }
 
         reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
 
@@ -330,6 +348,12 @@ class MainActivity : Activity(), EventListCallback {
         }
     }
 
+    // undoSenseHistoricY = -1.0f
+    private fun hideUndoDismiss() {
+        ApplicationController.undoManager.clear()
+        undoLayout.visibility = View.GONE
+    }
+
     private fun onNumEventsUpdated() {
         updateUndoVisibility()
         val hasEvents = adapter.itemCount > 0
@@ -357,6 +381,7 @@ class MainActivity : Activity(), EventListCallback {
             logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
             ApplicationController.dismissEvent(this, event, enableUndo=true);
             adapter.removeAt(position)
+            undoSenseHistoricY = null
             onNumEventsUpdated()
         }
         refreshReminderLastFired()

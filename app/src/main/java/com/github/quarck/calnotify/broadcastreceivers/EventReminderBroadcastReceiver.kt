@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.toLongOrNull
 
 class EventReminderBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -40,11 +41,10 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
 
         val uri = intent.data;
 
-        val alertTime: String? = uri.lastPathSegment;
-
+        val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime != null) {
             try {
-                val events = CalendarProvider.getAlertByTime(context, alertTime.toLong())
+                val events = CalendarProvider.getAlertByTime(context, alertTime)
 
                 for (event in events) {
                     logger.info("Seen event ${event.eventId} / ${event.instanceStartTime}")

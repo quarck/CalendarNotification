@@ -21,8 +21,14 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 
 interface CalendarReloadManagerInterface {
+
+    // returns true if any changed detected
     fun reloadCalendar(context: Context, db: EventsStorageInterface, calendar: CalendarProviderInterface): Boolean
+
+    // returns true if event has changed. Event is updated in place
+    fun reloadSingleEvent(context: Context, db: EventsStorageInterface, event: EventAlertRecord, calendar: CalendarProviderInterface): Boolean
 }

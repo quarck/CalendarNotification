@@ -343,7 +343,7 @@ class MainActivity : Activity(), EventListCallback {
 
         val event = adapter.getEventAtPosition(position, eventId)
         if (event != null)
-            CalendarIntents.viewCalendarEvent(this, event.eventId, event.instanceStartTime, event.instanceEndTime)
+            CalendarIntents.viewCalendarEvent(this, event)
 
         refreshReminderLastFired()
     }
@@ -394,7 +394,7 @@ class MainActivity : Activity(), EventListCallback {
         val event = adapter.getEventAtPosition(position, eventId)
 
         if (event != null)
-            CalendarIntents.viewCalendarEvent(this, event.eventId, event.instanceStartTime, event.instanceEndTime)
+            CalendarIntents.viewCalendarEvent(this, event)
 
         refreshReminderLastFired()
     }

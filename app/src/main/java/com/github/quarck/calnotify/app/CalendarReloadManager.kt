@@ -32,13 +32,13 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         logger.debug("Reloading calendar")
 
-        var rePostNotifications = false
+        var changedDetected = false
 
         val currentTime = System.currentTimeMillis()
 
         for (event in db.events) {
             try {
-                rePostNotifications =  rePostNotifications ||
+                changedDetected =  changedDetected ||
                     reloadCalendarEvent(context, db, calendar, event, currentTime)
 
             } catch (ex: Exception) {
@@ -46,7 +46,25 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             }
         }
 
-        return rePostNotifications
+        return changedDetected
+    }
+
+    // returns true if event has changed. Event is updated in place
+    override fun reloadSingleEvent(context: Context, db: EventsStorageInterface, event: EventAlertRecord, calendar: CalendarProviderInterface): Boolean {
+
+        logger.debug("Reloading calendar")
+
+        var changedDetected = false
+
+        val currentTime = System.currentTimeMillis()
+
+        try {
+            changedDetected = reloadCalendarEvent(context, db, calendar, event, currentTime)
+        } catch (ex: Exception) {
+            logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
+        }
+
+        return changedDetected
     }
 
     fun reloadCalendarEvent(
@@ -58,13 +76,13 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         val newEventInstance = calendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
 
-        val rePostNotifications =
+        val changesDetected =
             if (newEventInstance != null )
                 reloadCalendarEventInstanceFound(context, db, calendarProvider, event, newEventInstance, currentTime)
             else
                 reloadCalendarEventInstanceNotFound(context, db, calendarProvider, event, currentTime)
 
-        return rePostNotifications
+        return changesDetected
     }
 
     fun reloadCalendarEventInstanceFound(
@@ -75,7 +93,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance found")
 
-        var rePostNotifications = false
+        var changesDetected = false
 
         // Things to remember:
         // multiple instances for same eventId
@@ -101,7 +119,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                         instanceEnd = newEventAlert.instanceEndTime)
                 }
 
-                rePostNotifications = true
+                changesDetected = true
 
             } else {
                 logger.debug("Non-repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
@@ -116,14 +134,14 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                     event,
                     displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
 
-                rePostNotifications = true
+                changesDetected = true
 
             } else {
                 logger.debug("Repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
             }
         }
 
-        return rePostNotifications
+        return changesDetected
     }
 
     fun reloadCalendarEventInstanceNotFound(
@@ -134,7 +152,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance NOT found")
 
-        var rePostNotifications = false
+        var changesDetected = false
 
         if (!event.isRepeating) {
 
@@ -142,7 +160,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
             if (instances.size == 1) {
                 logger.debug("Non-repeating event ${event.eventId} was found at new alert time ${instances[0].alertTime}, instance start ${instances[0].instanceStartTime}");
-                rePostNotifications = reloadCalendarEventInstanceFound(context, db, calendar, event, instances[0], currentTime)
+                changesDetected = reloadCalendarEventInstanceFound(context, db, calendar, event, instances[0], currentTime)
             } else {
                 logger.debug("No instances of event ${event.eventId} were found in the future")
 
@@ -155,7 +173,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                         event.alertTime = newAlertTime
                         event.displayStatus = EventDisplayStatus.Hidden
                         db.updateEventAndInstanceTimes(event, newEvent.startTime, newEvent.endTime)
-                        rePostNotifications = true
+                        changesDetected = true
                     } else {
                         logger.debug("Event instance ${event.eventId} / ${event.instanceStartTime} disappeared, actual event is still exactly the same");
                     }
@@ -171,6 +189,6 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             logger.debug("Repeating event ${event.eventId} instance ${event.instanceStartTime} disappeared");
         }
 
-       return rePostNotifications;
+       return changesDetected;
     }
 }

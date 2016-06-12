@@ -30,32 +30,32 @@ object CalendarIntents {
 
     val logger = Logger("CalendarIntents")
 
-    private fun intentForAction(action: String, eventId: Long,
-                                instanceBeginTime: Long, instanceEndTime: Long): Intent {
+    private fun intentForAction(action: String, event: EventAlertRecord): Intent {
 
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
         val intent = Intent(action).setData(uri)
 
-        if (instanceBeginTime != 0L &&
-            instanceEndTime != 0L &&
-            instanceBeginTime < instanceEndTime) {
+        if (event.isRepeating &&
+            event.instanceStartTime != 0L &&
+            event.instanceEndTime != 0L &&
+            event.instanceStartTime < event.instanceEndTime) {
             // only add if it is a valid instance start / end time, and we need both
-            logger.debug("Adding instance start / end for event $eventId, start: $instanceBeginTime, end: $instanceEndTime");
-            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, instanceBeginTime)
-            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, instanceEndTime)
+            logger.debug("Adding instance start / end for event ${event.eventId}, start: ${event.instanceStartTime}, end: ${event.instanceEndTime}");
+            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.instanceStartTime)
+            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.instanceEndTime)
         }
         return intent
     }
 
-    fun getCalendarViewIntent(eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
-        = intentForAction(Intent.ACTION_VIEW, eventId, instanceBeginTime, instanceEndTime)
+    fun getCalendarViewIntent(event: EventAlertRecord)
+        = intentForAction(Intent.ACTION_VIEW, event)
 
-    fun getCalendarEditIntent(eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
-        = intentForAction(Intent.ACTION_EDIT, eventId, instanceBeginTime, instanceEndTime)
+    fun getCalendarEditIntent(event: EventAlertRecord)
+        = intentForAction(Intent.ACTION_EDIT, event)
 
-    fun viewCalendarEvent(context: Context, eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
-        = context.startActivity(getCalendarViewIntent(eventId, instanceBeginTime, instanceEndTime))
+    fun viewCalendarEvent(context: Context, event: EventAlertRecord)
+        = context.startActivity(getCalendarViewIntent(event))
 
-    fun editCalendarEvent(context: Context, eventId: Long, instanceBeginTime: Long, instanceEndTime: Long)
-        = context.startActivity(getCalendarEditIntent(eventId, instanceBeginTime, instanceEndTime))
+    fun editCalendarEvent(context: Context, event: EventAlertRecord)
+        = context.startActivity(getCalendarEditIntent(event))
 }

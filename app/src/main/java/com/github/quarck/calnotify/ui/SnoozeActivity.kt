@@ -30,12 +30,8 @@ import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.app.SnoozeResult
-import com.github.quarck.calnotify.app.SnoozeType
-import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.app.*
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
@@ -51,6 +47,9 @@ class SnoozeActivity : Activity() {
     lateinit var snoozePresets: LongArray
 
     lateinit var settings: Settings
+
+    val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
+    val calendarProvider: CalendarProviderInterface = CalendarProvider
 
     var snoozeAllIsChange = false
 
@@ -91,7 +90,6 @@ class SnoozeActivity : Activity() {
         settings = Settings(this)
 
         // Populate event details
-        // val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
         val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
 
@@ -100,9 +98,14 @@ class SnoozeActivity : Activity() {
         val isSnoozeAll = (eventId == -1L)
 
         // load event if it is not a "snooze all"
-        //var event: EventRecord? = null
-        if (!isSnoozeAll)
-            event = EventsStorage(this).use { it.getEvent(eventId, instanceStartTime) }
+        if (!isSnoozeAll) {
+            EventsStorage(this).use {
+                db ->
+                event = db.getEvent(eventId, instanceStartTime)
+//                if (event != null)
+//                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider) // would leave it for later for now
+            }
+        }
 
         val ev = event // so we can check it only once for null
 
@@ -175,7 +178,7 @@ class SnoozeActivity : Activity() {
 
             val onClick =
                 View.OnClickListener {
-                    CalendarIntents.viewCalendarEvent(this, eventId, ev.instanceStartTime, ev.instanceEndTime)
+                    CalendarIntents.viewCalendarEvent(this, ev)
                 }
 
             dateView.setOnClickListener(onClick)
@@ -234,7 +237,7 @@ class SnoozeActivity : Activity() {
     fun OnButtonEventDetailsClick(v: View?) {
         val ev = event
         if (ev != null)
-            CalendarIntents.viewCalendarEvent(this, ev.eventId, ev.instanceStartTime, ev.instanceEndTime);
+            CalendarIntents.viewCalendarEvent(this, ev)
     }
 
     private fun dateToStr(time: Long)
@@ -403,7 +406,7 @@ class SnoozeActivity : Activity() {
             if (moved) {
                 // Show
                 if (Settings(this).viewAfterEdit)
-                    CalendarIntents.viewCalendarEvent(this, ev.eventId, 0L, 0L)
+                    CalendarIntents.viewCalendarEvent(this, ev)
                 else
                     toastAboutSnoozeResult(SnoozeResult(SnoozeType.Moved, ev.startTime, 0L))
 

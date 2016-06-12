@@ -20,8 +20,10 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.Activity
+import android.content.ContentUris
 import android.content.Intent
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -121,10 +123,11 @@ class TestButtonsAndToDoActivity : Activity() {
     fun OnButtonViewClick(v: View) {
         val id = filterText.toLongOrNull()
         if (id != null) {
-
-            // var ev = CalendarUtils.getEvent(this, id);
-
-            CalendarIntents.viewCalendarEvent(this, id, 0L, 0L);
+            startActivity(
+                Intent(Intent.ACTION_VIEW).setData(
+                    ContentUris.withAppendedId(
+                        CalendarContract.Events.CONTENT_URI,
+                        id)))
         }
     }
 

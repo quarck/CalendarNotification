@@ -312,7 +312,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val calendarIntent = CalendarIntents.getCalendarViewIntent(event.eventId, event.instanceStartTime, event.instanceEndTime);
+        val calendarIntent = CalendarIntents.getCalendarViewIntent(event)
 
         val calendarPendingIntent =
             TaskStackBuilder.create(ctx)

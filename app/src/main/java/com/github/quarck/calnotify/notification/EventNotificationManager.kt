@@ -464,9 +464,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val intent = Intent(context, MainActivity::class.java);
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
+        val numEvents = events.size
+
         val title = java.lang.String.format(
             context.getString(com.github.quarck.calnotify.R.string.multiple_events),
-            events.size
+            numEvents
         );
 
         val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
@@ -490,6 +492,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setStyle(Notification.BigTextStyle().bigText(bigText))
+                .setNumber(numEvents)
 
         if (settings.ledNotificationOn) {
             if (settings.ledPattern.size == 2)

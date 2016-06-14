@@ -36,6 +36,8 @@ import com.github.quarck.calnotify.textutils.formatText
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.textutils.formatTime
+import com.github.quarck.calnotify.textutils.shortFormatDayOrTime
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivity
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
@@ -477,7 +479,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val bigText =
             events
-                .fold( StringBuilder(), { sb, ev -> sb.append("${ev.title}\n")} )
+                .fold(
+                    StringBuilder(), {
+                        sb, ev ->
+                        sb.append("${ev.shortFormatDayOrTime(context)}: ${ev.title}\n")
+                    } )
                 .toString()
 
         val builder =

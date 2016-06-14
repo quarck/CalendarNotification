@@ -142,6 +142,33 @@ fun EventAlertRecord.formatTime(ctx: Context): Pair<String, String> {
     return Pair(sbDay.toString(), sbTime.toString());
 }
 
+fun EventAlertRecord.shortFormatDayOrTime(ctx: Context): String {
+    val sb = StringBuilder()
+
+    if (this.displayedStartTime != 0L) {
+        val currentTime = System.currentTimeMillis();
+
+        val today = Date(currentTime)
+        val start = Date(this.displayedStartTime)
+
+        val currentDay = Calendar.getInstance()
+        val startDay = Calendar.getInstance()
+
+        currentDay.time = today
+        startDay.time = start
+
+        if (currentDay.dayEquals(startDay)) {
+            val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+            sb.append(timeFormatter.format(Date(this.displayedStartTime)))
+        } else {
+            val dateFormatter = DateFormat.getDateInstance(DateFormat.FULL)
+            sb.append(dateFormatter.format(Date(this.displayedStartTime)))
+        }
+    }
+
+    return sb.toString()
+}
+
 fun EventAlertRecord.formatSnoozedUntil(ctx: Context): String {
     var sb = StringBuilder();
 

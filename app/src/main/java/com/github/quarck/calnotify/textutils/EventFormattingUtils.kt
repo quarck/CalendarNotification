@@ -161,7 +161,7 @@ fun EventAlertRecord.shortFormatDayOrTime(ctx: Context): String {
             val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
             sb.append(timeFormatter.format(Date(this.displayedStartTime)))
         } else {
-            val dateFormatter = DateFormat.getDateInstance(DateFormat.FULL)
+            val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
             sb.append(dateFormatter.format(Date(this.displayedStartTime)))
         }
     }

@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.utils
 
 import android.app.AlarmManager
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -95,4 +96,12 @@ fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: Pen
     }
     // Old way
     return this.set(type, triggerAtMillis, operation);
+}
+
+fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder {
+    val build = android.os.Build.VERSION.SDK_INT
+    if (build >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        setShowWhen(value)
+    }
+    return this
 }

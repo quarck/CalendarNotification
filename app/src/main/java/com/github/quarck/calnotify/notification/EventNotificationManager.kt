@@ -41,6 +41,7 @@ import com.github.quarck.calnotify.ui.SnoozeActivity
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.notificationManager
 import com.github.quarck.calnotify.utils.powerManager
+import com.github.quarck.calnotify.utils.setShowWhenCompat
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
@@ -338,7 +339,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setOngoing(notificationSettings.showDismissButton)
             .setStyle(Notification.BigTextStyle()
                 .bigText(notificationText))
-            .setWhen(System.currentTimeMillis())
+            .setWhen(event.alertTime)
+            .setShowWhenCompat(false)
 
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 
@@ -493,6 +495,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setOngoing(true)
                 .setStyle(Notification.BigTextStyle().bigText(bigText))
                 .setNumber(numEvents)
+                .setShowWhenCompat(false)
 
         if (settings.ledNotificationOn) {
             if (settings.ledPattern.size == 2)

@@ -423,6 +423,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
+
+        intent.action = Intent.ACTION_MAIN;
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
         return intent;
     }
 
@@ -440,14 +444,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent {
 
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+/*      intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         val pendingIntent =
             TaskStackBuilder.create(ctx)
                 .addNextIntentWithParentStack(intent)
                 .getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return pendingIntent
+        return pendingIntent */
+
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        return PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
     }
 
     @Suppress("UNUSED_PARAMETER")

@@ -20,27 +20,37 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.support.v7.widget.helper.ItemTouchHelper.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
+import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
     fun onItemDismiss(v: View, position: Int, eventId: Long): Unit
     fun onItemSnooze(v: View, position: Int, eventId: Long): Unit
-    fun onItemLocation(v: View, position: Int, eventId: Long): Unit
-    fun onItemDateTime(v: View, position: Int, eventId: Long): Unit
+//    fun onItemLocation(v: View, position: Int, eventId: Long): Unit
+//    fun onItemDateTime(v: View, position: Int, eventId: Long): Unit
+    fun onItemRemoved(event: EventAlertRecord)
 }
 
 @Suppress("DEPRECATION")
@@ -55,64 +65,77 @@ class EventListAdapter(
     : RecyclerView.ViewHolder(itemView) {
         var eventId: Long = 0;
 
-        var eventHolder: RelativeLayout
-        var eventTitle: TextView
-        var eventTitleLayout: RelativeLayout
-        var eventDate: TextView
-        var eventTime: TextView
-        var eventLocation: TextView
-        var actionLayout: View
-        var snoozedUntil: TextView
-        var change: Button
-        var dismiss: Button
-        var color: ColorDrawable
+        var eventHolder: RelativeLayout?
+        var eventTitleText: TextView?
+        var eventTitleLayout: RelativeLayout?
+        var eventDateText: TextView?
+        var eventTimeText: TextView?
+        var eventLocatoinText: TextView?
+        var snoozedUntilText: TextView?
+        val compactViewCalendarColor: View?
+
+        val compactViewContentLayout: RelativeLayout?
+        var undoLayout: RelativeLayout?
+
+        var snoozeButton: Button?
+        var dismissButton: Button?
+        var undoButton: Button?
+
+        var calendarColor: ColorDrawable
 
         init {
             eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitle = itemView.find<TextView>(R.id.card_view_event_name)
-            eventTitleLayout = itemView.find<RelativeLayout>(R.id.card_view_event_title_layout)
-            eventDate = itemView.find<TextView>(R.id.card_view_event_date)
-            eventTime = itemView.find<TextView>(R.id.card_view_event_time)
-            eventLocation = itemView.find<TextView>(R.id.card_view_location)
-            actionLayout = itemView.find<View>(R.id.card_view_event_action_layout)
-            snoozedUntil = itemView.find<TextView>(R.id.card_view_snoozed_until)
-            change = itemView.find<Button>(R.id.card_view_button_reschedule)
-            dismiss = itemView.find<Button>(R.id.card_view_button_dismiss)
+            eventTitleText = itemView.find<TextView>(R.id.card_view_event_name)
+            eventTitleLayout = itemView.find<RelativeLayout?>(R.id.card_view_event_title_layout)
 
-            color = ColorDrawable(0)
+            eventDateText = itemView.find<TextView>(R.id.card_view_event_date)
+            eventTimeText = itemView.find<TextView>(R.id.card_view_event_time)
+            snoozedUntilText = itemView.find<TextView>(R.id.card_view_snoozed_until)
 
-            eventHolder.setOnClickListener {
+            eventLocatoinText = itemView.find<TextView?>(R.id.card_view_location)
+
+            snoozeButton = itemView.find<Button?>(R.id.card_view_button_reschedule)
+            dismissButton = itemView.find<Button?>(R.id.card_view_button_dismiss)
+
+            undoLayout = itemView.find<RelativeLayout?>(R.id.event_card_undo_layout)
+
+            compactViewContentLayout = itemView.find<RelativeLayout?>(R.id.compact_view_content_layout)
+            compactViewCalendarColor = itemView.find<View?>(R.id.compact_view_calendar_color)
+
+            undoButton = itemView.find<Button?>(R.id.card_view_button_undo)
+
+            calendarColor = ColorDrawable(0)
+
+            val itemClickListener = View.OnClickListener {
                 callback.onItemClick(itemView, adapterPosition, eventId);
-            };
+            }
 
-            dismiss.setOnClickListener {
+            eventHolder?.setOnClickListener(itemClickListener)
+            eventLocatoinText?.setOnClickListener(itemClickListener)
+            eventDateText?.setOnClickListener(itemClickListener)
+            eventTimeText?.setOnClickListener(itemClickListener)
+
+            dismissButton?.setOnClickListener {
                 callback.onItemDismiss(itemView, adapterPosition, eventId);
             }
 
-            change.setOnClickListener {
+            snoozeButton?.setOnClickListener {
                 callback.onItemSnooze(itemView, adapterPosition, eventId);
             }
-
-            eventLocation.setOnClickListener {
-                callback.onItemLocation(itemView, adapterPosition, eventId);
-            }
-
-            val dateTimeLisneter = View.OnClickListener {
-                callback.onItemDateTime(itemView, adapterPosition, eventId);
-            }
-
-            eventDate.setOnClickListener(dateTimeLisneter)
-            eventTime.setOnClickListener(dateTimeLisneter)
-
         }
     }
 
-
     private var events = arrayOf<EventAlertRecord>();
+    private var eventsPendingRemoval = mutableListOf<EventAlertRecord>()
+
+    var recyclerView: RecyclerView? = null
 
     private val primaryColor: Int
     private val changeString: String
     private val snoozeString: String
+
+    private val handler = Handler()
+    private val pendingRunnables = mutableMapOf<EventAlertRecord, Runnable>()
 
     init {
         primaryColor = context.resources.getColor(R.color.primary)
@@ -124,36 +147,59 @@ class EventListAdapter(
         if (position >= 0 && position < events.size && holder != null) {
             val event = events[position]
 
-            holder.eventTitle.text = event.title
+            if (eventsPendingRemoval.contains(event)) {
+                // we need to show the "undo" state of the row
+                holder.undoLayout?.visibility = View.VISIBLE
+                holder.compactViewContentLayout?.visibility = View.GONE
 
-            val (date, time) = event.formatTime(context)
+                holder.undoButton?.setOnClickListener {
+                    v ->
+                    val runnable = pendingRunnables[event];
+                    pendingRunnables.remove(event);
+                    if (runnable != null)
+                        handler.removeCallbacks(runnable);
 
-            holder.eventDate.text = date
-            holder.eventTime.text = time
-            holder.eventLocation.text = event.location
+                    eventsPendingRemoval.remove(event);
 
-            if (event.location != "")
-                holder.eventLocation.visibility = View.VISIBLE;
-            else
-                holder.eventLocation.visibility = View.GONE;
+                    notifyItemChanged(events.indexOf(event));
+                }
 
-            if (event.snoozedUntil != 0L) {
-                holder.snoozedUntil.text =
-                        context.resources.getString(R.string.snoozed_until_string) + " " +
-                                event.formatSnoozedUntil(context);
-
-                holder.snoozedUntil.visibility = View.VISIBLE;
-                holder.change.text = changeString
             } else {
-                holder.snoozedUntil.text = "";
-                holder.snoozedUntil.visibility = View.GONE;
-                holder.change.text = snoozeString
+                holder.eventTitleText?.text = event.title
+
+                holder.undoLayout?.visibility = View.GONE
+                holder.compactViewContentLayout?.visibility = View.VISIBLE
+
+                val (date, time) = event.formatTime(context)
+
+                holder.eventDateText?.text = date
+                holder.eventTimeText?.text = time
+                holder.eventLocatoinText?.text = event.location
+
+                if (event.location != "")
+                    holder.eventLocatoinText?.visibility = View.VISIBLE;
+                else
+                    holder.eventLocatoinText?.visibility = View.GONE;
+
+                if (event.snoozedUntil != 0L) {
+                    holder.snoozedUntilText?.text =
+                        context.resources.getString(R.string.snoozed_until_string) + " " +
+                            event.formatSnoozedUntil(context);
+
+                    holder.snoozedUntilText?.visibility = View.VISIBLE;
+                    holder.snoozeButton?.text = changeString
+                } else {
+                    holder.snoozedUntilText?.text = "";
+                    holder.snoozedUntilText?.visibility = View.GONE;
+                    holder.snoozeButton?.text = snoozeString
+                }
+
+                holder.eventId = event.eventId;
+
+                holder.calendarColor.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
+                holder.eventTitleLayout?.background = holder.calendarColor
+                holder.compactViewCalendarColor?.background = holder.calendarColor
             }
-
-            holder.eventId = event.eventId;
-
-            holder.color.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
-            holder.eventTitleLayout.background = holder.color
         }
     }
 
@@ -195,4 +241,50 @@ class EventListAdapter(
             events = events.filterIndexed { idx, ev -> idx != position }.toTypedArray()
             notifyItemRemoved(position)
         }
+
+    private fun remove(position: Int) {
+
+        var event: EventAlertRecord? = null
+
+        synchronized(this) {
+            if (position >= 0 && position < events.size)
+                event = events[position]
+            events = events.filterIndexed { idx, ev -> idx != position }.toTypedArray()
+            notifyItemRemoved(position)
+        }
+
+        if (event != null)
+            callback.onItemRemoved(event!!)
+    }
+
+    private fun remove(event: EventAlertRecord) {
+
+        synchronized(this) {
+            val idx = events.indexOf(event)
+            events = events.filter { ev -> ev != event }.toTypedArray()
+            notifyItemRemoved(idx)
+        }
+
+        callback.onItemRemoved(event)
+    }
+
+    fun pendingRemoval(position: Int) {
+        val event = events[position]
+
+        if (!eventsPendingRemoval.contains(event)) {
+            eventsPendingRemoval.add(event);
+
+            notifyItemChanged(position);
+
+            val runnable = Runnable() { remove(event) };
+
+            handler.postDelayed(runnable, Consts.UNDO_TIMEOUT);
+            pendingRunnables.put(event, runnable);
+        }
+    }
+
+    fun isPendingRemoval(position: Int): Boolean {
+        val event = events[position]
+        return eventsPendingRemoval.contains(event)
+    }
 }

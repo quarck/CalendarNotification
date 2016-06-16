@@ -84,7 +84,7 @@ object Consts {
 
     const val SAMSUNG_KEYWORD = "samsung"
 
-    const val UNDO_TIMEOUT = 60 * 1000L
+    const val UNDO_TIMEOUT = 10 * 1000L
 
     // amount to scroll on the main activity until 'undo' layout hides itself
     const val UNDO_PROMPT_DISAPPEAR_SENSITIVITY = 80.0f

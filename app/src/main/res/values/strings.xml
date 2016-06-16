@@ -189,4 +189,7 @@
     <string name="led_pattern">LED Pattern</string>
 
     <string name="milliseconds_suffix">ms</string>
+    <string name="compact_layout">Use compact layout</string>
+    <string name="needs_app_restart">(needs app restart)</string>
+    <string name="appearance">Appearance</string>
 </resources>

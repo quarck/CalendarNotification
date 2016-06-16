@@ -21,12 +21,18 @@ package com.github.quarck.calnotify.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
@@ -79,25 +85,25 @@ class MainActivity : Activity(), EventListCallback {
 
         setContentView(R.layout.activity_main)
 
-        adapter = EventListAdapter(this, R.layout.event_card, this)
+        val useCompactView = settings.useCompactView
+
+        adapter =
+            EventListAdapter(
+                this,
+                if (useCompactView) R.layout.event_card_compact else R.layout.event_card,
+                this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = find<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
+        adapter.recyclerView = recyclerView
 
-        recyclerView.setOnTouchListener {
-            view, motionEvent ->
-            when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP ->
-                    if (undoSenseHistoricY == null) {
-                        undoSenseHistoricY = motionEvent.y
-                    } else if (Math.abs((undoSenseHistoricY ?: 0.0f) - motionEvent.y) > Consts.UNDO_PROMPT_DISAPPEAR_SENSITIVITY) {
-                        undoSenseHistoricY = null
-                        hideUndoDismiss()
-                    }
-            }
-            return@setOnTouchListener false
+        if (useCompactView) {
+            setUpItemTouchHelper()
+            setUpAnimationDecoratorHelper()
+        } else {
+            recyclerView.setOnTouchListener { view, motionEvent -> onMainListMotion(motionEvent) }
         }
 
         reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
@@ -348,6 +354,22 @@ class MainActivity : Activity(), EventListCallback {
         }
     }
 
+    private fun onMainListMotion(motionEvent: MotionEvent): Boolean {
+
+        val action = motionEvent.action
+
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
+            if (undoSenseHistoricY == null) {
+                undoSenseHistoricY = motionEvent.y
+            } else if (Math.abs((undoSenseHistoricY ?: 0.0f) - motionEvent.y) > Consts.UNDO_PROMPT_DISAPPEAR_SENSITIVITY) {
+                undoSenseHistoricY = null
+                hideUndoDismiss()
+            }
+        }
+
+        return false
+    }
+
     // undoSenseHistoricY = -1.0f
     private fun hideUndoDismiss() {
         ApplicationController.undoManager.clear()
@@ -362,16 +384,172 @@ class MainActivity : Activity(), EventListCallback {
     }
 
 
+    private fun setUpItemTouchHelper() {
+
+        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
+            internal val background = ColorDrawable(Color.RED)
+            internal var xMark = resources.getDrawable(R.drawable.ic_clear_white_24dp)
+            internal var xMarkMargin = 20 // TODO: xMarkMargin = this@EventListAdapter.getResources().getDimension(R.dimen.ic_clear_margin) as Int
+
+            init {
+                xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+            }
+
+            // not important, we don't want drag & drop
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                val position = viewHolder!!.adapterPosition
+
+                val adapter = recyclerView?.adapter as EventListAdapter?
+
+                if (adapter != null && !adapter.isPendingRemoval(position)) {
+                    return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT) or
+                        makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                val swipedPosition = viewHolder.adapterPosition
+
+                (recyclerView.adapter as EventListAdapter?)?.pendingRemoval(swipedPosition)
+            }
+
+            override fun onChildDraw(
+                c: Canvas, recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float, dY: Float,
+                actionState: Int, isCurrentlyActive: Boolean) {
+
+                val itemView = viewHolder.itemView
+
+                // not sure why, but this method get's called for viewholder that are already swiped away
+                if (viewHolder.adapterPosition == -1) {
+                    // not interested in those
+                    return
+                }
+
+                // draw red background
+                background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                background.draw(c)
+
+                // draw x mark
+                val itemHeight = itemView.bottom - itemView.top
+                val intrinsicWidth = xMark.intrinsicWidth
+                val intrinsicHeight = xMark.intrinsicWidth
+
+                val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
+                val xMarkRight = itemView.right - xMarkMargin
+                val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                val xMarkBottom = xMarkTop + intrinsicHeight
+                xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+
+                xMark.draw(c)
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        }
+
+        ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView)
+    }
+
+    private fun setUpAnimationDecoratorHelper() {
+
+        recyclerView?.addItemDecoration(object : RecyclerView.ItemDecoration() {
+
+            // we want to cache this and not allocate anything repeatedly in the onDraw method
+            internal var background = ColorDrawable(Color.RED)
+
+            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+
+                // only if animation is in progress
+                if (parent.itemAnimator.isRunning) {
+
+                    // some items might be animating down and some items might be animating up to close the gap left by the removed item
+                    // this is not exclusive, both movement can be happening at the same time
+                    // to reproduce this leave just enough items so the first one and the last one would be just a little off screen
+                    // then remove one from the middle
+
+                    // find first child with translationY > 0
+                    // and last one with translationY < 0
+                    // we're after a rect that is not covered in recycler-view views at this point in time
+                    var lastViewComingDown: View? = null
+                    var firstViewComingUp: View? = null
+
+                    // this is fixed
+                    val left = 0
+                    val right = parent.width
+
+                    // this we need to find out
+                    var top = 0
+                    var bottom = 0
+
+                    // find relevant translating views
+                    val childCount = parent.layoutManager.childCount
+                    for (i in 0..childCount - 1) {
+                        val child = parent.layoutManager.getChildAt(i)
+                        if (child.translationY < 0) {
+                            // view is coming down
+                            lastViewComingDown = child
+                        } else if (child.translationY > 0) {
+                            // view is coming up
+                            if (firstViewComingUp == null) {
+                                firstViewComingUp = child
+                            }
+                        }
+                    }
+
+                    if (lastViewComingDown != null && firstViewComingUp != null) {
+                        // views are coming down AND going up to fill the void
+                        top = lastViewComingDown.bottom + lastViewComingDown.translationY.toInt()
+                        bottom = firstViewComingUp.top + firstViewComingUp.translationY.toInt()
+                    } else if (lastViewComingDown != null) {
+                        // views are going down to fill the void
+                        top = lastViewComingDown.bottom + lastViewComingDown.translationY.toInt()
+                        bottom = lastViewComingDown.bottom
+                    } else if (firstViewComingUp != null) {
+                        // views are coming up to fill the void
+                        top = firstViewComingUp.top
+                        bottom = firstViewComingUp.top + firstViewComingUp.translationY.toInt()
+                    }
+
+                    background.setBounds(left, top, right, bottom)
+                    background.draw(c)
+
+                }
+                super.onDraw(c, parent, state)
+            }
+
+        })
+    }
+
     override fun onItemClick(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemClick, pos=$position, eventId=$eventId");
+        logger.debug("onItemClick, pos=$position, eventId=$eventId")
 
         val event = adapter.getEventAtPosition(position, eventId)
-        if (event != null)
-            CalendarIntents.viewCalendarEvent(this, event)
+        if (event != null) {
+
+            if (settings.useCompactView) {
+                startActivity(
+                    Intent(this, SnoozeActivity::class.java)
+                        .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
+                        .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
+                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime))
+
+            } else {
+                CalendarIntents.viewCalendarEvent(this, event)
+            }
+        }
 
         refreshReminderLastFired()
     }
 
+    // user clicks on 'dismiss' button, item still in the list
     override fun onItemDismiss(v: View, position: Int, eventId: Long) {
         logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
 
@@ -384,6 +562,18 @@ class MainActivity : Activity(), EventListCallback {
             undoSenseHistoricY = null
             onNumEventsUpdated()
         }
+        refreshReminderLastFired()
+    }
+
+    // Item was already removed from UI, we just have to dismiss it now
+    override fun onItemRemoved(event: EventAlertRecord) {
+
+        logger.debug("onItemRemoved, eventId=${event.eventId}");
+
+        logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+        ApplicationController.dismissEvent(this, event, enableUndo=false); // Undo works different way for compact view
+        onNumEventsUpdated()
+
         refreshReminderLastFired()
     }
 
@@ -402,6 +592,7 @@ class MainActivity : Activity(), EventListCallback {
         refreshReminderLastFired()
     }
 
+/*
     override fun onItemLocation(v: View, position: Int, eventId: Long) {
         logger.debug("onItemLocation, pos=$position, eventId=$eventId");
 
@@ -423,6 +614,7 @@ class MainActivity : Activity(), EventListCallback {
 
         refreshReminderLastFired()
     }
+*/
 
 
 

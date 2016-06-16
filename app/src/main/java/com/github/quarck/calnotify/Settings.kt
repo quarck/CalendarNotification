@@ -189,6 +189,9 @@ class Settings(ctx: Context) {
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
         prefs.setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
+    val useCompactView: Boolean
+        get() = prefs.getBoolean(USE_COMPACT_LAYOUT_KEY, false)
+
     var powerOptimisationWarningShown: Boolean
         get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
         set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
@@ -214,6 +217,9 @@ class Settings(ctx: Context) {
     companion object {
 
         // Preferences keys
+
+        private const val USE_COMPACT_LAYOUT_KEY = "compact_layout"
+
         private const val REMOVE_ORIGINAL_KEY = "remove_original"
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 

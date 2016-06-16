@@ -7,6 +7,19 @@
     </Preference>
 
     <PreferenceScreen
+        android:title="@string/appearance"
+        android:key="pref_key_appearance">
+
+        <CheckBoxPreference
+            android:key="compact_layout"
+            android:title="@string/compact_layout"
+            android:summary="@string/needs_app_restart"
+            android:defaultValue="false"/>
+
+    </PreferenceScreen>
+
+
+    <PreferenceScreen
         android:title="@string/notification_settings"
         android:key="pref_key_notification_settings">
 

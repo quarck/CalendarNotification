@@ -49,7 +49,7 @@ object UndoManager: UndoManagerInterface {
 
     override fun clearIfTimeout()
         = synchronized(this) {
-            if (System.currentTimeMillis() - dismissedTime > Consts.UNDO_TIMEOUT - Consts.ALARM_THRESHOULD/2L) // some safety check
+            if (System.currentTimeMillis() - dismissedTime > (Consts.UNDO_TIMEOUT * 9 / 10)) // some safety check
                record = null
         }
 

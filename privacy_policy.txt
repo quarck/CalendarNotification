@@ -1,0 +1,12 @@
+As part of normal operation, this app might receive and store information about events fired by Android Calendar
+
+No such information ever leaves application: 
+
+ * it is not transmitted anywhere
+
+ * not shared with anyone
+
+ * not provided to any 3rd party 
+
+All event details are removed once event is dismissed. If user has enabled option to keep recently dismissed 
+events - such information is removed as soon as timeout passes. 

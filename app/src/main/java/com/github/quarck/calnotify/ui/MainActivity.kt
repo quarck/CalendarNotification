@@ -389,8 +389,7 @@ class MainActivity : Activity(), EventListCallback {
 
         val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
-            internal val background = ColorDrawable(Color.RED)
+            internal val background = ColorDrawable(resources.getColor(R.color.material_red))
             internal var xMark = resources.getDrawable(R.drawable.ic_clear_white_24dp)
             internal var xMarkMargin = 20 // TODO: xMarkMargin = this@EventListAdapter.getResources().getDimension(R.dimen.ic_clear_margin) as Int
 
@@ -398,7 +397,6 @@ class MainActivity : Activity(), EventListCallback {
                 xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             }
 
-            // not important, we don't want drag & drop
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
             }
@@ -408,11 +406,14 @@ class MainActivity : Activity(), EventListCallback {
 
                 val adapter = recyclerView?.adapter as EventListAdapter?
 
-                if (adapter != null && !adapter.isPendingRemoval(position)) {
-                    return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT) or
-                        makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-                }
-                return super.getSwipeDirs(recyclerView, viewHolder)
+                if (adapter == null)
+                    return super.getSwipeDirs(recyclerView, viewHolder)
+
+                if (adapter.isPendingRemoval(position))
+                    return 0
+
+                return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
+                    makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
@@ -429,26 +430,34 @@ class MainActivity : Activity(), EventListCallback {
 
                 val itemView = viewHolder.itemView
 
-                // not sure why, but this method get's called for viewholder that are already swiped away
-                if (viewHolder.adapterPosition == -1) {
-                    // not interested in those
+                if (viewHolder.adapterPosition == -1)
                     return
-                }
 
-                // draw red background
-                background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                if (dX < 0)
+                    background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                else
+                    background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+
                 background.draw(c)
 
-                // draw x mark
                 val itemHeight = itemView.bottom - itemView.top
                 val intrinsicWidth = xMark.intrinsicWidth
                 val intrinsicHeight = xMark.intrinsicWidth
 
-                val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
-                val xMarkRight = itemView.right - xMarkMargin
-                val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                val xMarkBottom = xMarkTop + intrinsicHeight
-                xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+
+                if (dX < 0) {
+                    val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
+                    val xMarkRight = itemView.right - xMarkMargin
+                    val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                    val xMarkBottom = xMarkTop + intrinsicHeight
+                    xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                } else {
+                    val xMarkLeft = itemView.left + xMarkMargin
+                    val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
+                    val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                    val xMarkBottom = xMarkTop + intrinsicHeight
+                    xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                }
 
                 xMark.draw(c)
 
@@ -461,32 +470,20 @@ class MainActivity : Activity(), EventListCallback {
 
     private fun setUpAnimationDecoratorHelper() {
 
-        recyclerView?.addItemDecoration(object : RecyclerView.ItemDecoration() {
+        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
 
-            // we want to cache this and not allocate anything repeatedly in the onDraw method
-            internal var background = ColorDrawable(Color.RED)
+            internal val background = ColorDrawable(resources.getColor(R.color.material_red))
 
-            override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+            fun ongDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
 
-                // only if animation is in progress
                 if (parent.itemAnimator.isRunning) {
 
-                    // some items might be animating down and some items might be animating up to close the gap left by the removed item
-                    // this is not exclusive, both movement can be happening at the same time
-                    // to reproduce this leave just enough items so the first one and the last one would be just a little off screen
-                    // then remove one from the middle
-
-                    // find first child with translationY > 0
-                    // and last one with translationY < 0
-                    // we're after a rect that is not covered in recycler-view views at this point in time
                     var lastViewComingDown: View? = null
                     var firstViewComingUp: View? = null
 
-                    // this is fixed
                     val left = 0
                     val right = parent.width
 
-                    // this we need to find out
                     var top = 0
                     var bottom = 0
 
@@ -494,6 +491,7 @@ class MainActivity : Activity(), EventListCallback {
                     val childCount = parent.layoutManager.childCount
                     for (i in 0..childCount - 1) {
                         val child = parent.layoutManager.getChildAt(i)
+
                         if (child.translationY < 0) {
                             // view is coming down
                             lastViewComingDown = child
@@ -519,11 +517,12 @@ class MainActivity : Activity(), EventListCallback {
                         bottom = firstViewComingUp.top + firstViewComingUp.translationY.toInt()
                     }
 
+                    logger.debug("background.setBounds2($left, $top, $right, $bottom)");
                     background.setBounds(left, top, right, bottom)
                     background.draw(c)
 
                 }
-                super.onDraw(c, parent, state)
+                //super.onDraw(c, parent, state)
             }
 
         })

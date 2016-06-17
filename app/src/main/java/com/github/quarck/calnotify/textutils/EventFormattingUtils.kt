@@ -26,7 +26,6 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.displayedEndTime
 import com.github.quarck.calnotify.calendar.displayedStartTime
-import com.github.quarck.calnotify.utils.createCalendarTime
 import com.github.quarck.calnotify.utils.dayEquals
 import java.text.DateFormat
 import java.util.*
@@ -68,7 +67,7 @@ fun EventAlertRecord.formatText(ctx: Context): String {
         startDay.time = start
         endDay.time = end
 
-        val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
+        val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
         val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
 
         if (!currentDay.dayEquals(startDay)) {
@@ -142,46 +141,30 @@ fun EventAlertRecord.formatTime(ctx: Context): Pair<String, String> {
     return Pair(sbDay.toString(), sbTime.toString());
 }
 
-fun EventAlertRecord.formatTimeOnly(ctx: Context): String {
+fun EventAlertRecord.dateRangeOneLine(ctx: Context, showWeekDay: Boolean = false): String {
 
-    val sbTime = StringBuilder();
+    val startIsToday = DateUtils.isToday(displayedStartTime)
+    val endIsToday = DateUtils.isToday(displayedEndTime)
 
-    if (this.displayedStartTime != 0L) {
+    val weekFlag = if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0
 
-        val startDay = createCalendarTime(displayedStartTime)
-        val endDay = createCalendarTime(displayedEndTime)
+    val ret = when {
+        startIsToday && endIsToday ->
+            DateUtils.formatDateRange(ctx, displayedStartTime, displayedEndTime, DateUtils.FORMAT_SHOW_TIME)
 
-        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+        startIsToday && displayedEndTime == 0L ->
+            DateUtils.formatDateTime(ctx, displayedStartTime, DateUtils.FORMAT_SHOW_TIME)
 
-        sbTime.append(timeFormatter.format(Date(this.displayedStartTime)));
+        !startIsToday && displayedEndTime == 0L ->
+            DateUtils.formatDateTime(ctx, displayedStartTime,
+                DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or weekFlag)
 
-        if (this.displayedEndTime != 0L && endDay.dayEquals(startDay)) {
-            sbTime.append(" - ");
-            sbTime.append(timeFormatter.format(Date(this.displayedEndTime)))
-        }
+        else ->
+            DateUtils.formatDateRange(ctx, displayedStartTime, displayedEndTime,
+                DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or weekFlag)
     }
 
-    return sbTime.toString()
-}
-fun EventAlertRecord.shortFormatDayOrTime(ctx: Context): String {
-    val sb = StringBuilder()
-
-    if (this.displayedStartTime != 0L) {
-        val currentTime = System.currentTimeMillis();
-
-        val currentDay = createCalendarTime(currentTime)
-        val startDay = createCalendarTime(displayedStartTime)
-
-        if (currentDay.dayEquals(startDay)) {
-            val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-            sb.append(timeFormatter.format(Date(this.displayedStartTime)))
-        } else {
-            val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
-            sb.append(dateFormatter.format(Date(this.displayedStartTime)))
-        }
-    }
-
-    return sb.toString()
+    return ret
 }
 
 fun EventAlertRecord.formatSnoozedUntil(ctx: Context): String {
@@ -197,7 +180,7 @@ fun EventAlertRecord.formatSnoozedUntil(ctx: Context): String {
         if ((snoozedUntil - System.currentTimeMillis()) / 1000L / Consts.DAY_IN_SECONDS / 30 >= 3L) // over 3mon - show year
             flags = flags or DateUtils.FORMAT_SHOW_YEAR
 
-        ret = DateUtils.formatDateTime(ctx, snoozedUntil,flags)
+        ret = DateUtils.formatDateTime(ctx, snoozedUntil, flags)
     } else {
         ret = ""
     }

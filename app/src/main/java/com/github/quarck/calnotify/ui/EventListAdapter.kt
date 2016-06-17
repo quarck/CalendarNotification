@@ -43,7 +43,7 @@ import com.github.quarck.calnotify.calendar.displayedEndTime
 import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
-import com.github.quarck.calnotify.textutils.formatTimeOnly
+import com.github.quarck.calnotify.textutils.dateRangeOneLine
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
@@ -177,27 +177,10 @@ class EventListAdapter(
                     holder.undoLayout?.visibility = View.GONE
                     holder.compactViewContentLayout?.visibility = View.VISIBLE
 
+                    val time = event.dateRangeOneLine(context)
+                    holder.eventDateText.text = time
+                    holder.eventTimeText.text = ""
 
-                    val currentDay = createCalendarTime(System.currentTimeMillis())
-                    val startDay = createCalendarTime(event.displayedStartTime)
-                    val endDay = createCalendarTime(event.displayedEndTime)
-
-
-                    val time = event.formatTimeOnly(context)
-
-                    if (currentDay.dayEquals(startDay) &&
-                        (event.displayedEndTime == 0L || currentDay.dayEquals(endDay)) ) {
-                        // no date
-                        holder.eventDateText.text = time
-                        holder.eventTimeText.text = ""
-                    } else {
-                        // full date
-                        val date = DateUtils.formatDateTime(context, event.displayedStartTime,
-                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY)
-
-                        holder.eventDateText.text = "$date, $time" // date
-                        holder.eventTimeText.text = ""
-                    }
                 } else {
 
                     val (date, time) = event.formatTime(context)

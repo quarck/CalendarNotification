@@ -26,18 +26,18 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
+import android.text.format.DateUtils
 import com.github.quarck.calnotify.*
-import com.github.quarck.calnotify.R.drawable.ic_clear_white_24dp
 import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.textutils.formatText
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.textutils.formatTime
-import com.github.quarck.calnotify.textutils.shortFormatDayOrTime
+import com.github.quarck.calnotify.textutils.dateRangeOneLine
+import com.github.quarck.calnotify.textutils.formatText
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivity
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
@@ -490,7 +490,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .fold(
                     StringBuilder(), {
                         sb, ev ->
-                        sb.append("${ev.shortFormatDayOrTime(context)}: ${ev.title}\n")
+
+                        val flags =
+                            if (DateUtils.isToday(ev.displayedStartTime))
+                                DateUtils.FORMAT_SHOW_TIME
+                            else
+                                DateUtils.FORMAT_SHOW_DATE
+
+                        sb.append("${DateUtils.formatDateTime(context, ev.displayedStartTime, flags)}: ${ev.title}\n")
                     } )
                 .toString()
 

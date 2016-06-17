@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.utils
 
 import android.content.Context
 import android.text.format.DateUtils
+import android.text.format.Time
 import java.util.*
 
 
@@ -43,3 +44,5 @@ fun createCalendarTime(timeMillis: Long): Calendar {
     return ret
 }
 
+fun sameCalendarDay(timeMillisLeft: Long, timeMillisRight: Long)
+    = createCalendarTime(timeMillisLeft).dayEquals(createCalendarTime(timeMillisRight))

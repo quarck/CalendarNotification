@@ -102,7 +102,7 @@ class MainActivity : Activity(), EventListCallback {
 
         if (useCompactView) {
             setUpItemTouchHelper()
-            setUpAnimationDecoratorHelper()
+            //setUpAnimationDecoratorHelper()
         } else {
             recyclerView.setOnTouchListener { view, motionEvent -> onMainListMotion(motionEvent) }
         }
@@ -391,7 +391,7 @@ class MainActivity : Activity(), EventListCallback {
 
             internal val background = ColorDrawable(resources.getColor(R.color.material_red))
             internal var xMark = resources.getDrawable(R.drawable.ic_clear_white_24dp)
-            internal var xMarkMargin = 20 // TODO: xMarkMargin = this@EventListAdapter.getResources().getDimension(R.dimen.ic_clear_margin) as Int
+            internal var xMarkMargin = resources.getDimension(R.dimen.ic_clear_margin).toInt()
 
             init {
                 xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
@@ -468,65 +468,6 @@ class MainActivity : Activity(), EventListCallback {
         ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView)
     }
 
-    private fun setUpAnimationDecoratorHelper() {
-
-        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
-
-            internal val background = ColorDrawable(resources.getColor(R.color.material_red))
-
-            fun ongDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
-
-                if (parent.itemAnimator.isRunning) {
-
-                    var lastViewComingDown: View? = null
-                    var firstViewComingUp: View? = null
-
-                    val left = 0
-                    val right = parent.width
-
-                    var top = 0
-                    var bottom = 0
-
-                    // find relevant translating views
-                    val childCount = parent.layoutManager.childCount
-                    for (i in 0..childCount - 1) {
-                        val child = parent.layoutManager.getChildAt(i)
-
-                        if (child.translationY < 0) {
-                            // view is coming down
-                            lastViewComingDown = child
-                        } else if (child.translationY > 0) {
-                            // view is coming up
-                            if (firstViewComingUp == null) {
-                                firstViewComingUp = child
-                            }
-                        }
-                    }
-
-                    if (lastViewComingDown != null && firstViewComingUp != null) {
-                        // views are coming down AND going up to fill the void
-                        top = lastViewComingDown.bottom + lastViewComingDown.translationY.toInt()
-                        bottom = firstViewComingUp.top + firstViewComingUp.translationY.toInt()
-                    } else if (lastViewComingDown != null) {
-                        // views are going down to fill the void
-                        top = lastViewComingDown.bottom + lastViewComingDown.translationY.toInt()
-                        bottom = lastViewComingDown.bottom
-                    } else if (firstViewComingUp != null) {
-                        // views are coming up to fill the void
-                        top = firstViewComingUp.top
-                        bottom = firstViewComingUp.top + firstViewComingUp.translationY.toInt()
-                    }
-
-                    logger.debug("background.setBounds2($left, $top, $right, $bottom)");
-                    background.setBounds(left, top, right, bottom)
-                    background.draw(c)
-
-                }
-                //super.onDraw(c, parent, state)
-            }
-
-        })
-    }
 
     override fun onItemClick(v: View, position: Int, eventId: Long) {
         logger.debug("onItemClick, pos=$position, eventId=$eventId")

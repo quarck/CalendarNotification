@@ -74,6 +74,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:onClick="onReloadButtonClick"
+                android:textStyle="bold"
                 />
 
             <TextView
@@ -128,6 +129,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:onClick="onUndoButtonClick"
+                android:textStyle="bold"
                 />
 
             <TextView

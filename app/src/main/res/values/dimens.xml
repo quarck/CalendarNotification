@@ -5,6 +5,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <dimen name="ic_clear_margin">25dp</dimen>
+
     <dimen name="snooze_close_btn_padding">8dp</dimen>
 
     <dimen name="snooze_view_padding_start">60dp</dimen>
@@ -70,4 +72,6 @@
     <dimen name="date_time_picker_margin">2dp</dimen>
     <dimen name="date_time_picker_padding">5dp</dimen>
     <dimen name="compact_view_layout_height">80dp</dimen>
+    <dimen name="compact_view_left_margin">10dp</dimen>
+    <dimen name="compact_view_right_margin">10dp</dimen>
 </resources>

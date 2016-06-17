@@ -39,7 +39,7 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.dateRangeOneLine
 import com.github.quarck.calnotify.textutils.formatText
 import com.github.quarck.calnotify.ui.MainActivity
-import com.github.quarck.calnotify.ui.SnoozeActivity
+import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
 import com.github.quarck.calnotify.utils.notificationManager
 import com.github.quarck.calnotify.utils.powerManager
@@ -419,7 +419,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun snoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
-        val intent = Intent(ctx, SnoozeActivity::class.java)
+        val intent = Intent(ctx, SnoozeActivityNoRecents::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)

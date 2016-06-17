@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/activity_main_quiet_hours"
                 android:text="Hello World"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/accent"
                 android:gravity="center"
                 android:padding="@dimen/text_view_main_activity_quiet_hrs_status_padding"

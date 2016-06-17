@@ -51,9 +51,8 @@ interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
     fun onItemDismiss(v: View, position: Int, eventId: Long): Unit
     fun onItemSnooze(v: View, position: Int, eventId: Long): Unit
-//    fun onItemLocation(v: View, position: Int, eventId: Long): Unit
-//    fun onItemDateTime(v: View, position: Int, eventId: Long): Unit
     fun onItemRemoved(event: EventAlertRecord)
+    fun onItemRestored(event: EventAlertRecord) // e.g. undo
 }
 
 @Suppress("DEPRECATION")
@@ -158,14 +157,18 @@ class EventListAdapter(
 
                 holder.undoButton?.setOnClickListener {
                     v ->
+
+                    callback.onItemRestored(event)
+
                     val runnable = pendingRunnables[event];
-                    pendingRunnables.remove(event);
+                    pendingRunnables.remove(event)
+
                     if (runnable != null)
-                        handler.removeCallbacks(runnable);
+                        handler.removeCallbacks(runnable)
 
-                    eventsPendingRemoval.remove(event);
+                    eventsPendingRemoval.remove(event)
 
-                    notifyItemChanged(events.indexOf(event));
+                    notifyItemChanged(events.indexOf(event))
                 }
 
             } else {
@@ -272,26 +275,24 @@ class EventListAdapter(
             callback.onItemRemoved(event!!)
     }
 
-    private fun remove(event: EventAlertRecord) {
-
-        synchronized(this) {
-            val idx = events.indexOf(event)
-            events = events.filter { ev -> ev != event }.toTypedArray()
-            notifyItemRemoved(idx)
-        }
-
-        callback.onItemRemoved(event)
-    }
-
     fun pendingRemoval(position: Int) {
         val event = events[position]
 
         if (!eventsPendingRemoval.contains(event)) {
+
             eventsPendingRemoval.add(event);
+
+            callback.onItemRemoved(event)
 
             notifyItemChanged(position);
 
-            val runnable = Runnable() { remove(event) };
+            val runnable = Runnable() {
+                synchronized(this) {
+                    val idx = events.indexOf(event)
+                    events = events.filter { ev -> ev != event }.toTypedArray()
+                    notifyItemRemoved(idx)
+                }
+            }
 
             handler.postDelayed(runnable, Consts.UNDO_TIMEOUT);
             pendingRunnables.put(event, runnable);

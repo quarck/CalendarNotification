@@ -259,7 +259,7 @@ class MainActivity : Activity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                    Intent(this, SnoozeActivity::class.java)
+                    Intent(this, SnoozeActivityNoRecents::class.java)
                         .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents))
 
             R.id.action_settings ->
@@ -569,10 +569,19 @@ class MainActivity : Activity(), EventListCallback {
     // Item was already removed from UI, we just have to dismiss it now
     override fun onItemRemoved(event: EventAlertRecord) {
 
-        logger.debug("onItemRemoved, eventId=${event.eventId}");
+        logger.debug("onItemRemoved, eventId=${event.eventId}")
 
         logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
         ApplicationController.dismissEvent(this, event, enableUndo=false); // Undo works different way for compact view
+        onNumEventsUpdated()
+
+        refreshReminderLastFired()
+    }
+
+    override fun onItemRestored(event: EventAlertRecord) {
+        logger.debug("onItemRestored, eventId=${event.eventId}")
+        ApplicationController.restoreEvent(this, event)
+
         onNumEventsUpdated()
 
         refreshReminderLastFired()
@@ -585,7 +594,7 @@ class MainActivity : Activity(), EventListCallback {
 
         if (event != null) {
             startActivity(
-                Intent(this, SnoozeActivity::class.java)
+                Intent(this, SnoozeActivityNoRecents::class.java)
                     .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                     .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
                     .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime))

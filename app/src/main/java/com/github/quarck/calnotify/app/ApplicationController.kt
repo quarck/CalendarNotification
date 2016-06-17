@@ -28,7 +28,7 @@ import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
-import com.github.quarck.calnotify.ui.SnoozeActivity
+import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.ui.UINotifierService
 
 object ApplicationController {
@@ -315,6 +315,11 @@ object ApplicationController {
             EventsStorage(context).use { it.addEvent(event) }
             notificationManager.onEventRestored(context, event)
         }
+    }
+
+    fun restoreEvent(context: Context, event: EventAlertRecord) {
+        EventsStorage(context).use { it.addEvent(event) }
+        notificationManager.onEventRestored(context, event)
     }
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {

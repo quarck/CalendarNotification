@@ -36,10 +36,15 @@
             android:parentActivityName=".ui.MainActivity">
         </activity>
         <activity
-            android:name=".ui.SnoozeActivity"
+            android:name=".ui.SnoozeActivityNoRecents"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_activity_snooze"
             android:noHistory="true"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.SnoozeActivity"
+            android:label="@string/title_activity_activity_snooze"
             android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
         <activity

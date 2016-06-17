@@ -72,7 +72,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonTestActivityClick(v: View) {
-        startActivity(Intent(applicationContext, SnoozeActivity::class.java));
+        startActivity(Intent(applicationContext, SnoozeActivityNoRecents::class.java));
     }
 
     fun randomTitle(currentTime: Long): String {

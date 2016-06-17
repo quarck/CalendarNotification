@@ -21,10 +21,12 @@ package com.github.quarck.calnotify.textutils
 
 import android.content.Context
 import android.text.format.DateUtils
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.displayedEndTime
 import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.utils.createCalendarTime
 import com.github.quarck.calnotify.utils.dayEquals
 import java.text.DateFormat
 import java.util.*
@@ -104,6 +106,7 @@ fun EventAlertRecord.formatText(ctx: Context): String {
 }
 
 fun EventAlertRecord.formatTime(ctx: Context): Pair<String, String> {
+
     val sbDay = StringBuilder()
     val sbTime = StringBuilder();
 
@@ -132,30 +135,42 @@ fun EventAlertRecord.formatTime(ctx: Context): Pair<String, String> {
         }
 
         sbDay.append(
-                EventRecordUtils.dayName(
-                        ctx,
-                    displayedStartTime, DateFormat.getDateInstance(DateFormat.FULL)
-                )
-        );
+            EventRecordUtils.dayName(ctx,
+                displayedStartTime, DateFormat.getDateInstance(DateFormat.FULL)))
     }
 
     return Pair(sbDay.toString(), sbTime.toString());
 }
 
+fun EventAlertRecord.formatTimeOnly(ctx: Context): String {
+
+    val sbTime = StringBuilder();
+
+    if (this.displayedStartTime != 0L) {
+
+        val startDay = createCalendarTime(displayedStartTime)
+        val endDay = createCalendarTime(displayedEndTime)
+
+        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
+
+        sbTime.append(timeFormatter.format(Date(this.displayedStartTime)));
+
+        if (this.displayedEndTime != 0L && endDay.dayEquals(startDay)) {
+            sbTime.append(" - ");
+            sbTime.append(timeFormatter.format(Date(this.displayedEndTime)))
+        }
+    }
+
+    return sbTime.toString()
+}
 fun EventAlertRecord.shortFormatDayOrTime(ctx: Context): String {
     val sb = StringBuilder()
 
     if (this.displayedStartTime != 0L) {
         val currentTime = System.currentTimeMillis();
 
-        val today = Date(currentTime)
-        val start = Date(this.displayedStartTime)
-
-        val currentDay = Calendar.getInstance()
-        val startDay = Calendar.getInstance()
-
-        currentDay.time = today
-        startDay.time = start
+        val currentDay = createCalendarTime(currentTime)
+        val startDay = createCalendarTime(displayedStartTime)
 
         if (currentDay.dayEquals(startDay)) {
             val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
@@ -170,32 +185,23 @@ fun EventAlertRecord.shortFormatDayOrTime(ctx: Context): String {
 }
 
 fun EventAlertRecord.formatSnoozedUntil(ctx: Context): String {
-    var sb = StringBuilder();
+
+    val ret: String
 
     if (snoozedUntil != 0L) {
-        var currentTime = System.currentTimeMillis();
+        var flags = DateUtils.FORMAT_SHOW_TIME
 
-        val currentDay = Calendar.getInstance()
-        var snoozedDay = Calendar.getInstance()
+        if (!DateUtils.isToday(snoozedUntil))
+            flags = flags or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY
 
-        currentDay.time = Date(currentTime)
-        snoozedDay.time = Date(this.snoozedUntil)
+        if ((snoozedUntil - System.currentTimeMillis()) / 1000L / Consts.DAY_IN_SECONDS / 30 >= 3L) // over 3mon - show year
+            flags = flags or DateUtils.FORMAT_SHOW_YEAR
 
-        var timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-
-        if (!snoozedDay.dayEquals(currentDay)) {
-            sb.append(
-                    EventRecordUtils.dayName(
-                            ctx,
-                            snoozedUntil, DateFormat.getDateInstance(DateFormat.SHORT)
-                    )
-            );
-            sb.append(" ");
-        }
-
-        sb.append(timeFormatter.format(Date(snoozedUntil)));
+        ret = DateUtils.formatDateTime(ctx, snoozedUntil,flags)
+    } else {
+        ret = ""
     }
 
-    return sb.toString();
+    return ret
 }
 

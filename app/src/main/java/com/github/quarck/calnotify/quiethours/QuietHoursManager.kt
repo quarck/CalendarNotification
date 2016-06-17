@@ -21,7 +21,7 @@ package com.github.quarck.calnotify.quiethours
 
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.calendarWithTimeMillisHourAndMinute
+import com.github.quarck.calnotify.utils.createCalendarTime
 import java.util.*
 
 object QuietHoursManager: QuietHoursManagerInterface {
@@ -50,10 +50,10 @@ object QuietHoursManager: QuietHoursManagerInterface {
         cal.timeInMillis = currentTime
 
         val from = settings.quietHoursFrom
-        var silentFrom = calendarWithTimeMillisHourAndMinute(currentTime, from.component1(), from.component2())
+        var silentFrom = createCalendarTime(currentTime, from.component1(), from.component2())
 
         val to = settings.quietHoursTo
-        var silentTo = calendarWithTimeMillisHourAndMinute(currentTime, to.component1(), to.component2())
+        var silentTo = createCalendarTime(currentTime, to.component1(), to.component2())
 
         logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
 
@@ -105,10 +105,10 @@ object QuietHoursManager: QuietHoursManagerInterface {
             })
 
         val from = settings.quietHoursFrom
-        var silentFrom: Calendar = calendarWithTimeMillisHourAndMinute(currentTimes[0], from.component1(), from.component2())
+        var silentFrom: Calendar = createCalendarTime(currentTimes[0], from.component1(), from.component2())
 
         val to = settings.quietHoursTo
-        var silentTo = calendarWithTimeMillisHourAndMinute(currentTimes[0], to.component1(), to.component2())
+        var silentTo = createCalendarTime(currentTimes[0], to.component1(), to.component2())
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
         silentFrom.add(Calendar.DATE, -1);

@@ -90,6 +90,7 @@ class MainActivity : Activity(), EventListCallback {
         adapter =
             EventListAdapter(
                 this,
+                useCompactView,
                 if (useCompactView) R.layout.event_card_compact else R.layout.event_card,
                 this)
 

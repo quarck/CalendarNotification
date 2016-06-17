@@ -29,6 +29,7 @@ import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.support.v7.widget.helper.ItemTouchHelper.*
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,11 +39,13 @@ import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.displayedEndTime
+import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
-import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.background
-import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.textutils.formatTimeOnly
+import com.github.quarck.calnotify.utils.*
+import java.util.*
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
@@ -56,6 +59,7 @@ interface EventListCallback {
 @Suppress("DEPRECATION")
 class EventListAdapter(
     val context: Context,
+    val useCompactView: Boolean,
     val cardVewResourceId: Int,
     val callback: EventListCallback)
 
@@ -66,10 +70,10 @@ class EventListAdapter(
         var eventId: Long = 0;
 
         var eventHolder: RelativeLayout?
-        var eventTitleText: TextView?
+        var eventTitleText: TextView
         var eventTitleLayout: RelativeLayout?
-        var eventDateText: TextView?
-        var eventTimeText: TextView?
+        var eventDateText: TextView
+        var eventTimeText: TextView
         var eventLocatoinText: TextView?
         var snoozedUntilText: TextView?
         val compactViewCalendarColor: View?
@@ -112,8 +116,8 @@ class EventListAdapter(
 
             eventHolder?.setOnClickListener(itemClickListener)
             eventLocatoinText?.setOnClickListener(itemClickListener)
-            eventDateText?.setOnClickListener(itemClickListener)
-            eventTimeText?.setOnClickListener(itemClickListener)
+            eventDateText.setOnClickListener(itemClickListener)
+            eventTimeText.setOnClickListener(itemClickListener)
 
             dismissButton?.setOnClickListener {
                 callback.onItemDismiss(itemView, adapterPosition, eventId);
@@ -165,21 +169,49 @@ class EventListAdapter(
                 }
 
             } else {
-                holder.eventTitleText?.text = event.title
+                holder.eventId = event.eventId;
 
-                holder.undoLayout?.visibility = View.GONE
-                holder.compactViewContentLayout?.visibility = View.VISIBLE
+                holder.eventTitleText.text = event.title
 
-                val (date, time) = event.formatTime(context)
+                if (useCompactView) {
+                    holder.undoLayout?.visibility = View.GONE
+                    holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-                holder.eventDateText?.text = date
-                holder.eventTimeText?.text = time
-                holder.eventLocatoinText?.text = event.location
 
-                if (event.location != "")
-                    holder.eventLocatoinText?.visibility = View.VISIBLE;
-                else
-                    holder.eventLocatoinText?.visibility = View.GONE;
+                    val currentDay = createCalendarTime(System.currentTimeMillis())
+                    val startDay = createCalendarTime(event.displayedStartTime)
+                    val endDay = createCalendarTime(event.displayedEndTime)
+
+
+                    val time = event.formatTimeOnly(context)
+
+                    if (currentDay.dayEquals(startDay) &&
+                        (event.displayedEndTime == 0L || currentDay.dayEquals(endDay)) ) {
+                        // no date
+                        holder.eventDateText.text = time
+                        holder.eventTimeText.text = ""
+                    } else {
+                        // full date
+                        val date = DateUtils.formatDateTime(context, event.displayedStartTime,
+                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY)
+
+                        holder.eventDateText.text = "$date, $time" // date
+                        holder.eventTimeText.text = ""
+                    }
+                } else {
+
+                    val (date, time) = event.formatTime(context)
+
+                    holder.eventDateText.text = date
+                    holder.eventTimeText.text = time
+
+                    holder.eventLocatoinText?.text = event.location
+
+                    if (event.location != "")
+                        holder.eventLocatoinText?.visibility = View.VISIBLE;
+                    else
+                        holder.eventLocatoinText?.visibility = View.GONE;
+                }
 
                 if (event.snoozedUntil != 0L) {
                     holder.snoozedUntilText?.text =
@@ -194,11 +226,11 @@ class EventListAdapter(
                     holder.snoozeButton?.text = snoozeString
                 }
 
-                holder.eventId = event.eventId;
-
                 holder.calendarColor.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
-                holder.eventTitleLayout?.background = holder.calendarColor
-                holder.compactViewCalendarColor?.background = holder.calendarColor
+                if (useCompactView)
+                    holder.compactViewCalendarColor?.background = holder.calendarColor
+                else
+                    holder.eventTitleLayout?.background = holder.calendarColor
             }
         }
     }

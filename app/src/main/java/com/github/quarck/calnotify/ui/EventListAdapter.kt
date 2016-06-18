@@ -305,4 +305,15 @@ class EventListAdapter(
         val event = events[position]
         return eventsPendingRemoval.contains(event)
     }
+
+    fun hideUndoDismiss() {
+
+        for ((event, runnable) in pendingRunnables)
+            handler.removeCallbacks(runnable)
+
+        for ((event, runnable) in pendingRunnables)
+            runnable.run()
+
+        pendingRunnables.clear()
+    }
 }

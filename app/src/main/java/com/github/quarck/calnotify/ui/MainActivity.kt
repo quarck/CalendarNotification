@@ -99,12 +99,11 @@ class MainActivity : Activity(), EventListCallback {
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView
 
-        if (useCompactView) {
+
+        recyclerView.setOnTouchListener { view, motionEvent -> onMainListMotion(motionEvent) }
+
+        if (useCompactView)
             setUpItemTouchHelper()
-            //setUpAnimationDecoratorHelper()
-        } else {
-            recyclerView.setOnTouchListener { view, motionEvent -> onMainListMotion(motionEvent) }
-        }
 
         reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
 
@@ -364,6 +363,7 @@ class MainActivity : Activity(), EventListCallback {
             } else if (Math.abs((undoSenseHistoricY ?: 0.0f) - motionEvent.y) > Consts.UNDO_PROMPT_DISAPPEAR_SENSITIVITY) {
                 undoSenseHistoricY = null
                 hideUndoDismiss()
+                adapter.hideUndoDismiss()
             }
         }
 
@@ -385,7 +385,7 @@ class MainActivity : Activity(), EventListCallback {
 
 
     private fun setUpItemTouchHelper() {
-        
+
         val itemTouchCallback =
             object: ItemTouchHelper.Callback() {
 
@@ -398,7 +398,17 @@ class MainActivity : Activity(), EventListCallback {
                 }
 
                 override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                    return makeMovementFlags(0, ItemTouchHelper.START or ItemTouchHelper.END)
+                    val position = viewHolder!!.adapterPosition
+                    val adapter = recyclerView?.adapter as EventListAdapter?
+
+                    if (adapter == null)
+                        return 0
+
+                    if (adapter.isPendingRemoval(position))
+                        return 0
+
+                    return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
+                        makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
                 }
 
                 override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {

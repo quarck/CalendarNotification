@@ -424,7 +424,27 @@ class MainActivity : Activity(), EventListCallback {
                 }
 
                 override fun isLongPressDragEnabled() = false
+
                 override fun isItemViewSwipeEnabled() = true
+
+                /* From documentation:
+                 * Defines the minimum velocity which will be considered as a swipe action by the user.
+                 * You can increase this value to make it harder to swipe or decrease it to make
+                 * it easier. */
+                override fun getSwipeEscapeVelocity(defaultValue: Float) = defaultValue * 2.0f
+
+                /* From documentation:
+                 * Defines the maximum velocity ItemTouchHelper will ever calculate for pointer
+                 * movements.
+                 * If you increase the value, it will be easier for the user to swipe diagonally and
+                 * if you decrease the value, user will need to make a rather straight finger movement
+                 * to trigger a swipe.*/
+                override fun getSwipeVelocityThreshold(defaultValue: Float) = defaultValue / 3.0f
+
+                /* From documentation:
+                 * Default value is .5f, which means, to swipe a View, user must move the View at
+                 * least half of RecyclerView's width or height, depending on the swipe direction. */
+//                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder) = 0.5f
 
                 override fun onChildDraw(
                     c: Canvas, recyclerView: RecyclerView,

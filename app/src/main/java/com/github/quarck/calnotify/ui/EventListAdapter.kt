@@ -147,77 +147,79 @@ class EventListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        if (position >= 0 && position < events.size && holder != null) {
-            val event = events[position]
+        //
+        if (position < 0 || position >= events.size || holder == null)
+            return
 
-            if (eventsPendingRemoval.contains(event)) {
-                // we need to show the "undo" state of the row
-                holder.undoLayout?.visibility = View.VISIBLE
-                holder.compactViewContentLayout?.visibility = View.GONE
+        val event = events[position]
 
-                holder.undoButton?.setOnClickListener {
-                    v ->
+        if (eventsPendingRemoval.contains(event)) {
+            // we need to show the "undo" state of the row
+            holder.undoLayout?.visibility = View.VISIBLE
+            holder.compactViewContentLayout?.visibility = View.GONE
 
-                    callback.onItemRestored(event)
+            holder.undoButton?.setOnClickListener {
+                v ->
 
-                    val runnable = pendingRunnables[event];
-                    pendingRunnables.remove(event)
+                callback.onItemRestored(event)
 
-                    if (runnable != null)
-                        handler.removeCallbacks(runnable)
+                val runnable = pendingRunnables[event];
+                pendingRunnables.remove(event)
 
-                    eventsPendingRemoval.remove(event)
+                if (runnable != null)
+                    handler.removeCallbacks(runnable)
 
-                    notifyItemChanged(events.indexOf(event))
-                }
+                eventsPendingRemoval.remove(event)
+
+                notifyItemChanged(events.indexOf(event))
+            }
+
+        } else {
+            holder.eventId = event.eventId;
+
+            holder.eventTitleText.text = event.title
+
+            if (useCompactView) {
+                holder.undoLayout?.visibility = View.GONE
+                holder.compactViewContentLayout?.visibility = View.VISIBLE
+
+                val time = event.dateRangeOneLine(context)
+                holder.eventDateText.text = time
+                holder.eventTimeText.text = ""
 
             } else {
-                holder.eventId = event.eventId;
 
-                holder.eventTitleText.text = event.title
+                val (date, time) = event.formatTime(context)
 
-                if (useCompactView) {
-                    holder.undoLayout?.visibility = View.GONE
-                    holder.compactViewContentLayout?.visibility = View.VISIBLE
+                holder.eventDateText.text = date
+                holder.eventTimeText.text = time
 
-                    val time = event.dateRangeOneLine(context)
-                    holder.eventDateText.text = time
-                    holder.eventTimeText.text = ""
+                holder.eventLocatoinText?.text = event.location
 
-                } else {
-
-                    val (date, time) = event.formatTime(context)
-
-                    holder.eventDateText.text = date
-                    holder.eventTimeText.text = time
-
-                    holder.eventLocatoinText?.text = event.location
-
-                    if (event.location != "")
-                        holder.eventLocatoinText?.visibility = View.VISIBLE;
-                    else
-                        holder.eventLocatoinText?.visibility = View.GONE;
-                }
-
-                if (event.snoozedUntil != 0L) {
-                    holder.snoozedUntilText?.text =
-                        context.resources.getString(R.string.snoozed_until_string) + " " +
-                            event.formatSnoozedUntil(context);
-
-                    holder.snoozedUntilText?.visibility = View.VISIBLE;
-                    holder.snoozeButton?.text = changeString
-                } else {
-                    holder.snoozedUntilText?.text = "";
-                    holder.snoozedUntilText?.visibility = View.GONE;
-                    holder.snoozeButton?.text = snoozeString
-                }
-
-                holder.calendarColor.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
-                if (useCompactView)
-                    holder.compactViewCalendarColor?.background = holder.calendarColor
+                if (event.location != "")
+                    holder.eventLocatoinText?.visibility = View.VISIBLE;
                 else
-                    holder.eventTitleLayout?.background = holder.calendarColor
+                    holder.eventLocatoinText?.visibility = View.GONE;
             }
+
+            if (event.snoozedUntil != 0L) {
+                holder.snoozedUntilText?.text =
+                    context.resources.getString(R.string.snoozed_until_string) + " " +
+                        event.formatSnoozedUntil(context);
+
+                holder.snoozedUntilText?.visibility = View.VISIBLE;
+                holder.snoozeButton?.text = changeString
+            } else {
+                holder.snoozedUntilText?.text = "";
+                holder.snoozedUntilText?.visibility = View.GONE;
+                holder.snoozeButton?.text = snoozeString
+            }
+
+            holder.calendarColor.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
+            if (useCompactView)
+                holder.compactViewCalendarColor?.background = holder.calendarColor
+            else
+                holder.eventTitleLayout?.background = holder.calendarColor
         }
     }
 

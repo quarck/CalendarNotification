@@ -21,7 +21,6 @@ package com.github.quarck.calnotify.ui
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Canvas
@@ -30,6 +29,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -49,7 +49,6 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
@@ -386,88 +385,83 @@ class MainActivity : Activity(), EventListCallback {
 
 
     private fun setUpItemTouchHelper() {
+        
+        val itemTouchCallback =
+            object: ItemTouchHelper.Callback() {
 
-        val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                internal val background = ColorDrawable(resources.getColor(R.color.material_red))
+                internal var xMark = resources.getDrawable(R.drawable.ic_clear_white_24dp)
+                internal var xMarkMargin = resources.getDimension(R.dimen.ic_clear_margin).toInt()
 
-            internal val background = ColorDrawable(resources.getColor(R.color.material_red))
-            internal var xMark = resources.getDrawable(R.drawable.ic_clear_white_24dp)
-            internal var xMarkMargin = resources.getDimension(R.dimen.ic_clear_margin).toInt()
-
-            init {
-                xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-            }
-
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return false
-            }
-
-            override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                val position = viewHolder!!.adapterPosition
-
-                val adapter = recyclerView?.adapter as EventListAdapter?
-
-                if (adapter == null)
-                    return super.getSwipeDirs(recyclerView, viewHolder)
-
-                if (adapter.isPendingRemoval(position))
-                    return 0
-
-                return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
-                    makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                val swipedPosition = viewHolder.adapterPosition
-
-                (recyclerView.adapter as EventListAdapter?)?.pendingRemoval(swipedPosition)
-            }
-
-            override fun onChildDraw(
-                c: Canvas, recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float, dY: Float,
-                actionState: Int, isCurrentlyActive: Boolean) {
-
-                val itemView = viewHolder.itemView
-
-                if (viewHolder.adapterPosition == -1)
-                    return
-
-                if (dX < 0)
-                    background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
-                else
-                    background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
-
-                background.draw(c)
-
-                val itemHeight = itemView.bottom - itemView.top
-                val intrinsicWidth = xMark.intrinsicWidth
-                val intrinsicHeight = xMark.intrinsicWidth
-
-
-                if (dX < 0) {
-                    val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
-                    val xMarkRight = itemView.right - xMarkMargin
-                    val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                    val xMarkBottom = xMarkTop + intrinsicHeight
-                    xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
-                } else {
-                    val xMarkLeft = itemView.left + xMarkMargin
-                    val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
-                    val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                    val xMarkBottom = xMarkTop + intrinsicHeight
-                    xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                init {
+                    xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
                 }
 
-                xMark.draw(c)
+                override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                    return makeMovementFlags(0, ItemTouchHelper.START or ItemTouchHelper.END)
+                }
 
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                    val swipedPosition = viewHolder?.adapterPosition
+                    if (swipedPosition != null) {
+                        recyclerView.itemAnimator?.changeDuration = 0;
+                        (recyclerView.adapter as EventListAdapter?)?.pendingRemoval(swipedPosition)
+                    }
+                }
+
+                override fun isLongPressDragEnabled() = false
+                override fun isItemViewSwipeEnabled() = true
+
+                override fun onChildDraw(
+                    c: Canvas, recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float, dY: Float,
+                    actionState: Int, isCurrentlyActive: Boolean) {
+
+                    val itemView = viewHolder.itemView
+
+                    if (viewHolder.adapterPosition == -1)
+                        return
+
+                    if (dX < 0)
+                        background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    else
+                        background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+
+                    background.draw(c)
+
+                    val itemHeight = itemView.bottom - itemView.top
+                    val intrinsicWidth = xMark.intrinsicWidth
+                    val intrinsicHeight = xMark.intrinsicWidth
+
+
+                    if (dX < 0) {
+                        val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
+                        val xMarkRight = itemView.right - xMarkMargin
+                        val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                        val xMarkBottom = xMarkTop + intrinsicHeight
+                        xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                    } else {
+                        val xMarkLeft = itemView.left + xMarkMargin
+                        val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
+                        val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                        val xMarkBottom = xMarkTop + intrinsicHeight
+                        xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                    }
+
+                    xMark.draw(c)
+
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
             }
-        }
 
-        ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView)
+        val touchHelper = ItemTouchHelper(itemTouchCallback)
+        touchHelper.attachToRecyclerView(recyclerView)
     }
-
 
     override fun onItemClick(v: View, position: Int, eventId: Long) {
         logger.debug("onItemClick, pos=$position, eventId=$eventId")

@@ -34,6 +34,7 @@
                 android:paddingEnd="@dimen/snooze_view_img_padding_end"
                 android:paddingRight="@dimen/snooze_view_img_padding_end"
                 android:paddingLeft="@dimen/snooze_view_img_padding_start"
+                android:paddingStart="@dimen/snooze_view_img_padding_start"
                 android:paddingTop="@dimen/card_view_img_padding_top"
                 android:paddingBottom="@dimen/snooze_view_img_topbottom"
                 />
@@ -55,13 +56,13 @@
                 android:textColor="@color/icons"
                 android:ellipsize="end"
                 android:maxLines="6"
-                android:text="__TITLE__"/>
+                android:text="@string/event_title_example"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/card_view_snoozed_until"
-                android:text="Snoozed Until __DATE__/__TIME__"
+                android:text="@string/snoozed_until_example"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/icons"
                 android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
@@ -88,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/card_view_event_date"
-                android:text="Tomorrow"
+                android:text="@string/event_time_example_2ln_first"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/primary_text"
                 android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
@@ -104,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/card_view_event_time"
-                android:text="22:00 - 23:00"
+                android:text="@string/event_time_example_2ln_second"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/primary_text"
                 android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"

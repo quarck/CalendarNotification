@@ -189,8 +189,9 @@ class Settings(ctx: Context) {
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
         prefs.setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
-    val useCompactView: Boolean
-        get() = prefs.getBoolean(USE_COMPACT_LAYOUT_KEY, false)
+    var useCompactView: Boolean
+        get() = prefs.getBoolean(USE_COMPACT_LAYOUT_KEY, true)
+        set(value) = prefs.setBoolean(USE_COMPACT_LAYOUT_KEY, value)
 
     var powerOptimisationWarningShown: Boolean
         get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)

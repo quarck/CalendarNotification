@@ -29,6 +29,7 @@ object Consts {
 
     const val MIN_REMINDER_INTERVAL = 60 * 1000
 
+    const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
 
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val HOUR_IN_SECONDS: Long = 3600L
@@ -83,7 +84,4 @@ object Consts {
     const val EVENT_MOVED_THRESHOLD = 60*60*1000L
 
     const val SAMSUNG_KEYWORD = "samsung"
-
-    // amount to scroll on the main activity until 'undo' layout hides itself, in dp-s
-    //const val UNDO_DISAPPEAR_SENSITIVITY = 160
 }

@@ -99,7 +99,6 @@ class SettingsActivity : PreferenceActivity(), SharedPreferences.OnSharedPrefere
         val nestedPreferences =
             listOf(
                 "pref_key_notification_settings",
-                "pref_key_notification_settings",
                 "pref_key_snooze_prs",
                 "pref_key_reminder",
                 "pref_key_quiet_hours",

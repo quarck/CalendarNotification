@@ -84,6 +84,8 @@ class MainActivity : Activity(), EventListCallback {
 
         logger.debug("onCreateView")
 
+        ApplicationController.onMainActivityCreate(this);
+
         setContentView(R.layout.activity_main)
 
         useCompactView = settings.useCompactView
@@ -120,7 +122,7 @@ class MainActivity : Activity(), EventListCallback {
         logger.debug("onStart()")
         super.onStart()
 
-        ApplicationController.onAppStarted(applicationContext);
+        ApplicationController.onMainActivityStarted(this);
     }
 
     private fun refreshReminderLastFired() {
@@ -158,7 +160,7 @@ class MainActivity : Activity(), EventListCallback {
         checkPermissions()
 
         background {
-            ApplicationController.onAppResumed(this)
+            ApplicationController.onMainActivityResumed(this)
         }
     }
 

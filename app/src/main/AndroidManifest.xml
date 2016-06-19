@@ -48,16 +48,27 @@
             android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
         <activity
-            android:name=".ui.CalendarsActivity"
+            android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
             android:parentActivityName=".ui.SettingsActivity">
             >
             <intent-filter>
-                <action android:name="com.github.quarck.calnotify.ui.CalendarsActivity"/>
-
+                <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".prefs.AppStylePrefActivity"
+            android:label="@string/appearance"
+            android:parentActivityName=".ui.SettingsActivity">
+            >
+            <intent-filter>
+                <action android:name="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do">

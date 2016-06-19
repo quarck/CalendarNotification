@@ -16,7 +16,7 @@
 //   along with this program; if not, write to the Free Software Foundation,
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
-package com.github.quarck.calnotify.ui
+package com.github.quarck.calnotify.prefs
 
 import android.app.Activity
 import android.app.ListActivity
@@ -181,14 +181,14 @@ class CalendarsActivity: Activity() {
             for ((owner, type) in calendars.map { Pair(it.owner, it.accountType) }.toSet()) {
 
                 // Add group title
-                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner) )
+                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner))
 
                 // Add all the calendars for this owner
                 entries.addAll(
                     calendars
                         .filter { it.owner == owner && it.accountType == type }
                         .sortedBy { it.calendarId }
-                        .map{
+                        .map {
                             CalendarListEntry(
                                 type = CalendarListEntryType.Calendar,
                                 calendar = it,
@@ -196,12 +196,12 @@ class CalendarsActivity: Activity() {
                         })
 
                 // Add a divider
-                entries.add(CalendarListEntry(type = CalendarListEntryType.Divider) )
+                entries.add(CalendarListEntry(type = CalendarListEntryType.Divider))
             }
 
             // remove last divider
-            if (entries[entries.size-1].type == CalendarListEntryType.Divider)
-                entries.removeAt(entries.size-1)
+            if (entries[entries.size - 1].type == CalendarListEntryType.Divider)
+                entries.removeAt(entries.size - 1)
 
             val entriesFinal = entries.toTypedArray()
 

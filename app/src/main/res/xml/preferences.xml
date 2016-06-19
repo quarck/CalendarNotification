@@ -3,20 +3,15 @@
 
     <Preference android:title="@string/title_calendars_activity" >
         <intent
-            android:action="com.github.quarck.calnotify.ui.CalendarsActivity"/>
+            android:action="com.github.quarck.calnotify.prefs.CalendarsActivity"/>
     </Preference>
 
-    <PreferenceScreen
+    <Preference
         android:title="@string/appearance"
         android:key="pref_key_appearance">
-
-        <CheckBoxPreference
-            android:key="compact_layout"
-            android:title="@string/compact_layout"
-            android:summary="@string/needs_app_restart"
-            android:defaultValue="false"/>
-
-    </PreferenceScreen>
+        <intent
+            android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
+    </Preference>
 
 
     <PreferenceScreen

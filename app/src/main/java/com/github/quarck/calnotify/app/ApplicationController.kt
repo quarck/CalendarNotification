@@ -240,8 +240,7 @@ object ApplicationController {
         notificationManager.fireEventReminder(context);
     }
 
-    fun onAppStarted(context: Context?) {
-
+    fun onMainActivityCreate(context: Context?) {
         if (context != null) {
             val settings = getSettings(context)
 
@@ -252,7 +251,10 @@ object ApplicationController {
         }
     }
 
-    fun onAppResumed(context: Context?) {
+    fun onMainActivityStarted(context: Context?) {
+    }
+
+    fun onMainActivityResumed(context: Context?) {
         if (context != null) {
             val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
             notificationManager.postEventNotifications(context, true, null)

@@ -406,8 +406,6 @@ class EventListAdapter(
 
     fun removeWithUndo(event: EventAlertRecord) {
 
-        clearUndoState()
-
         if (!eventsPendingRemoval.contains(event)) {
 
             eventsPendingRemoval.add(event);

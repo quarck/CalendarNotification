@@ -14,26 +14,11 @@
         android:orientation="vertical"
         >
 
-        <android.support.v7.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/activity_main_new_style_message_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="2dp"
-            card_view:cardCornerRadius="2dp"
-            card_view:cardElevation="4dp"
-            android:visibility="gone"
-            >
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
+            android:id="@+id/activity_main_new_style_message_layout"
             android:orientation="vertical"
             >
 
@@ -57,14 +42,12 @@
                 android:textColor="@color/primary_text"
                 android:gravity="left"
 
-                android:paddingTop="10dp"
+                android:paddingTop="2dp"
                 android:paddingBottom="1dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
-
-                android:background="?android:attr/selectableItemBackground"
 
                 android:textStyle="bold"
                 />
@@ -80,14 +63,12 @@
                 android:textColor="@color/primary_text"
                 android:gravity="left"
 
-                android:paddingTop="5dp"
+                android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
-
-                android:background="?android:attr/selectableItemBackground"
                 />
 
             <LinearLayout
@@ -109,8 +90,8 @@
                     android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
                     android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
-                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
 
                     android:background="?android:attr/selectableItemBackground"
 
@@ -130,8 +111,8 @@
                     android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
                     android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
-                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
 
                     android:background="?android:attr/selectableItemBackground"
 
@@ -142,8 +123,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        </android.support.v7.widget.CardView>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view_main_holder"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/compact_view_layout_height"
+    android:background="@color/cardview_light_background"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/compact_view_layout_height"
+        android:id="@+id/compact_view_content_layout"
+        >
+
+        <View
+            android:id="@+id/compact_view_calendar_color"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:background="@color/primary"
+            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="1.5dp"
+            android:layout_marginBottom="0.5dp"/>
+
+        <TextView
+            android:id="@+id/card_view_event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginLeft="@dimen/compact_view_left_margin"
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginRight="@dimen/compact_view_right_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="1dp"
+
+            android:text="@string/event_title_example"
+
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_toRightOf="@id/compact_view_calendar_color"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_event_date"
+            android:text="@string/event_time_example"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/secondary_text"
+            android:layout_below="@id/card_view_event_name"
+
+            android:layout_marginLeft="@dimen/compact_view_left_margin"
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginRight="@dimen/compact_view_right_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_toRightOf="@id/compact_view_calendar_color"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_event_time"
+            android:text=""
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/secondary_text"
+
+            android:layout_marginLeft="@dimen/compact_view_left_margin"
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginRight="@dimen/compact_view_right_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+
+            android:layout_below="@id/card_view_event_date"
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_toRightOf="@id/compact_view_calendar_color"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_snoozed_until"
+            android:text="@string/snoozed_until_example"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/divider"
+
+            android:layout_below="@id/card_view_event_date"
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_toRightOf="@id/compact_view_calendar_color"
+
+            android:layout_marginLeft="@dimen/compact_view_left_margin"
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginRight="@dimen/compact_view_right_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/event_card_undo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/compact_view_layout_height"
+        android:background="@color/material_red"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_event_dismissed_text"
+            android:text="Dismissed"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/icons"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/undo"
+            android:id="@+id/card_view_button_undo"
+            android:visibility="visible"
+            android:textColor="@color/icons"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+
+            android:paddingStart="18dp"
+            android:paddingLeft="18dp"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@color/light_divider"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
+
+

@@ -33,6 +33,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -60,7 +61,7 @@ class MainActivity : Activity(), EventListCallback {
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
     private lateinit var undoLayout: RelativeLayout
-    private lateinit var newStyleMessageLayout: LinearLayout
+    private lateinit var newStyleMessageLayout: View
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
 
@@ -117,15 +118,18 @@ class MainActivity : Activity(), EventListCallback {
 
         undoLayout = find<RelativeLayout>(R.id.activity_main_undo_layout)
 
-        newStyleMessageLayout = find<LinearLayout>(R.id.activity_main_new_style_message_layout)
+        newStyleMessageLayout = find<View>(R.id.activity_main_new_style_message_layout)
 
         shouldShowPowerOptimisationWarning =
             (Build.MANUFACTURER.indexOf(Consts.SAMSUNG_KEYWORD, ignoreCase=true) != -1) &&
                 !Settings(this).powerOptimisationWarningShown
 
-        if (settings.versionCodeFirstInstalled < Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
-            if (settings.showNewStyleMessage)
-                newStyleMessageLayout.visibility = View.VISIBLE
+        if (useCompactView && settings.showNewStyleMessage) {
+            newStyleMessageLayout.visibility = View.VISIBLE
+            if (settings.versionCodeFirstInstalled >= Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
+                find<Button>(R.id.activity_main_button_hate_new_style).visibility = View.GONE
+                find<TextView>(R.id.text_view_style_message).text = resources.getString(R.string.usage_hints)
+            }
         }
     }
 

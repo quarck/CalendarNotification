@@ -138,7 +138,7 @@ class TestButtonsAndToDoActivity : Activity() {
 
         if (first) {
             settings.quietHoursOneTimeReminderEnabled = true
-            ApplicationController.onMainActivityResumed(this)
+            ApplicationController.onMainActivityResumed(this, true)
         } else {
             val currentTime = System.currentTimeMillis();
 

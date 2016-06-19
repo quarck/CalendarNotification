@@ -74,6 +74,8 @@ class MainActivity : Activity(), EventListCallback {
 
     private var useCompactView = true
 
+    private var shouldRepost = true
+
     private val undoDisappearSensitivity: Float by lazy  {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
@@ -175,7 +177,8 @@ class MainActivity : Activity(), EventListCallback {
         checkPermissions()
 
         background {
-            ApplicationController.onMainActivityResumed(this)
+            ApplicationController.onMainActivityResumed(this, shouldRepost)
+            shouldRepost = false
         }
     }
 

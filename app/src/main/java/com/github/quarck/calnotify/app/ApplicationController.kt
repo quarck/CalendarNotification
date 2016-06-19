@@ -254,10 +254,12 @@ object ApplicationController {
     fun onMainActivityStarted(context: Context?) {
     }
 
-    fun onMainActivityResumed(context: Context?) {
+    fun onMainActivityResumed(context: Context?, shouldRepost: Boolean) {
         if (context != null) {
             val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
-            notificationManager.postEventNotifications(context, true, null)
+
+            if (shouldRepost || changes)
+                notificationManager.postEventNotifications(context, true, null)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 

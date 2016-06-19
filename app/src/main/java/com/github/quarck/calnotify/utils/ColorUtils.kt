@@ -19,19 +19,59 @@
 
 package com.github.quarck.calnotify.utils
 
-
 fun Int.adjustCalendarColor(): Int {
-    val colorFadeR = 1.2;
-    val colorFadeG = 1.3;
-    val colorFadeB = 1.2;
+
+    val colorFadeMin = 1.17;
+    val colorFadeMed = 1.3;
+    val colorFadeMax = 1.35;
 
     var r = (this.ushr(16)) and 0xff
     var g = (this.ushr(8)) and 0xff
     var b = (this.ushr(0)) and 0xff
 
-    r = (r / colorFadeR).toInt()
-    g = (g / colorFadeG).toInt()
-    b = (b / colorFadeB).toInt()
+    val min = Math.min(r, Math.min(g, b))
+    val max = Math.max(r, Math.max(g, b))
+
+    if (max - min < 0x10) {
+        r = (r / colorFadeMed).toInt()
+        g = (g / colorFadeMed).toInt()
+        b = (b / colorFadeMed).toInt()
+    } else {
+
+        if (r > g && r > b) {
+            //
+            r = (r / colorFadeMin).toInt()
+            if (g > b) {
+                g = (g / colorFadeMed).toInt()
+                b = (b / colorFadeMax).toInt()
+            } else {
+                b = (b / colorFadeMed).toInt()
+                g = (g / colorFadeMax).toInt()
+            }
+
+        } else if ( g > r && g > b) {
+            //
+            g = (g / colorFadeMin).toInt()
+            if (r > b) {
+                r = (r / colorFadeMed).toInt()
+                b = (b / colorFadeMax).toInt()
+            } else {
+                b = (b / colorFadeMed).toInt()
+                r = (r / colorFadeMax).toInt()
+            }
+        } else {
+            // b > r && b > g
+            b = (b / colorFadeMin).toInt()
+            if (r > g) {
+                r = (r / colorFadeMed).toInt()
+                g = (g / colorFadeMax).toInt()
+            } else {
+                g = (g / colorFadeMed).toInt()
+                r = (r / colorFadeMax).toInt()
+            }
+        }
+
+    }
 
     return 0xff000000.toInt() or (r shl 16) or (g shl 8) or (b shl 0)
 }

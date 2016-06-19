@@ -5,7 +5,8 @@
     <item
         android:id="@+id/action_snooze_all"
         android:orderInCategory="90"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_update_white_24dp"
         android:title="@string/snooze_all" />
 
     <item

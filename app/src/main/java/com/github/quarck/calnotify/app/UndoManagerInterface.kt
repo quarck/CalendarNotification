@@ -22,11 +22,15 @@ package com.github.quarck.calnotify.app
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 
+data class UndoState(val undo: Runnable? = null, val dismiss: Runnable? = null)
+
 interface UndoManagerInterface {
 
-    fun push(event: EventAlertRecord)
-    fun pop(): EventAlertRecord?
-    fun clear()
-    fun clearIfTimeout()
+    fun addUndoState(state: UndoState)
+
+    fun undo()
+
+    fun clearUndoState()
+
     val canUndo: Boolean get
 }

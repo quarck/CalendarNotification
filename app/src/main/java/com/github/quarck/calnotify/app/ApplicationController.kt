@@ -45,8 +45,6 @@ object ApplicationController {
 
     private val notificationManager: EventNotificationManagerInterface = EventNotificationManager()
 
-    val undoManager: UndoManagerInterface = UndoManager
-
     private val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
 
     private val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
@@ -266,24 +264,13 @@ object ApplicationController {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onAppPause(context: Context) {
-        undoManager.clear()
-    }
-
     fun onTimeChanged(context: Context) {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
-    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean, enableUndo: Boolean) {
+    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean) {
 
         logger.debug("Removing event id $eventId from DB, and dismissing notification")
-
-        if (enableUndo) {
-            val event = db.getEvent(eventId, instanceStartTime)
-            if (event != null)
-                undoManager.push(event)
-        }
 
         db.deleteEvent(eventId, instanceStartTime)
 
@@ -295,25 +282,15 @@ object ApplicationController {
             UINotifierService.notifyUI(context, true);
     }
 
-    fun dismissEvent(context: Context, event: EventAlertRecord, enableUndo: Boolean = false) {
+    fun dismissEvent(context: Context, event: EventAlertRecord) {
         EventsStorage(context).use {
-            if (enableUndo)
-                undoManager.push(event)
-            dismissEvent(context, it, event.eventId, event.instanceStartTime, event.notificationId, false, false)
+            dismissEvent(context, it, event.eventId, event.instanceStartTime, event.notificationId, false)
         }
     }
 
-    fun dismissEvent(context: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean = true, enableUndo: Boolean = false) {
+    fun dismissEvent(context: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean = true) {
         EventsStorage(context).use {
-            dismissEvent(context, it, eventId, instanceStartTime, notificationId, notifyActivity, enableUndo)
-        }
-    }
-
-    fun undoDismiss(context: Context) {
-        val event = undoManager.pop()
-        if (event != null) {
-            EventsStorage(context).use { it.addEvent(event) }
-            notificationManager.onEventRestored(context, event)
+            dismissEvent(context, it, eventId, instanceStartTime, notificationId, notifyActivity)
         }
     }
 
@@ -328,7 +305,7 @@ object ApplicationController {
 
         if (moved) {
             logger.info("moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
-            dismissEvent(context, event.eventId, event.instanceStartTime, event.notificationId, enableUndo = false)
+            dismissEvent(context, event.eventId, event.instanceStartTime, event.notificationId)
         }
 
         return moved

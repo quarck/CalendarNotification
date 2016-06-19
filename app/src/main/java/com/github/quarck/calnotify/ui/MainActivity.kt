@@ -34,6 +34,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.format.DateUtils
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -44,6 +46,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.app.UndoManager
+import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -72,9 +76,19 @@ class MainActivity : Activity(), EventListCallback {
 
     private val svcClient by lazy { UINotifierServiceClient() }
 
-    private var undoTimer: Timer? = null
+    private var undoSenseDismissedAtScrollPosition: Int? = null
 
-    private var undoSenseHistoricY: Float? = null
+    private var scrollViewPosition: Int = 0
+
+    private var useCompactView = true
+
+    private val undoDisappearSensitivity: Float by lazy  {
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, Consts.UNDO_DISAPPEAR_SENSITIVITY.toFloat(), displayMetrics );
+    }
+
+    private val undoManager by lazy { UndoManager() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,13 +98,16 @@ class MainActivity : Activity(), EventListCallback {
 
         setContentView(R.layout.activity_main)
 
-        val useCompactView = settings.useCompactView
+        useCompactView = settings.useCompactView
 
         adapter =
             EventListAdapter(
                 this,
                 useCompactView,
-                if (useCompactView) R.layout.event_card_compact else R.layout.event_card,
+                if (useCompactView)
+                    R.layout.event_card_compact
+                else
+                    R.layout.event_card,
                 this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -99,11 +116,17 @@ class MainActivity : Activity(), EventListCallback {
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView
 
-
-        recyclerView.setOnTouchListener { view, motionEvent -> onMainListMotion(motionEvent) }
-
         if (useCompactView)
             setUpItemTouchHelper()
+
+        recyclerView.addOnScrollListener (
+            object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+                    scrollViewPosition += dy;
+                    onMainListScroll(scrollViewPosition)
+                }
+            })
+
 
         reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
 
@@ -226,12 +249,9 @@ class MainActivity : Activity(), EventListCallback {
 
         svcClient.unbindService(this)
 
-        undoTimer?.cancel()
-        undoTimer = null
-
         refreshReminderLastFired()
 
-        ApplicationController.onAppPause(this)
+        undoManager.clearUndoState()
 
         super.onPause()
     }
@@ -322,7 +342,7 @@ class MainActivity : Activity(), EventListCallback {
     }
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onUndoButtonClick(v: View) {
-        ApplicationController.undoDismiss(this);
+        undoManager.undo()
         updateUndoVisibility()
         refreshReminderLastFired()
         reloadData()
@@ -336,43 +356,28 @@ class MainActivity : Activity(), EventListCallback {
     }
 
     private fun updateUndoVisibility() {
-
-        val canUndo = ApplicationController.undoManager.canUndo
+        val canUndo = undoManager.canUndo
         undoLayout.visibility = if (canUndo) View.VISIBLE else View.GONE
-
-        if (canUndo) {
-            if (undoTimer == null)
-                undoTimer = Timer()
-
-            undoTimer?.schedule(Consts.UNDO_TIMEOUT) {
-                ApplicationController.undoManager.clearIfTimeout()
-                runOnUiThread {
-                    undoLayout.visibility = if (ApplicationController.undoManager.canUndo) View.VISIBLE else View.GONE
-                }
-            }
-        }
     }
 
-    private fun onMainListMotion(motionEvent: MotionEvent): Boolean {
 
-        val action = motionEvent.action
+    private fun onMainListScroll(scrollPosition: Int) {
 
-        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
-            if (undoSenseHistoricY == null) {
-                undoSenseHistoricY = motionEvent.y
-            } else if (Math.abs((undoSenseHistoricY ?: 0.0f) - motionEvent.y) > Consts.UNDO_PROMPT_DISAPPEAR_SENSITIVITY) {
-                undoSenseHistoricY = null
-                hideUndoDismiss()
-                adapter.hideUndoDismiss()
+        val undoSense = undoSenseDismissedAtScrollPosition
+        if (undoSense != null) {
+            if (Math.abs(undoSense - scrollPosition) > undoDisappearSensitivity) {
+                undoSenseDismissedAtScrollPosition = null
+                if (!useCompactView)
+                    hideUndoDismiss()
+                else
+                    adapter.clearUndoState()
             }
         }
-
-        return false
     }
 
     // undoSenseHistoricY = -1.0f
     private fun hideUndoDismiss() {
-        ApplicationController.undoManager.clear()
+        undoManager.clearUndoState()
         undoLayout.visibility = View.GONE
     }
 
@@ -419,7 +424,7 @@ class MainActivity : Activity(), EventListCallback {
                     val swipedPosition = viewHolder?.adapterPosition
                     if (swipedPosition != null) {
                         recyclerView.itemAnimator?.changeDuration = 0;
-                        (recyclerView.adapter as EventListAdapter?)?.pendingRemoval(swipedPosition)
+                        (recyclerView.adapter as EventListAdapter?)?.removeWithUndo(swipedPosition)
                     }
                 }
 
@@ -522,9 +527,15 @@ class MainActivity : Activity(), EventListCallback {
 
         if (event != null) {
             logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, event, enableUndo=true);
+            ApplicationController.dismissEvent(this, event);
+
+            undoManager.addUndoState(
+                UndoState(
+                    undo = Runnable { ApplicationController.restoreEvent(this, event) }))
+
             adapter.removeAt(position)
-            undoSenseHistoricY = null
+            undoSenseDismissedAtScrollPosition = scrollViewPosition
+
             onNumEventsUpdated()
         }
         refreshReminderLastFired()
@@ -536,7 +547,8 @@ class MainActivity : Activity(), EventListCallback {
         logger.debug("onItemRemoved, eventId=${event.eventId}")
 
         logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-        ApplicationController.dismissEvent(this, event, enableUndo=false); // Undo works different way for compact view
+        ApplicationController.dismissEvent(this, event)
+        undoSenseDismissedAtScrollPosition = scrollViewPosition
         onNumEventsUpdated()
 
         refreshReminderLastFired()

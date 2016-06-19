@@ -137,7 +137,6 @@ class EventListAdapter(
     private val changeString: String
     private val snoozeString: String
 
-    private val handler = Handler()
     private val pendingRunnables = mutableMapOf<EventAlertRecord, Runnable>()
 
     init {
@@ -165,9 +164,6 @@ class EventListAdapter(
 
                 val runnable = pendingRunnables[event];
                 pendingRunnables.remove(event)
-
-                if (runnable != null)
-                    handler.removeCallbacks(runnable)
 
                 eventsPendingRemoval.remove(event)
 
@@ -277,8 +273,11 @@ class EventListAdapter(
             callback.onItemRemoved(event!!)
     }
 
-    fun pendingRemoval(position: Int) {
-        val event = events[position]
+    fun removeWithUndo(pos: Int) {
+
+        val event = events[pos]
+
+        clearUndoState()
 
         if (!eventsPendingRemoval.contains(event)) {
 
@@ -286,7 +285,7 @@ class EventListAdapter(
 
             callback.onItemRemoved(event)
 
-            notifyItemChanged(position);
+            notifyItemChanged(events.indexOf(event));
 
             val runnable = Runnable() {
                 synchronized(this) {
@@ -296,7 +295,6 @@ class EventListAdapter(
                 }
             }
 
-            handler.postDelayed(runnable, Consts.UNDO_TIMEOUT);
             pendingRunnables.put(event, runnable);
         }
     }
@@ -306,14 +304,13 @@ class EventListAdapter(
         return eventsPendingRemoval.contains(event)
     }
 
-    fun hideUndoDismiss() {
+    fun clearUndoState() {
 
-        for ((event, runnable) in pendingRunnables)
-            handler.removeCallbacks(runnable)
+        if (!pendingRunnables.isEmpty()) {
+            for ((event, runnable) in pendingRunnables)
+                runnable.run()
 
-        for ((event, runnable) in pendingRunnables)
-            runnable.run()
-
-        pendingRunnables.clear()
+            pendingRunnables.clear()
+        }
     }
 }

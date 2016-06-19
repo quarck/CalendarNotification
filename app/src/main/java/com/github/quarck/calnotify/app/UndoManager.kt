@@ -20,41 +20,33 @@
 
 package com.github.quarck.calnotify.app
 
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.calendar.EventAlertRecord
+class UndoManager: UndoManagerInterface {
 
-object UndoManager: UndoManagerInterface {
+    var undoState: UndoState? = null
 
-    private var record: EventAlertRecord? = null
 
-    private var dismissedTime: Long = 0
-
-    override fun push(event: EventAlertRecord)
-        = synchronized(this) {
-            record = event
-            dismissedTime = System.currentTimeMillis()
+    override fun addUndoState(state: UndoState) {
+        synchronized(this) {
+            undoState = state
         }
+    }
 
-    override fun pop()
-        = synchronized(this){
-            val ret = record
-            record = null
-            ret
+    override fun undo() {
+        synchronized(this) {
+            undoState?.undo?.run()
+            undoState = null
         }
+    }
 
-    override fun clear()
-        = synchronized(this) {
-            record = null
+    override fun clearUndoState() {
+        synchronized(this) {
+            undoState?.dismiss?.run()
+            undoState = null
         }
-
-    override fun clearIfTimeout()
-        = synchronized(this) {
-            if (System.currentTimeMillis() - dismissedTime > (Consts.UNDO_TIMEOUT * 9 / 10)) // some safety check
-               record = null
-        }
+    }
 
     override val canUndo: Boolean
         get() = synchronized(this) {
-            record != null && (System.currentTimeMillis() - dismissedTime < Consts.UNDO_TIMEOUT)
+            undoState != null
         }
 }

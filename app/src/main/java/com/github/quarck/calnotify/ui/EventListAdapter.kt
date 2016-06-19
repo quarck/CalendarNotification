@@ -377,6 +377,8 @@ class EventListAdapter(
     fun setEventsToDisplay(newEvents: Array<EventAlertRecord>)
         = synchronized(this) {
             events = newEvents;
+            eventsPendingRemoval.clear()
+            pendingEventRemoveRunnables.clear()
             notifyDataSetChanged();
         }
 

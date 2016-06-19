@@ -60,25 +60,16 @@ class AppStylePrefActivity: Activity() {
 
     fun onRadioButtonClicked(view: View) {
         if (view is RadioButton && view.isChecked) {
-
             when (view.id) {
-                R.id.radio_button_card_view -> {
+                R.id.radio_button_card_view ->
                     settings.useCompactView = false
-                    toast()
-                }
 
-                R.id.radio_button_compact_view -> {
+                R.id.radio_button_compact_view ->
                     settings.useCompactView = true
-                    toast()
-                }
             }
         }
     }
 
-    fun toast(){
-        val msg = resources.getString(R.string.restart_the_app_to_apply_changes)
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
 
     companion object {
         val logger = Logger("AppStylePrefActivity")

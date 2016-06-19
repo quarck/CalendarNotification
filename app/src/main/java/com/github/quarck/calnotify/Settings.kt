@@ -201,6 +201,10 @@ class Settings(ctx: Context) {
         get() = prefs.getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
         set(value) = prefs.setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
 
+    var showNewStyleMessage: Boolean
+        get() = prefs.getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
+        set(value) = prefs.setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
             showDismissButton = showDismissButton,
@@ -261,6 +265,8 @@ class Settings(ctx: Context) {
         private const val POWER_OPTIMISATION_WARNING_SHOWN_KEY = "power_warning1_shown"
 
         private const val VERSION_CODE_FIRST_INSTALLED_KEY = "first_installed_ver"
+
+        private const val SHOW_NEW_STYLE_MSG_KEY = "show_new_style_message"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

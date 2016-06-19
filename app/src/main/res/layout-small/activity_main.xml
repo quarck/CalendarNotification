@@ -14,6 +14,119 @@
         android:orientation="vertical"
         >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_new_style_message_layout"
+            android:visibility="gone"
+            android:orientation="vertical"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="visible"
+                />
+
+            <TextView
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compact_view_is_a_default_style_now"
+
+                android:textAppearance="?android:textAppearanceSmall"
+
+                android:textColor="@color/primary_text"
+                android:gravity="left"
+
+                android:paddingTop="10dp"
+                android:paddingBottom="1dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+
+                android:background="?android:attr/selectableItemBackground"
+
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compact_view_explanation"
+
+                android:textAppearance="?android:textAppearanceSmall"
+
+                android:textColor="@color/primary_text"
+                android:gravity="left"
+
+                android:paddingTop="5dp"
+                android:paddingBottom="1dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+
+                android:background="?android:attr/selectableItemBackground"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="right"
+                >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/switch_to_cards"
+                    android:id="@+id/activity_main_button_hate_new_style"
+                    android:visibility="visible"
+                    android:textColor="@color/primary"
+
+                    android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:onClick="onRevertToCardViewClick"
+                    android:textStyle="bold"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ok"
+                    android:id="@+id/activity_main_button_new_style_ok"
+                    android:visibility="visible"
+                    android:textColor="@color/primary"
+
+                    android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:onClick="onOKWithNewStyleClick"
+                    android:textStyle="bold"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -169,6 +282,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center"
         android:visibility="gone"
+        android:textColor="@color/secondary_text"
         android:text="@string/no_events_to_display" />
 
     <TextView
@@ -178,6 +292,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center"
         android:visibility="gone"
+        android:textColor="@color/secondary_text"
         android:text="@string/no_calendar_permissions_main" />
 
 </RelativeLayout>

@@ -33,6 +33,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
@@ -59,6 +60,7 @@ class MainActivity : Activity(), EventListCallback {
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
     private lateinit var undoLayout: RelativeLayout
+    private lateinit var newStyleMessageLayout: LinearLayout
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
 
@@ -113,9 +115,16 @@ class MainActivity : Activity(), EventListCallback {
 
         undoLayout = find<RelativeLayout>(R.id.activity_main_undo_layout)
 
+        newStyleMessageLayout = find<LinearLayout>(R.id.activity_main_new_style_message_layout)
+
         shouldShowPowerOptimisationWarning =
             (Build.MANUFACTURER.indexOf(Consts.SAMSUNG_KEYWORD, ignoreCase=true) != -1) &&
                 !Settings(this).powerOptimisationWarningShown
+
+        if (settings.versionCodeFirstInstalled < Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
+            if (settings.showNewStyleMessage)
+                newStyleMessageLayout.visibility = View.VISIBLE
+        }
     }
 
     public override fun onStart() {
@@ -138,6 +147,12 @@ class MainActivity : Activity(), EventListCallback {
     public override fun onResume() {
         logger.debug("onResume")
         super.onResume()
+
+        if (settings.useCompactView != useCompactView) {
+            val intent = intent
+            finish()
+            startActivity(intent)
+        }
 
         svcClient.bindService(this) {
             // Service callback on data update
@@ -338,6 +353,21 @@ class MainActivity : Activity(), EventListCallback {
         undoLayout.visibility = if (canUndo) View.VISIBLE else View.GONE
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onRevertToCardViewClick(v: View) {
+        settings.useCompactView = false
+        settings.showNewStyleMessage = false
+
+        val intent = intent
+        finish()
+        startActivity(intent)
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onOKWithNewStyleClick(v: View) {
+        settings.showNewStyleMessage = false
+        newStyleMessageLayout.visibility = View.GONE
+    }
 
     override fun onScrollPositionChange(scrollPosition: Int) {
 

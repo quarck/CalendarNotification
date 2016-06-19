@@ -202,8 +202,11 @@
     <string name="restart_the_app_to_apply_changes">Restart the app to apply changes</string>
     <string name="event_list_style_summary">Select between compact and card view here\nChanging this setting would require app restart to apply new settings</string>
     <string name="compact_view">Compact view</string>
-    <string name="compact_view_explanation"> — Swipe event off to dismiss it\n — Click on event to open snooze dialog\n — Open snooze and click on title to open event in the calendar</string>
+    <string name="compact_view_explanation">— Swipe event off to dismiss it\n— Click on event to open snooze dialog\n— Open snooze and click on title to open event in the calendar</string>
     <string name="list_item_look_like">List item look like:</string>
     <string name="card_view">Card view</string>
-    <string name="card_view_explanation"> — Click on the card to open even in the calendar\n — Use buttons snooze or dismiss event</string>
+    <string name="card_view_explanation">— Click on the card to open even in the calendar\n— Use buttons snooze or dismiss event</string>
+    <string name="ok">OK</string>
+    <string name="compact_view_is_a_default_style_now">Compact view is a default style now</string>
+    <string name="switch_to_cards">SWITCH TO CARDS</string>
 </resources>

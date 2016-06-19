@@ -40,7 +40,7 @@
         android:ellipsize="end"
         android:maxLines="1"
 
-        android:text="Compact view"
+        android:text="@string/compact_view"
 
         android:layout_marginTop="10dp"
         android:layout_marginBottom="1dp"
@@ -67,7 +67,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
 
-        android:text=" — Swipe event off to dismiss it\n — Click on event to open snooze dialog\n — Open snooze and click on title to open event in the calendar"
+        android:text="@string/compact_view_explanation"
         />
 
     <TextView
@@ -85,7 +85,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
 
-        android:text="List item look like:"
+        android:text="@string/list_item_look_like"
         />
 
     <View
@@ -131,7 +131,7 @@
         android:ellipsize="end"
         android:maxLines="1"
 
-        android:text="Card view"
+        android:text="@string/card_view"
 
         android:layout_marginTop="30dp"
         android:layout_marginBottom="1dp"
@@ -157,7 +157,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
 
-        android:text=" — Click on the card to open even in the calendar\n — Use buttons snooze or dismiss event"
+        android:text="@string/card_view_explanation"
         />
 
     <TextView
@@ -175,7 +175,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
 
-        android:text="List item look like:"
+        android:text="@string/list_item_look_like"
         />
 
     <RelativeLayout

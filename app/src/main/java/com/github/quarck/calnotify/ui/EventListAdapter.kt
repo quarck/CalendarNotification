@@ -53,6 +53,7 @@ interface EventListCallback {
     fun onItemSnooze(v: View, position: Int, eventId: Long): Unit
     fun onItemRemoved(event: EventAlertRecord)
     fun onItemRestored(event: EventAlertRecord) // e.g. undo
+    fun onScrollPositionChange(newPos: Int)
 }
 
 @Suppress("DEPRECATION")
@@ -129,21 +130,165 @@ class EventListAdapter(
     }
 
     private var events = arrayOf<EventAlertRecord>();
-    private var eventsPendingRemoval = mutableListOf<EventAlertRecord>()
 
-    var recyclerView: RecyclerView? = null
+    private var _recyclerView: RecyclerView? = null
+    var recyclerView: RecyclerView?
+        get() = _recyclerView
+        set(value) {
+            _recyclerView = value
+            onRecycleViewRegistered(_recyclerView)
+        }
+
 
     private val primaryColor: Int
     private val changeString: String
     private val snoozeString: String
 
-    private val pendingRunnables = mutableMapOf<EventAlertRecord, Runnable>()
+    private var currentScrollPosition: Int = 0
+
+    private val pendingEventRemoveRunnables = mutableMapOf<EventAlertRecord, Runnable>()
+    private var eventsPendingRemoval = mutableListOf<EventAlertRecord>()
+
+    val scrollPosition: Int
+        get() = currentScrollPosition
 
     init {
         primaryColor = context.resources.getColor(R.color.primary)
         changeString = context.resources.getString(R.string.card_view_btn_change);
         snoozeString = context.resources.getString(R.string.card_view_btn_snooze);
     }
+
+    private fun onRecycleViewRegistered(_recyclerView: RecyclerView?) {
+
+        _recyclerView?.addOnScrollListener (
+            object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+                    currentScrollPosition += dy;
+                    callback.onScrollPositionChange(currentScrollPosition)
+                }
+            })
+
+        if (useCompactView)
+            setUpItemTouchHelper(_recyclerView)
+    }
+
+    private fun setUpItemTouchHelper(_recyclerView: RecyclerView?) {
+
+        val itemTouchCallback =
+            object: ItemTouchHelper.Callback() {
+
+                internal val background = ColorDrawable(context.resources.getColor(R.color.material_red))
+                internal var xMark = context.resources.getDrawable(R.drawable.ic_clear_white_24dp)
+                internal var xMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
+
+                init {
+                    xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                }
+
+                override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                    val position = viewHolder!!.adapterPosition
+                    val adapter = recyclerView?.adapter as EventListAdapter?
+
+                    if (adapter == null)
+                        return 0
+
+                    if (adapter.isPendingRemoval(position))
+                        return 0
+
+                    return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
+                        makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+                }
+
+                override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                    val swipedPosition = viewHolder?.adapterPosition
+                    if (swipedPosition != null) {
+                        _recyclerView?.itemAnimator?.changeDuration = 0;
+
+                        val event = getEventAtPosition(swipedPosition)
+
+                        if (event != null) {
+                            removeWithUndo(event)
+                            callback.onItemRemoved(event)
+                        }
+                    }
+                }
+
+                override fun isLongPressDragEnabled() = false
+
+                override fun isItemViewSwipeEnabled() = true
+
+                /* From documentation:
+                 * Defines the minimum velocity which will be considered as a swipe action by the user.
+                 * You can increase this value to make it harder to swipe or decrease it to make
+                 * it easier. */
+                override fun getSwipeEscapeVelocity(defaultValue: Float) = defaultValue * 2.0f
+
+                /* From documentation:
+                 * Defines the maximum velocity ItemTouchHelper will ever calculate for pointer
+                 * movements.
+                 * If you increase the value, it will be easier for the user to swipe diagonally and
+                 * if you decrease the value, user will need to make a rather straight finger movement
+                 * to trigger a swipe.*/
+                override fun getSwipeVelocityThreshold(defaultValue: Float) = defaultValue / 3.0f
+
+                /* From documentation:
+                 * Default value is .5f, which means, to swipe a View, user must move the View at
+                 * least half of RecyclerView's width or height, depending on the swipe direction. */
+//                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder) = 0.5f
+
+                override fun onChildDraw(
+                    c: Canvas, recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float, dY: Float,
+                    actionState: Int, isCurrentlyActive: Boolean) {
+
+                    val itemView = viewHolder.itemView
+
+                    if (viewHolder.adapterPosition == -1)
+                        return
+
+                    if (dX < 0)
+                        background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    else
+                        background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+
+                    background.draw(c)
+
+                    val itemHeight = itemView.bottom - itemView.top
+                    val intrinsicWidth = xMark.intrinsicWidth
+                    val intrinsicHeight = xMark.intrinsicWidth
+
+
+                    if (dX < 0) {
+                        val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
+                        val xMarkRight = itemView.right - xMarkMargin
+                        val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                        val xMarkBottom = xMarkTop + intrinsicHeight
+                        xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                    } else {
+                        val xMarkLeft = itemView.left + xMarkMargin
+                        val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
+                        val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                        val xMarkBottom = xMarkTop + intrinsicHeight
+                        xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                    }
+
+                    xMark.draw(c)
+
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
+            }
+
+        if (_recyclerView != null) {
+            val touchHelper = ItemTouchHelper(itemTouchCallback)
+            touchHelper.attachToRecyclerView(_recyclerView)
+        }
+    }
+
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         //
@@ -162,8 +307,8 @@ class EventListAdapter(
 
                 callback.onItemRestored(event)
 
-                val runnable = pendingRunnables[event];
-                pendingRunnables.remove(event)
+                val runnable = pendingEventRemoveRunnables[event];
+                pendingEventRemoveRunnables.remove(event)
 
                 eventsPendingRemoval.remove(event)
 
@@ -235,14 +380,6 @@ class EventListAdapter(
             notifyDataSetChanged();
         }
 
-    fun getEventAtPosition(position: Int): EventAlertRecord?
-        = synchronized(this) {
-            if (position >= 0 && position < events.size)
-                events[position];
-            else
-                null
-        }
-
     fun getEventAtPosition(position: Int, expectedEventId: Long): EventAlertRecord?
         = synchronized(this) {
             if (position >= 0 && position < events.size && events[position].eventId == expectedEventId)
@@ -251,31 +388,23 @@ class EventListAdapter(
                 null
         }
 
-
-    fun removeAt(position: Int)
+    private fun getEventAtPosition(position: Int): EventAlertRecord?
         = synchronized(this) {
-            events = events.filterIndexed { idx, ev -> idx != position }.toTypedArray()
-            notifyItemRemoved(position)
-        }
-
-    private fun remove(position: Int) {
-
-        var event: EventAlertRecord? = null
-
-        synchronized(this) {
             if (position >= 0 && position < events.size)
-                event = events[position]
-            events = events.filterIndexed { idx, ev -> idx != position }.toTypedArray()
-            notifyItemRemoved(position)
+                events[position];
+            else
+                null
         }
 
-        if (event != null)
-            callback.onItemRemoved(event!!)
-    }
 
-    fun removeWithUndo(pos: Int) {
+    fun removeEvent(event: EventAlertRecord)
+        = synchronized(this) {
+            val idx = events.indexOf(event)
+            events = events.filter { ev -> ev != event }.toTypedArray()
+            notifyItemRemoved(idx)
+        }
 
-        val event = events[pos]
+    fun removeWithUndo(event: EventAlertRecord) {
 
         clearUndoState()
 
@@ -283,34 +412,29 @@ class EventListAdapter(
 
             eventsPendingRemoval.add(event);
 
-            callback.onItemRemoved(event)
+            pendingEventRemoveRunnables.put(
+                event,
+                Runnable() {
+                    synchronized(this) {
+                        val idx = events.indexOf(event)
+                        events = events.filter { ev -> ev != event }.toTypedArray()
+                        notifyItemRemoved(idx)
+                    }
+                });
 
-            notifyItemChanged(events.indexOf(event));
-
-            val runnable = Runnable() {
-                synchronized(this) {
-                    val idx = events.indexOf(event)
-                    events = events.filter { ev -> ev != event }.toTypedArray()
-                    notifyItemRemoved(idx)
-                }
+            synchronized(this) {
+                notifyItemChanged(events.indexOf(event));
             }
-
-            pendingRunnables.put(event, runnable);
         }
     }
 
-    fun isPendingRemoval(position: Int): Boolean {
-        val event = events[position]
-        return eventsPendingRemoval.contains(event)
-    }
+    fun isPendingRemoval(position: Int)
+        = eventsPendingRemoval.contains(getEventAtPosition(position))
 
     fun clearUndoState() {
 
-        if (!pendingRunnables.isEmpty()) {
-            for ((event, runnable) in pendingRunnables)
-                runnable.run()
-
-            pendingRunnables.clear()
-        }
+        for ((event, runnable) in pendingEventRemoveRunnables)
+            runnable.run()
+        pendingEventRemoveRunnables.clear()
     }
 }

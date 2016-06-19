@@ -68,14 +68,12 @@ class MainActivity : Activity(), EventListCallback {
 
     private val svcClient by lazy { UINotifierServiceClient() }
 
-    private var undoSenseDismissedAtScrollPosition: Int? = null
+    private var lastEventDismissalScrollPosition: Int? = null
 
     private var useCompactView = true
 
     private val undoDisappearSensitivity: Float by lazy  {
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, Consts.UNDO_DISAPPEAR_SENSITIVITY.toFloat(), displayMetrics );
+        resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
 
     private val undoManager by lazy { UndoManager() }
@@ -341,10 +339,10 @@ class MainActivity : Activity(), EventListCallback {
 
     override fun onScrollPositionChange(scrollPosition: Int) {
 
-        val undoSense = undoSenseDismissedAtScrollPosition
+        val undoSense = lastEventDismissalScrollPosition
         if (undoSense != null) {
             if (Math.abs(undoSense - scrollPosition) > undoDisappearSensitivity) {
-                undoSenseDismissedAtScrollPosition = null
+                lastEventDismissalScrollPosition = null
                 if (!useCompactView)
                     hideUndoDismiss()
                 else
@@ -404,7 +402,7 @@ class MainActivity : Activity(), EventListCallback {
                     undo = Runnable { ApplicationController.restoreEvent(this, event) }))
 
             adapter.removeEvent(event)
-            undoSenseDismissedAtScrollPosition = adapter.scrollPosition
+            lastEventDismissalScrollPosition = adapter.scrollPosition
 
             onNumEventsUpdated()
         }
@@ -418,7 +416,7 @@ class MainActivity : Activity(), EventListCallback {
 
         logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
         ApplicationController.dismissEvent(this, event)
-        undoSenseDismissedAtScrollPosition = adapter.scrollPosition
+        lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
 
         refreshReminderLastFired()

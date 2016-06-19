@@ -5,7 +5,11 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <!-- Compact view - 'dismissed' view - 'x' icon margin -->
     <dimen name="ic_clear_margin">25dp</dimen>
+
+    <!--  amount to scroll on the main activity until 'undo' layout hides itself, in dp-s -->
+    <dimen name="undo_dismiss_sensitivity">160dp</dimen>
 
     <dimen name="snooze_close_btn_padding">8dp</dimen>
 
@@ -71,6 +75,7 @@
     <dimen name="color_picker_sqr_size_pls_sp">56dp</dimen>
     <dimen name="date_time_picker_margin">2dp</dimen>
     <dimen name="date_time_picker_padding">5dp</dimen>
+
     <dimen name="compact_view_layout_height">80dp</dimen>
     <dimen name="compact_view_left_margin">10dp</dimen>
     <dimen name="compact_view_right_margin">10dp</dimen>

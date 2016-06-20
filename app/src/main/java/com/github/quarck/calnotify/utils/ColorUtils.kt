@@ -21,9 +21,12 @@ package com.github.quarck.calnotify.utils
 
 fun Int.adjustCalendarColor(): Int {
 
+    val channelsAreEqualThreshold = 0x10
     val colorFadeMin = 1.17;
     val colorFadeMed = 1.3;
     val colorFadeMax = 1.35;
+
+    val fullAlpha = 0xff000000.toInt()
 
     var r = (this.ushr(16)) and 0xff
     var g = (this.ushr(8)) and 0xff
@@ -32,7 +35,7 @@ fun Int.adjustCalendarColor(): Int {
     val min = Math.min(r, Math.min(g, b))
     val max = Math.max(r, Math.max(g, b))
 
-    if (max - min < 0x10) {
+    if (max - min < channelsAreEqualThreshold) {
         r = (r / colorFadeMed).toInt()
         g = (g / colorFadeMed).toInt()
         b = (b / colorFadeMed).toInt()
@@ -73,5 +76,5 @@ fun Int.adjustCalendarColor(): Int {
 
     }
 
-    return 0xff000000.toInt() or (r shl 16) or (g shl 8) or (b shl 0)
+    return fullAlpha or (r shl 16) or (g shl 8) or (b shl 0)
 }

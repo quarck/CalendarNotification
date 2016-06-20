@@ -116,11 +116,14 @@
     <string name="change_all">Change All</string>
     <string name="snooze_all_confirmation">Snooze ALL events?\nAlready snoozed would also change snooze time unless snoozed to longer period</string>
     <string name="change_all_notification">This will change snooze time for all events\nContinue?</string>
-    <string name="all_events">Snooze all events</string>
-    <string name="change_all_events">Change snooze time for all events</string>
-    <string name="snooze_events_for">Snooze events for:</string>
+
+    <string name="snooze_all_events">Snooze all events to:</string>
+    <string name="change_all_events">Change snooze time for all events:</string>
 
     <string name="change_snooze_to">Change snooze to:</string>
+
+    <string name="snooze_all_title">Snooze all events</string>
+    <string name="change_all_title">Change all events</string>
 
     <string name="led_color">LED Color</string>
     <string name="wake_screen_title">Wake screen</string>

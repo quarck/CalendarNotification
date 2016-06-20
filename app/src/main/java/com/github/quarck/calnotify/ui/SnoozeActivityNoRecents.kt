@@ -191,8 +191,10 @@ open class SnoozeActivityNoRecents : Activity() {
                 color = resources.getColor(R.color.primary)
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
 
-            if (!ev.isRepeating)
+            if (!ev.isRepeating) {
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
+                find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
+            }
 
             if (ev.snoozedUntil != 0L) {
                 find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
@@ -208,9 +210,9 @@ open class SnoozeActivityNoRecents : Activity() {
 
         } else if (isSnoozeAll) {
 
-            find<TextView>(R.id.snooze_view_title).text =
+            find<TextView>(R.id.snooze_snooze_for).text =
                 if (!snoozeAllIsChange)
-                    this.resources.getString(R.string.all_events);
+                    this.resources.getString(R.string.snooze_all_events)
                 else
                     this.resources.getString(R.string.change_all_events)
 
@@ -219,20 +221,19 @@ open class SnoozeActivityNoRecents : Activity() {
             find<TextView>(R.id.snooze_view_event_date_line1).text = ""
             find<TextView>(R.id.snooze_view_event_date_line2).text = ""
 
-            find<TextView>(R.id.snooze_snooze_for).text =
+
+            this.title =
                 if (!snoozeAllIsChange)
-                    resources.getString(R.string.snooze_events_for)
+                    resources.getString(R.string.snooze_all_title)
                 else
-                    resources.getString(R.string.change_snooze_to)
+                    resources.getString(R.string.change_all_title)
+
+            find<ImageView>(R.id.snooze_view_cancel).visibility = View.GONE
+            find<RelativeLayout>(R.id.snooze_view_event_details_layout).visibility = View.GONE
+
+            find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
 
-/*
-        if (snoozeFromMainActivity) {
-            find<ImageView>(R.id.snooze_view_cancel)
-                .setImageDrawable(
-                    resources.getDrawable(R.drawable.ic_navigate_before_white_24dp))
-
-        }*/
     }
 
     private fun formatPreset(preset: Long): String {

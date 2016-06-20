@@ -277,7 +277,7 @@ class MainActivity : Activity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                    Intent(this, SnoozeActivity::class.java)
+                    Intent(this, SnoozeActivityWithAppBar::class.java)
                         .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
                         .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 

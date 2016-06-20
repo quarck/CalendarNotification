@@ -642,6 +642,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/divider"
+                android:id="@+id/snooze_view_inter_view_divider"
                 android:padding="0dp"
                 />
 

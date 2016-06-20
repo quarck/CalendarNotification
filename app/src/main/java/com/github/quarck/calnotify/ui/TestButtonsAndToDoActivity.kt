@@ -48,32 +48,8 @@ class TestButtonsAndToDoActivity : Activity() {
 
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<TextView>(R.id.log).text = "-- DISABLED - FOREVER --"
-        find<ToggleButton>(R.id.debug_logging_toggle).isChecked = settings.debugTransactionLogEnabled;
-        find<ToggleButton>(R.id.remove_original_event).isChecked = settings.removeOriginal
     }
 
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnDebugLoggingToggle(v: View) {
-        if (v is ToggleButton) {
-            settings.debugTransactionLogEnabled = v.isChecked;
-  //          if (!v.isChecked)
-//                DebugTransactionLog(this).dropAll();
-        }
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnRemoveOriginalEventToggle(v: View) {
-        if (v is ToggleButton) {
-            settings.removeOriginal = v.isChecked
-        }
-    }
-
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonTestActivityClick(v: View) {
-        startActivity(Intent(applicationContext, SnoozeActivityNoRecents::class.java));
-    }
 
     fun randomTitle(currentTime: Long): String {
 
@@ -129,6 +105,58 @@ class TestButtonsAndToDoActivity : Activity() {
                         CalendarContract.Events.CONTENT_URI,
                         id)))
         }
+    }
+
+    fun clr(r: Int, g: Int, b: Int) = 0xff.shl(24) or r.shl(16) or g.shl(8) or b
+
+    fun addStoreEvent(currentTime: Long, eventId: Long, title: String, minutesFromNow: Long, duration: Long, location: String, color: Int) {
+
+        val start = ((currentTime/(15*60*1000L))+1L)*15*60*1000L + minutesFromNow * 60L * 1000L
+        val end = start + duration * 60L * 1000L
+
+        ApplicationController.onCalendarEventFired(this,
+            EventAlertRecord(
+                -1L,
+                eventId,
+                false,
+                currentTime,
+                0,
+                title,
+                start,
+                end,
+                start,
+                end,
+                location,
+                currentTime,
+                0L, // snoozed
+                EventDisplayStatus.Hidden,
+                color
+            ));
+    }
+
+    fun OnButtonStrEvClick(v: View) {
+
+        val currentTime = System.currentTimeMillis()
+        var eventId = currentTime
+        addStoreEvent(currentTime, eventId, "Publish new version to play store", 520L, 30L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Take laptop to work", 24 *60L, 15L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Holidays in Spain", 4 * 25 * 60L, 7 * 25 * 60L, "Costa Dorada Salou", -18312)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Back to work", 15 * 25 * 60L, 15L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Check for new documentation releases", 120L, 15L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Call parents", 120L, 15L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Submit VHI claim", 120L, 15L, "", -2380289)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Charge phone!", 120L, 15L, "", -11958553)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Take vitamin", 450L, 15L, "", -2380289)
+        eventId ++
+        addStoreEvent(currentTime, eventId, "Collect parcel", 120L, 15L, "GPO Post Office", -18312)
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

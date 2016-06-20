@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ActivityTestButtonsAndToDo">
+    tools:context=".ui.TestButtonsAndToDoActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -161,9 +161,9 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SZ ACT"
+                    android:text="POST STR"
                     android:id="@+id/buttonTest3"
-                    android:onClick="OnButtonTestActivityClick"
+                    android:onClick="OnButtonStrEvClick"
                     android:layout_gravity="center_horizontal"
                     android:visibility="visible"
                     android:background="?android:attr/selectableItemBackground"
@@ -176,28 +176,7 @@
                     android:background="?android:attr/dividerVertical"
                     />
 
-                <ToggleButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/debug_logging_toggle"
-                    android:onClick="OnDebugLoggingToggle"
-                    android:textOn="DBG LOG ON"
-                    android:textOff="DBG LOG OFF"
-                    android:background="?android:attr/selectableItemBackground"
-                    />
-
             </LinearLayout>
-
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/remove_original_event"
-                android:onClick="OnRemoveOriginalEventToggle"
-                android:textOn="Removing original event"
-                android:textOff="Not removing original event"
-                android:background="?android:attr/selectableItemBackground"
-                />
-
 
         </LinearLayout>
 

@@ -19,6 +19,8 @@
 
 package com.github.quarck.calnotify.utils
 
+import com.github.quarck.calnotify.logs.Logger
+
 fun Int.adjustCalendarColor(): Int {
 
     val channelsAreEqualThreshold = 0x10

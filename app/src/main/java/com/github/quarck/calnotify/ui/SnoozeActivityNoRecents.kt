@@ -193,6 +193,7 @@ open class SnoozeActivityNoRecents : Activity() {
 
             if (!ev.isRepeating) {
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
+            } else {
                 find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
             }
 

@@ -277,11 +277,14 @@ class MainActivity : Activity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                    Intent(this, SnoozeActivityNoRecents::class.java)
-                        .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents))
+                    Intent(this, SnoozeActivity::class.java)
+                        .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
+                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
-            R.id.action_settings ->
+            R.id.action_settings -> {
+                shouldRepost = true // so onResume would re-post everything
                 startActivity(Intent(this, SettingsActivity::class.java))
+            }
 
             R.id.action_feedback ->
                 startActivity(Intent(this, HelpAndFeedbackActivity::class.java))
@@ -416,7 +419,8 @@ class MainActivity : Activity(), EventListCallback {
                     Intent(this, SnoozeActivity::class.java)
                         .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                         .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
-                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime))
+                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
+                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
             } else {
                 CalendarIntents.viewCalendarEvent(this, event)
@@ -477,10 +481,11 @@ class MainActivity : Activity(), EventListCallback {
 
         if (event != null) {
             startActivity(
-                Intent(this, SnoozeActivityNoRecents::class.java)
+                Intent(this, SnoozeActivity::class.java)
                     .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                     .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
-                    .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime))
+                    .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
+                    .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
         }
         refreshReminderLastFired()
     }

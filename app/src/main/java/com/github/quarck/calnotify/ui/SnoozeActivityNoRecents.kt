@@ -36,6 +36,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
@@ -52,6 +53,8 @@ open class SnoozeActivityNoRecents : Activity() {
     val calendarProvider: CalendarProviderInterface = CalendarProvider
 
     var snoozeAllIsChange = false
+
+    var snoozeFromMainActivity = false
 
     val snoozePresetControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1,
@@ -94,6 +97,8 @@ open class SnoozeActivityNoRecents : Activity() {
         val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
 
         snoozeAllIsChange = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, false)
+
+        snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
 
         val isSnoozeAll = (eventId == -1L)
 
@@ -158,7 +163,7 @@ open class SnoozeActivityNoRecents : Activity() {
                     else
                         ev.title;
 
-            val (date, time) = ev.formatTime(this);
+            val (line1, line2) = ev.formatTime(this);
 
             val location = ev.location;
             if (location != "") {
@@ -170,20 +175,16 @@ open class SnoozeActivityNoRecents : Activity() {
 
             find<TextView>(R.id.snooze_view_title).text = title;
 
-            val dateView = find<TextView>(R.id.snooze_view_event_date)
-            val timeView = find<TextView>(R.id.snooze_view_event_time)
+            val dateTimeFirstLine = find<TextView>(R.id.snooze_view_event_date_line1)
+            val dateTimeSecondLine = find<TextView>(R.id.snooze_view_event_date_line2)
 
-            dateView.text = date;
-            timeView.text = time;
+            dateTimeFirstLine.text = line1;
+            dateTimeSecondLine.text = line2;
 
-            val onClick =
-                View.OnClickListener {
-                    CalendarIntents.viewCalendarEvent(this, ev)
-                }
+            val onClick = View.OnClickListener { CalendarIntents.viewCalendarEvent(this, ev) }
 
-            dateView.setOnClickListener(onClick)
-            timeView.setOnClickListener(onClick)
-
+            dateTimeFirstLine.setOnClickListener(onClick)
+            dateTimeSecondLine.setOnClickListener(onClick)
 
             var color: Int = ev.color.adjustCalendarColor();
             if (color == 0)
@@ -193,15 +194,45 @@ open class SnoozeActivityNoRecents : Activity() {
             if (!ev.isRepeating)
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
 
+            if (ev.snoozedUntil != 0L) {
+                find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
+                val snoozedUntil = find<TextView?>(R.id.snooze_view_snoozed_until)
+                if (snoozedUntil != null) {
+                    snoozedUntil.visibility = View.VISIBLE
+                    snoozedUntil.text =
+                        resources.getString(R.string.snoozed_until_string) + " " +
+                            ev.formatSnoozedUntil(this);
+
+                }
+            }
+
         } else if (isSnoozeAll) {
 
-            find<TextView>(R.id.snooze_view_title).text = this.resources.getString(R.string.all_events);
+            find<TextView>(R.id.snooze_view_title).text =
+                if (!snoozeAllIsChange)
+                    this.resources.getString(R.string.all_events);
+                else
+                    this.resources.getString(R.string.change_all_events)
+
             find<RelativeLayout>(R.id.layout_snooze_time).visibility = View.GONE
             find<View>(R.id.view_snooze_divider).visibility = View.GONE
-            find<TextView>(R.id.snooze_view_event_date).text = ""
-            find<TextView>(R.id.snooze_view_event_time).text = ""
-            find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.snooze_events_for)
+            find<TextView>(R.id.snooze_view_event_date_line1).text = ""
+            find<TextView>(R.id.snooze_view_event_date_line2).text = ""
+
+            find<TextView>(R.id.snooze_snooze_for).text =
+                if (!snoozeAllIsChange)
+                    resources.getString(R.string.snooze_events_for)
+                else
+                    resources.getString(R.string.change_snooze_to)
         }
+
+/*
+        if (snoozeFromMainActivity) {
+            find<ImageView>(R.id.snooze_view_cancel)
+                .setImageDrawable(
+                    resources.getDrawable(R.drawable.ic_navigate_before_white_24dp))
+
+        }*/
     }
 
     private fun formatPreset(preset: Long): String {

@@ -4,6 +4,7 @@
           android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" /> <!-- For HTC -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
@@ -46,6 +47,11 @@
             android:name=".ui.SnoozeActivity"
             android:label="@string/title_activity_activity_snooze"
             android:theme="@android:style/Theme.Holo.NoActionBar">
+        </activity>
+        <activity
+            android:name=".ui.SnoozeActivityWithAppBar"
+            android:label="@string/title_activity_activity_snooze"
+            android:parentActivityName=".ui.MainActivity" >
         </activity>
         <activity
             android:name=".prefs.CalendarsActivity"
@@ -91,10 +97,12 @@
             android:name=".broadcastreceivers.BootCompleteBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/> <!-- Well, HTC -->
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" /> <!-- Well, OLD HTC -->
+                <action android:name="android.intent.action.REBOOT"/> <!-- Well, MIUI -->
 
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>

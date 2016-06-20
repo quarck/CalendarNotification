@@ -52,6 +52,7 @@
             android:onClick="onButtonCancelClick"
             android:background="?android:attr/selectableItemBackground"
             />
+
     </RelativeLayout>
 
     <ScrollView
@@ -94,7 +95,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/snooze_view_event_date"
+                    android:id="@+id/snooze_view_event_date_line1"
                     android:text="Tomorrow"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
@@ -110,7 +111,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/snooze_view_event_time"
+                    android:id="@+id/snooze_view_event_date_line2"
                     android:text="22:00 - 23:00"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
@@ -120,9 +121,28 @@
                     android:paddingEnd="@dimen/snooze_view_padding_end"
                     android:paddingRight="@dimen/snooze_view_padding_end"
                     android:paddingLeft="@dimen/snooze_view_padding_start"
-                    android:layout_below="@id/snooze_view_event_date"
+                    android:layout_below="@id/snooze_view_event_date_line1"
                     android:clickable="true"
                     />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_snoozed_until"
+                    android:text="Snoozed until: 21 June 2999 18:00"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/secondary_text"
+                    android:gravity="left|bottom"
+                    android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                    android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:visibility="gone"
+                    android:layout_below="@id/snooze_view_event_date_line2"
+                    />
+
 
             </RelativeLayout>
 
@@ -163,6 +183,7 @@
                     android:paddingLeft="@dimen/snooze_view_padding_start"
                     android:clickable="true"
                     />
+
             </RelativeLayout>
 
             <View

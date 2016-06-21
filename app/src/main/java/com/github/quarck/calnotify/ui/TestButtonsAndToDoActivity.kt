@@ -28,6 +28,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
@@ -109,9 +110,11 @@ class TestButtonsAndToDoActivity : Activity() {
 
     fun clr(r: Int, g: Int, b: Int) = 0xff.shl(24) or r.shl(16) or g.shl(8) or b
 
-    fun addStoreEvent(currentTime: Long, eventId: Long, title: String, minutesFromNow: Long, duration: Long, location: String, color: Int) {
+    fun addStoreEvent(currentTime: Long, eventId: Long, title: String, minutesFromMidnight: Long, duration: Long, location: String, color: Int) {
 
-        val start = ((currentTime/(15*60*1000L))+1L)*15*60*1000L + minutesFromNow * 60L * 1000L
+        val nextDay = ((currentTime / (Consts.DAY_IN_SECONDS * 1000L)) + 1) * (Consts.DAY_IN_SECONDS * 1000L)
+
+        val start = nextDay + minutesFromMidnight * 60L * 1000L
         val end = start + duration * 60L * 1000L
 
         ApplicationController.onCalendarEventFired(this,
@@ -136,27 +139,36 @@ class TestButtonsAndToDoActivity : Activity() {
 
     fun OnButtonStrEvClick(v: View) {
 
-        val currentTime = System.currentTimeMillis()
+        var currentTime = System.currentTimeMillis()
         var eventId = currentTime
-        addStoreEvent(currentTime, eventId, "Publish new version to play store", 520L, 30L, "", -11958553)
+        addStoreEvent(currentTime, eventId, "Publish new version to play store", 18 * 60L, 30L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Take laptop to work", 24 *60L, 15L, "", -11958553)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Take laptop to work", 6 *60L, 15L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Holidays in Spain", 4 * 25 * 60L, 7 * 25 * 60L, "Costa Dorada Salou", -18312)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Holidays in Spain", (4 * 24 + 8) * 60L, 7 * 24 * 60L, "Costa Dorada Salou", -18312)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Back to work", 15 * 25 * 60L, 15L, "", -11958553)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Back to work", (15 * 24 + 8) * 60L, 15L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Check for new documentation releases", 120L, 15L, "", -11958553)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Check for new documentation releases", 8 * 60L, 15L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Call parents", 120L, 15L, "", -11958553)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Call parents", 12 * 60L, 15L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Submit VHI claim", 120L, 15L, "", -2380289)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Submit VHI claim", 19 * 60L, 15L, "", -2380289)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Charge phone!", 120L, 15L, "", -11958553)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Charge phone!", 23 * 60L, 15L, "", -11958553)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Take vitamin", 450L, 15L, "", -2380289)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Take vitamin", 13 * 60L, 15L, "", -2380289)
         eventId ++
-        addStoreEvent(currentTime, eventId, "Collect parcel", 120L, 15L, "GPO Post Office", -18312)
+        currentTime += 10
+        addStoreEvent(currentTime, eventId, "Collect parcel", 15 * 60L, 15L, "GPO Post Office", -18312)
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.text.format.DateUtils
@@ -64,6 +65,7 @@ class MainActivity : Activity(), EventListCallback {
     private lateinit var newStyleMessageLayout: View
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     private lateinit var adapter: EventListAdapter
 
@@ -92,6 +94,12 @@ class MainActivity : Activity(), EventListCallback {
         ApplicationController.onMainActivityCreate(this);
 
         setContentView(R.layout.activity_main)
+
+        refreshLayout = find<SwipeRefreshLayout>(R.id.cardview_refresh_layout)
+
+        refreshLayout.setOnRefreshListener {
+            reloadData()
+        }
 
         useCompactView = settings.useCompactView
 
@@ -297,6 +305,7 @@ class MainActivity : Activity(), EventListCallback {
     }
 
     private fun reloadData() {
+
         background {
 
             val events =
@@ -340,6 +349,8 @@ class MainActivity : Activity(), EventListCallback {
                 } else {
                     quietHoursLayout.visibility = View.GONE;
                 }
+
+                refreshLayout?.isRefreshing = false
             }
         }
     }

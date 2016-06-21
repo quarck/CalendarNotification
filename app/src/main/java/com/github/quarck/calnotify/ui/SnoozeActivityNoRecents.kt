@@ -40,6 +40,7 @@ import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+import kotlinx.android.synthetic.main.activity_snooze.*
 import java.util.*
 
 open class SnoozeActivityNoRecents : Activity() {
@@ -199,14 +200,6 @@ open class SnoozeActivityNoRecents : Activity() {
 
             if (ev.snoozedUntil != 0L) {
                 find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
-                val snoozedUntil = find<TextView?>(R.id.snooze_view_snoozed_until)
-                if (snoozedUntil != null) {
-                    snoozedUntil.visibility = View.VISIBLE
-                    snoozedUntil.text =
-                        resources.getString(R.string.snoozed_until_string) + " " +
-                            ev.formatSnoozedUntil(this);
-
-                }
             }
 
         } else if (isSnoozeAll) {
@@ -221,6 +214,9 @@ open class SnoozeActivityNoRecents : Activity() {
             find<View>(R.id.view_snooze_divider).visibility = View.GONE
             find<TextView>(R.id.snooze_view_event_date_line1).text = ""
             find<TextView>(R.id.snooze_view_event_date_line2).text = ""
+
+            find<ImageView>(R.id.snooze_view_img_custom_period)?.visibility = View.VISIBLE
+            find<ImageView>(R.id.snooze_view_img_until)?.visibility = View.VISIBLE
 
 
             this.title =

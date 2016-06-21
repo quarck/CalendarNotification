@@ -256,7 +256,7 @@
                     android:id="@+id/snooze_view_snooze_present1_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_snooze_for"
@@ -321,7 +321,7 @@
                     android:id="@+id/snooze_view_snooze_present2_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present1"
@@ -385,7 +385,7 @@
                     android:id="@+id/snooze_view_snooze_present3_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present2"
@@ -450,7 +450,7 @@
                     android:id="@+id/snooze_view_snooze_present4_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present3"
@@ -515,7 +515,7 @@
                     android:id="@+id/snooze_view_snooze_present5_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present4"
@@ -579,7 +579,7 @@
                     android:id="@+id/snooze_view_snooze_present6_quiet_time_notice"
                     android:text="@string/hits_quiet_period"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/secondary_text"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:paddingBottom="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present5"
@@ -620,6 +620,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_img_custom_period"
                     android:src="@drawable/ic_repeat_one_black_24dp"
                     android:longClickable="false"
                     android:paddingStart="@dimen/snooze_view_img_padding_start"
@@ -628,6 +629,7 @@
                     android:paddingLeft="@dimen/snooze_view_img_padding_start"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_present6"
+                    android:visibility="gone"
                     />
 
                 <TextView
@@ -652,6 +654,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_img_until"
                     android:longClickable="false"
                     android:src="@drawable/ic_date_range_black_24dp"
                     android:paddingStart="@dimen/snooze_view_img_padding_start"
@@ -660,6 +663,7 @@
                     android:paddingLeft="@dimen/snooze_view_img_padding_start"
                     android:paddingTop="@dimen/snooze_view_spacing"
                     android:layout_below="@id/snooze_view_snooze_custom"
+                    android:visibility="gone"
                     />
 
                 <TextView

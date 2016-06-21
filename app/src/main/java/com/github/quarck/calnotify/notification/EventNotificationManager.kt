@@ -37,7 +37,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.dateRangeOneLine
-import com.github.quarck.calnotify.textutils.formatNotificationDateRange
+import com.github.quarck.calnotify.textutils.formatNotificationSecondaryText
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
@@ -324,7 +324,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
                     PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notificationText = event.formatNotificationDateRange(ctx);
+        val notificationText = event.formatNotificationSecondaryText(ctx);
 
         val builder = Notification.Builder(ctx)
             .setContentTitle(event.title)

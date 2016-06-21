@@ -48,7 +48,7 @@ object EventRecordUtils {
     }
 }
 
-fun EventAlertRecord.formatNotificationDateRange(ctx: Context): String {
+fun EventAlertRecord.formatNotificationSecondaryText(ctx: Context): String {
     val sb = StringBuilder()
 
     if (this.displayedStartTime != 0L) {
@@ -98,6 +98,7 @@ fun EventAlertRecord.formatNotificationDateRange(ctx: Context): String {
     if (this.location != "") {
         sb.append("\n")
         sb.append(ctx.resources.getString(R.string.location));
+        sb.append(" ")
         sb.append(this.location)
     }
 

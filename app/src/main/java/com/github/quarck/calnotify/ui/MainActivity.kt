@@ -98,6 +98,8 @@ class MainActivity : Activity(), EventListCallback {
         refreshLayout = find<SwipeRefreshLayout>(R.id.cardview_refresh_layout)
 
         refreshLayout.setOnRefreshListener {
+            updateUndoVisibility()
+            refreshReminderLastFired()
             reloadData()
         }
 

@@ -269,14 +269,15 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/cardview_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/activity_main_bottom_indicators">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_events"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/cardview_light_background"
-            android:layout_above="@id/activity_main_bottom_indicators"/>
+            />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView

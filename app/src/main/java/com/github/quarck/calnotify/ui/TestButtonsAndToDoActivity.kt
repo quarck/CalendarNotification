@@ -150,7 +150,7 @@ class TestButtonsAndToDoActivity : Activity() {
         addStoreEvent(currentTime, eventId, "Holidays in Spain", (4 * 24 + 8) * 60L, 7 * 24 * 60L, "Costa Dorada Salou", -18312)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Back to work", (15 * 24 + 8) * 60L, 15L, "", -11958553)
+        addStoreEvent(currentTime, eventId, "Meeting with John", (15 * 24 + 8) * 60L, 15L, "", -11958553)
         eventId ++
         currentTime += 10
         addStoreEvent(currentTime, eventId, "Check for new documentation releases", 8 * 60L, 15L, "", -11958553)

@@ -36,11 +36,9 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.textutils.formatSnoozedUntil
 import com.github.quarck.calnotify.textutils.formatTime
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
-import kotlinx.android.synthetic.main.activity_snooze.*
 import java.util.*
 
 open class SnoozeActivityNoRecents : Activity() {

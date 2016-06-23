@@ -24,28 +24,19 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.support.v7.widget.helper.ItemTouchHelper.*
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.displayedEndTime
-import com.github.quarck.calnotify.calendar.displayedStartTime
-import com.github.quarck.calnotify.textutils.formatSnoozedUntil
-import com.github.quarck.calnotify.textutils.formatTime
-import com.github.quarck.calnotify.textutils.dateRangeOneLine
-import com.github.quarck.calnotify.utils.*
-import java.util.*
+import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.adjustCalendarColor
+import com.github.quarck.calnotify.utils.find
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
@@ -139,7 +130,6 @@ class EventListAdapter(
             onRecycleViewRegistered(_recyclerView)
         }
 
-
     private val primaryColor: Int
     private val changeString: String
     private val snoozeString: String
@@ -148,6 +138,8 @@ class EventListAdapter(
 
     private val pendingEventRemoveRunnables = mutableMapOf<EventAlertRecord, Runnable>()
     private var eventsPendingRemoval = mutableListOf<EventAlertRecord>()
+
+    private val eventFormatter = EventFormatter(context)
 
     val scrollPosition: Int
         get() = currentScrollPosition
@@ -307,7 +299,7 @@ class EventListAdapter(
 
                 callback.onItemRestored(event)
 
-                val runnable = pendingEventRemoveRunnables[event];
+//                val runnable = pendingEventRemoveRunnables[event];
                 pendingEventRemoveRunnables.remove(event)
 
                 eventsPendingRemoval.remove(event)
@@ -324,13 +316,13 @@ class EventListAdapter(
                 holder.undoLayout?.visibility = View.GONE
                 holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-                val time = event.dateRangeOneLine(context)
+                val time = eventFormatter.formatDateTimeOneLine(event)
                 holder.eventDateText.text = time
                 holder.eventTimeText.text = ""
 
             } else {
 
-                val (date, time) = event.formatTime(context)
+                val (date, time) = eventFormatter.formatDateTimeTwoLines(event)
 
                 holder.eventDateText.text = date
                 holder.eventTimeText.text = time
@@ -346,7 +338,7 @@ class EventListAdapter(
             if (event.snoozedUntil != 0L) {
                 holder.snoozedUntilText?.text =
                     context.resources.getString(R.string.snoozed_until_string) + " " +
-                        event.formatSnoozedUntil(context);
+                        eventFormatter.formatSnoozedUntil(event);
 
                 holder.snoozedUntilText?.visibility = View.VISIBLE;
                 holder.snoozeButton?.text = changeString

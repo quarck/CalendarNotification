@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
+import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.ui.UINotifierService
 
@@ -57,7 +58,7 @@ object ApplicationController {
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
     fun onEventAlarm(context: Context) {
-        notificationManager.postEventNotifications(context, false, null);
+        notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
@@ -65,7 +66,7 @@ object ApplicationController {
     fun onAppUpdated(context: Context) {
 
         val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
-        notificationManager.postEventNotifications(context, true, null);
+        notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -75,7 +76,7 @@ object ApplicationController {
 
     fun onBootComplete(context: Context) {
         val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
-        notificationManager.postEventNotifications(context, true, null);
+        notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -87,7 +88,7 @@ object ApplicationController {
 
         val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
         if (changes) {
-            notificationManager.postEventNotifications(context, true, null);
+            notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -107,7 +108,7 @@ object ApplicationController {
                 if (event.isRepeating) {
                     // repeating event - always simply add
                     db.addEvent(event)
-                    notificationManager.onEventAdded(context, event)
+                    notificationManager.onEventAdded(context, EventFormatter(context), event)
                 } else {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents
@@ -120,7 +121,7 @@ object ApplicationController {
                         // delete old instances for the same event id (should be only one, but who knows)
                         for (oldEvent in oldEvents) {
                             db.deleteEvent(oldEvent)
-                            notificationManager.onEventDismissed(context, oldEvent.eventId, oldEvent.notificationId)
+                            notificationManager.onEventDismissed(context, EventFormatter(context), oldEvent.eventId, oldEvent.notificationId)
                         }
                     } catch (ex: Exception) {
                         logger.error("exception while removing old events: ${ex.message}");
@@ -128,7 +129,7 @@ object ApplicationController {
 
                     // add newly fired event
                     db.addEvent(event)
-                    notificationManager.onEventAdded(context, event)
+                    notificationManager.onEventAdded(context, EventFormatter(context), event)
                 }
             }
 
@@ -177,7 +178,7 @@ object ApplicationController {
             }
 
         if (snoozedEvent != null) {
-            notificationManager.onEventSnoozed(context, snoozedEvent.eventId, snoozedEvent.notificationId);
+            notificationManager.onEventSnoozed(context, EventFormatter(context), snoozedEvent.eventId, snoozedEvent.notificationId);
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -237,7 +238,7 @@ object ApplicationController {
     }
 
     fun fireEventReminder(context: Context) {
-        notificationManager.fireEventReminder(context);
+        notificationManager.fireEventReminder(context, EventFormatter(context));
     }
 
     fun onMainActivityCreate(context: Context?) {
@@ -259,7 +260,7 @@ object ApplicationController {
             val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
 
             if (shouldRepost || changes)
-                notificationManager.postEventNotifications(context, true, null)
+                notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -278,7 +279,7 @@ object ApplicationController {
 
         db.deleteEvent(eventId, instanceStartTime)
 
-        notificationManager.onEventDismissed(context, eventId, notificationId);
+        notificationManager.onEventDismissed(context, EventFormatter(context), eventId, notificationId);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -300,7 +301,7 @@ object ApplicationController {
 
     fun restoreEvent(context: Context, event: EventAlertRecord) {
         EventsStorage(context).use { it.addEvent(event) }
-        notificationManager.onEventRestored(context, event)
+        notificationManager.onEventRestored(context, EventFormatter(context), event)
     }
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {

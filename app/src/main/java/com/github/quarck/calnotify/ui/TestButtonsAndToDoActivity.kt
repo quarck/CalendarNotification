@@ -110,7 +110,10 @@ class TestButtonsAndToDoActivity : Activity() {
 
     fun clr(r: Int, g: Int, b: Int) = 0xff.shl(24) or r.shl(16) or g.shl(8) or b
 
-    fun addStoreEvent(currentTime: Long, eventId: Long, title: String, minutesFromMidnight: Long, duration: Long, location: String, color: Int) {
+    fun addDemoEvent(
+        currentTime: Long, eventId: Long, title: String,
+        minutesFromMidnight: Long, duration: Long, location: String,
+        color: Int, allDay: Boolean) {
 
         val nextDay = ((currentTime / (Consts.DAY_IN_SECONDS * 1000L)) + 1) * (Consts.DAY_IN_SECONDS * 1000L)
 
@@ -121,6 +124,7 @@ class TestButtonsAndToDoActivity : Activity() {
             EventAlertRecord(
                 -1L,
                 eventId,
+                allDay,
                 false,
                 currentTime,
                 0,
@@ -141,34 +145,34 @@ class TestButtonsAndToDoActivity : Activity() {
 
         var currentTime = System.currentTimeMillis()
         var eventId = currentTime
-        addStoreEvent(currentTime, eventId, "Publish new version to play store", 18 * 60L, 30L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Publish new version to play store", 18 * 60L, 30L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Take laptop to work", 6 *60L, 15L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Take laptop to work", 6 *60L, 15L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Holidays in Spain", (4 * 24 + 8) * 60L, 7 * 24 * 60L, "Costa Dorada Salou", -18312)
+        addDemoEvent(currentTime, eventId, "Holidays in Spain", (4 * 24 + 8) * 60L, 7 * 24 * 60L, "Costa Dorada Salou", -18312, true)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Meeting with John", (15 * 24 + 8) * 60L, 15L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Meeting with John", (15 * 24 + 8) * 60L, 15L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Check for new documentation releases", 8 * 60L, 15L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Check for new documentation releases", 8 * 60L, 15L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Call parents", 12 * 60L, 15L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Call parents", 12 * 60L, 15L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Submit VHI claim", 19 * 60L, 15L, "", -2380289)
+        addDemoEvent(currentTime, eventId, "Submit VHI claim", 19 * 60L, 15L, "", -2380289, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Charge phone!", 23 * 60L, 15L, "", -11958553)
+        addDemoEvent(currentTime, eventId, "Charge phone!", 23 * 60L, 15L, "", -11958553, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Take vitamin", 13 * 60L, 15L, "", -2380289)
+        addDemoEvent(currentTime, eventId, "Take vitamin", 13 * 60L, 15L, "", -2380289, false)
         eventId ++
         currentTime += 10
-        addStoreEvent(currentTime, eventId, "Collect parcel", 15 * 60L, 15L, "GPO Post Office", -18312)
+        addDemoEvent(currentTime, eventId, "Collect parcel", 15 * 60L, 15L, "GPO Post Office", -18312, false)
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -187,6 +191,7 @@ class TestButtonsAndToDoActivity : Activity() {
             val event = EventAlertRecord(
                 -1L,
                 eventId,
+                false,
                 false,
                 System.currentTimeMillis(),
                 0,

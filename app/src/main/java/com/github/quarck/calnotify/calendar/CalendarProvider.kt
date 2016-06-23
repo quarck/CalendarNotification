@@ -33,34 +33,48 @@ object CalendarProvider: CalendarProviderInterface {
 
     private val alertFields =
         arrayOf(
-            CalendarContract.CalendarAlerts.EVENT_ID,   // 0
-            CalendarContract.CalendarAlerts.STATE,      // 1
-            CalendarContract.CalendarAlerts.TITLE,      // 2
-            CalendarContract.CalendarAlerts.DESCRIPTION,   // 3
-            CalendarContract.CalendarAlerts.DTSTART,    // 4
-            CalendarContract.CalendarAlerts.DTEND,      // 5
-            CalendarContract.Events.EVENT_LOCATION,     // 6
-            CalendarContract.Events.DISPLAY_COLOR,      // 7
-            CalendarContract.CalendarAlerts.ALARM_TIME, // 8
-            CalendarContract.Events.CALENDAR_ID,        // 9
-            CalendarContract.CalendarAlerts.BEGIN,      // 10
-            CalendarContract.CalendarAlerts.END         // 11
+            CalendarContract.CalendarAlerts.EVENT_ID,
+            CalendarContract.CalendarAlerts.STATE,
+            CalendarContract.Events.CALENDAR_ID,
+            CalendarContract.Events.TITLE,
+            CalendarContract.Events.DTSTART,
+            CalendarContract.Events.DTEND,
+            CalendarContract.Events.EVENT_LOCATION,
+            CalendarContract.Events.DISPLAY_COLOR,
+            CalendarContract.CalendarAlerts.ALARM_TIME,
+            CalendarContract.CalendarAlerts.BEGIN,
+            CalendarContract.CalendarAlerts.END,
+            CalendarContract.Events.ALL_DAY
         )
+
+    private val PROJECTION_INDEX_EVENT_ID = 0
+    private val PROJECTION_INDEX_STATE = 1
+    private val PROJECTION_INDEX_CALENDAR_ID = 3
+    private val PROJECTION_INDEX_TITLE = 4
+    private val PROJECTION_INDEX_DTSTART = 5
+    private val PROJECTION_INDEX_DTEND = 6
+    private val PROJECTION_INDEX_LOCATION = 7
+    private val PROJECTION_INDEX_COLOR  = 8
+    private val PROJECTION_INDEX_ALARM_TIME = 9
+    private val PROJECTION_INDEX_INSTANCE_BEGIN = 10
+    private val PROJECTION_INDEX_INSTANCE_END = 11
+    private val PROJECTION_INDEX_ALL_DAY = 12
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
-        val eventId: Long? = cursor.getLong(0)
-        val state: Int? = cursor.getInt(1)
-        val title: String? = cursor.getString(2)
-        val startTime: Long? = cursor.getLong(4)
-        val endTime: Long? = cursor.getLong(5)
-        val location: String? = cursor.getString(6)
-        val color: Int? = cursor.getInt(7)
-        val newAlarmTime: Long? = cursor.getLong(8)
-        val calendarId: Long? = cursor.getLong(9)
+        val eventId: Long? = cursor.getLong(PROJECTION_INDEX_EVENT_ID)
+        val state: Int? = cursor.getInt(PROJECTION_INDEX_STATE)
+        val title: String? = cursor.getString(PROJECTION_INDEX_TITLE)
+        val startTime: Long? = cursor.getLong(PROJECTION_INDEX_DTSTART)
+        val endTime: Long? = cursor.getLong(PROJECTION_INDEX_DTEND)
+        val location: String? = cursor.getString(PROJECTION_INDEX_LOCATION)
+        val color: Int? = cursor.getInt(PROJECTION_INDEX_COLOR)
+        val newAlarmTime: Long? = cursor.getLong(PROJECTION_INDEX_ALARM_TIME)
+        val calendarId: Long? = cursor.getLong(PROJECTION_INDEX_CALENDAR_ID)
 
-        val instanceStart: Long? = cursor.getLong(10)
-        val instanceEnd: Long? = cursor.getLong(11)
+        val instanceStart: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_BEGIN)
+        val instanceEnd: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_END)
+        val allDay: Int? = cursor.getInt(PROJECTION_INDEX_ALL_DAY)
 
         if (eventId == null || state == null || title == null || startTime == null)
             return Pair(null, null);
@@ -69,6 +83,7 @@ object CalendarProvider: CalendarProviderInterface {
             EventAlertRecord(
                 calendarId = calendarId ?: -1L,
                 eventId = eventId,
+                isAllDay = (allDay ?: 0) != 0,
                 notificationId = 0,
                 alertTime = alarmTime ?: newAlarmTime ?: 0,
                 title = title,
@@ -98,13 +113,13 @@ object CalendarProvider: CalendarProviderInterface {
         val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
         val cursor: Cursor? =
-                context.contentResolver.query(
-                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                    alertFields,
-                        selection,
-                        arrayOf(alertTime.toString()),
-                        null
-                );
+            context.contentResolver.query(
+                CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
+                alertFields,
+                selection,
+                arrayOf(alertTime.toString()),
+                null
+            );
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -290,6 +305,7 @@ object CalendarProvider: CalendarProviderInterface {
                 CalendarContract.Events.TITLE,
                 CalendarContract.Events.DTSTART,
                 CalendarContract.Events.DTEND,
+                CalendarContract.Events.ALL_DAY,
                 CalendarContract.Events.EVENT_LOCATION,
                 CalendarContract.Events.DISPLAY_COLOR
             )
@@ -309,8 +325,9 @@ object CalendarProvider: CalendarProviderInterface {
             val title: String? = cursor.getString(1)
             val start: Long? = cursor.getLong(2)
             val end: Long? = cursor.getLong(3)
-            val location: String? = cursor.getString(4)
-            val color: Int? = cursor.getInt(5)
+            val allDay: Int? = cursor.getInt(4)
+            val location: String? = cursor.getString(5)
+            val color: Int? = cursor.getInt(6)
 
             if (title != null && start != null) {
                 ret =
@@ -320,6 +337,7 @@ object CalendarProvider: CalendarProviderInterface {
                         title = title,
                         startTime = start,
                         endTime = end ?: 0L,
+                        isAllDay = (allDay ?: 0) != 0,
                         location = location ?: "",
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                         reminders = listOf<EventReminderRecord>() // stub for now

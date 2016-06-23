@@ -286,7 +286,8 @@ class EventsStorageImplV6()
             displayStatus = EventDisplayStatus.fromInt(cursor.getInt(11)),
             color = cursor.getInt(12),
             alertTime = cursor.getLong(13),
-            isRepeating = false
+            isRepeating = false,
+            isAllDay = false
         )
     }
 

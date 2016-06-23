@@ -24,6 +24,7 @@ data class EventReminderRecord(val millisecondsBefore: Long, val method: Int)
 data class EventRecord(
     val calendarId: Long,
     val eventId: Long,
+    var isAllDay: Boolean,
     var title: String,
     var startTime: Long,
     var endTime: Long,

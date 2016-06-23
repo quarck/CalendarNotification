@@ -17,24 +17,27 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.notification
+package com.github.quarck.calnotify.textutils
 
 import android.content.Context
+import android.text.format.DateUtils
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.textutils.EventFormatterInterface
+import com.github.quarck.calnotify.calendar.displayedEndTime
+import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.utils.dayEquals
+import com.github.quarck.calnotify.utils.sameCalendarDay
+import java.text.DateFormat
+import java.util.*
 
-interface EventNotificationManagerInterface {
-    fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord);
+interface EventFormatterInterface {
 
-    fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
+    fun formatNotificationSecondaryText(event: EventAlertRecord): String
 
-    fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
+    fun formatDateTimeTwoLines(event: EventAlertRecord, showWeekDay: Boolean = true): Pair<String, String>
 
-    fun onAllEventsSnoozed(context: Context)
+    fun formatDateTimeOneLine(event: EventAlertRecord, showWeekDay: Boolean = false): String
 
-    fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);
-
-    fun fireEventReminder(context: Context, formatter: EventFormatterInterface)
-
-    fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord)
+    fun formatSnoozedUntil(event: EventAlertRecord): String
 }

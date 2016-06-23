@@ -36,7 +36,8 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.textutils.formatTime
+import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import java.util.*
@@ -47,6 +48,8 @@ open class SnoozeActivityNoRecents : Activity() {
     lateinit var snoozePresets: LongArray
 
     lateinit var settings: Settings
+
+    lateinit var formatter: EventFormatterInterface
 
     val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
     val calendarProvider: CalendarProviderInterface = CalendarProvider
@@ -90,6 +93,7 @@ open class SnoozeActivityNoRecents : Activity() {
         val currentTime = System.currentTimeMillis()
 
         settings = Settings(this)
+        formatter = EventFormatter(this)
 
         // Populate event details
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
@@ -162,7 +166,7 @@ open class SnoozeActivityNoRecents : Activity() {
                     else
                         ev.title;
 
-            val (line1, line2) = ev.formatTime(this);
+            val (line1, line2) = formatter.formatDateTimeTwoLines(ev);
 
             val location = ev.location;
             if (location != "") {

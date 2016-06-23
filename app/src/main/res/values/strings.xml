@@ -218,4 +218,6 @@
     <string name="special_thanks_to">Special thanks to:</string>
 
     <string name="usage_hints">Usage hints:</string>
+
+    <string name="hyphen" translatable="false">—</string>
 </resources>

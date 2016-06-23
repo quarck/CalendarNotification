@@ -31,6 +31,7 @@ object Consts {
 
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
 
+    const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val HOUR_IN_SECONDS: Long = 3600L
     const val MINUTE_IN_SECONDS: Long = 60L;

@@ -61,7 +61,7 @@ class EventsStorageImplV7()
                 "$KEY_COLOR INTEGER, " +
                 "$KEY_IS_REPEATING TEXT, " +
 
-                "$KEY_RESERVED_INT2 TEXT, " +
+                "$KEY_ALL_DAY TEXT, " +
                 "$KEY_RESERVED_INT3 TEXT, " +
 
                 "$KEY_RESERVED_STR1 TEXT, " +
@@ -273,9 +273,9 @@ class EventsStorageImplV7()
         values.put(KEY_DISPLAY_STATUS, event.displayStatus.code);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
+        values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
 
         // Fill reserved keys with some placeholders
-        values.put(KEY_RESERVED_INT2, 0L)
         values.put(KEY_RESERVED_INT3, 0L)
 
         values.put(KEY_RESERVED_STR1, "")
@@ -288,21 +288,22 @@ class EventsStorageImplV7()
     private fun cursorToEventRecord(cursor: Cursor): EventAlertRecord {
 
         return EventAlertRecord(
-            calendarId = (cursor.getLong(0) as Long?) ?: -1L,
-            eventId = cursor.getLong(1),
-            alertTime = cursor.getLong(2),
-            notificationId = cursor.getInt(3),
-            title = cursor.getString(4),
-            startTime = cursor.getLong(5),
-            endTime = cursor.getLong(6),
-            instanceStartTime = cursor.getLong(7),
-            instanceEndTime = cursor.getLong(8),
-            location = cursor.getString(9),
-            snoozedUntil = cursor.getLong(10),
-            lastEventVisibility = cursor.getLong(11),
-            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(12)),
-            color = cursor.getInt(13),
-            isRepeating = cursor.getInt(14) != 0
+            calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
+            eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
+            alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
+            notificationId = cursor.getInt(PROJECTION_KEY_NOTIFICATIONID),
+            title = cursor.getString(PROJECTION_KEY_TITLE),
+            startTime = cursor.getLong(PROJECTION_KEY_START),
+            endTime = cursor.getLong(PROJECTION_KEY_END),
+            instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
+            instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
+            location = cursor.getString(PROJECTION_KEY_LOCATION),
+            snoozedUntil = cursor.getLong(PROJECTION_KEY_SNOOZED_UNTIL),
+            lastEventVisibility = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
+            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
+            color = cursor.getInt(PROJECTION_KEY_COLOR),
+            isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,
+            isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
         )
     }
 
@@ -316,6 +317,7 @@ class EventsStorageImplV7()
         private const val KEY_EVENTID = "eventId"
 
         private const val KEY_IS_REPEATING = "i1"
+        private const val KEY_ALL_DAY = "i2"
 
         private const val KEY_NOTIFICATIONID = "notificationId"
         private const val KEY_TITLE = "title"
@@ -334,7 +336,6 @@ class EventsStorageImplV7()
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
 
-        private const val KEY_RESERVED_INT2 = "i2"
         private const val KEY_RESERVED_INT3 = "i3"
 
         private val SELECT_COLUMNS = arrayOf<String>(
@@ -352,7 +353,25 @@ class EventsStorageImplV7()
             KEY_LAST_EVENT_VISIBILITY,
             KEY_DISPLAY_STATUS,
             KEY_COLOR,
-            KEY_IS_REPEATING
+            KEY_IS_REPEATING,
+            KEY_ALL_DAY
         )
+
+        const val PROJECTION_KEY_CALENDAR_ID = 0;
+        const val PROJECTION_KEY_EVENTID = 1;
+        const val PROJECTION_KEY_ALERT_TIME = 2;
+        const val PROJECTION_KEY_NOTIFICATIONID = 3;
+        const val PROJECTION_KEY_TITLE = 4;
+        const val PROJECTION_KEY_START = 5;
+        const val PROJECTION_KEY_END = 6;
+        const val PROJECTION_KEY_INSTANCE_START = 7;
+        const val PROJECTION_KEY_INSTANCE_END = 8;
+        const val PROJECTION_KEY_LOCATION = 9;
+        const val PROJECTION_KEY_SNOOZED_UNTIL = 10;
+        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 11;
+        const val PROJECTION_KEY_DISPLAY_STATUS = 12;
+        const val PROJECTION_KEY_COLOR = 13;
+        const val PROJECTION_KEY_IS_REPEATING = 14;
+        const val PROJECTION_KEY_ALL_DAY = 15;
     }
 }

@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.calendar
 data class EventAlertRecord(
     val calendarId: Long,
     val eventId: Long,
+    var isAllDay: Boolean,
     var isRepeating: Boolean,
     var alertTime: Long,
     var notificationId: Int,
@@ -58,6 +59,11 @@ fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
 
     if (endTime != newEvent.endTime) {
         endTime = newEvent.endTime
+        ret = true
+    }
+
+    if (isAllDay != newEvent.isAllDay) {
+        isAllDay = newEvent.isAllDay
         ret = true
     }
 
@@ -99,6 +105,11 @@ fun EventAlertRecord.updateFrom(newEvent: EventRecord): Boolean {
 
     if (color != newEvent.color) {
         color = newEvent.color
+        ret = true
+    }
+
+    if (isAllDay != newEvent.isAllDay) {
+        isAllDay = newEvent.isAllDay
         ret = true
     }
 

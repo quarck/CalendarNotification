@@ -36,8 +36,8 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.textutils.dateRangeOneLine
-import com.github.quarck.calnotify.textutils.formatNotificationSecondaryText
+import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.backgroundWakeLocked
@@ -47,7 +47,7 @@ import com.github.quarck.calnotify.utils.setShowWhenCompat
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
-    override fun onEventAdded(ctx: Context, event: EventAlertRecord) {
+    override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
             // not using threshold when event is just added
@@ -55,10 +55,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 lastEventVisibility = System.currentTimeMillis())
         }
 
-        postEventNotifications(ctx, false, event.eventId);
+        postEventNotifications(ctx, formatter, false, event.eventId);
     }
 
-    override fun onEventRestored(context: Context, event: EventAlertRecord) {
+    override fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
         EventsStorage(context).use {
             it.updateEvent(event,
                 // do not update last event visibility, so preserve original sorting order in the activity
@@ -66,17 +66,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 displayStatus = EventDisplayStatus.Hidden)
         }
 
-        postEventNotifications(context, true, event.eventId);
+        postEventNotifications(context, formatter, true, event.eventId);
     }
 
-    override fun onEventDismissed(context: Context, eventId: Long, notificationId: Int) {
+    override fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, eventId, notificationId);
-        postEventNotifications(context, false, null);
+        postEventNotifications(context, formatter, false, null);
     }
 
-    override fun onEventSnoozed(context: Context, eventId: Long, notificationId: Int) {
+    override fun onEventSnoozed(context: Context, formatter: EventFormatterInterface,eventId: Long, notificationId: Int) {
         removeNotification(context, eventId, notificationId);
-        postEventNotifications(context, false, null);
+        postEventNotifications(context, formatter, false, null);
     }
 
     override fun onAllEventsSnoozed(context: Context) {
@@ -100,7 +100,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     }
 
-    override fun postEventNotifications(context: Context, force: Boolean, primaryEventId: Long?) {
+    override fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?) {
         //
         val settings = Settings(context)
 
@@ -131,6 +131,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             postedAnyNotification =
                 postDisplayedEventNotifications(
                     context, db, settings,
+                    formatter,
                     recentEvents,
                     force, isQuietPeriodActive,
                     primaryEventId)
@@ -143,7 +144,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             wakeScreenIfRequired(context, settings);
     }
 
-    override fun fireEventReminder(context: Context) {
+    override fun fireEventReminder(context: Context, formatter: EventFormatterInterface) {
 
         val mostRecentEvent =
             EventsStorage(context).use {
@@ -159,6 +160,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             postNotification(
                 context,
+                formatter,
                 mostRecentEvent,
                 settings.notificationSettingsSnapshot
             )
@@ -200,6 +202,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context: Context,
         db: EventsStorage,
         settings: Settings,
+        formatter: EventFormatterInterface,
         events: List<EventAlertRecord>,
         force: Boolean,
         isQuietPeriodActive: Boolean,
@@ -258,7 +261,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
-                    postNotification(context, event,
+                    postNotification(context, formatter, event,
                         if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings)
 
                     // Update db to indicate that this event is currently actively displayed
@@ -275,7 +278,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
 
-                postNotification(context, event,
+                postNotification(context, formatter, event,
                     if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
@@ -310,6 +313,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     @Suppress("DEPRECATION")
     private fun postNotification(
         ctx: Context,
+        formatter: EventFormatterInterface,
         event: EventAlertRecord,
         notificationSettings: NotificationSettingsSnapshot
     ) {
@@ -324,7 +328,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
                     PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notificationText = event.formatNotificationSecondaryText(ctx);
+        val notificationText = formatter.formatNotificationSecondaryText(event);
 
         val builder = Notification.Builder(ctx)
             .setContentTitle(event.title)

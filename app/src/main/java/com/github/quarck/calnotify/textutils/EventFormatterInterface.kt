@@ -19,17 +19,7 @@
 
 package com.github.quarck.calnotify.textutils
 
-import android.content.Context
-import android.text.format.DateUtils
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.displayedEndTime
-import com.github.quarck.calnotify.calendar.displayedStartTime
-import com.github.quarck.calnotify.utils.dayEquals
-import com.github.quarck.calnotify.utils.sameCalendarDay
-import java.text.DateFormat
-import java.util.*
 
 interface EventFormatterInterface {
 

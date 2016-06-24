@@ -46,9 +46,8 @@ class TestButtonsAndToDoActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_buttons_and_to_do)
-
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<TextView>(R.id.log).text = "-- DISABLED - FOREVER --"
+        find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = settings.removeOriginal
     }
 
 
@@ -90,11 +89,6 @@ class TestButtonsAndToDoActivity : Activity() {
 
     private val filterText: String
         get() = find<EditText>(R.id.edittext_debug_event_id).text.toString()
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonFilterClick(v: View) {
-        find<TextView>(R.id.log).text = " -- DISABLED --- FOREVER -- "
-    }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonViewClick(v: View) {
@@ -141,6 +135,7 @@ class TestButtonsAndToDoActivity : Activity() {
             ));
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonStrEvClick(v: View) {
 
         var currentTime = System.currentTimeMillis()
@@ -176,40 +171,38 @@ class TestButtonsAndToDoActivity : Activity() {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonTestClick(v: View) {
+    fun OnButtonAddRandomEventClick(v: View) {
 
-        val first = (v.id == R.id.buttonTest);
+        val currentTime = System.currentTimeMillis();
 
-        if (first) {
-            settings.quietHoursOneTimeReminderEnabled = true
-            ApplicationController.onMainActivityResumed(this, true)
-        } else {
-            val currentTime = System.currentTimeMillis();
+        val eventId = 10000000L + (currentTime % 1000L)
 
-            val eventId = if (first) 101010101L else 10000000L + (currentTime % 1000L)
+        val event = EventAlertRecord(
+            -1L,
+            eventId,
+            false,
+            false,
+            System.currentTimeMillis(),
+            0,
+            randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
+            currentTime + 3600L * 1000L,
+            currentTime + 2 * 3600L * 1000L,
+            currentTime + 3600L * 1000L,
+            currentTime + 2 * 3600L * 1000L,
+            if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
+            System.currentTimeMillis(),
+            0L,
+            EventDisplayStatus.Hidden,
+            0xff660066.toInt()
+        )
 
-            val event = EventAlertRecord(
-                -1L,
-                eventId,
-                false,
-                false,
-                System.currentTimeMillis(),
-                0,
-                if (first) "Test Notification" else randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-                currentTime + 3600L * 1000L,
-                currentTime + 2 * 3600L * 1000L,
-                currentTime + 3600L * 1000L,
-                currentTime + 2 * 3600L * 1000L,
-                if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
-                System.currentTimeMillis(),
-                0L,
-                EventDisplayStatus.Hidden,
-                0xff660066.toInt()
-            )
+        cnt++;
 
-            cnt++;
+        ApplicationController.onCalendarEventFired(this, event)
+    }
 
-            ApplicationController.onCalendarEventFired(this, event)
-        }
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonToggleRemoveClick(v: View) {
+        settings.removeOriginal = find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked
     }
 }

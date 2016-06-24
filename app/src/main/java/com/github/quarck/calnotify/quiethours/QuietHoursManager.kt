@@ -21,7 +21,7 @@ package com.github.quarck.calnotify.quiethours
 
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.createCalendarTime
+import com.github.quarck.calnotify.utils.DateTimeUtils
 import java.util.*
 
 object QuietHoursManager: QuietHoursManagerInterface {
@@ -50,10 +50,10 @@ object QuietHoursManager: QuietHoursManagerInterface {
         cal.timeInMillis = currentTime
 
         val from = settings.quietHoursFrom
-        var silentFrom = createCalendarTime(currentTime, from.component1(), from.component2())
+        val silentFrom = DateTimeUtils.createCalendarTime(currentTime, from.component1(), from.component2())
 
         val to = settings.quietHoursTo
-        var silentTo = createCalendarTime(currentTime, to.component1(), to.component2())
+        val silentTo = DateTimeUtils.createCalendarTime(currentTime, to.component1(), to.component2())
 
         logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
 
@@ -88,7 +88,7 @@ object QuietHoursManager: QuietHoursManagerInterface {
 
     override fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
-        var ret = LongArray(currentTimes.size)
+        val ret = LongArray(currentTimes.size)
 
         if (!isEnabled(settings))
             return ret
@@ -99,16 +99,16 @@ object QuietHoursManager: QuietHoursManagerInterface {
         val cals =
             Array<Calendar>(ret.size, {
                 idx ->
-                var cal = Calendar.getInstance()
+                val cal = Calendar.getInstance()
                 cal.timeInMillis = currentTimes[idx]
                 cal
             })
 
         val from = settings.quietHoursFrom
-        var silentFrom: Calendar = createCalendarTime(currentTimes[0], from.component1(), from.component2())
+        val silentFrom: Calendar = DateTimeUtils.createCalendarTime(currentTimes[0], from.component1(), from.component2())
 
         val to = settings.quietHoursTo
-        var silentTo = createCalendarTime(currentTimes[0], to.component1(), to.component2())
+        val silentTo = DateTimeUtils.createCalendarTime(currentTimes[0], to.component1(), to.component2())
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
         silentFrom.add(Calendar.DATE, -1);

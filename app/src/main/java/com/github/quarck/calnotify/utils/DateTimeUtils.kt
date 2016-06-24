@@ -19,30 +19,47 @@
 
 package com.github.quarck.calnotify.utils
 
-import android.content.Context
-import android.text.format.DateUtils
-import android.text.format.Time
 import java.util.*
 
+object DateTimeUtils {
 
-fun Calendar.dayEquals(other: Calendar)
-        = this.get(Calendar.YEAR) == other.get(Calendar.YEAR) &&
-        this.get(Calendar.DAY_OF_YEAR) == other.get(Calendar.DAY_OF_YEAR);
+    val timeZoneName = "UTC"
 
-fun createCalendarTime(timeMillis: Long, hour: Int, minute: Int): Calendar {
-    val ret = Calendar.getInstance()
-    ret.timeInMillis = timeMillis
-    ret.set(Calendar.HOUR_OF_DAY, hour)
-    ret.set(Calendar.MINUTE, minute)
-    ret.set(Calendar.SECOND, 0)
-    return ret
+    val utcTimeZone: TimeZone by lazy { java.util.TimeZone.getTimeZone(timeZoneName) }
+
+    fun createUTCCalendarTime(timeMillis: Long): Calendar {
+        val ret = Calendar.getInstance(utcTimeZone)
+        ret.timeInMillis = timeMillis
+        return ret
+    }
+
+    fun createCalendarTime(timeMillis: Long, hour: Int, minute: Int): Calendar {
+        val ret = Calendar.getInstance()
+        ret.timeInMillis = timeMillis
+        ret.set(Calendar.HOUR_OF_DAY, hour)
+        ret.set(Calendar.MINUTE, minute)
+        ret.set(Calendar.SECOND, 0)
+        return ret
+    }
+
+    fun createCalendarTime(timeMillis: Long): Calendar {
+        val ret = Calendar.getInstance()
+        ret.timeInMillis = timeMillis
+        return ret
+    }
+
+    fun calendarDayEquals(left: Calendar, right: Calendar)
+        = left.get(Calendar.YEAR) == right.get(Calendar.YEAR) &&
+        left.get(Calendar.DAY_OF_YEAR) == right.get(Calendar.DAY_OF_YEAR);
+
+    fun calendarDayEquals(timeMillisLeft: Long, timeMillisRight: Long) =
+        calendarDayEquals(createCalendarTime(timeMillisLeft), createCalendarTime(timeMillisRight))
+
+
+    // very special case required for calendar full-day events, such events
+    // are stored in UTC format, so to check if event is today we have to
+    // convert current date in local time zone into year / day of year and compare
+    // it with event time in UTC converted to year / day of year
+    fun isUTCToday(timeInUTC: Long) =
+        calendarDayEquals(createUTCCalendarTime(timeInUTC), createCalendarTime(System.currentTimeMillis()))
 }
-
-fun createCalendarTime(timeMillis: Long): Calendar {
-    val ret = Calendar.getInstance()
-    ret.timeInMillis = timeMillis
-    return ret
-}
-
-fun sameCalendarDay(timeMillisLeft: Long, timeMillisRight: Long)
-    = createCalendarTime(timeMillisLeft).dayEquals(createCalendarTime(timeMillisRight))

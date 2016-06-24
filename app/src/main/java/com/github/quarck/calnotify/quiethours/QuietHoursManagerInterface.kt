@@ -20,9 +20,6 @@
 package com.github.quarck.calnotify.quiethours
 
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.createCalendarTime
-import java.util.*
 
 interface QuietHoursManagerInterface {
 

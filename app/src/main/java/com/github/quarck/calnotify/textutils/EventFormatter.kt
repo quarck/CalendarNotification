@@ -21,37 +21,32 @@ package com.github.quarck.calnotify.textutils
 
 import android.content.Context
 import android.text.format.DateUtils
+import android.text.format.Formatter
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.displayedEndTime
 import com.github.quarck.calnotify.calendar.displayedStartTime
-import com.github.quarck.calnotify.utils.dayEquals
-import com.github.quarck.calnotify.utils.sameCalendarDay
-import java.text.DateFormat
+import com.github.quarck.calnotify.utils.DateTimeUtils
 import java.util.*
 
 class EventFormatter(val ctx: Context): EventFormatterInterface {
 
-    fun getDayName(ctx: Context, time: Long, showWeekDay: Boolean) =
-        when {
-            DateUtils.isToday(time) ->
-                ctx.resources.getString(R.string.today)
+    private val defaultLocale by lazy { Locale.getDefault() }
 
-            DateUtils.isToday(time - Consts.DAY_IN_MILLISECONDS) ->
-                ctx.resources.getString(R.string.tomorrow)
+    private fun formatDateRangeUTC(startMillis: Long, endMillis: Long, flags: Int): String {
+        val formatter = Formatter(StringBuilder(60), defaultLocale)
+        return DateUtils.formatDateRange(ctx, formatter, startMillis, endMillis,
+            flags, DateTimeUtils.timeZoneName).toString()
+    }
 
-            else ->
-                DateUtils.formatDateTime(
-                    ctx, time,
-                    DateUtils.FORMAT_SHOW_DATE or
-                        (if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0))
-        }
+    private fun formatDateTimeUTC(startMillis: Long, flags: Int) =
+        formatDateRangeUTC(startMillis, startMillis, flags)
 
     override fun formatNotificationSecondaryText(event: EventAlertRecord): String {
         val sb = StringBuilder()
 
-        sb.append(formatDateTimeOneLineRegular(event, false))
+        sb.append(formatDateTimeOneLine(event, false))
 
         if (event.location != "") {
             sb.append("\n")
@@ -62,7 +57,6 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
 
         return sb.toString()
     }
-
 
     override fun formatDateTimeTwoLines(event: EventAlertRecord, showWeekDay: Boolean): Pair<String, String>  =
         when {
@@ -115,7 +109,7 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
                         ctx, startTime, DateUtils.FORMAT_SHOW_TIME)
             } else {
                 // not tomorrow...
-                if (sameCalendarDay(startTime, endTime)) {
+                if (DateTimeUtils.calendarDayEquals(startTime, endTime)) {
                     // but same start and and days (so end can't be zero)
                     line1 = DateUtils.formatDateTime(
                         ctx, startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag)
@@ -146,40 +140,48 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
 
         val ret: Pair<String, String>
 
+        // A bit of a hack here: full day events are pointing to the millisecond after
+        // the time period, and it is already +1 day, so substract 1s to make formatting work correct
+        // also all-day events ignoring timezone, so should be printed as UTC
         val startTime = event.displayedStartTime
-        val endTime = event.displayedEndTime
+        var endTime = event.displayedEndTime
+        if (endTime != 0L)
+            endTime -= 1000L
+        else
+            endTime = startTime
 
-        val startIsToday = DateUtils.isToday(startTime)
-        val endIsToday = DateUtils.isToday(endTime)
+        val startIsToday = DateTimeUtils.isUTCToday(startTime)
+        val endIsToday = DateTimeUtils.isUTCToday(endTime)
 
         val weekFlag = if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0
 
-        if (startIsToday && (endIsToday || endTime == 0L)) {
+        if (startIsToday && endIsToday) {
             // full day one-day event that is today
             ret = Pair(ctx.resources.getString(R.string.today), "")
         } else {
-            val startIsTomorrow = DateUtils.isToday(startTime - Consts.DAY_IN_MILLISECONDS)
-            val endIsTomorrow = DateUtils.isToday(endTime - Consts.DAY_IN_MILLISECONDS)
+            val startIsTomorrow = DateTimeUtils.isUTCToday(startTime - Consts.DAY_IN_MILLISECONDS)
+            val endIsTomorrow = DateTimeUtils.isUTCToday(endTime - Consts.DAY_IN_MILLISECONDS)
 
-            if (startIsTomorrow && (endIsTomorrow || endTime == 0L)) {
+            if (startIsTomorrow && endIsTomorrow) {
                 // full-day one-day event that is tomorrow
                 ret = Pair(ctx.resources.getString(R.string.tomorrow), "")
             } else {
                 // otherwise -- format full range if we have end time, or just start time
                 // if we only have start time
-                if (endTime != 0L) {
-                    val from = DateUtils.formatDateTime(
-                        ctx, startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag)
+                if (!DateTimeUtils.calendarDayEquals(startTime, endTime)) {
 
-                    val to = DateUtils.formatDateTime(
-                        ctx, endTime, DateUtils.FORMAT_SHOW_DATE or weekFlag);
+                    val from = formatDateTimeUTC(
+                        startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag)
+
+                    val to = formatDateTimeUTC(
+                        endTime, DateUtils.FORMAT_SHOW_DATE or weekFlag);
 
                     val hyp = ctx.resources.getString(R.string.hyphen)
 
                     ret = Pair("$from $hyp", to)
                 } else {
-                    ret = Pair(DateUtils.formatDateTime(
-                            ctx, startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag), "")
+                    ret = Pair(formatDateTimeUTC(
+                            startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag), "")
                 }
             }
         }
@@ -241,35 +243,47 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
 
     private fun formatDateTimeOneLineAllDay(event: EventAlertRecord, showWeekDay: Boolean = false): String {
 
+        // A bit of a hack here: full day events are pointing to the millisecond after
+        // the time period, and it is already +1 day, so substract 1s to make formatting work correct
+        // also all-day events ignoring timezone, so should be printed as UTC
         val startTime = event.displayedStartTime
-        val endTime = event.displayedEndTime
+        var endTime = event.displayedEndTime
+        if (endTime != 0L)
+            endTime -= 1000L
+        else
+            endTime = startTime
 
-        val startIsToday = DateUtils.isToday(startTime)
-        val endIsToday = DateUtils.isToday(endTime)
+        val startIsToday = DateTimeUtils.isUTCToday(startTime)
+        val endIsToday = DateTimeUtils.isUTCToday(endTime)
 
         val weekFlag = if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0
 
         val ret: String
 
-        if (startIsToday && (endIsToday || endTime == 0L)) {
+        if (startIsToday && endIsToday) {
             // full day one-day event that is today
             ret = ctx.resources.getString(R.string.today)
         } else {
-            val startIsTomorrow = DateUtils.isToday(startTime - Consts.DAY_IN_MILLISECONDS)
-            val endIsTomorrow = DateUtils.isToday(endTime - Consts.DAY_IN_MILLISECONDS)
+            val startIsTomorrow = DateTimeUtils.isUTCToday(startTime - Consts.DAY_IN_MILLISECONDS)
+            val endIsTomorrow = DateTimeUtils.isUTCToday(endTime - Consts.DAY_IN_MILLISECONDS)
 
-            if (startIsTomorrow && (endIsTomorrow || endTime == 0L)) {
+            if (startIsTomorrow && endIsTomorrow) {
                 // full-day one-day event that is tomorrow
                 ret = ctx.resources.getString(R.string.tomorrow)
             } else {
                 // otherwise -- format full range if we have end time, or just start time
                 // if we only have start time
-                if (endTime != 0L) {
-                    ret = DateUtils.formatDateRange(ctx, startTime, endTime,
-                        DateUtils.FORMAT_SHOW_DATE or weekFlag)
+
+                if (!DateTimeUtils.calendarDayEquals(startTime, endTime)) {
+                    val from = formatDateTimeUTC(startTime, DateUtils.FORMAT_SHOW_DATE  or weekFlag)
+
+                    val to = DateUtils.formatDateTime(ctx, endTime, DateUtils.FORMAT_SHOW_DATE or weekFlag)
+
+                    val hyp = ctx.resources.getString(R.string.hyphen)
+
+                    ret = "$from $hyp $to"
                 } else {
-                    ret = DateUtils.formatDateTime(ctx, startTime,
-                        DateUtils.FORMAT_SHOW_DATE or weekFlag)
+                    ret = formatDateTimeUTC(startTime, DateUtils.FORMAT_SHOW_DATE or weekFlag)
                 }
             }
         }
@@ -297,5 +311,4 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
 
         return ret
     }
-
 }

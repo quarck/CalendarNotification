@@ -38,36 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text=
-"WARNING:\n\nTHIS ACTIVITY IS FOR DEBUGGING PURPOSE ONLY\nPLEASE LEAVE IT NOW\nNO USABLE OR 'HIDDEN' APP FUNCTIONALITY CAN BE FOUND HERE\n\n\nDISCLAIMER:\n\nIf debug transaction log (DBG LOG) is enabled (off by default), app would collect some debug information about when event has fired, when notification was dismissed or snoozed, etc. None of such information is transferred to Internet or to any 3rd party. All the data is stored locally. All the data is wiped when debug transaction log is disabled. \nIF YOU ARE NOT DEVELOPER OF THIS APP - DON NOT ENABLE IT.\n\nAPP ONGOING TODO:
-\n0) [DONE] Highlighted view for text buttons
-\n1) [DONE] Watch calendar updates
-\n2) [DONE] Snooze vs Reschedule
-\n3) [DONE] List of events on main activity
-\n4) [DONE] Variable snooze times
-\n5) [IGNORE] Action for location
-\n6) [DONE] Re-load all monitored details on startup from calendar provider
-\n7) [DONE] Load colors for calendars
-\n8) Support undo on main view
-\n9) [IGNORE] Reschedules must be confirmed first
-\n10) [KIND OF DONE] Collect all own logs
-\n11) [IGNORE] Different icon - add alarm or bell symbol to existing one
-\n12) [DONE] Clickable location on the snooze screen
-\n13) [KIND OF DONE] Clickable \'Today\' and event time -- bring event edit activity
-\n14) [DONE] Limit max height of the card
-\n15) [DONE] Load events in background\n\n"
+                android:text="
+WARNING!\n\nNo usable hidden functionality canbe found here\nThis Activity is purely for debug purpose\nif you want to play with it - use it at your own risk!\n\n\n\n\n\n\n\n\n\n"
                 android:id="@+id/todo"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingBottom="16dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Debug log entries (if any):"
-                android:id="@+id/log_ent_title"
+                android:visibility="visible"
                 />
 
             <LinearLayout
@@ -88,17 +62,6 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FILTER"
-                    android:id="@+id/test_btn_filter"
-                    android:onClick="OnButtonFilterClick"
-                    android:padding="4dp"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="visible"
-                    android:background="?android:attr/selectableItemBackground"
-                    />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="VIEW"
                     android:id="@+id/test_btn_view"
                     android:onClick="OnButtonViewClick"
@@ -110,73 +73,37 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
+            <Button
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text=""
-                android:id="@+id/log"
+                android:text="ADD RANDOM EVENT"
+                android:id="@+id/buttonTest2"
+                android:onClick="OnButtonAddRandomEventClick"
+                android:visibility="visible"
+                android:padding="24dp"
                 />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TEST 1"
-                    android:id="@+id/buttonTest"
-                    android:onClick="OnButtonTestClick"
-                    android:padding="4dp"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="visible"
-                    android:background="?android:attr/selectableItemBackground"
-                    />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POST DEMO EVENTS FOR PLAY STORE"
+                android:id="@+id/buttonTest3"
+                android:onClick="OnButtonStrEvClick"
+                android:visibility="visible"
+                android:padding="24dp"
+                />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/dividerVertical"
-                    />
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTestToggleRemove"
+                android:onClick="OnButtonToggleRemoveClick"
+                android:visibility="visible"
+                android:textOn="REMOVING ORIGINAL EVENT"
+                android:textOff="NOT REMOVING ORIGINAL EVENT"
+                android:padding="24dp"
+                />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TEST 2"
-                    android:id="@+id/buttonTest2"
-                    android:onClick="OnButtonTestClick"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="visible"
-                    android:padding="4dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/dividerVertical"
-                    />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="POST STR"
-                    android:id="@+id/buttonTest3"
-                    android:onClick="OnButtonStrEvClick"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="visible"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:padding="4dp"
-                    />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/dividerVertical"
-                    />
-
-            </LinearLayout>
 
         </LinearLayout>
 

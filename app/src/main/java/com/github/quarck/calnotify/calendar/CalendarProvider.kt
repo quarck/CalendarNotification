@@ -49,16 +49,16 @@ object CalendarProvider: CalendarProviderInterface {
 
     private val PROJECTION_INDEX_EVENT_ID = 0
     private val PROJECTION_INDEX_STATE = 1
-    private val PROJECTION_INDEX_CALENDAR_ID = 3
-    private val PROJECTION_INDEX_TITLE = 4
-    private val PROJECTION_INDEX_DTSTART = 5
-    private val PROJECTION_INDEX_DTEND = 6
-    private val PROJECTION_INDEX_LOCATION = 7
-    private val PROJECTION_INDEX_COLOR  = 8
-    private val PROJECTION_INDEX_ALARM_TIME = 9
-    private val PROJECTION_INDEX_INSTANCE_BEGIN = 10
-    private val PROJECTION_INDEX_INSTANCE_END = 11
-    private val PROJECTION_INDEX_ALL_DAY = 12
+    private val PROJECTION_INDEX_CALENDAR_ID = 2
+    private val PROJECTION_INDEX_TITLE = 3
+    private val PROJECTION_INDEX_DTSTART = 4
+    private val PROJECTION_INDEX_DTEND = 5
+    private val PROJECTION_INDEX_LOCATION = 6
+    private val PROJECTION_INDEX_COLOR  = 7
+    private val PROJECTION_INDEX_ALARM_TIME = 8
+    private val PROJECTION_INDEX_INSTANCE_BEGIN = 9
+    private val PROJECTION_INDEX_INSTANCE_END = 10
+    private val PROJECTION_INDEX_ALL_DAY = 11
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 

@@ -90,7 +90,7 @@
                     android:paddingRight="@dimen/snooze_view_img_padding_end"
                     android:paddingLeft="@dimen/snooze_view_img_padding_start"
                     android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                    android:paddingBottom="@dimen/snooze_view_img_topbottom"
+                    android:paddingBottom="10dp"
                     />
 
                 <TextView

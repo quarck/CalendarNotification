@@ -182,7 +182,11 @@ open class SnoozeActivityNoRecents : Activity() {
             val dateTimeSecondLine = find<TextView>(R.id.snooze_view_event_date_line2)
 
             dateTimeFirstLine.text = line1;
-            dateTimeSecondLine.text = line2;
+
+            if (line2.isEmpty())
+                dateTimeSecondLine.visibility = View.GONE
+            else
+                dateTimeSecondLine.text = line2;
 
             val onClick = View.OnClickListener { CalendarIntents.viewCalendarEvent(this, ev) }
 

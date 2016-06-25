@@ -19,13 +19,14 @@
 
 package com.github.quarck.calnotify.utils
 
+import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
 object DateTimeUtils {
 
-    val timeZoneName = "UTC"
+    val utcTimeZoneName = "UTC"
 
-    val utcTimeZone: TimeZone by lazy { java.util.TimeZone.getTimeZone(timeZoneName) }
+    val utcTimeZone: TimeZone by lazy { java.util.TimeZone.getTimeZone(utcTimeZoneName) }
 
     fun createUTCCalendarTime(timeMillis: Long): Calendar {
         val ret = Calendar.getInstance(utcTimeZone)
@@ -48,13 +49,15 @@ object DateTimeUtils {
         return ret
     }
 
-    fun calendarDayEquals(left: Calendar, right: Calendar)
-        = left.get(Calendar.YEAR) == right.get(Calendar.YEAR) &&
-        left.get(Calendar.DAY_OF_YEAR) == right.get(Calendar.DAY_OF_YEAR);
+    fun calendarDayEquals(left: Calendar, right: Calendar) =
+        left.get(Calendar.YEAR) == right.get(Calendar.YEAR)
+            && left.get(Calendar.DAY_OF_YEAR) == right.get(Calendar.DAY_OF_YEAR)
 
     fun calendarDayEquals(timeMillisLeft: Long, timeMillisRight: Long) =
         calendarDayEquals(createCalendarTime(timeMillisLeft), createCalendarTime(timeMillisRight))
 
+    fun calendarDayUTCEquals(timeMillisLeft: Long, timeMillisRight: Long) =
+        calendarDayEquals(createUTCCalendarTime(timeMillisLeft), createUTCCalendarTime(timeMillisRight))
 
     // very special case required for calendar full-day events, such events
     // are stored in UTC format, so to check if event is today we have to

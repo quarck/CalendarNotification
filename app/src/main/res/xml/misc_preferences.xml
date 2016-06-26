@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- PreferenceScreen
+        android:title="@string/misc_settings"
+        android:key="pref_key_misc" -->
+
+        <CheckBoxPreference
+            android:key="abort_broadcast"
+            android:title="@string/abort_broadcast"
+            android:summary="@string/abort_broadcast_summary"
+            android:defaultValue="false"/>
+
+</PreferenceScreen>

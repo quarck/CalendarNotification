@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <CheckBoxPreference
+            android:key="forward_to_pebble"
+            android:title="@string/forward_to_pebble"
+            android:summary="@string/forward_to_pebble_summary"
+            android:defaultValue="false"/>
+
+
+        <CheckBoxPreference
+            android:key="pebble_text_in_title"
+            android:title="@string/pebble_event_text_in_the_title"
+            android:summary="@string/pebble_event_text_in_the_title_summary"
+            android:defaultValue="false"
+            android:dependency="forward_to_pebble"/>
+
+</PreferenceScreen>

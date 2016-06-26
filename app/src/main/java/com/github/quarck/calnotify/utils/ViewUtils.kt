@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.utils
 
 import android.app.Activity
 import android.view.View
+import android.support.v4.app.Fragment
 
 
 @Suppress("UNCHECKED_CAST")
@@ -29,3 +30,5 @@ fun <T> View.find(id: Int) = findViewById(id) as T
 @Suppress("UNCHECKED_CAST")
 fun <T> Activity.find(id: Int) = findViewById(id) as T
 
+@Suppress("UNCHECKED_CAST")
+fun <T> Fragment.find(id: Int) = view?.findViewById(id) as T?

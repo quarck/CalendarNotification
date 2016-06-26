@@ -1,0 +1,310 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="0dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:context=".ui.MainActivity"
+                tools:showIn="@layout/activity_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity_main_bottom_indicators"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/activity_main_new_style_message_layout"
+            android:orientation="vertical"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:visibility="visible"
+                />
+
+            <TextView
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compact_view_is_a_default_style_now"
+
+                android:id="@+id/text_view_style_message"
+
+                android:textAppearance="?android:textAppearanceSmall"
+
+                android:textColor="@color/primary_text"
+                android:gravity="left"
+
+                android:paddingTop="2dp"
+                android:paddingBottom="1dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compact_view_explanation"
+
+                android:textAppearance="?android:textAppearanceSmall"
+
+                android:textColor="@color/primary_text"
+                android:gravity="left"
+
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="right"
+                >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/switch_to_cards"
+                    android:id="@+id/activity_main_button_hate_new_style"
+                    android:visibility="visible"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/accent"
+
+                    android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:onClick="onRevertToCardViewClick"
+                    android:textStyle="bold"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ok"
+                    android:id="@+id/activity_main_button_new_style_ok"
+                    android:visibility="visible"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/accent"
+
+                    android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                    android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:onClick="onOKWithNewStyleClick"
+                    android:textStyle="bold"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_quiet_hours_info_layout"
+            android:visibility="gone"
+            android:background="@color/quiet_hours_active_background"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_quiet_hours"
+                android:text="Hello World"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/quiet_hours_active_text"
+                android:gravity="center"
+                android:padding="@dimen/text_view_main_activity_quiet_hrs_status_padding"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_reload_layout"
+            android:visibility="gone"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_reload"
+                android:id="@+id/activity_main_button_reload"
+                android:visibility="visible"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/accent"
+                android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="onReloadButtonClick"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_rationale"
+                android:text="@string/new_events_detected"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/primary_text"
+                android:gravity="left"
+                android:paddingTop="@dimen/activity_main_text_pading_top"
+                android:paddingBottom="@dimen/activity_main_text_pading_bottom"
+                android:paddingStart="@dimen/activity_main_text_pading_start"
+                android:paddingEnd="@dimen/activity_main_text_pading_end"
+                android:paddingRight="@dimen/activity_main_text_pading_end"
+                android:paddingLeft="@dimen/activity_main_text_pading_start"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toStartOf="@id/activity_main_button_reload"
+                android:layout_toLeftOf="@id/activity_main_button_reload"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_undo_layout"
+            android:visibility="gone"
+            android:background="@color/primary_text"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/undo"
+                android:id="@+id/activity_main_button_undo"
+                android:visibility="visible"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/accent"
+                android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
+                android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
+                android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:onClick="onUndoButtonClick"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/activity_main_undo_text"
+                android:text="@string/event_dismissed"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/icons"
+                android:gravity="left"
+                android:paddingTop="@dimen/activity_main_text_pading_top"
+                android:paddingBottom="@dimen/activity_main_text_pading_bottom"
+                android:paddingStart="@dimen/activity_main_text_pading_start"
+                android:paddingEnd="@dimen/activity_main_text_pading_end"
+                android:paddingRight="@dimen/activity_main_text_pading_end"
+                android:paddingLeft="@dimen/activity_main_text_pading_start"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toStartOf="@id/activity_main_button_undo"
+                android:layout_toLeftOf="@id/activity_main_button_undo"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/cardview_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/activity_main_bottom_indicators">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/secondary_text"
+        android:text="@string/no_events_to_display" />
+
+    <TextView
+        android:id="@+id/no_permissions_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/secondary_text"
+        android:text="@string/no_calendar_permissions_main" />
+
+</RelativeLayout>

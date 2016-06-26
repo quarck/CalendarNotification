@@ -22,24 +22,28 @@ package com.github.quarck.calnotify.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.TextView
 
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
-class AboutActivity : Activity() {
+class AboutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-//        android:id="@+id/text_view_app_version"
+        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        val versionText = find<TextView>(R.id.text_view_app_version)
+        val versionText = find<TextView?>(R.id.text_view_app_version)
 
         val pInfo = packageManager.getPackageInfo(packageName, 0);
-        versionText.text = pInfo.versionName
+        versionText?.text = pInfo.versionName
 
     }
 

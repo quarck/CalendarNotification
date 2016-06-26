@@ -1,0 +1,60 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+       <CheckBoxPreference
+            android:key="pref_key_enable_dismiss_button"
+            android:summary="@string/show_dismiss_summary"
+            android:title="@string/show_dismiss_button"
+            android:defaultValue="true"  />
+
+        <CheckBoxPreference
+            android:key="notification_led"
+            android:summary="@string/notification_light_summary"
+            android:title="@string/notification_light_title"
+            android:defaultValue="true" />
+        
+        <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
+            android:key="notification_led_color"
+            android:title="@string/led_color"
+            android:dependency="notification_led" />
+
+        <com.github.quarck.calnotify.prefs.LEDPatternPreference
+            android:key="notification_led_v2pattern"
+            android:title="@string/led_pattern"
+            android:dependency="notification_led"
+            android:defaultValue="300,2000"/>
+
+        <RingtonePreference
+            android:key="pref_key_ringtone"
+            android:summary="@string/ringtone_selection_summary"
+            android:title="@string/ringtone_selection"
+            android:ringtoneType="notification"
+            android:showSilent="false"
+            android:showDefault="true"
+            />
+
+        <CheckBoxPreference android:key="vibra_on"
+            android:title="@string/vibra_on"
+            android:defaultValue="true"/>
+
+        <ListPreference
+            android:key="pref_vibration_pattern"
+            android:title="@string/vibration_pattern"
+            android:dialogTitle="@string/vibration_pattern"
+            android:entries="@array/pref_vibration_pattern_entries"
+            android:entryValues="@array/pref_vibration_pattern_values"
+            android:defaultValue="0" />
+
+
+        <CheckBoxPreference android:key="heads_up_notification"
+            android:title="@string/heads_up_notification"
+            android:summary="@string/heads_up_notification_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference android:key="notification_wake_screen"
+            android:title="@string/wake_screen_title"
+            android:summary="@string/wake_screen_summary"
+            android:defaultValue="false"
+            />
+
+</PreferenceScreen>

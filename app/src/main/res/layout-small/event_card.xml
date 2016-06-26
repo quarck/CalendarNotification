@@ -22,7 +22,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
+            android:background="@color/cal_sample_primary"
             android:id="@+id/card_view_event_title_layout"
             >
 
@@ -151,7 +151,8 @@
                 android:text="@string/card_view_btn_dismiss"
                 android:id="@+id/card_view_button_dismiss"
                 android:visibility="visible"
-                android:textColor="@color/primary_dark"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/accent"
                 android:paddingStart="@dimen/card_view_action_buttons_start_padding"
                 android:paddingLeft="@dimen/card_view_action_buttons_start_padding"
                 android:paddingEnd="@dimen/card_view_action_buttons_end_padding"
@@ -169,7 +170,10 @@
                 android:text="@string/card_view_btn_change"
                 android:id="@+id/card_view_button_reschedule"
                 android:visibility="visible"
-                android:textColor="@color/primary_dark"
+
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/accent"
+
                 android:paddingStart="@dimen/card_view_action_buttons_start_padding"
                 android:paddingLeft="@dimen/card_view_action_buttons_start_padding"
                 android:paddingEnd="@dimen/card_view_action_buttons_end_padding"

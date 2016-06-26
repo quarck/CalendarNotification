@@ -26,6 +26,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 
 object PermissionsManager
 {
@@ -47,6 +48,5 @@ object PermissionsManager
 
     fun requestPermissions(activity: Activity) =
         ActivityCompat.requestPermissions(activity,
-                arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CALENDAR),
-                0)
+            arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CALENDAR), 0)
 }

@@ -24,8 +24,10 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +41,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
-class AppStylePrefActivity: Activity() {
+class AppStylePrefActivity: AppCompatActivity() {
 
     private lateinit var settings: Settings
 
@@ -49,6 +51,10 @@ class AppStylePrefActivity: Activity() {
         logger.debug("onCreate")
 
         setContentView(R.layout.activity_style_pref)
+
+        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         settings = Settings(this)
 

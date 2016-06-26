@@ -16,47 +16,53 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/main_activity_title"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/SettingsTheme">
         </activity>
+
         <activity
             android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity
             android:name=".ui.SnoozeActivityNoRecents"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_activity_snooze"
             android:noHistory="true"
-            android:theme="@android:style/Theme.Holo.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity
             android:name=".ui.SnoozeActivity"
             android:label="@string/title_activity_activity_snooze"
-            android:theme="@android:style/Theme.Holo.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".ui.MainActivity">
         </activity>
-        <activity
-            android:name=".ui.SnoozeActivityWithAppBar"
-            android:label="@string/title_activity_activity_snooze"
-            android:parentActivityName=".ui.MainActivity" >
-        </activity>
+
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
-            android:parentActivityName=".ui.SettingsActivity">
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             >
             <intent-filter>
                 <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity"/>
@@ -67,7 +73,8 @@
         <activity
             android:name=".prefs.AppStylePrefActivity"
             android:label="@string/appearance"
-            android:parentActivityName=".ui.SettingsActivity">
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             >
             <intent-filter>
                 <action android:name="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
@@ -77,12 +84,15 @@
 
         <activity
             android:name=".ui.TestButtonsAndToDoActivity"
-            android:label="@string/title_activity_activity_test_buttons_and_to_do">
+            android:label="@string/title_activity_activity_test_buttons_and_to_do"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
         <activity
             android:name=".ui.AboutActivity"
-            android:parentActivityName=".ui.SettingsActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:label="@string/menu_about"
+            android:theme="@style/AppTheme.NoActionBar"
             />
 
         <service android:name=".notification.NotificationActionDismissService"/>

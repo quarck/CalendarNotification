@@ -79,4 +79,5 @@
     <dimen name="compact_view_layout_height">80dp</dimen>
     <dimen name="compact_view_left_margin">10dp</dimen>
     <dimen name="compact_view_right_margin">10dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
 </resources>

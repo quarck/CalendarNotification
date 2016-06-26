@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:title="@string/title_calendars_activity"
+        android:summary="">
+        <intent
+            android:action="com.github.quarck.calnotify.prefs.CalendarsActivity"/>
+    </header>
+
+    <header
+        android:title="@string/appearance"
+        android:summary="">
+        <intent
+            android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
+    </header>
+
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.NotificationSettingsFragment"
+        android:title="@string/notification_settings"
+        android:summary="" />
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.SnoozeSettingsFragment"
+        android:title="@string/snooze_presets"
+        android:summary="" />
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.ReminderSettingsFragment"
+        android:title="@string/reminders_section"
+        android:summary="" />
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.QuietHoursSettingsFragment"
+        android:title="@string/quiet_hours_section"
+        android:summary="" />
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.SmartwatchSettingsFragment"
+        android:title="@string/smartwatch_support"
+        android:summary="" />
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.MiscSettingsFragment"
+        android:title="@string/misc_settings"
+        android:summary="" />
+
+    <!--    <header
+            android:fragment="com.example.prefs.SettingsActivity$SettingsFragmentTwo"
+            android:title="@string/prefs_category_two"
+            android:summary="@string/prefs_summ_category_two" >
+            <extra android:name="someKey" android:value="someHeaderValue" />
+        </header>
+    -->
+</preference-headers>

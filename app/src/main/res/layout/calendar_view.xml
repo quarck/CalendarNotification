@@ -15,7 +15,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="__CALENDAR_OWNER__"
         android:textColor="@color/primary_text"
-        android:padding="5dp" />
+        android:paddingLeft="15dp"
+        android:paddingStart="15dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,20 +44,25 @@
         <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="__CALENDAR_NAME__"
             android:id="@+id/checkBoxCalendarSelection"
             android:layout_marginLeft="0dp"
             android:layout_marginStart="0dp"
             android:textColor="@color/primary_text"
-            android:padding="8dp"
+            android:paddingLeft="15dp"
+            android:paddingStart="15dp"
+            android:paddingRight="15dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="15dp"
         android:id="@+id/viewCalendarsSpacing"
         android:visibility="gone" />
 

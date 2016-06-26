@@ -1,25 +1,27 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ActivityMain" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.ActivityMain" >
 
     <item
         android:id="@+id/action_snooze_all"
         android:orderInCategory="90"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_update_white_24dp"
         android:title="@string/snooze_all" />
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="120"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:icon="@android:drawable/ic_menu_preferences"
         android:title="@string/settings"/>
 
     <item
         android:id="@+id/action_feedback"
         android:orderInCategory="130"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:icon="@android:drawable/ic_menu_help"
         android:title="@string/help_feedback"
         />
@@ -27,7 +29,7 @@
     <item
         android:id="@+id/action_about"
         android:orderInCategory="1000"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menu_about" />
 
 </menu>

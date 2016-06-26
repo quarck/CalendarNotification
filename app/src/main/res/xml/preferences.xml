@@ -13,7 +13,6 @@
             android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
     </Preference>
 
-
     <PreferenceScreen
         android:title="@string/notification_settings"
         android:key="pref_key_notification_settings">

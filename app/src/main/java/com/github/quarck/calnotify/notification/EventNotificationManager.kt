@@ -162,7 +162,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 context,
                 formatter,
                 mostRecentEvent,
-                settings.notificationSettingsSnapshot
+                settings.notificationSettingsSnapshot,
+                true
             )
 
             wakeScreenIfRequired(context, settings);
@@ -262,7 +263,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
                     postNotification(context, formatter, event,
-                        if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings)
+                        if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
+                        force)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -279,7 +281,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
 
                 postNotification(context, formatter, event,
-                    if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings)
+                    if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
@@ -315,7 +317,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         ctx: Context,
         formatter: EventFormatterInterface,
         event: EventAlertRecord,
-        notificationSettings: NotificationSettingsSnapshot
+        notificationSettings: NotificationSettingsSnapshot,
+        isForce: Boolean
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -335,7 +338,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setContentText(notificationText)
             .setSmallIcon(R.drawable.stat_notify_calendar)
             .setPriority(
-                if (notificationSettings.headsUpNotification)
+                if (notificationSettings.headsUpNotification && !isForce)
                     Notification.PRIORITY_HIGH
                 else
                     Notification.PRIORITY_DEFAULT

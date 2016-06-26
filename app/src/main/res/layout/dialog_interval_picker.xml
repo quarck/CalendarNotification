@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/numberPickerTimeInterval"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center"/>
 
         <Spinner
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/spinnerTimeIntervalUnit"
             android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:entries="@array/time_units_plurals"/>
 
     </LinearLayout>

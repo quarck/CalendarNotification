@@ -1,11 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="0dp"
-                tools:context=".ui.MainActivity" >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.MainActivity"
+    tools:showIn="@layout/activity_main">
 
-    <LinearLayout
+<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/activity_main_bottom_indicators"
@@ -14,40 +18,49 @@
         android:orientation="vertical"
         >
 
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/activity_main_new_style_message_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="4dp"
+            android:visibility="gone"
+            >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:id="@+id/activity_main_new_style_message_layout"
             android:orientation="vertical"
             >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/divider"
-                android:visibility="visible"
-                />
 
             <TextView
                 android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/compact_view_is_a_default_style_now"
 
                 android:id="@+id/text_view_style_message"
 
-                android:textAppearance="?android:textAppearanceSmall"
+                android:text="@string/compact_view_is_a_default_style_now"
+
+                android:textAppearance="?android:textAppearanceMedium"
 
                 android:textColor="@color/primary_text"
                 android:gravity="left"
 
-                android:paddingTop="2dp"
+                android:paddingTop="10dp"
                 android:paddingBottom="1dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+
+                android:background="?android:attr/selectableItemBackground"
 
                 android:textStyle="bold"
                 />
@@ -58,17 +71,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/compact_view_explanation"
 
-                android:textAppearance="?android:textAppearanceSmall"
+                android:textAppearance="?android:textAppearanceMedium"
 
                 android:textColor="@color/primary_text"
                 android:gravity="left"
 
-                android:paddingTop="1dp"
+                android:paddingTop="5dp"
                 android:paddingBottom="1dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+
+                android:background="?android:attr/selectableItemBackground"
                 />
 
             <LinearLayout
@@ -84,14 +99,15 @@
                     android:text="@string/switch_to_cards"
                     android:id="@+id/activity_main_button_hate_new_style"
                     android:visibility="visible"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/accent"
+                    android:textAppearance="?android:textAppearanceMedium"
 
                     android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
                     android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
+                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
 
                     android:background="?android:attr/selectableItemBackground"
 
@@ -105,14 +121,15 @@
                     android:text="@string/ok"
                     android:id="@+id/activity_main_button_new_style_ok"
                     android:visibility="visible"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/accent"
+                    android:textAppearance="?android:textAppearanceMedium"
 
                     android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
                     android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
                     android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
+                    android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
+                    android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
 
                     android:background="?android:attr/selectableItemBackground"
 
@@ -124,12 +141,14 @@
 
         </LinearLayout>
 
+        </android.support.v7.widget.CardView>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/activity_main_quiet_hours_info_layout"
             android:visibility="gone"
-            android:background="@color/primary_text"
+            android:background="@color/quiet_hours_active_background"
             >
 
             <View
@@ -144,7 +163,7 @@
                 android:id="@+id/activity_main_quiet_hours"
                 android:text="Hello World"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/accent"
+                android:textColor="@color/quiet_hours_active_text"
                 android:gravity="center"
                 android:padding="@dimen/text_view_main_activity_quiet_hrs_status_padding"
                 android:background="?android:attr/selectableItemBackground"
@@ -173,7 +192,8 @@
                 android:text="@string/button_reload"
                 android:id="@+id/activity_main_button_reload"
                 android:visibility="visible"
-                android:textColor="@color/primary"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/accent"
                 android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
                 android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
                 android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
@@ -192,7 +212,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/activity_main_rationale"
                 android:text="@string/new_events_detected"
-                android:textAppearance="?android:textAppearanceSmall"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/primary_text"
                 android:gravity="left"
                 android:paddingTop="@dimen/activity_main_text_pading_top"
@@ -212,7 +232,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/activity_main_undo_layout"
-            android:visibility="gone"
+            android:visibility="visible"
             android:background="@color/primary_text"
             >
 
@@ -228,6 +248,7 @@
                 android:text="@string/undo"
                 android:id="@+id/activity_main_button_undo"
                 android:visibility="visible"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/accent"
                 android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
                 android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
@@ -247,7 +268,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/activity_main_undo_text"
                 android:text="@string/event_dismissed"
-                android:textAppearance="?android:textAppearanceSmall"
+                android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/icons"
                 android:gravity="left"
                 android:paddingTop="@dimen/activity_main_text_pading_top"
@@ -265,7 +286,6 @@
 
     </LinearLayout>
 
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/cardview_refresh_layout"
         android:layout_width="match_parent"
@@ -278,6 +298,7 @@
             android:layout_height="match_parent"
             android:background="@color/cardview_light_background"
             />
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView

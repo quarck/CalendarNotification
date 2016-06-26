@@ -220,4 +220,6 @@
     <string name="usage_hints">Usage hints:</string>
 
     <string name="hyphen" translatable="false">—</string>
+    <string name="compact_vs_card_view">Compact vs Card view</string>
+    <string name="no_calendars_found">No calendars found</string>
 </resources>

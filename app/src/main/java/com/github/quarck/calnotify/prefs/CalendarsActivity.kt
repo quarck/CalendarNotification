@@ -24,8 +24,10 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -136,11 +138,12 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 }
 
 
-class CalendarsActivity: Activity() {
+class CalendarsActivity: AppCompatActivity() {
 
     private lateinit var adapter: CalendarListAdapter
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
+    private lateinit var noCalendarsText: TextView
 
     private lateinit var settings: Settings
 
@@ -150,6 +153,9 @@ class CalendarsActivity: Activity() {
         logger.debug("onCreate")
 
         setContentView(R.layout.activity_calendars)
+        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         settings = Settings(this)
 
@@ -166,6 +172,8 @@ class CalendarsActivity: Activity() {
         recyclerView = find<RecyclerView>(R.id.list_calendars)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
+
+        noCalendarsText = find<TextView>(R.id.no_calendars_text)
     }
 
     override fun onResume() {
@@ -200,14 +208,16 @@ class CalendarsActivity: Activity() {
             }
 
             // remove last divider
-            if (entries[entries.size - 1].type == CalendarListEntryType.Divider)
+            if (entries.size >= 1 && entries[entries.size - 1].type == CalendarListEntryType.Divider)
                 entries.removeAt(entries.size - 1)
 
             val entriesFinal = entries.toTypedArray()
 
             runOnUiThread {
-
                 // update activity finally
+
+                noCalendarsText.visibility = if (entriesFinal.isNotEmpty()) View.GONE else View.VISIBLE
+
                 adapter.entries = entriesFinal
                 adapter.notifyDataSetChanged();
             }

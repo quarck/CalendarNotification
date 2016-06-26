@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,14 +27,13 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
@@ -53,9 +51,11 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
+import org.jetbrains.annotations.NotNull
 import java.util.*
 
-class MainActivity : Activity(), EventListCallback {
+class MainActivity : AppCompatActivity(), EventListCallback {
+
     private val settings: Settings by lazy { Settings(this) }
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
@@ -94,6 +94,9 @@ class MainActivity : Activity(), EventListCallback {
         ApplicationController.onMainActivityCreate(this);
 
         setContentView(R.layout.activity_main)
+        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         refreshLayout = find<SwipeRefreshLayout>(R.id.cardview_refresh_layout)
 
@@ -153,7 +156,7 @@ class MainActivity : Activity(), EventListCallback {
 
     private fun refreshReminderLastFired() {
         // avoid firing reminders when UI is active and user is interacting with it
-        this.globalState.reminderLastFireTime = System.currentTimeMillis()
+        applicationContext.globalState.reminderLastFireTime = System.currentTimeMillis()
     }
 
     public override fun onStop() {
@@ -241,9 +244,7 @@ class MainActivity : Activity(), EventListCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
-        if (grantResults == null)
-            return;
+    override fun onRequestPermissionsResult(requestCode: Int, @NotNull permissions: Array<out String>, @NotNull grantResults: IntArray) {
 
         var granted = true
 
@@ -288,7 +289,7 @@ class MainActivity : Activity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                    Intent(this, SnoozeActivityWithAppBar::class.java)
+                    Intent(this, SnoozeActivity::class.java)
                         .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
                         .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 

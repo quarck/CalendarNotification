@@ -1,0 +1,33 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <CheckBoxPreference
+            android:key="enable_quiet_hours"
+            android:title="@string/enable_quiet_time"
+            android:defaultValue="false"
+            android:summary="@string/quiet_hours_summary"
+            />
+
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+            android:key="quiet_hours_from"
+            android:title="@string/quiet_time_from"
+            android:defaultValue="1320"
+            android:dependency="enable_quiet_hours"
+            />
+
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+            android:key="quiet_hours_to"
+            android:title="@string/quiet_time_to"
+            android:defaultValue="360"
+            android:dependency="enable_quiet_hours"
+            />
+
+        <CheckBoxPreference
+            android:key="quiet_hours_mute_primary"
+            android:title="@string/quiet_hours_mute_primary"
+            android:summary="@string/quiet_hours_mute_primary_summary"
+            android:dependency="enable_quiet_hours"
+            android:defaultValue="false"
+            />
+
+</PreferenceScreen>

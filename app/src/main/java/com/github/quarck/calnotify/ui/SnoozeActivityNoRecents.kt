@@ -24,6 +24,8 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
@@ -42,7 +44,7 @@ import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import java.util.*
 
-open class SnoozeActivityNoRecents : Activity() {
+open class SnoozeActivityNoRecents : AppCompatActivity() {
     var event: EventAlertRecord? = null
 
     lateinit var snoozePresets: LongArray
@@ -104,6 +106,15 @@ open class SnoozeActivityNoRecents : Activity() {
         snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
 
         val isSnoozeAll = (eventId == -1L)
+
+        val toolbar = find<Toolbar?>(R.id.toolbar)
+        if (isSnoozeAll) {
+            setSupportActionBar(toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+        } else {
+            toolbar?.visibility = View.GONE
+        }
 
         // load event if it is not a "snooze all"
         if (!isSnoozeAll) {
@@ -196,7 +207,14 @@ open class SnoozeActivityNoRecents : Activity() {
             var color: Int = ev.color.adjustCalendarColor();
             if (color == 0)
                 color = resources.getColor(R.color.primary)
-            find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = ColorDrawable(color)
+
+            val colorDrawable = ColorDrawable(color)
+            find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = color
+            }
+
 
             if (!ev.isRepeating) {
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
@@ -246,13 +264,25 @@ open class SnoozeActivityNoRecents : Activity() {
 
         if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.DAY_IN_SECONDS;
-            unit = if (num != 1L) resources.getString(R.string.days) else resources.getString(R.string.day)
+            unit =
+                if (num != 1L)
+                    resources.getString(R.string.days)
+                else
+                    resources.getString(R.string.day)
         } else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.HOUR_IN_SECONDS;
-            unit = if (num != 1L) resources.getString(R.string.hours) else resources.getString(R.string.hour)
+            unit =
+                if (num != 1L)
+                    resources.getString(R.string.hours)
+                else
+                    resources.getString(R.string.hour)
         } else {
             num = presetSeconds / Consts.MINUTE_IN_SECONDS;
-            unit = if (num != 1L) resources.getString(R.string.minutes) else resources.getString(R.string.minute)
+            unit =
+                if (num != 1L)
+                    resources.getString(R.string.minutes)
+                else
+                    resources.getString(R.string.minute)
         }
 
         if (num < 0) {

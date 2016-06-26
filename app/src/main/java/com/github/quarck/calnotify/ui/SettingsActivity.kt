@@ -19,90 +19,96 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
-import android.preference.PreferenceScreen
+import android.support.annotation.LayoutRes
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatDelegate
+import android.support.v7.widget.Toolbar
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.utils.vibratorService
 
-class SettingsActivity : PreferenceActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsActivity : PreferenceActivity() {
 
-    @Suppress("DEPRECATION")
+    private val delegate by lazy { AppCompatDelegate.create(this, null) }
+
     public override fun onCreate(savedInstanceState: Bundle?) {
+        delegate.installViewFactory()
+        delegate.onCreate(savedInstanceState)
         super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.preferences)
 
-        for (nestedPref in nestedPreferences) {
-            val preferenceScreen = findPreference(nestedPref) as PreferenceScreen
+    }
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        delegate?.onPostCreate(savedInstanceState)
+    }
 
-            preferenceScreen.setOnPreferenceClickListener({
-                preference ->
+    val supportActionBar: ActionBar?
+        get() = delegate.supportActionBar
 
-                preferenceScreen.dialog.actionBar.setDisplayHomeAsUpEnabled(true);
+    fun setSupportActionBar(toolbar: Toolbar?) =
+        delegate.setSupportActionBar(toolbar)
 
-                val dialog = preferenceScreen.dialog;
+    override fun getMenuInflater(): MenuInflater =
+        delegate.menuInflater
 
-                val homeBtn = dialog.findViewById(android.R.id.home);
-                if (homeBtn != null) {
-                    val dismissListener = View.OnClickListener { dialog.dismiss(); }
+    override fun setContentView(@LayoutRes layoutResID: Int) =
+        delegate.setContentView(layoutResID)
 
-                    // Prepare yourselves for some hacky programming
-                    val homeBtnContainer = homeBtn.parent;
+    override fun setContentView(view: View) =
+        delegate.setContentView(view)
 
-                    // The home button is an ImageView inside a FrameLayout
-                    if (homeBtnContainer is FrameLayout) {
-                        val containerParent = homeBtnContainer.parent as ViewGroup
+    override fun setContentView(view: View, params: ViewGroup.LayoutParams) =
+        delegate.setContentView(view, params)
 
-                        if (containerParent is LinearLayout) {
-                            // This view also contains the title text, set the whole view as clickable
-                            containerParent.setOnClickListener(dismissListener);
-                        } else {
-                            // Just set it on the home button
-                            homeBtnContainer.setOnClickListener(dismissListener);
-                        }
-                    } else {
-                        // The 'If all else fails' default case
-                        homeBtn.setOnClickListener(dismissListener);
-                    }
-                }
-                true
-            })
+    override fun addContentView(view: View, params: ViewGroup.LayoutParams) =
+        delegate.addContentView(view, params)
+
+    override fun onPostResume() {
+        super.onPostResume()
+        delegate.onPostResume()
+    }
+
+    override fun onTitleChanged(title: CharSequence, color: Int) {
+        super.onTitleChanged(title, color)
+        delegate.setTitle(title)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        delegate.onConfigurationChanged(newConfig)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        delegate.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        delegate.onDestroy()
+    }
+
+    override fun invalidateOptionsMenu() =
+        delegate.invalidateOptionsMenu()
+
+    override fun onBuildHeaders(target: List<PreferenceActivity.Header>) =
+        loadHeadersFromResource(R.xml.preference_headers, target);
+
+    override fun isValidFragment(fragmentName: String) = true
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        if(android.R.id.home ==  item?.getItemId() ){
+            finish();
+            return true;
         }
-    }
 
-    @Suppress("DEPRECATION")
-    override fun onResume() {
-        super.onResume();
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
+        return super.onOptionsItemSelected(item);
 
-    @Suppress("DEPRECATION")
-    override fun onPause() {
-        super.onPause();
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-        if (key != null && key == Settings.VIBRATION_PATTERN_KEY) {
-            val newPattern = Settings(this).vibrationPattern
-            this.vibratorService.vibrate(newPattern, -1);
-        }
-    }
-
-    companion object {
-        val nestedPreferences =
-            listOf(
-                "pref_key_notification_settings",
-                "pref_key_snooze_prs",
-                "pref_key_reminder",
-                "pref_key_quiet_hours",
-                "pref_key_smartwatch",
-                "pref_key_misc" )
     }
 }

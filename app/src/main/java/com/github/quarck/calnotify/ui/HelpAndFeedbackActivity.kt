@@ -23,11 +23,14 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.View
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.find
 
-class HelpAndFeedbackActivity : Activity() {
+class HelpAndFeedbackActivity : AppCompatActivity() {
     private var easterEggCount = 0;
     private var firstClick = 0L;
 
@@ -35,6 +38,10 @@ class HelpAndFeedbackActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help_and_feedback)
+
+        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         logger.debug("onCreate")
     }

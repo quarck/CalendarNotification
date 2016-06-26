@@ -81,13 +81,13 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
         colorValue = this.getPersistedInt(0)
         for (buttonId in colorButtonIds) {
 
-            var button = view.find<Button>(buttonId)
+            val button = view.find<Button>(buttonId)
             button.setOnClickListener { v -> onClick(v) }
 
-            var parent: ViewParent = button.parent
+            val parent: ViewParent = button.parent
 
             if (parent is LinearLayout) {
-                var background = parent.background
+                val background = parent.background
 
                 if (background is ColorDrawable) {
                     originalColors.add(Pair(parent, background))

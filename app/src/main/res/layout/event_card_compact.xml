@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view_main_holder"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/compact_view_layout_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/compact_view_layout_height"
     android:background="@color/cardview_light_background"
-    >
+    android:elevation="2dp"
+    tools:targetApi="m">
 
     <RelativeLayout
         android:layout_width="match_parent"

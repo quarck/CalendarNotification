@@ -44,6 +44,7 @@ import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
@@ -322,6 +323,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             if (lhs.snoozedUntil < rhs.snoozedUntil)
                                 return@Comparator -1;
                             else if (lhs.snoozedUntil > rhs.snoozedUntil)
+                                return@Comparator 1;
+
+                            val lhsDispTime = lhs.displayedStartTime
+                            val rhsDispTime = rhs.displayedStartTime
+
+                            if (lhsDispTime < rhsDispTime)
+                                return@Comparator -1;
+                            else if (lhsDispTime > rhsDispTime)
                                 return@Comparator 1;
 
                             if (lhs.lastEventVisibility > rhs.lastEventVisibility)

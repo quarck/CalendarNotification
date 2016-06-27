@@ -40,10 +40,7 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
-import com.github.quarck.calnotify.utils.backgroundWakeLocked
-import com.github.quarck.calnotify.utils.notificationManager
-import com.github.quarck.calnotify.utils.powerManager
-import com.github.quarck.calnotify.utils.setShowWhenCompat
+import com.github.quarck.calnotify.utils.*
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
@@ -123,7 +120,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         (it.snoozedUntil == 0L)
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                     }
-                    .sortedBy { it.lastEventVisibility }
+                    .sortedByDescending { it.displayedStartTime }
 
             val recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
             val olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
@@ -348,8 +345,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setOngoing(notificationSettings.showDismissButton)
             .setStyle(Notification.BigTextStyle()
                 .bigText(notificationText))
-            .setWhen(event.alertTime)
+            .setWhen(event.displayedStartTime)
             .setShowWhenCompat(false)
+            .setSortKeyCompat("${event.displayedStartTime}")
 
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 

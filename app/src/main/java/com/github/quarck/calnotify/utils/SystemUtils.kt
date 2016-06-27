@@ -105,3 +105,14 @@ fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder
     }
     return this
 }
+
+fun Notification.Builder.setSortKeyCompat(value: String): Notification.Builder {
+    val build = android.os.Build.VERSION.SDK_INT
+    if (build >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+        setSortKey(value)
+    }
+    return this
+}
+
+
+

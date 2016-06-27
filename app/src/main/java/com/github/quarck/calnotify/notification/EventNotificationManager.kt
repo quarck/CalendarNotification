@@ -348,6 +348,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setWhen(event.displayedStartTime)
             .setShowWhenCompat(false)
             .setSortKeyCompat("${event.displayedStartTime}")
+            .setEventCategoryCompat()
 
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
 

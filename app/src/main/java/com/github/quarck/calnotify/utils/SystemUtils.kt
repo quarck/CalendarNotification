@@ -114,5 +114,10 @@ fun Notification.Builder.setSortKeyCompat(value: String): Notification.Builder {
     return this
 }
 
-
-
+fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
+    val build = android.os.Build.VERSION.SDK_INT
+    if (build >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        setCategory(Notification.CATEGORY_EVENT)
+    }
+    return this
+}

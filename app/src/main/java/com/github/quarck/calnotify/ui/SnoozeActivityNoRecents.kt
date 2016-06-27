@@ -436,7 +436,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 title.text =
                     String.format(
                         resources.getString(R.string.choose_time),
-                        DateUtils.formatDateTime(this, date.timeInMillis, DateUtils.FORMAT_SHOW_DATE))
+                        DateUtils.formatDateTime(this, date.timeInMillis,
+                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH))
 
                 AlertDialog.Builder(this)
                     .setView(dialogTime)

@@ -414,44 +414,58 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     @Suppress("unused", "UNUSED_PARAMETER", "DEPRECATION")
     fun OnButtonSnoozeUntilClick(v: View?) {
 
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_date_time_picker, null);
-
-        val timePicker = dialogView.find<TimePicker>(R.id.timePickerCustomSnooze)
-        val datePicker = dialogView.find<DatePicker>(R.id.datePickerCustomSnooze)
-        timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+        val dialogDate = this.layoutInflater.inflate(R.layout.dialog_date_picker, null);
+        val datePicker = dialogDate.find<DatePicker>(R.id.datePickerCustomSnooze)
 
         AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton(R.string.snooze) {
+            .setView(dialogDate)
+            .setPositiveButton(R.string.next) {
                 x: DialogInterface?, y: Int ->
 
                 datePicker.clearFocus()
-                timePicker.clearFocus()
 
-                // grab time from timePicker + date picker
-                val cal = Calendar.getInstance()
-                cal.set(
-                    datePicker.year,
-                    datePicker.month,
-                    datePicker.dayOfMonth,
-                    timePicker.currentHour,
-                    timePicker.currentMinute,
-                    0)
+                val dialogTime = this.layoutInflater.inflate(R.layout.dialog_time_picker, null);
+                val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
+                timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
 
-                val snoozeFor = cal.timeInMillis - System.currentTimeMillis() - Consts.ALARM_THRESHOULD
+                AlertDialog.Builder(this)
+                    .setView(dialogTime)
+                    .setPositiveButton(R.string.snooze) {
+                        x: DialogInterface?, y: Int ->
 
-                if (snoozeFor > 0L) {
-                    snoozeEvent(snoozeFor)
-                } else {
-                    // Selected time is in the past
-                    AlertDialog.Builder(this)
-                        .setTitle(R.string.selected_time_is_in_the_past)
-                        .setNegativeButton(R.string.cancel) {
-                            x: DialogInterface?, y: Int ->
+                            timePicker.clearFocus()
+
+                            // grab time from timePicker + date picker
+                            val cal = Calendar.getInstance()
+                            cal.set(
+                                datePicker.year,
+                                datePicker.month,
+                                datePicker.dayOfMonth,
+                                timePicker.currentHour,
+                                timePicker.currentMinute,
+                                0)
+
+                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() - Consts.ALARM_THRESHOULD
+
+                            if (snoozeFor > 0L) {
+                                snoozeEvent(snoozeFor)
+                            } else {
+                                // Selected time is in the past
+                                AlertDialog.Builder(this)
+                                    .setTitle(R.string.selected_time_is_in_the_past)
+                                    .setNegativeButton(R.string.cancel) {
+                                        x: DialogInterface?, y: Int ->
+                                    }
+                                    .create()
+                                    .show()
+                            }
+
                         }
-                        .create()
-                        .show()
-                }
+                    .setNegativeButton(R.string.cancel) {
+                        x: DialogInterface?, y: Int ->
+                    }
+                    .create()
+                    .show()
             }
             .setNegativeButton(R.string.cancel) {
                 x: DialogInterface?, y: Int ->

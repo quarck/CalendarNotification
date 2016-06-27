@@ -14,7 +14,17 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="__DIALOG_TITLE__"
         android:id="@+id/textViewTimeIntervalTitle"
-         />
+        android:layout_gravity="left"
+        android:paddingLeft="30dp"
+        android:paddingStart="30dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textStyle="bold"
+        android:textColor="@color/secondary_text"
+
+        />
 
 <!--     android:text="@string/remind_interval" -->
 

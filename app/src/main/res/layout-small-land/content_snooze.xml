@@ -640,6 +640,25 @@
                     android:background="?android:attr/selectableItemBackground"
                     />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/snooze_view_snooze_until"
+                    android:text="@string/until_specific_time"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingTop="@dimen/snooze_view_spacing"
+                    android:paddingBottom="@dimen/snooze_view_spacing"
+                    android:paddingStart="@dimen/snooze_view_padding_start"
+                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingRight="@dimen/snooze_view_padding_end"
+                    android:paddingLeft="@dimen/snooze_view_padding_start"
+                    android:layout_below="@id/snooze_view_snooze_custom"
+                    android:clickable="true"
+                    android:onClick="OnButtonSnoozeUntilClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    />
+
             </RelativeLayout>
 
             <View

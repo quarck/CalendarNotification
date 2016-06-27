@@ -33,7 +33,7 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/SettingsTheme">
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:theme="@style/PickerDialogTheme"
     >
 
     <TextView
@@ -29,7 +30,6 @@
             android:id="@+id/numberPickerTimeInterval"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center"
-            style="@style/AppTheme"
             />
 
         <Spinner
@@ -39,7 +39,7 @@
             android:layout_gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:entries="@array/time_units_plurals"
-            style="@style/AppTheme"/>
+            />
 
     </LinearLayout>
 

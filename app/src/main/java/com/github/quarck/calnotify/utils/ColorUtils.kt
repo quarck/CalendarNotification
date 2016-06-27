@@ -104,7 +104,7 @@ fun Int.adjustCalendarColor(): Int {
         }
     }
 
-    return this;//RGB(r,g,b).toInt()//.scaleColorLuminosity(0.9f);
+    return RGB(r,g,b).toInt()
 }
 
 

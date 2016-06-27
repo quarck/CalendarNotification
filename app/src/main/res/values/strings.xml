@@ -224,7 +224,8 @@
     <string name="no_calendars_found">No calendars found</string>
     <string name="dismissed">Dismissed</string>
     <string name="choose_date">Choose Date</string>
-    <string name="choose_time">Choose Time</string>
+
+    <string name="choose_time" formatted="false">Snoozing until %s\nChoose Time</string>
 
     <string name="next">Next</string>
 </resources>

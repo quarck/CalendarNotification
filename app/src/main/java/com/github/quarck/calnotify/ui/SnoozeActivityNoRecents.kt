@@ -425,8 +425,18 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 datePicker.clearFocus()
 
                 val dialogTime = this.layoutInflater.inflate(R.layout.dialog_time_picker, null);
+
                 val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
                 timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+
+                val date = Calendar.getInstance()
+                date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth, 0, 0, 0)
+
+                val title = dialogTime.find<TextView>(R.id.textViewSnoozeUntilDate)
+                title.text =
+                    String.format(
+                        resources.getString(R.string.choose_time),
+                        DateUtils.formatDateTime(this, date.timeInMillis, DateUtils.FORMAT_SHOW_DATE))
 
                 AlertDialog.Builder(this)
                     .setView(dialogTime)
@@ -445,7 +455,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                                 timePicker.currentMinute,
                                 0)
 
-                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() - Consts.ALARM_THRESHOULD
+                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOULD
 
                             if (snoozeFor > 0L) {
                                 snoozeEvent(snoozeFor)

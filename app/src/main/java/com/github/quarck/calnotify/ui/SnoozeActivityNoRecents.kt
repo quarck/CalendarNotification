@@ -42,7 +42,7 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.scaleColorLuminosity
+import com.github.quarck.calnotify.utils.scaleColor
 import java.util.*
 
 open class SnoozeActivityNoRecents : AppCompatActivity() {
@@ -213,7 +213,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = color.scaleColorLuminosity(0.7f)
+                window.statusBarColor = color.scaleColor(0.7f)
             }
 
 

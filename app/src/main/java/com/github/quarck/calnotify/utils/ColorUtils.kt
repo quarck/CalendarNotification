@@ -108,23 +108,13 @@ fun Int.adjustCalendarColor(): Int {
 }
 
 
-fun Int.scaleColorLuminosity(value: Float): Int {
+fun Int.scaleColor(value: Float): Int {
 
     val (r, g, b) = RGB(this)
 
-    var y = RGB_TO_YUV_1_1 * r + RGB_TO_YUV_1_2 * r + RGB_TO_YUV_1_3 * b
-    val u = RGB_TO_YUV_2_1 * r + RGB_TO_YUV_2_2 * g + RGB_TO_YUV_2_3 * b
-    val v = RGB_TO_YUV_3_1 * r + RGB_TO_YUV_3_2 * g + RGB_TO_YUV_3_3 * b
-
-    y = Math.min(Y_MAX, Math.max(Y_MIN, y * value))
-
-    var newR = (YUV_TO_RGB_1_1 * y + YUV_TO_RGB_1_2 * u + YUV_TO_RGB_1_3 * v).toInt()
-    var newG = (YUV_TO_RGB_2_1 * y + YUV_TO_RGB_2_2 * u + YUV_TO_RGB_2_3 * v).toInt()
-    var newB = (YUV_TO_RGB_3_1 * y + YUV_TO_RGB_3_2 * u + YUV_TO_RGB_3_3 * v).toInt()
-
-    newR = Math.max(0, Math.min(newR, 255))
-    newG = Math.max(0, Math.min(newG, 255))
-    newB = Math.max(0, Math.min(newB, 255))
+    val newR = Math.max(0, Math.min((r * value).toInt(), 255))
+    val newG = Math.max(0, Math.min((g * value).toInt(), 255))
+    val newB = Math.max(0, Math.min((b * value).toInt(), 255))
 
     return RGB(newR,newG,newB).toInt()
 }

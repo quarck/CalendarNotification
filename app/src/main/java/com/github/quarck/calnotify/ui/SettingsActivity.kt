@@ -40,8 +40,8 @@ class SettingsActivity : PreferenceActivity() {
         delegate.installViewFactory()
         delegate.onCreate(savedInstanceState)
         super.onCreate(savedInstanceState)
-
     }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         delegate?.onPostCreate(savedInstanceState)

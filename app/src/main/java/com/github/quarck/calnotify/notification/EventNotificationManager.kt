@@ -513,11 +513,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
-                .setPriority(
-                    if (settings.headsUpNotification)
-                        Notification.PRIORITY_DEFAULT
-                    else
-                        Notification.PRIORITY_LOW )
+                .setPriority(Notification.PRIORITY_LOW ) // always LOW regardless of other settings for regular notifications, so it is always last
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)

@@ -116,6 +116,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
         android:id="@+id/relative_layout_compact_view_example"
+        android:elevation="4dp"
+        tools:targetApi="m"
         >
 
         <include

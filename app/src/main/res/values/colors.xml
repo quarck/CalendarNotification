@@ -34,6 +34,8 @@
 
     <color name="light_divider">#D6D6D6</color>
 
+    <color name="ultra_light_divider">#F0F0F0</color>
+
     <color name="material_red">#c3362b</color>
 
     <color name="cal_sample_primary">#03A9F4</color>

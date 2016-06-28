@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Calendar Notifications Plus</string>
+
+    <string name="main_activity_title">Calendar Notifications</string>
+
+    <string name="settings">Ustawienia</string>
+
+    <string name="application_has_no_access">Aplikacja wymaga specjalnych uprawnień, aby mieć dostęp do powiadomień kalendarza\n\nProszę udzielić uprawnień READ_CALENDAR i WRITE_CALENDAR \n\nWRITE_CALENDAR aby ukryć pierwotne powiadomienia z kalendarza</string>
+    <string name="cancel">Anuluj</string>
+
+    <string name="on">Włączone</string>
+    <string name="off">Wyłączone</string>
+
+    <string name="dismiss">Odrzuć</string>
+    <string name="snooze">Odłóż</string>
+
+    <string name="show_dismiss_button">Pokaż przycisk \'Odrzuć\'</string>
+    <string name="show_dismiss_summary">Akcja \'Odrzuć\' będzie wyświetlana na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku</string>
+
+    <string name="play_reminder_sound">Dźwięk powiadomień</string>
+    <string name="play_reminder_sound_summary">Włącz aby odegrać dzięk powiadomienia</string>
+
+    <string name="ringtone_selection">Dzwonek powiadomień</string>
+    <string name="ringtone_selection_summary">Wybierz dzwonek dla powiadomień</string>
+
+    <string name="vibra_on">Wibracje</string>
+
+
+    <string name="notification_light_summary">Użyj diody do informacji o aktywnych powiadomieniach</string>
+    <string name="notification_light_title">Powiadomienia diodą</string>
+
+    <string name="help_feedback">Pomoc i Opinie</string>
+
+    <string name="feedback">Opinie</string>
+
+    <string name="help_title">Jeżeli znalazłeś błąd, masz pytanie lub chciałbyś zasugerować nową opcję w aplikacji - proszę o kontakt z autorem poprzez mail.\n\nProszę nie oczekuj natychmiastowej odpowiedzi. Rozwijam tą aplikację w moim wolnym czasie i mogę odpowiadać tylko jeżeli znajdę na to czas</string>
+    <string name="email_developer">EMAIL DO AUTORA</string>
+
+    <string name="forward_to_pebble">Forward to Pebble</string>
+    <string name="forward_to_pebble_summary">Jeżeli posiadasz Smart Watch Pebble - umożliwia aplikacji przekazywanie powiadomień na Pebble</string>
+
+    <string name="multiple_events">%d więcej wydarzeń</string>
+    <string name="multiple_events_details">Stuknij aby zobaczyć szczegóły</string>
+    <string name="title_activity_activity_snooze">Odłóż</string>
+
+    <string name="empty_title">(Brak tytułu)</string>
+    <string name="snooze_event_for">Odłóż wydarzenie na:</string>
+
+    <string name="snooze_preset_15_min">15 minut</string>
+    <string name="snooze_preset_1_hour">1 godzina</string>
+    <string name="snooze_preset_4_hours">4 godziny</string>
+    <string name="snooze_preset_1_day">1 dzień</string>
+
+    <string name="location">Lokalizacja:</string>
+    <string name="today">Dzisiaj</string>
+    <string name="tomorrow">Jutro</string>
+    <string name="yesterday">Wczoraj</string>
+
+    <string name="change_event_time">Zmień czas wydarzenia</string>
+    <string name="one_hour_from_now">Przenieś na następną godzinę</string>
+    <string name="same_time_tomorrow">Przenieś na następny dzień</string>
+    <string name="next_week_same_day">Przenieś na następny tydzień</string>
+    <string name="custom_pick_a_date">Dowolny (wybierz datę)</string>
+
+    <string name="snoozed_until_string">Odłóż dopóki </string>
+    <string name="card_view_btn_change">ZMIEŃ</string>
+    <string name="card_view_btn_snooze">ODŁÓRZ</string>
+    <string name="card_view_btn_dismiss">ODRZUĆ</string>
+    <string name="new_events_detected">Odśwież aby zobaczyć nowe wydarzenia</string>
+    <string name="button_reload">ODŚWIERZ</string>
+    <string name="settings_name">Ustawienia</string>
+    <string name="app_icon_credit">Icon credit:</string>
+    <string name="app_created_with">Utworzona w</string>
+    <string name="notification_settings">Ustawienia Powiadomień</string>
+    <string name="snooze_presets">Ustawienia dla opcji "Odłóż"</string>
+    <string name="smartwatch_support">Wsparcie dla Smartwatch</string>
+
+
+    <string name="error_cannot_parse_preset">Przepraszam, Nie można przetworzyć definicji</string>
+    <string name="snooze_presets_title">Definicje opcji "Odłóż"</string>
+    <string name="snooze_presets_summary">Tutaj możesz zmienić domyśle definicje opcji "odłóż"</string>
+
+    <string name="error_too_many_presets">Wspierane jest do 6 definicji, wszystko powyżej 6 jest ignorowane</string>
+
+    <string name="days">dni</string>
+    <string name="day">dzień</string>
+    <string name="hours">godzin</string>
+    <string name="hour">godzina</string>
+    <string name="minutes">minut</string>
+    <string name="minute">minuta</string>
+
+    <string name="no_events_to_display">Brak wydarzeń do wyświetlenia</string>
+    <string name="no_calendar_permissions_main">Aplikacja nie ma uprawnień do kalendarza</string>
+
+    <string name="view_after_edit">Zobacz po edycji</string>
+    <string name="view_after_edit_summary">Włącz aby automatycznie zobaczyć zdarzenie w kalendarzu po zmianie czasu przy użyciu opcji Odłóż</string>
+    <string name="misc_settings">Więcej ustawień</string>
+    <string name="abort_broadcast">Anuluj nadawanie</string>
+    <string name="abort_broadcast_summary">Wybierz to jeżeli widzisz powiadomienia zarówno z kalendarza jak i z tej aplikacji</string>
+
+    <string name="enable_reminders">Włącz przypomnienia</string>
+    <string name="enable_reminders_summary">Jeżeli włączone, aplikakcja będzie wielokrotnie przypominała o aktywnych powiadomieniach</string>
+    <string name="remind_interval">Interwał przypomnień</string>
+    <string name="invalid_reminder_interval">Interwał przypomnień nie może być 0, przywrócono do 1 minuty</string>
+    <string name="max_reminders">Max ilość przypomnień</string>
+    <string name="max_reminders_summary">Maksymalna ilość przypomnień, 0 oznacza nieskończoność</string>
+
+    <string name="pebble_notification_title">Kalendarz</string>
+    <string name="heads_up_notification">Powiadomienia Heads-up</string>
+    <string name="heads_up_notification_summary">Pokazuje powiadomienia w górnej części ekranu</string>
+
+    <string name="projectPageOnGitHub">Strona projektu na GitHub</string>
+
+    <string name="snooze_all">Odłóż Wszystkie</string>
+
+    <string name="led_color">Kolor diody</string>
+    <string name="wake_screen_title">Wybudzenie ekranu</string>
+    <string name="wake_screen_summary">Wybudź ekran dla krótki czas gdy nadejdzie powiadomienie</string>
+
+    <string name="error_cannot_parse_pattern">Nie można przetworzyć z powodu błędnych danych</string>
+    <string name="quiet_time_from">Godziny ciszy od</string>
+    <string name="quiet_time_to">Godziny ciszy do</string>
+    <string name="enable_quiet_time">Włącz godziny ciszy</string>
+
+    <string name="reminders_section">Przypomnienia</string>
+    <string name="quiet_hours_section">Ustawienia godzin ciszy</string>
+    <string name="quiet_hours">Godziny ciszy</string>
+
+    <string name="snoozed_time_inside_quiet_hours" formatted="false">UWAGA: Następne odłożone wydarzenie przypada na godziny ciszy, żadne dźwięki i wibracje nie będą odtwarzane do końca cichych godzin o %s</string>
+    <string name="quiet_hours_summary">Użyj godzin ciszy do wyciszenia wszystkich przypomnień i odłożonych wydarzeń w określonym przedziale czasowym. Podstawowe powiadomienia dla wydarzeń nadal będą odtwarzane (zgodnie z ustawieniami)</string>
+
+    <string name="quiet_hours_mute_primary">Wycisz podstawowe powiadomienia</string>
+    <string name="quiet_hours_mute_primary_summary">Wycisz podstawowe powiadomienia podczas godzin ciszy, aby aplikacja pozostała wyciszona. Podstawowe powiadomienie jest pierwszym powiadomieniem dla danego wydarzenia</string>
+
+    <string name="quiet_hours_main_activity_status" formatted="false">Godziny ciszy są aktywne\nBrak powiadomień do %s</string>
+    <string name="hits_quiet_period">(wystąpień w godzinach ciszy)</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
+
+
+</resources>

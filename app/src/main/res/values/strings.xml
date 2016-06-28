@@ -202,7 +202,7 @@
     <string name="event_title_example">Event title</string>
     <string name="event_time_example">Wednesday, 31 December</string>
     <string name="event_time_example_2ln_first">Tomorrow</string>
-    <string name="event_time_example_2ln_second">22:00 - 23:00</string>
+    <string name="event_time_example_2ln_second">22:00 – 23:00</string>
     <string name="event_list_style">Event List Style</string>
 
     <string name="restart_the_app_to_apply_changes">Restart the app to apply changes</string>

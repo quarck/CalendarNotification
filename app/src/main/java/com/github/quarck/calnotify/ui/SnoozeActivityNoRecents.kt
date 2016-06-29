@@ -292,7 +292,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         if (num <= 0) {
             val beforeEventString = resources.getString(R.string.before_event)
             return "${-num} $unit $beforeEventString"
-        }   
+        }
         return "$num $unit"
     }
 

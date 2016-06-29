@@ -25,6 +25,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.preference.PreferenceManager
 import com.github.quarck.calnotify.prefs.PreferenceUtils
+import com.github.quarck.calnotify.utils.toIntOrNull
 
 fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
     if (this != null) {
@@ -164,8 +165,7 @@ class Settings(ctx: Context) {
         get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
     val maxNumberOfReminders: Int
-        get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toInt()
-
+        get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toIntOrNull() ?: 0
 
     val quietHoursEnabled: Boolean
         get() = prefs.getBoolean(ENABLE_QUIET_HOURS_KEY, false)

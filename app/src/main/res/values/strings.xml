@@ -228,4 +228,6 @@
     <string name="choose_time" formatted="false">Snoozing until %s\nChoose Time</string>
 
     <string name="next">Next</string>
+
+    <string name="until_event_time">Until event time</string>
 </resources>

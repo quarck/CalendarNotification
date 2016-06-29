@@ -263,6 +263,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val unit: String
         val presetSeconds = preset / 1000L;
 
+        if (presetSeconds == 0L)
+            return resources.getString(R.string.until_event_time)
+
         if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.DAY_IN_SECONDS;
             unit =
@@ -286,11 +289,10 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     resources.getString(R.string.minute)
         }
 
-        if (num < 0) {
+        if (num <= 0) {
             val beforeEventString = resources.getString(R.string.before_event)
             return "${-num} $unit $beforeEventString"
-        }
-
+        }   
         return "$num $unit"
     }
 

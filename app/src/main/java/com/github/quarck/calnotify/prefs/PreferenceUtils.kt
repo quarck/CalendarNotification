@@ -55,7 +55,6 @@ object PreferenceUtils {
                             }
                     seconds * 1000L
                 }
-                .filter { it != 0L } // Remove zeroes as they are ambiguous
                 .toLongArray()
         } catch (ex: Exception) {
             ret = null;

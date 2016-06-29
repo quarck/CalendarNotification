@@ -14,11 +14,14 @@
             android:defaultValue="10"
             android:dependency="enable_reminding_key" />
 
-        <EditTextPreference
+        <com.github.quarck.calnotify.prefs.MaxRemindersPreference
             android:key="reminder_max_reminders"
             android:title="@string/max_reminders"
             android:summary="@string/max_reminders_summary"
             android:defaultValue="0"
-            android:dependency="enable_reminding_key" />
+            android:dependency="enable_reminding_key"
+            />
+
+        <!-- MaxRemindersPreference -->
 
 </PreferenceScreen>

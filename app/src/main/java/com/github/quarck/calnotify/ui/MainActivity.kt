@@ -325,14 +325,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             else if (lhs.snoozedUntil > rhs.snoozedUntil)
                                 return@Comparator 1;
 
-                            val lhsDispTime = lhs.displayedStartTime
-                            val rhsDispTime = rhs.displayedStartTime
-
-                            if (lhsDispTime < rhsDispTime)
-                                return@Comparator -1;
-                            else if (lhsDispTime > rhsDispTime)
-                                return@Comparator 1;
-
                             if (lhs.lastEventVisibility > rhs.lastEventVisibility)
                                 return@Comparator -1;
                             else if (lhs.lastEventVisibility < rhs.lastEventVisibility)

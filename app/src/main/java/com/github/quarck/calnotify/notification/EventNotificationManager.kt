@@ -120,7 +120,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         (it.snoozedUntil == 0L)
                             || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
                     }
-                    .sortedByDescending { it.displayedStartTime }
+                    .sortedBy { it.lastEventVisibility }
 
             val recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
             val olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
@@ -345,9 +345,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setOngoing(notificationSettings.showDismissButton)
             .setStyle(Notification.BigTextStyle()
                 .bigText(notificationText))
-            .setWhen(event.displayedStartTime)
+            .setWhen(event.lastEventVisibility)
             .setShowWhenCompat(false)
-            .setSortKeyCompat("${event.displayedStartTime}")
+            .setSortKeyCompat("${Long.MAX_VALUE-event.lastEventVisibility}") // hack to inverse it
             .setEventCategoryCompat()
 
         logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")

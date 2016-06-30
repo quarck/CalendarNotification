@@ -195,7 +195,7 @@
     <string name="led_pattern">LED Pattern</string>
 
     <string name="milliseconds_suffix">ms</string>
-    <string name="compact_layout">Use compact layout</string>
+    <string name="compact_layout">Use compact view</string>
     <string name="needs_app_restart">(needs app restart)</string>
     <string name="appearance">Appearance</string>
     <string name="snoozed_until_example">Snoozed until 15:15</string>

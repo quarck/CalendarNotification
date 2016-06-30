@@ -138,4 +138,105 @@
     <string name="hits_quiet_period">(wystąpień w godzinach ciszy)</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
 
 
+    <!-- English text has changed: -->
+
+    <string name="dialog_snooze_text_label_v2">Lista definicji rozdzielona przecinkiem\n\nWspierane wartości takie jak \'15m\', \'2h\' or \'3d\' także wartości ujemne jak \'-5m\' ("5 minut przed wydarzeniem")\n\nDo 6 elementów na liście\n\nPozostaw puste aby użyć ustawień domyślnych</string>
+
+    <!-- New strings: -->
+
+    <string name="snooze_all_confirmation">Odłożyć WSZYSTKIE wydarzenia?\nOdłożone wydarzenia także zmienią swój czas, chyba że odłożenie było ostawione na dłuższy okres czasu</string>
+    <string name="change_all_notification">To zmienia czas odłożenia dla wszystkich wydarzeń\nKontynuować?</string>
+
+    <string name="snooze_all_events">Odłóż wszystkie wydarzenia na:</string>
+    <string name="change_all_events">Zmień czas odłożenia dla wszystkich wydarzeń:</string>
+
+    <string name="change_snooze_to">Zmień odłożenie na:</string>
+
+    <string name="snooze_all_title">Odłóż wszystkie wydarzenia</string>
+    <string name="change_all_title">Zmień wszystkie wydarzenia</string>
+
+
+    <string name="custom_snooze_entry">Niestandardowy</string>
+
+    <string name="for_a_custom_time">Na niestandardowy okres</string>
+    <string name="until_specific_time">Na konkretną datę i godzinę</string>
+    <string name="snooze_for">Odłóż na:</string>
+    <string name="selected_time_is_in_the_past"><b>Nie można odłożyć wydarzenia:</b><br>wybrano datę z przeszłości</br></string>
+    <string name="snooze_until_string">Odłóż do data / godzina:</string>
+    <string name="custom_snooze_options_title">Niestandardowe opcji dla opcji odłożenia</string>
+    <string name="custom_snooze_options_summary">Pokaż niestandardowe opcje odłożenia</string>
+
+    <string-array name="time_units_plurals">
+        <item>Minuty</item>
+        <item>Godziny</item>
+        <item>Dni</item>
+    </string-array>
+
+    <string name="pebble_event_text_in_the_title">Tekst wydarzenia w tytule</string>
+    <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania pebble</string>
+
+    <string name="title_calendars_activity">Obsługiwane Kalendarze</string>
+
+    <string name="power_optimisation_warning"><b>Ważna informacja dla użytkowników Samsunga:</b>\n\nW najnowszych urządzeniach Samsung dodał optymalizację użycia energii\nJeżeli optymalizacja zostanie włączona dla Calendar Notifications Plus, przypomnienia dla wydarzeń mogą pojawiać się z opóźnieniem\n\nNie ma możliwośći automatycznego sprawdzenia czy optymalizacja jest włączona czy nie. Należy to zrobić ręcznie\n\nWyłączenie optymalizacji użycia energii dla aplikacji nie spowoduje drenażu baterii\n\nProszę otworzyć\nUstawienia -&gt; Bateria -&gt; Oszczędzanie energii -&gt; Znajdź "Calendar Notifications Plus"\ni zmień na \'Wyłączony\'\n\nTa informacja nie ma znaczenie jeżeli jest używany niestandardowy ROM (brak TouchWiz)</string>
+    <string name="never_show_again">Nie pokazuj ponownie</string>
+
+
+    <string name="before_event">Przed</string>
+    <string name="menu_about">O programie</string>
+    <string name="translation_contributors">Tłumaczenie:</string>
+
+    <!-- NOTE: 'gplv3_notice' is a part of standard GPLv3 notice text. Most likely there is already official version of this text translated to Polish language somewhere -->
+    <string name="gplv3_notice">Niniejszy program jest wolnym oprogramowaniem; możesz go rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej Licencji Publicznej GNU, wydanej przez Fundację Wolnego Oprogramowania - według wersji 3 tej Licencji lub którejś z późniejszych wersji. Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH ZASTOSOWAŃ. W celu uzyskania bliższych informacji - Powszechna Licencja Publiczna GNU.</string>
+
+    <string name="gplv3_src_comment">\nPełna treść licencji GPLv3 oraz kod źródłowy dla programu:</string>
+    <string name="credits">Uznania:</string>
+    <string name="app_icon">App Icon:</string>
+    <string name="undo">COFNIJ</string>
+    <string name="event_dismissed">Wydarzenia odrzucone</string>
+
+    <string name="moved_to_string">Wydarzenie przełożone na</string>
+    <string name="vibration_pattern">Wzór dla wibracji</string>
+    <string name="_100ms">100ms</string>
+    <string name="_2500ms">2500ms</string>
+    <string name="led_on_time">Włącz diodę o:</string>
+    <string name="led_off_time">Wyłącz diodę o:</string>
+    <string name="led_pattern">Wzór dla diody</string>
+
+    <string name="milliseconds_suffix">ms</string>
+    <string name="compact_layout">Użyj układu skróconego</string>
+    <string name="needs_app_restart">(potrzebne ponowne uruchomienie aplikacji)</string>
+    <string name="appearance">Wygląd</string>
+    <string name="snoozed_until_example">Odłóż do 15:15</string>
+    <string name="event_title_example">Nazwa wydarzenia</string>
+    <string name="event_time_example">Środa, 31 Grudnia</string>
+    <string name="event_time_example_2ln_first">Jutro</string>
+    <string name="event_time_example_2ln_second">22:00 – 23:00</string>
+    <string name="event_list_style">Lista wydarzeń</string>
+
+    <string name="restart_the_app_to_apply_changes">Uruchom ponowanie aplikację aby zastosować zmiany</string>
+    <string name="event_list_style_summary">Wybierz pomiędzy widokiem skórconym a widokiem karty\nZmiana wymaga ponownego uruchomienia aplikacji</string>
+    <string name="compact_view">Widok skrócony</string>
+    <string name="compact_view_explanation">— Przesuń aby odrzucić\n— Kliknij na wydarzenie aby otworzyć okno dla odłożenia\n— Otwórz odłożenie i kliknij na tytuł aby otworzyć wydarzenie w kalendarzu</string>
+    <string name="list_item_look_like">Wygląd listy:</string>
+    <string name="card_view">Widok karty</string>
+    <string name="card_view_explanation">— Kliknij na karcie aby otworzyć wydarzenie w kalendarzu\n— Użyj przycisków odłóż lub odrzuć wydarzenie</string>
+    <string name="ok">OK</string>
+    <string name="compact_view_is_a_default_style_now">Widok skrócony jest widokiem domyślnym</string>
+    <string name="switch_to_cards">ZMIEŃ NA KARTY</string>
+    <string name="special_thanks_to">Specjalne podziękowania dla:</string>
+
+    <string name="usage_hints">Poradnik:</string>
+
+    <string name="hyphen" translatable="false">—</string>
+    <string name="compact_vs_card_view">Widok skrócony czy Widok kart</string>
+    <string name="no_calendars_found">Nie znaleziono kalendarza</string>
+    <string name="dismissed">Odrzucone</string>
+    <string name="choose_date">Wybierz Datę</string>
+
+    <string name="choose_time" formatted="false">Odłóż do %s\nWybierz godzinę</string>
+
+    <string name="next">Następny</string>
+
+    <string name="until_event_time">Odłóż do czasy rozpoczęcia</string>
+
 </resources>

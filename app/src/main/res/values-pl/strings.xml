@@ -227,7 +227,6 @@
 
     <string name="usage_hints">Poradnik:</string>
 
-    <string name="hyphen" translatable="false">—</string>
     <string name="compact_vs_card_view">Widok skrócony czy Widok kart</string>
     <string name="no_calendars_found">Nie znaleziono kalendarza</string>
     <string name="dismissed">Odrzucone</string>

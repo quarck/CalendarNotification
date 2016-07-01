@@ -193,6 +193,12 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(USE_COMPACT_LAYOUT_KEY, true)
         set(value) = prefs.setBoolean(USE_COMPACT_LAYOUT_KEY, value)
 
+    val haloLightDatePicker: Boolean
+        get() = prefs.getBoolean(HALO_LIGHT_DATE_PICKER_KEY, false)
+
+    val haloLightTimePicker: Boolean
+        get() = prefs.getBoolean(HALO_LIGHT_TIMER_PICKER_KEY, false)
+
     var powerOptimisationWarningShown: Boolean
         get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
         set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
@@ -257,6 +263,9 @@ class Settings(ctx: Context) {
         private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
         private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
         private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
+
+        private const val HALO_LIGHT_DATE_PICKER_KEY = "halo_light_date"
+        private const val HALO_LIGHT_TIMER_PICKER_KEY = "halo_light_time"
 
         private const val LAST_CUSTOM_INTERVAL_KEY = "last_custom_snooze_interval"
 

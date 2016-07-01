@@ -38,7 +38,6 @@
     <string name="help_title">Jeżeli znalazłeś błąd, masz pytanie lub chciałbyś zasugerować nową opcję w aplikacji - proszę o kontakt z autorem poprzez mail.\n\nProszę nie oczekuj natychmiastowej odpowiedzi. Rozwijam tą aplikację w moim wolnym czasie i mogę odpowiadać tylko jeżeli znajdę na to czas</string>
     <string name="email_developer">EMAIL DO AUTORA</string>
 
-    <string name="forward_to_pebble">Forward to Pebble</string>
     <string name="forward_to_pebble_summary">Jeżeli posiadasz Smart Watch Pebble - umożliwia aplikacji przekazywanie powiadomień na Pebble</string>
 
     <string name="multiple_events">%d więcej wydarzeń</string>
@@ -173,7 +172,6 @@
     </string-array>
 
     <string name="pebble_event_text_in_the_title">Tekst wydarzenia w tytule</string>
-    <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania pebble</string>
 
     <string name="title_calendars_activity">Obsługiwane Kalendarze</string>
 
@@ -237,5 +235,8 @@
     <string name="next">Następny</string>
 
     <string name="until_event_time">Odłóż do czasy rozpoczęcia</string>
+
+    <string name="forward_to_pebble">Przekaż na Pebble</string>
+    <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania Pebble</string>
 
 </resources>

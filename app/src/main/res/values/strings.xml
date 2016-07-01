@@ -230,4 +230,8 @@
     <string name="next">Next</string>
 
     <string name="until_event_time">Until event time</string>
+    <string name="halo_light_theme_date_picker">Halo.Light theme for date picker</string>
+    <string name="halo_light_theme_date_picker_summary">Use Android Jellybean style date pickers</string>
+    <string name="halo_light_theme_time_picker">Halo.Light theme for time picker</string>
+    <string name="halo_light_theme_time_picker_summary">Use Android Jellybean style time pickers</string>
 </resources>

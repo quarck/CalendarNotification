@@ -23,7 +23,6 @@ package com.github.quarck.calnotify.prefs
 import android.content.Context
 import android.content.res.TypedArray
 import android.preference.DialogPreference
-import android.provider.Settings
 import android.util.AttributeSet
 import android.view.View
 import android.widget.CheckBox
@@ -33,6 +32,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import java.text.DateFormat
+import com.github.quarck.calnotify.Settings
 import java.util.*
 
 class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
@@ -47,7 +47,14 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
     internal var widgetView: TextView? = null
 
     init {
-        dialogLayoutResource = R.layout.dialog_time_of_day
+        val settings = Settings(getContext())
+
+        dialogLayoutResource =
+            if (settings.haloLightTimePicker)
+                R.layout.dialog_time_of_day_halo_light
+            else
+                R.layout.dialog_time_of_day
+
         widgetLayoutResource = R.layout.dialog_time_of_day_widget
 
         setPositiveButtonText(android.R.string.ok)

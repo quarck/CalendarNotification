@@ -416,7 +416,12 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     @Suppress("unused", "UNUSED_PARAMETER", "DEPRECATION")
     fun OnButtonSnoozeUntilClick(v: View?) {
 
-        val dialogDate = this.layoutInflater.inflate(R.layout.dialog_date_picker, null);
+        val dialogDate = this.layoutInflater.inflate(
+            if (settings.haloLightDatePicker)
+                R.layout.dialog_date_picker_halo_light
+            else
+                R.layout.dialog_date_picker,
+            null);
         val datePicker = dialogDate.find<DatePicker>(R.id.datePickerCustomSnooze)
 
         AlertDialog.Builder(this)
@@ -426,7 +431,11 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                 datePicker.clearFocus()
 
-                val dialogTime = this.layoutInflater.inflate(R.layout.dialog_time_picker, null);
+                val dialogTime = this.layoutInflater.inflate(
+                    if (settings.haloLightTimePicker)
+                        R.layout.dialog_time_picker_halo_light
+                    else
+                        R.layout.dialog_time_picker, null);
 
                 val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
                 timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))

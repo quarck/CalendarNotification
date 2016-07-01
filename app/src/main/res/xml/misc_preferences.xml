@@ -5,10 +5,22 @@
         android:title="@string/misc_settings"
         android:key="pref_key_misc" -->
 
-        <CheckBoxPreference
-            android:key="abort_broadcast"
-            android:title="@string/abort_broadcast"
-            android:summary="@string/abort_broadcast_summary"
-            android:defaultValue="false"/>
+    <CheckBoxPreference
+        android:key="halo_light_date"
+        android:title="@string/halo_light_theme_date_picker"
+        android:summary="@string/halo_light_theme_date_picker_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="halo_light_time"
+        android:title="@string/halo_light_theme_time_picker"
+        android:summary="@string/halo_light_theme_time_picker_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="abort_broadcast"
+        android:title="@string/abort_broadcast"
+        android:summary="@string/abort_broadcast_summary"
+        android:defaultValue="false"/>
 
 </PreferenceScreen>

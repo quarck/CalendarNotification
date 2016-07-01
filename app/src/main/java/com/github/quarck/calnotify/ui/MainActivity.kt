@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var useCompactView = true
 
-    private var shouldRepost = true
+    private var shouldForceRepost = false
 
     private val undoDisappearSensitivity: Float by lazy  {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
@@ -98,6 +98,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         setSupportActionBar(find<Toolbar?>(R.id.toolbar))
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        shouldForceRepost = (System.currentTimeMillis() - globalState.lastNotificationRePost) > Consts.MIN_FORCE_REPOST_INTERVAL
 
         refreshLayout = find<SwipeRefreshLayout>(R.id.cardview_refresh_layout)
 
@@ -196,8 +198,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         checkPermissions()
 
         background {
-            ApplicationController.onMainActivityResumed(this, shouldRepost)
-            shouldRepost = false
+            ApplicationController.onMainActivityResumed(this, shouldForceRepost)
+            shouldForceRepost = false
         }
     }
 
@@ -295,7 +297,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
             R.id.action_settings -> {
-                shouldRepost = true // so onResume would re-post everything
+                shouldForceRepost = true // so onResume would re-post everything
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
 

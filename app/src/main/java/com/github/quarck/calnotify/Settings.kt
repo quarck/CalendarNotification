@@ -158,6 +158,12 @@ class Settings(ctx: Context) {
             return notification
         }
 
+    val maxNotifications: Int
+        get() = prefs.getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.MAX_NOTIFICATIONS)
+
+    val collapseEverything: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)
+
     val remindersEnabled: Boolean
         get() = prefs.getBoolean(ENABLE_REMINDERS_KEY, false)
 
@@ -245,6 +251,9 @@ class Settings(ctx: Context) {
         private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
         private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
+
+        private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
+        private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything"
 
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
         private const val SHOW_CUSTOM_SNOOZE_TIMES_KEY = "show_custom_snooze_and_until"

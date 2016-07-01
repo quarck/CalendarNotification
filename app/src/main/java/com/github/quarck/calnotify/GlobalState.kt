@@ -28,6 +28,8 @@ class GlobalState : Application() {
 	var notificationLastFireTime: Long = 0
 	var numRemindersFired: Int = 0
 
+	var lastNotificationRePost: Long = 0
+
 	fun updateNotificationLastFiredTime() {
 		notificationLastFireTime = System.currentTimeMillis()
 		numRemindersFired = 0

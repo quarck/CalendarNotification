@@ -23,6 +23,7 @@ import android.content.Context
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
@@ -259,8 +260,10 @@ object ApplicationController {
         if (context != null) {
             val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
 
-            if (shouldRepost || changes)
+            if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
+                context.globalState.lastNotificationRePost = System.currentTimeMillis()
+            }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 

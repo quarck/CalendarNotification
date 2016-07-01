@@ -234,4 +234,12 @@
     <string name="halo_light_theme_date_picker_summary">Use Android Jellybean style date pickers</string>
     <string name="halo_light_theme_time_picker">Halo.Light theme for time picker</string>
     <string name="halo_light_theme_time_picker_summary">Use Android Jellybean style time pickers</string>
+
+    <string name="max_notifications_before_collapse">Max notifications</string>
+    <string name="max_notifications_before_collapse_summary">Number of max allowed notifications to be displayed at any time by the app simultaneously\n\nNote: upper number is limited to 8 to avoid potential SystemUI crashes that happen on some devices when app is posting too many notifications</string>
+    <string name="collapse_everything">Collapse everything on exceeding</string>
+    <string name="collapse_everything_summary">When number of total active notifications exceeds max notifications, everything would be collapsed into a single group notification</string>
+
+    <string name="multiple_events_single_notification">%d calendar events</string>
+
 </resources>

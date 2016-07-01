@@ -122,8 +122,19 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     }
                     .sortedBy { it.lastEventVisibility }
 
-            val recentEvents = activeEvents.takeLast(Consts.MAX_NOTIFICATIONS - 1);
-            val olderEvents = activeEvents.take(activeEvents.size - recentEvents.size)
+            val maxNotifications = settings.maxNotifications
+            val collapseEverything = settings.collapseEverything
+
+            var recentEvents = activeEvents.takeLast(maxNotifications - 1);
+            var collapsedEvents = activeEvents.take(activeEvents.size - recentEvents.size)
+
+            if (collapsedEvents.size == 1) {
+                recentEvents +=  collapsedEvents;
+                collapsedEvents = listOf<EventAlertRecord>()
+            } else if (collapseEverything && !collapsedEvents.isEmpty()) {
+                collapsedEvents = recentEvents + collapsedEvents;
+                recentEvents = listOf<EventAlertRecord>()
+            }
 
             postedAnyNotification =
                 postDisplayedEventNotifications(
@@ -133,7 +144,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     force, isQuietPeriodActive,
                     primaryEventId)
 
-            collapseDisplayedNotifications(context, db, olderEvents, settings, force);
+            collapseDisplayedNotifications(context, db, collapsedEvents, settings, force, recentEvents.isEmpty());
         }
 
         // If this is a new notification -- wake screen when required
@@ -169,7 +180,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun collapseDisplayedNotifications(
         context: Context, db: EventsStorage,
-        events: List<EventAlertRecord>, settings: Settings, force: Boolean ) {
+        events: List<EventAlertRecord>, settings: Settings, force: Boolean, everythingCollapsed: Boolean ) {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
@@ -189,7 +200,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (!events.isEmpty())
-            postNumNotificationsCollapsed(context, db, settings, events);
+            postNumNotificationsCollapsed(context, db, settings, events, everythingCollapsed);
         else
             hideCollapsedEventsNotification(context);
     }
@@ -475,7 +486,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context: Context,
         db: EventsStorage,
         settings: Settings,
-        events: List<EventAlertRecord>
+        events: List<EventAlertRecord>,
+        everythingCollapsed: Boolean
     ) {
         logger.debug("Posting collapsed view notification for ${events.size} events");
 
@@ -485,7 +497,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val numEvents = events.size
 
         val title = java.lang.String.format(
-            context.getString(com.github.quarck.calnotify.R.string.multiple_events),
+            context.getString(
+                if (everythingCollapsed)
+                    R.string.multiple_events_single_notification
+                else
+                    R.string.multiple_events),
             numEvents
         );
 

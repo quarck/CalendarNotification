@@ -241,5 +241,6 @@
     <string name="collapse_everything_summary">When number of total active notifications exceeds max notifications, everything would be collapsed into a single group notification</string>
 
     <string name="multiple_events_single_notification">%d calendar events</string>
+    <string name="advanced">Advanced</string>
 
 </resources>

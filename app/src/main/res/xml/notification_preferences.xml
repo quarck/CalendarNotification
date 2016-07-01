@@ -57,18 +57,22 @@
         android:defaultValue="false"
         />
 
-    <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
-        android:key="max_notifications_before_collapse"
-        android:title="@string/max_notifications_before_collapse"
-        android:summary="@string/max_notifications_before_collapse_summary"
-        android:defaultValue="8"
-        />
+    <PreferenceCategory
+        android:title="@string/advanced"
+        android:key="_notifications_advanced">
 
-    <CheckBoxPreference
-        android:key="max_notifications_collapse_everything"
-        android:title="@string/collapse_everything"
-        android:summary="@string/collapse_everything_summary"
-        android:defaultValue="false"
-        />
+        <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
+            android:key="max_notifications_before_collapse"
+            android:title="@string/max_notifications_before_collapse"
+            android:summary="@string/max_notifications_before_collapse_summary"
+            android:defaultValue="8"/>
+
+        <CheckBoxPreference
+            android:key="max_notifications_collapse_everything"
+            android:title="@string/collapse_everything"
+            android:summary="@string/collapse_everything_summary"
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

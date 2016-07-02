@@ -35,6 +35,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -255,6 +256,20 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
+
+/*
+        val sinceLastFire = globalState.sinceLastTimerBroadcast / 1000L / 60L;
+        if (sinceLastFire < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC) {
+
+            val control = find<TextView?>(R.id.snooze_view_subtle_notice)
+
+            if (control != null) {
+                control.visibility = View.VISIBLE
+                control.text = String.format(resources.getString(R.string.reminders_not_accurate),
+                    ((Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC - sinceLastFire)/1000L + 59L) / 60L )
+            }
+        }
+*/
 
     }
 

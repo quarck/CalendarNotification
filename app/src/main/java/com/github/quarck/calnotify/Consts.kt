@@ -88,4 +88,5 @@ object Consts {
     const val SAMSUNG_KEYWORD = "samsung"
 
     const val MIN_FORCE_REPOST_INTERVAL = 60L*60L*1000L // minimum once an hour
+    const val MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC = 10 * 60 * 1000L
 }

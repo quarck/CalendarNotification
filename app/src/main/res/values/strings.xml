@@ -243,4 +243,6 @@
     <string name="multiple_events_single_notification">%d calendar events</string>
     <string name="advanced">Advanced</string>
 
+    <string name="reminders_not_accurate" formatted="false">"Reminders in less than %d from now might be not accurate"</string>
+
 </resources>

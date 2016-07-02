@@ -25,7 +25,7 @@ import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.broadcastreceivers.AlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
@@ -64,7 +64,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                 logger.info("Scheduling next alarm at ${nextEventAlarm}, in ${(nextEventAlarm - currentTime) / 1000L} seconds");
 
-                val intent = Intent(context, AlarmBroadcastReceiver::class.java);
+                val intent = Intent(context, SnoozeAlarmBroadcastReceiver::class.java);
                 val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                 context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);

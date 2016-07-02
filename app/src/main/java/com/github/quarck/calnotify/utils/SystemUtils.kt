@@ -121,3 +121,7 @@ fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
     }
     return this
 }
+
+fun IsMarshmallowOrAbove(): Boolean {
+    return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+}

@@ -23,17 +23,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 
-class AlarmBroadcastReceiver : BroadcastReceiver() {
+class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive");
-        if (context != null)
+        if (context != null) {
+            context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
             ApplicationController.onEventAlarm(context);
+        }
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverAlarm");
+        private val logger = Logger("SnoozeAlarmBroadcastReceiver");
     }
 }
 

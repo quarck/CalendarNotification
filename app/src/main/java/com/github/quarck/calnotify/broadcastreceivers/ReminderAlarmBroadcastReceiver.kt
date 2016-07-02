@@ -49,6 +49,8 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
             return;
         }
 
+        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
             if (!ApplicationController.hasActiveEvents(context))

@@ -28,12 +28,17 @@ class GlobalState : Application() {
 	var notificationLastFireTime: Long = 0
 	var numRemindersFired: Int = 0
 
-	var lastNotificationRePost: Long = 0
-
 	fun updateNotificationLastFiredTime() {
 		notificationLastFireTime = System.currentTimeMillis()
 		numRemindersFired = 0
 	}
+
+	var lastNotificationRePost: Long = 0
+
+	var lastTimerBroadcastReceived: Long = 0
+
+	val sinceLastTimerBroadcast: Long
+		get() = System.currentTimeMillis() - lastTimerBroadcastReceived
 }
 
 val Context.globalState: GlobalState

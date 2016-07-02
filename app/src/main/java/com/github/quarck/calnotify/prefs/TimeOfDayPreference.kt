@@ -17,7 +17,6 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-
 package com.github.quarck.calnotify.prefs
 
 import android.content.Context
@@ -25,7 +24,6 @@ import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.TimePicker
 import com.github.quarck.calnotify.R
@@ -85,11 +83,18 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         updateWidgetView()
     }
 
+    override fun onClick() {
+        super.onClick()
+        picker.clearFocus()
+    }
+
     @Suppress("DEPRECATION")
     override fun onDialogClosed(positiveResult: Boolean) {
 
         // When the user selects "OK", persist the new value
         if (positiveResult) {
+            picker.clearFocus()
+
             timeValue = Pair(picker.currentHour, picker.currentMinute)
             persistInt(PreferenceUtils.packTime(timeValue))
             updateWidgetView()

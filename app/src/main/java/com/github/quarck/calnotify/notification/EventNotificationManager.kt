@@ -383,7 +383,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (shouldPlayAndVibrate && notificationsSettings.forwardToPebble)
-            PebbleUtils.forwardNotificationToPebble(context, text, bigText, true)
+            PebbleUtils.forwardNotificationToPebble(context, title, bigText, true)
 
         return postedNotification
     }

@@ -181,7 +181,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     formatter,
                     recentEvents.first(),
                     settings.notificationSettingsSnapshot,
-                    true
+                    true, // force, so it won't randomly pop-up this notification
+                    false // was collapsed
                 )
 
                 wakeScreenIfRequired(context, settings);
@@ -450,6 +451,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 // - this is currently potentially displayed event but we are doing "force re-post" to
                 //   ensure all events are displayed (like at boot or after app upgrade
 
+                var wasCollapsed = false
+
                 if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
                     logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
@@ -467,6 +470,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         // No sound / vibration should be played here
                         logger.debug("event ${event.eventId}: notification was collapsed, not playing sound");
                         shouldBeQuiet = true
+                        wasCollapsed = true
+
                     } else if (isQuietPeriodActive) {
                         // we are in a silent period, normally we should always be quiet, but there
                         // are a few exclusions
@@ -486,7 +491,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     postNotification(context, formatter, event,
                         if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
-                        force)
+                        force, wasCollapsed)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -503,7 +508,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
 
                 postNotification(context, formatter, event,
-                    if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force)
+                    if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force, false)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
@@ -540,7 +545,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         formatter: EventFormatterInterface,
         event: EventAlertRecord,
         notificationSettings: NotificationSettingsSnapshot,
-        isForce: Boolean
+        isForce: Boolean,
+        wasCollapsed: Boolean
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -560,7 +566,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             .setContentText(notificationText)
             .setSmallIcon(R.drawable.stat_notify_calendar)
             .setPriority(
-                if (notificationSettings.headsUpNotification && !isForce)
+                if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
                     Notification.PRIORITY_HIGH
                 else
                     Notification.PRIORITY_DEFAULT

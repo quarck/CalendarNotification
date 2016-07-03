@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="pref_vibration_pattern_entries">
+        <item>Długo</item>
+        <item>Bardzo Długo</item>
+        <item>Krótko Krótko Krótko</item>
+        <item>Długo Krótko Krótko Krótko</item>
+        <item>Krótko Krótko Krótko Długo</item>
+    </string-array>
+
+
+</resources>

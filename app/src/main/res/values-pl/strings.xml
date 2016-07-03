@@ -196,8 +196,8 @@
     <string name="vibration_pattern">Wzór dla wibracji</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2500ms</string>
-    <string name="led_on_time">Włącz diodę o:</string>
-    <string name="led_off_time">Wyłącz diodę o:</string>
+    <string name="led_on_time">Włącz diodę na:</string>
+    <string name="led_off_time">Wyłącz diodę na:</string>
     <string name="led_pattern">Wzór dla diody</string>
 
     <string name="milliseconds_suffix">ms</string>

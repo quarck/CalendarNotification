@@ -20,4 +20,5 @@ Rationale for requested permissions:
 You could get this app from:
 * Play Store: https://play.google.com/store/apps/details?id=com.github.quarck.calnotify
 * F-Droid: https://f-droid.org/repository/browse/?fdid=com.github.quarck.calnotify
-* Build it yourself from sources available here :) 
+* Build it yourself from sources available here :)
+

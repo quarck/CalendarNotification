@@ -243,6 +243,6 @@
     <string name="multiple_events_single_notification">%d calendar events</string>
     <string name="advanced">Advanced</string>
 
-    <string name="reminders_not_accurate" formatted="false">"Reminders in less than %d from now might be not accurate"</string>
+    <string name="reminders_not_accurate" formatted="false">WARNING: Reminder fired recently\n\nDue to restrictions imposed by Android since Marshmallow ("Doze" and "App Standby" modes), next reminder or snoozed event is unlikely to fire earlier than in %d minutes from now\nThis restriction doesn\'t apply when device is charging</string>
 
 </resources>

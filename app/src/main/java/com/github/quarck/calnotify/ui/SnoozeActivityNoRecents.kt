@@ -41,6 +41,7 @@ import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
+import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.scaleColor
@@ -256,21 +257,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
-
-/*
-        val sinceLastFire = globalState.sinceLastTimerBroadcast / 1000L / 60L;
-        if (sinceLastFire < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC) {
-
-            val control = find<TextView?>(R.id.snooze_view_subtle_notice)
-
-            if (control != null) {
-                control.visibility = View.VISIBLE
-                control.text = String.format(resources.getString(R.string.reminders_not_accurate),
-                    ((Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC - sinceLastFire)/1000L + 59L) / 60L )
-            }
-        }
-*/
-
     }
 
     private fun formatPreset(preset: Long): String {
@@ -330,6 +316,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         var msg = ""
 
+        val duration = Toast.LENGTH_LONG
+
         if (res.type == SnoozeType.Snoozed) {
             if (res.quietUntil != 0L) {
 
@@ -349,7 +337,54 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
 
         if (msg != "")
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, msg, duration).show();
+    }
+
+    private fun checkForMarshmallowWarningAndContinueWith(
+            res: SnoozeResult,
+            cont: () -> Unit ) {
+
+        if (!isMarshmallowOrAbove() || res.quietUntil != 0L || res.snoozedUntil == 0L) {
+            cont()
+            return
+        }
+
+        val lastAlarm = globalState.lastTimerBroadcastReceived
+        val currentTime = System.currentTimeMillis()
+
+        val untilNextAlarmFromLastAlarm = res.snoozedUntil - lastAlarm
+
+        if (untilNextAlarmFromLastAlarm >= Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC) {
+            cont()
+            return
+        }
+
+        if (settings.dontShowMarshmallowWarning) {
+            cont()
+            return
+        }
+
+        val expectedNextFire = lastAlarm + Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC
+        val untilNextFire = expectedNextFire - currentTime
+
+        val mmWarning =
+                String.format(
+                        resources.getString(R.string.reminders_not_accurate),
+                        (untilNextFire/1000L + 59L) / 60L )
+
+        AlertDialog.Builder(this)
+            .setMessage(mmWarning).setCancelable(false)
+            .setPositiveButton(android.R.string.ok) {
+                x, y ->
+                cont()
+            }
+            .setNegativeButton(R.string.never_show_again) {
+                x, y ->
+                settings.dontShowMarshmallowWarning = true
+                cont()
+            }
+            .create()
+            .show()
     }
 
     private fun snoozeEvent(snoozeDelay: Long) {
@@ -358,10 +393,15 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             logger.debug("Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
             val result = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
-            if (result != null)
-                toastAboutSnoozeResult(result)
+            if (result != null) {
+                checkForMarshmallowWarningAndContinueWith(result) {
+                    toastAboutSnoozeResult(result)
+                    finish()
+                }
+            } else
+                finish()
 
-            finish();
+
         } else {
             AlertDialog.Builder(this)
                 .setMessage(
@@ -376,9 +416,13 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     logger.debug("Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
                     val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
-                    if (result != null)
-                        toastAboutSnoozeResult(result)
-                    finish();
+                    if (result != null) {
+                        checkForMarshmallowWarningAndContinueWith(result) {
+                            toastAboutSnoozeResult(result)
+                            finish()
+                        }
+                    } else
+                        finish()
                 }
                 .setNegativeButton(R.string.cancel) {
                     x, y ->

@@ -217,6 +217,11 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
         set(value) = prefs.setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
 
+    var dontShowMarshmallowWarning: Boolean
+        get() = prefs.getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
+        set(value) = prefs.setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
+
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
             showDismissButton = showDismissButton,
@@ -286,6 +291,7 @@ class Settings(ctx: Context) {
 
         private const val SHOW_NEW_STYLE_MSG_KEY = "show_new_style_message"
 
+        private const val HIDE_MARSHMALLOW_WARNING_KEY = "hide_m_doze_warning"
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
         internal const val DEFAULT_REMINDER_INTERVAL = 10

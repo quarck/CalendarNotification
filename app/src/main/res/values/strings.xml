@@ -244,5 +244,9 @@
     <string name="advanced">Advanced</string>
 
     <string name="reminders_not_accurate" formatted="false">WARNING: Reminder fired recently\n\nDue to restrictions imposed by Android since Marshmallow ("Doze" and "App Standby" modes), next reminder or snoozed event is unlikely to fire earlier than in %d minutes from now\nThis restriction doesn\'t apply when device is charging</string>
+    <string name="open_wiki">OPEN WIKI</string>
+    <string name="dash_or_dash">— or —</string>
+    <string name="if_you_have_a_question_on_using_this_app_please_first_check_application_wiki_page_if_it_is_alwady_answered_there">If you have a question on using this app please first check application Wiki page if it is alwady answered there:</string>
+
 
 </resources>

@@ -60,6 +60,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         startActivity(email);
     }
 
+    fun OnButtonWiki(v: View) = startActivity(Intent.parseUri(wikiUri, 0))
+
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEasterEgg(v: View) {
         if (easterEggCount == 0) {
@@ -90,6 +92,7 @@ Android build: ${Build.DISPLAY}
 App version: ${pInfo.versionName} (${pInfo.versionCode})
 
 <type your feedback / request here>
+
 """
     }
 
@@ -100,5 +103,6 @@ App version: ${pInfo.versionName} (${pInfo.versionCode})
         val mimeType = "message/rfc822"
         val emailSubject = "Calendar Notification Plus Feedback"
 
+        val wikiUri = "https://github.com/quarck/CalendarNotification/wiki"
     }
 }

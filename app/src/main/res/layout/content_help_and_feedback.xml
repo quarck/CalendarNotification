@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_text"
-        android:text="@string/if_you_have_a_question_on_using_this_app_please_first_check_application_wiki_page_if_it_is_alwady_answered_there"
+        android:text="@string/check_wiki_text"
         android:id="@+id/help_and_feedback_wikitext_view"
         />
 

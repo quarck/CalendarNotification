@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.prefs
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.res.TypedArray
 import android.preference.DialogPreference
@@ -26,10 +27,13 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
     internal var timeValue = 0
@@ -69,6 +73,26 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
             }
 
             persistInt(timeValue)
+
+            val settings = Settings(context)
+
+            if (isMarshmallowOrAbove() &&
+                    timeValue * Consts.MINUTE_IN_SECONDS * 1000L < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC &&
+                    !settings.dontShowMarshmallowWarningInSettings) {
+
+                AlertDialog.Builder(context)
+                        .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.ok) {
+                            x, y ->
+                        }
+                        .setNegativeButton(R.string.never_show_again) {
+                            x, y ->
+                            Settings(context).dontShowMarshmallowWarningInSettings = true
+                        }
+                        .create()
+                        .show()
+            }
         }
     }
 

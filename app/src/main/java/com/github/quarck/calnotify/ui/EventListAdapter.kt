@@ -33,6 +33,7 @@ import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -161,13 +162,16 @@ class EventListAdapter(
             })
 
         if (useCompactView)
-            setUpItemTouchHelper(_recyclerView)
+            setUpItemTouchHelper(_recyclerView, context)
     }
 
-    private fun setUpItemTouchHelper(_recyclerView: RecyclerView?) {
+    private fun setUpItemTouchHelper(_recyclerView: RecyclerView?, context: Context) {
 
         val itemTouchCallback =
             object: ItemTouchHelper.Callback() {
+
+                internal val lightweightSwipe = Settings(context).lightweightSwipe
+                internal val escapeVelocityMultiplier = if (lightweightSwipe) 2.0f else 5.0f
 
                 internal val background = ColorDrawable(context.resources.getColor(R.color.material_red))
                 internal var xMark = context.resources.getDrawable(R.drawable.ic_clear_white_24dp)
@@ -217,7 +221,7 @@ class EventListAdapter(
                  * Defines the minimum velocity which will be considered as a swipe action by the user.
                  * You can increase this value to make it harder to swipe or decrease it to make
                  * it easier. */
-                override fun getSwipeEscapeVelocity(defaultValue: Float) = defaultValue * 2.0f
+                override fun getSwipeEscapeVelocity(defaultValue: Float) = defaultValue * escapeVelocityMultiplier
 
                 /* From documentation:
                  * Defines the maximum velocity ItemTouchHelper will ever calculate for pointer

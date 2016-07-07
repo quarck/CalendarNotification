@@ -1,10 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- PreferenceScreen
-        android:title="@string/misc_settings"
-        android:key="pref_key_misc" -->
-
     <CheckBoxPreference
         android:key="halo_light_date"
         android:title="@string/halo_light_theme_date_picker"
@@ -15,6 +11,12 @@
         android:key="halo_light_time"
         android:title="@string/halo_light_theme_time_picker"
         android:summary="@string/halo_light_theme_time_picker_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="lw_swipe"
+        android:title="@string/lightweight_swipe"
+        android:summary="@string/lightweight_swipe_summary"
         android:defaultValue="false" />
 
     <CheckBoxPreference

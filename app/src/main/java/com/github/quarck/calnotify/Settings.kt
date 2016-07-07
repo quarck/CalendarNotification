@@ -225,6 +225,8 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
         set(value) = prefs.setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
 
+    val lightweightSwipe: Boolean
+        get() = prefs.getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
@@ -297,6 +299,8 @@ class Settings(ctx: Context) {
 
         private const val HIDE_MARSHMALLOW_WARNING_KEY = "hide_m_doze_warning"
         private const val HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY = "hide_sttng_m_doze_warning"
+
+        private const val LIGHTWEIGHT_SWIPE_KEY = "lw_swipe"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

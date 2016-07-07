@@ -217,7 +217,24 @@
             android:paddingRight="@dimen/activity_help_credits_padding_right"
             android:paddingEnd="@dimen/activity_help_credits_padding_right"
             android:paddingTop="@dimen/activity_help_credits_padding_vertical"
-            android:paddingBottom="0dp"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            />
+
+        <!-- Not translatable, deliberately not in resources-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rafal (zitto)"
+            android:textColor="@color/primary_text"
+            android:paddingLeft="@dimen/activity_help_credits_padding_left"
+            android:paddingStart="@dimen/activity_help_credits_padding_left"
+            android:paddingRight="@dimen/activity_help_credits_padding_right"
+            android:paddingEnd="@dimen/activity_help_credits_padding_right"
+            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             />

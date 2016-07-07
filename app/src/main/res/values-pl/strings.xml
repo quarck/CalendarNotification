@@ -13,8 +13,6 @@
     <string name="on">Włączone</string>
     <string name="off">Wyłączone</string>
 
-    <string name="dismiss">Odrzuć</string>
-    <string name="snooze">Odłóż</string>
 
     <string name="show_dismiss_button">Pokaż przycisk \'Odrzuć\'</string>
     <string name="show_dismiss_summary">Akcja \'Odrzuć\' będzie wyświetlana na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku</string>
@@ -63,10 +61,15 @@
     <string name="next_week_same_day">Przenieś na następny tydzień</string>
     <string name="custom_pick_a_date">Dowolny (wybierz datę)</string>
 
-    <string name="snoozed_until_string">Odłóż dopóki </string>
+    <string name="snoozed_until_string">Odłożone do</string>
+
     <string name="card_view_btn_change">ZMIEŃ</string>
-    <string name="card_view_btn_snooze">ODŁÓRZ</string>
+    <string name="card_view_btn_snooze">ODŁÓŻ</string>
     <string name="card_view_btn_dismiss">ODRZUĆ</string>
+
+    <string name="dismiss">Odrzuć</string>
+    <string name="snooze">Odłóż</string>
+
     <string name="new_events_detected">Odśwież aby zobaczyć nowe wydarzenia</string>
     <string name="button_reload">ODŚWIERZ</string>
     <string name="settings_name">Ustawienia</string>
@@ -90,7 +93,6 @@
     <string name="minutes">minut</string>
     <string name="minute">minuta</string>
 
-    <string name="no_events_to_display">Brak wydarzeń do wyświetlenia</string>
     <string name="no_calendar_permissions_main">Aplikacja nie ma uprawnień do kalendarza</string>
 
     <string name="view_after_edit">Zobacz po edycji</string>
@@ -238,5 +240,15 @@
 
     <string name="forward_to_pebble">Przekaż na Pebble</string>
     <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania Pebble</string>
+
+    <string name="advanced">Zaawansowane</string>
+
+    <string name="max_notifications_before_collapse">Maksymalna liczba powiadomień</string>
+    <string name="max_notifications_before_collapse_summary">Maksymalna liczba powiadomień, które mogą być wyświetlone naraz\nUwaga: maksymalną liczbę powiadomień ograniczono do 8, ze względu na możliwość nieprawidłowego działania na niektórych urządzeniach przy większej liczbie</string>
+
+    <string name="collapse_everything">Zwiń wszystkie powiadomienia do jednego</string>
+    <string name="collapse_everything_summary">Zwija wszystkie aktywne powiadomienia do jednego - grupowego, gdy ich liczba przekracza ustawiony limit</string>
+
+    <string name="no_events_to_display">Brak powiadomień do wyświetlenia\nTu będą pojawiać się aktywne i odłożone powiadomienia</string>
 
 </resources>

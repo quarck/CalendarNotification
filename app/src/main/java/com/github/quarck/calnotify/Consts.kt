@@ -70,6 +70,7 @@ object Consts {
     const val DEFAULT_LED_PATTERN = "$LED_DURATION_ON,$LED_DURATION_OFF"
     const val LED_MIN_DURATION = 100
     const val LED_MAX_DURATION = 2500
+    const val LED_DURATION_GRANULARITY = 100
 
     const val DEFAULT_LED_COLOR = 0x7f0000ff;
 

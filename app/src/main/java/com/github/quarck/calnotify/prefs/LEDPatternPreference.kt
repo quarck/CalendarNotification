@@ -106,6 +106,9 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
                     progress / offTimeSeeker.max + Consts.LED_MIN_DURATION
         }
 
+        ledOnTime = Math.round(ledOnTime.toFloat() / Consts.LED_DURATION_GRANULARITY).toInt() * Consts.LED_DURATION_GRANULARITY
+        ledOffTime = Math.round(ledOffTime.toFloat() / Consts.LED_DURATION_GRANULARITY).toInt() * Consts.LED_DURATION_GRANULARITY
+
         updateTexts()
     }
 

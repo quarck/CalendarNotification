@@ -116,10 +116,6 @@ class Settings(ctx: Context) {
     val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
 
-    var debugTransactionLogEnabled: Boolean
-        get() = prefs.getBoolean(DEBUG_LOG_KEY, false)
-        set(value) = prefs.setBoolean(DEBUG_LOG_KEY, value)
-
     val abortBroadcast: Boolean
         get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
 
@@ -139,23 +135,46 @@ class Settings(ctx: Context) {
     val showCustomSnoozeAndUntil: Boolean
         get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
 
+    private fun loadRingtoneUri(settingsKey: String): Uri? {
+        var notification: Uri? = null
+
+        try {
+            val uriValue = prefs.getString(settingsKey, "")
+
+            if (uriValue != null && !uriValue.isEmpty())
+                notification = Uri.parse(uriValue)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        if (notification == null)
+            notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        return notification
+    }
+
     val ringtoneURI: Uri?
+        get() = loadRingtoneUri (RINGTONE_KEY)
+
+    val reminderRingtoneURI: Uri?
+        get() = loadRingtoneUri (if (reminderCustomVibra) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
+
+    val reminderCustomRingtone: Boolean
+        get() = prefs.getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
+
+    val reminderCustomVibra: Boolean
+        get() = prefs.getBoolean(REMINDERS_CUSTOM_VIBRATION_KEY, false)
+
+    val reminderVibraOn: Boolean
+        get() = prefs.getBoolean(if (reminderCustomVibra) REMINDERS_VIBRATION_ENABLED_KEY else VIBRATION_ENABLED_KEY, true)
+
+    val reminderVibrationPattern: LongArray
         get() {
-            var notification: Uri? = null
+            val idx = prefs.getString(
+                    if (reminderCustomVibra) REMINDERS_VIBRATION_PATTERN_KEY else VIBRATION_PATTERN_KEY, "0").toInt()
 
-            try {
-                val uriValue = prefs.getString(RINGTONE_KEY, "")
-
-                if (uriValue != null && !uriValue.isEmpty())
-                    notification = Uri.parse(uriValue)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            if (notification == null)
-                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-            return notification
+            val patterns = Consts.VIBRATION_PATTERNS
+            return if (idx < patterns.size && idx >= 0) patterns[idx] else patterns[0]
         }
 
     val maxNotifications: Int
@@ -271,12 +290,18 @@ class Settings(ctx: Context) {
 
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
 
-        private const val DEBUG_LOG_KEY = "debugLog"
         private const val ABORT_BROADCAST_KEY = "abort_broadcast"
 
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
+
+        private const val REMINDERS_CUSTOM_RINGTONE_KEY="reminders_custom_ringtone"
+        private const val REMINDERS_CUSTOM_VIBRATION_KEY ="reminders_custom_vibration"
+        private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone"
+        private const val REMINDERS_VIBRATION_ENABLED_KEY = "reminder_vibra_on"
+        const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern"
+
 
         private const val ENABLE_QUIET_HOURS_KEY = "enable_quiet_hours"
         private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from"

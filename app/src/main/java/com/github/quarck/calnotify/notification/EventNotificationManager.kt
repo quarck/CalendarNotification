@@ -52,7 +52,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 lastEventVisibility = System.currentTimeMillis())
         }
 
-        postEventNotifications(ctx, formatter, false, event.eventId);
+        postEventNotifications(ctx, formatter, false, event.eventId)
     }
 
     override fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
@@ -63,17 +63,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 displayStatus = EventDisplayStatus.Hidden)
         }
 
-        postEventNotifications(context, formatter, true, event.eventId);
+        postEventNotifications(context, formatter, true, event.eventId)
     }
 
     override fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
-        removeNotification(context, eventId, notificationId);
-        postEventNotifications(context, formatter, false, null);
+        removeNotification(context, eventId, notificationId)
+        postEventNotifications(context, formatter, false, null)
     }
 
     override fun onEventSnoozed(context: Context, formatter: EventFormatterInterface,eventId: Long, notificationId: Int) {
-        removeNotification(context, eventId, notificationId);
-        postEventNotifications(context, formatter, false, null);
+        removeNotification(context, eventId, notificationId)
+        postEventNotifications(context, formatter, false, null)
     }
 
     override fun onAllEventsSnoozed(context: Context) {
@@ -91,7 +91,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 Consts.SCREEN_WAKE_LOCK_NAME) {
                 // Screen would actually be turned on for a duration of screen timeout set by the user
                 // So don't need to keep wakelock for too long
-                Thread.sleep(Consts.WAKE_SCREEN_DURATION);
+                Thread.sleep(Consts.WAKE_SCREEN_DURATION)
             }
         }
 
@@ -115,14 +115,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val maxNotifications = settings.maxNotifications
         val collapseEverything = settings.collapseEverything
 
-        var recentEvents = activeEvents.takeLast(maxNotifications - 1);
+        var recentEvents = activeEvents.takeLast(maxNotifications - 1)
         var collapsedEvents = activeEvents.take(activeEvents.size - recentEvents.size)
 
         if (collapsedEvents.size == 1) {
-            recentEvents +=  collapsedEvents;
+            recentEvents +=  collapsedEvents
             collapsedEvents = listOf<EventAlertRecord>()
         } else if (collapseEverything && !collapsedEvents.isEmpty()) {
-            collapsedEvents = recentEvents + collapsedEvents;
+            collapsedEvents = recentEvents + collapsedEvents
             recentEvents = listOf<EventAlertRecord>()
         }
 
@@ -153,15 +153,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     primaryEventId)
 
             if (!recentEvents.isEmpty())
-                collapseDisplayedNotifications(context, db, collapsedEvents, settings, force);
+                collapseDisplayedNotifications(context, db, collapsedEvents, settings, force)
             else
                 updatedAnything = updatedAnything ||
-                    postEverythingCollapsed(context, db, collapsedEvents, settings, force, isQuietPeriodActive, primaryEventId, false);
+                    postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false)
         }
 
         // If this is a new notification -- wake screen when required
         if (primaryEventId != null || updatedAnything)
-            wakeScreenIfRequired(context, settings);
+            wakeScreenIfRequired(context, settings)
     }
 
     override fun fireEventReminder(context: Context, formatter: EventFormatterInterface) {
@@ -171,6 +171,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val settings = Settings(context)
 
+            val notificationSettings =
+                    settings.notificationSettingsSnapshot.copy(
+                            ringtoneUri = settings.reminderRingtoneURI,
+                            vibraOn = settings.reminderVibraOn,
+                            vibrationPattern = settings.reminderVibrationPattern
+                    )
 
             val (recentEvents, collapsedEvents) =  arrangeEvents(db, System.currentTimeMillis(), settings)
 
@@ -180,12 +186,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     context,
                     formatter,
                     recentEvents.first(),
-                    settings.notificationSettingsSnapshot,
+                    notificationSettings,
                     true, // force, so it won't randomly pop-up this notification
                     false // was collapsed
                 )
 
-                wakeScreenIfRequired(context, settings);
+                wakeScreenIfRequired(context, settings)
 
             } else if (!collapsedEvents.isEmpty()) {
                 // collapsed
@@ -196,13 +202,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     db,
                     collapsedEvents,
                     settings,
+                    notificationSettings,
                     false,
                     isQuietPeriodActive,
                     null,
                     true
-                );
+                )
 
-                wakeScreenIfRequired(context, settings);
+                wakeScreenIfRequired(context, settings)
             }
         }
     }
@@ -210,16 +217,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun postEverythingCollapsed(
         context: Context, db: EventsStorage,
         events: List<EventAlertRecord>, settings: Settings,
+        notificationsSettingsIn: NotificationSettingsSnapshot?,
         force: Boolean, isQuietPeriodActive: Boolean, primaryEventId: Long?, playReminderSound: Boolean ): Boolean {
 
-        logger.debug("Posting ${events.size} notifications in collapsed view");
+        logger.debug("Posting ${events.size} notifications in collapsed view")
 
         if (events.isEmpty()) {
             hideCollapsedEventsNotification(context)
             return false
         }
 
-        val notificationsSettings = settings.notificationSettingsSnapshot
+        val notificationsSettings = notificationsSettingsIn ?: settings.notificationSettingsSnapshot
 
         var postedNotification = false
 
@@ -229,7 +237,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             // make sure we remove full notifications
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
-                removeNotification(context, event.eventId, event.notificationId);
+                removeNotification(context, event.eventId, event.notificationId)
             }
 
             if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {
@@ -242,7 +250,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if ((event.displayStatus != EventDisplayStatus.DisplayedCollapsed) || force) {
                     // currently not displayed or forced -- post notifications
-                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
+                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
 
                     var shouldBeQuiet = false
 
@@ -254,7 +262,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     } else if (event.displayStatus == EventDisplayStatus.DisplayedNormal) {
 
-                        logger.debug("event ${event.eventId}: notification was displayed, not playing sound");
+                        logger.debug("event ${event.eventId}: notification was displayed, not playing sound")
                         shouldBeQuiet = true
 
                     } else if (isQuietPeriodActive) {
@@ -282,7 +290,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             } else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
+                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postedNotification = true
                 shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive
@@ -294,14 +302,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
 
         // now build actual notification and notify
-        val intent = Intent(context, MainActivity::class.java);
+        val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         val numEvents = events.size
 
         val title = java.lang.String.format(
             context.getString(R.string.multiple_events_single_notification),
-            numEvents);
+            numEvents)
 
         val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
 
@@ -341,26 +349,26 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (shouldPlayAndVibrate) {
             if (notificationsSettings.ringtoneUri != null) {
-                logger.debug("Adding ringtone uri ${notificationsSettings.ringtoneUri}");
+                logger.debug("Adding ringtone uri ${notificationsSettings.ringtoneUri}")
                 builder.setSound(notificationsSettings.ringtoneUri)
             } else {
                 logger.debug("No ringtone for this notification")
             }
 
             if (notificationsSettings.vibraOn) {
-                logger.debug("adding vibration");
-                builder.setVibrate(notificationsSettings.vibrationPattern);
+                logger.debug("adding vibration")
+                builder.setVibrate(notificationsSettings.vibrationPattern)
             } else {
                 logger.debug("no vibration")
-                builder.setVibrate(longArrayOf(0));
+                builder.setVibrate(longArrayOf(0))
             }
 
             if (notificationsSettings.ledNotificationOn) {
                 logger.debug("Adding LED light")
                 if (notificationsSettings.ledPattern.size == 2)
-                    builder.setLights(notificationsSettings.ledColor, notificationsSettings.ledPattern[0], notificationsSettings.ledPattern[1]);
+                    builder.setLights(notificationsSettings.ledColor, notificationsSettings.ledPattern[0], notificationsSettings.ledPattern[1])
                 else
-                    builder.setLights(notificationsSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+                    builder.setLights(notificationsSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
             } else {
                 logger.debug("No LED light")
             }
@@ -371,16 +379,16 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 
         if (shouldPlayAndVibrate)
-            context.globalState.updateNotificationLastFiredTime();
+            context.globalState.updateNotificationLastFiredTime()
 
         if (isQuietPeriodActive
             && events.isNotEmpty()
             && !shouldPlayAndVibrate
             && !settings.quietHoursOneTimeReminderEnabled) {
 
-            logger.debug("Would remind after snooze period");
+            logger.debug("Would remind after snooze period")
 
-            settings.quietHoursOneTimeReminderEnabled = true;
+            settings.quietHoursOneTimeReminderEnabled = true
         }
 
         if (shouldPlayAndVibrate && notificationsSettings.forwardToPebble)
@@ -405,9 +413,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
         for (event in events) {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
-                removeNotification(context, event.eventId, event.notificationId);
+                removeNotification(context, event.eventId, event.notificationId)
             } else {
-                logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed");
+                logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
             }
 
             if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {
@@ -417,7 +425,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-        postNumNotificationsCollapsed(context, db, settings, events);
+        postNumNotificationsCollapsed(context, db, settings, events)
     }
 
     // force - if true - would re-post all active notifications. Normally only new notifications are posted to
@@ -433,12 +441,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
         primaryEventId: Long?
     ): Boolean {
 
-        logger.debug("Posting ${events.size} notifications");
+        logger.debug("Posting ${events.size} notifications")
 
         val notificationsSettings = settings.notificationSettingsSnapshot
 
         val notificationsSettingsQuiet =
-            notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false);
+            notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false)
 
         var postedNotification = false
         var playedAnySound = false
@@ -455,7 +463,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
-                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}");
+                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
 
                     var shouldBeQuiet = false
 
@@ -468,7 +476,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
-                        logger.debug("event ${event.eventId}: notification was collapsed, not playing sound");
+                        logger.debug("event ${event.eventId}: notification was collapsed, not playing sound")
                         shouldBeQuiet = true
                         wasCollapsed = true
 
@@ -500,12 +508,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     playedAnySound = playedAnySound || !shouldBeQuiet
 
                 } else {
-                    logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen");
+                    logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
                 }
             } else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive");
+                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postNotification(context, formatter, event,
                     if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force, false)
@@ -524,16 +532,16 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (playedAnySound)
-            context.globalState.updateNotificationLastFiredTime();
+            context.globalState.updateNotificationLastFiredTime()
 
         if (isQuietPeriodActive
             && events.isNotEmpty()
             && !playedAnySound
             && !settings.quietHoursOneTimeReminderEnabled) {
 
-            logger.debug("Would remind after snooze period");
+            logger.debug("Would remind after snooze period")
 
-            settings.quietHoursOneTimeReminderEnabled = true;
+            settings.quietHoursOneTimeReminderEnabled = true
         }
 
         return postedNotification
@@ -559,7 +567,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
                     PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notificationText = formatter.formatNotificationSecondaryText(event);
+        val notificationText = formatter.formatNotificationSecondaryText(event)
 
         val builder = Notification.Builder(ctx)
             .setContentTitle(event.title)
@@ -612,26 +620,26 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (notificationSettings.ringtoneUri != null) {
-            logger.debug("Adding ringtone uri ${notificationSettings.ringtoneUri}");
+            logger.debug("Adding ringtone uri ${notificationSettings.ringtoneUri}")
             builder.setSound(notificationSettings.ringtoneUri)
         } else {
             logger.debug("No ringtone for this notification")
         }
 
         if (notificationSettings.vibraOn) {
-            logger.debug("adding vibration");
-            builder.setVibrate(notificationSettings.vibrationPattern);
+            logger.debug("adding vibration")
+            builder.setVibrate(notificationSettings.vibrationPattern)
         } else {
             logger.debug("no vibration")
-            builder.setVibrate(longArrayOf(0));
+            builder.setVibrate(longArrayOf(0))
         }
 
         if (notificationSettings.ledNotificationOn) {
             logger.debug("Adding LED light")
             if (notificationSettings.ledPattern.size == 2)
-                builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1]);
+                builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1])
             else
-                builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+                builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
         } else {
             logger.debug("No LED light")
         }
@@ -661,10 +669,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
 
-        intent.action = Intent.ACTION_MAIN;
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.action = Intent.ACTION_MAIN
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        return intent;
+        return intent
     }
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
@@ -673,7 +681,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
-        return intent;
+        return intent
     }
 
     private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
@@ -698,7 +706,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     @Suppress("UNUSED_PARAMETER")
     private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(notificationId);
+        notificationManager.cancel(notificationId)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -708,14 +716,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
         settings: Settings,
         events: List<EventAlertRecord>
     ) {
-        logger.debug("Posting collapsed view notification for ${events.size} events");
+        logger.debug("Posting collapsed view notification for ${events.size} events")
 
-        val intent = Intent(context, MainActivity::class.java);
+        val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         val numEvents = events.size
 
-        val title = java.lang.String.format(context.getString(R.string.multiple_events), numEvents);
+        val title = java.lang.String.format(context.getString(R.string.multiple_events), numEvents)
 
         val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
 
@@ -750,9 +758,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (settings.ledNotificationOn) {
             if (settings.ledPattern.size == 2)
-                builder.setLights(settings.ledColor, settings.ledPattern[0], settings.ledPattern[1]);
+                builder.setLights(settings.ledColor, settings.ledPattern[0], settings.ledPattern[1])
             else
-                builder.setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF);
+                builder.setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
         }
 
         val notification = builder.build()
@@ -761,8 +769,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     private fun hideCollapsedEventsNotification(context: Context) {
-        logger.debug("Hiding collapsed view notification");
-        context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED);
+        logger.debug("Hiding collapsed view notification")
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
     }
 
     companion object {
@@ -773,6 +781,5 @@ class EventNotificationManager : EventNotificationManagerInterface {
         const val EVENT_CODE_DELETE_OFFSET = 2
         const val EVENT_CODE_OPEN_OFFSET = 3
         const val EVENT_CODES_TOTAL = 4
-
     }
 }

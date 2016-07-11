@@ -32,7 +32,6 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.utils.find
@@ -48,6 +47,7 @@ class TestButtonsAndToDoActivity : Activity() {
         setContentView(R.layout.activity_test_buttons_and_to_do)
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = settings.removeOriginal
+        find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked = settings.abortBroadcast
     }
 
 
@@ -205,4 +205,11 @@ class TestButtonsAndToDoActivity : Activity() {
     fun OnButtonToggleRemoveClick(v: View) {
         settings.removeOriginal = find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked
     }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonToggleBroadcastAbortClick(v: View) {
+        settings.abortBroadcast = find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked
+    }
+
+
 }

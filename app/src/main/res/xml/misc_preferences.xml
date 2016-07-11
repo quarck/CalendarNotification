@@ -19,10 +19,4 @@
         android:summary="@string/lightweight_swipe_summary"
         android:defaultValue="false" />
 
-    <CheckBoxPreference
-        android:key="abort_broadcast"
-        android:title="@string/abort_broadcast"
-        android:summary="@string/abort_broadcast_summary"
-        android:defaultValue="false"/>
-
 </PreferenceScreen>

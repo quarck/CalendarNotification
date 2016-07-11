@@ -21,7 +21,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             >
 
@@ -38,8 +38,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/material_red"
                 android:text="
-WARNING!\n\nNo usable hidden functionality canbe found here\nThis Activity is purely for debug purpose\nif you want to play with it - use it at your own risk!\n\n\n\n\n\n\n\n\n\n"
+WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is purely for debuging purpose\nif you want to play with it - use it at your own risk!\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n."
                 android:id="@+id/todo"
                 android:visibility="visible"
                 />
@@ -90,6 +91,18 @@ WARNING!\n\nNo usable hidden functionality canbe found here\nThis Activity is pu
                 android:id="@+id/buttonTest3"
                 android:onClick="OnButtonStrEvClick"
                 android:visibility="visible"
+                android:padding="24dp"
+                />
+
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTestToggleAbortBroadcast"
+                android:onClick="OnButtonToggleBroadcastAbortClick"
+                android:visibility="visible"
+                android:textOn="ABORTING BROADCAST"
+                android:textOff="NOT ABORTING BROADCAST"
                 android:padding="24dp"
                 />
 

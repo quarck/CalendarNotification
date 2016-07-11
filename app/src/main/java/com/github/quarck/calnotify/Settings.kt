@@ -116,7 +116,7 @@ class Settings(ctx: Context) {
     val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
 
-    var abortBroadcast: Boolean
+    val abortBroadcast: Boolean
         get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
         set(value) = prefs.setBoolean(ABORT_BROADCAST_KEY, value)
 

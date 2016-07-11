@@ -27,6 +27,8 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
+import com.github.quarck.calnotify.notification.TextToSpeechNotificationManager
+import com.github.quarck.calnotify.notification.TextToSpeechNotificationManagerInterface
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.textutils.EventFormatter

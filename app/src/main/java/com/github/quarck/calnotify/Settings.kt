@@ -47,7 +47,7 @@ data class NotificationSettingsSnapshot
 (
         val showDismissButton: Boolean,
         val ringtoneUri: Uri?,
-        val vibraOn: Boolean,
+        val vibrationOn: Boolean,
         val vibrationPattern: LongArray,
         val ledNotificationOn: Boolean,
         val ledColor: Int,
@@ -113,10 +113,13 @@ class Settings(ctx: Context) {
     val notificationWakeScreen: Boolean
         get() = prefs.getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
 
+    val notificationPlayTts: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_TTS_KEY, false)
+
     val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
 
-    val abortBroadcast: Boolean
+    var abortBroadcast: Boolean
         get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
         set(value) = prefs.setBoolean(ABORT_BROADCAST_KEY, value)
 
@@ -252,7 +255,7 @@ class Settings(ctx: Context) {
         get() = NotificationSettingsSnapshot(
             showDismissButton = showDismissButton,
             ringtoneUri = ringtoneURI,
-            vibraOn = vibraOn,
+            vibrationOn = vibraOn,
             vibrationPattern = vibrationPattern,
             ledNotificationOn = ledNotificationOn,
             ledColor = ledColor,
@@ -282,6 +285,7 @@ class Settings(ctx: Context) {
         private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
         private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
+        private const val NOTIFICATION_TTS_KEY = "notification_tts"
 
         private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
         private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything"

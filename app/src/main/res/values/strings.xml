@@ -251,6 +251,8 @@
     <string name="check_wiki_text">If you have a question on using this app please first check application Wiki page if it is already answered there:</string>
     <string name="lightweight_swipe">Lightweight swipe on compact view</string>
     <string name="lightweight_swipe_summary">Reduce escape velocity required to dismiss event by \'quick swipe\'</string>
+    <string name="notify_tts">Notify via text-to-speech</string>
+    <string name="notify_tts_summary">Read out aloud event title</string>
 
 
 </resources>

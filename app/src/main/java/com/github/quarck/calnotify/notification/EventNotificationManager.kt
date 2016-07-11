@@ -44,6 +44,16 @@ import com.github.quarck.calnotify.utils.*
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
+    private var textToSpeechManager: TextToSpeechNotificationManagerInterface? = null
+
+    private fun getTTS(ctx: Context): TextToSpeechNotificationManagerInterface {
+        synchronized(this) {
+            if (textToSpeechManager == null)
+                textToSpeechManager = TextToSpeechNotificationManager(ctx)
+        }
+        return textToSpeechManager!!
+    }
+
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
@@ -53,6 +63,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         postEventNotifications(ctx, formatter, false, event.eventId)
+
+        if (Settings(ctx).notificationPlayTts) {
+            wakeLocked(ctx.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.TTS_WAKE_LOCK_NAME) {
+                getTTS(ctx).playText(event.title)
+            }
+        }
     }
 
     override fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
@@ -174,7 +190,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val notificationSettings =
                     settings.notificationSettingsSnapshot.copy(
                             ringtoneUri = settings.reminderRingtoneURI,
-                            vibraOn = settings.reminderVibraOn,
+                            vibrationOn = settings.reminderVibraOn,
                             vibrationPattern = settings.reminderVibrationPattern
                     )
 
@@ -355,7 +371,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 logger.debug("No ringtone for this notification")
             }
 
-            if (notificationsSettings.vibraOn) {
+            if (notificationsSettings.vibrationOn) {
                 logger.debug("adding vibration")
                 builder.setVibrate(notificationsSettings.vibrationPattern)
             } else {
@@ -446,7 +462,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notificationsSettings = settings.notificationSettingsSnapshot
 
         val notificationsSettingsQuiet =
-            notificationsSettings.copy(ringtoneUri = null, vibraOn = false, forwardToPebble = false)
+            notificationsSettings.copy(ringtoneUri = null, vibrationOn = false, forwardToPebble = false)
 
         var postedNotification = false
         var playedAnySound = false
@@ -626,7 +642,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             logger.debug("No ringtone for this notification")
         }
 
-        if (notificationSettings.vibraOn) {
+        if (notificationSettings.vibrationOn) {
             logger.debug("adding vibration")
             builder.setVibrate(notificationSettings.vibrationPattern)
         } else {

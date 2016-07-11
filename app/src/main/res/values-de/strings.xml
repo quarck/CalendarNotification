@@ -13,8 +13,6 @@
     <string name="on">Aktiviert</string>
     <string name="off">Deaktiviert</string>
 
-    <string name="empty" translatable="false"/>
-
     <string name="dismiss">Schließen</string>
     <string name="snooze">Schlummern</string>
 
@@ -63,7 +61,6 @@
     <string name="same_time_tomorrow">Auf morgen verschieben</string>
     <string name="next_week_same_day">Um eine Woche verschieben</string>
     <string name="custom_pick_a_date">Benutzerdefiniert (wählen Sie ein Datum)</string>
-    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
     <string name="snoozed_until_string">Nächste Erinnerung: </string>
     <string name="card_view_btn_change">BEARBEITEN</string>
@@ -72,9 +69,7 @@
     <string name="new_events_detected">Neuladen, um neue Termine zu sehen</string>
     <string name="button_reload">NEU LADEN</string>
     <string name="settings_name">Einstellungen</string>
-    <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
     <string name="app_icon_credit">App-Icon:</string>
-    <string name="kotlin_language" translatable="false">Kotlin Language</string>
     <string name="app_created_with">App erstellt mit</string>
     <string name="notification_settings">Benachrichtungs-Einstellungen</string>
     <string name="snooze_presets">Einstellungen für \'Schlummern\'</string>
@@ -219,7 +214,6 @@
 
     <string name="usage_hints">Benutzungshinweise:</string>
 
-    <string name="hyphen" translatable="false">—</string>
     <string name="compact_vs_card_view">Kompakte- oder Kartenansicht</string>
     <string name="no_calendars_found">Keinen Kalender gefunden</string>
     <string name="dismissed">Verworfen</string>

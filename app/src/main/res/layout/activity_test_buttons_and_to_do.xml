@@ -43,6 +43,7 @@
 WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is purely for debuging purpose\nif you want to play with it - use it at your own risk!\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n."
                 android:id="@+id/todo"
                 android:visibility="visible"
+                android:focusable="true"
                 />
 
             <LinearLayout
@@ -75,46 +76,46 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
             </LinearLayout>
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="ADD RANDOM EVENT"
                 android:id="@+id/buttonTest2"
                 android:onClick="OnButtonAddRandomEventClick"
                 android:visibility="visible"
-                android:padding="24dp"
+                android:padding="14dp"
                 />
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="POST DEMO EVENTS FOR PLAY STORE"
                 android:id="@+id/buttonTest3"
                 android:onClick="OnButtonStrEvClick"
                 android:visibility="visible"
-                android:padding="24dp"
+                android:padding="14dp"
                 />
 
 
             <ToggleButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonTestToggleAbortBroadcast"
                 android:onClick="OnButtonToggleBroadcastAbortClick"
                 android:visibility="visible"
                 android:textOn="ABORTING BROADCAST"
                 android:textOff="NOT ABORTING BROADCAST"
-                android:padding="24dp"
+                android:padding="14dp"
                 />
 
             <ToggleButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonTestToggleRemove"
                 android:onClick="OnButtonToggleRemoveClick"
                 android:visibility="visible"
                 android:textOn="REMOVING ORIGINAL EVENT"
                 android:textOff="NOT REMOVING ORIGINAL EVENT"
-                android:padding="24dp"
+                android:padding="14dp"
                 />
 
 

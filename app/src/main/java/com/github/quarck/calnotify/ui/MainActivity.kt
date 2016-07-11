@@ -24,6 +24,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -62,7 +64,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
-    private lateinit var undoLayout: RelativeLayout
+
     private lateinit var newStyleMessageLayout: View
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
@@ -105,7 +107,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         refreshLayout.setOnRefreshListener {
             reloadLayout.visibility = View.GONE;
-            updateUndoVisibility()
             refreshReminderLastFired()
             reloadData()
         }
@@ -132,8 +133,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         quietHoursLayout = find<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
         quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
-
-        undoLayout = find<RelativeLayout>(R.id.activity_main_undo_layout)
 
         newStyleMessageLayout = find<View>(R.id.activity_main_new_style_message_layout)
 
@@ -187,8 +186,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         reloadData()
-
-        updateUndoVisibility()
 
         refreshReminderLastFired()
 
@@ -362,9 +359,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
     }
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun onUndoButtonClick(v: View) {
+    fun onUndoButtonClick(v: View?) {
         undoManager.undo()
-        updateUndoVisibility()
         refreshReminderLastFired()
         reloadData()
     }
@@ -374,11 +370,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         reloadLayout.visibility = View.GONE;
         reloadData();
         refreshReminderLastFired()
-    }
-
-    private fun updateUndoVisibility() {
-        val canUndo = undoManager.canUndo
-        undoLayout.visibility = if (canUndo) View.VISIBLE else View.GONE
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -403,22 +394,13 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         if (undoSense != null) {
             if (Math.abs(undoSense - scrollPosition) > undoDisappearSensitivity) {
                 lastEventDismissalScrollPosition = null
-                if (!useCompactView)
-                    hideUndoDismiss()
-                else
+                if (useCompactView)
                     adapter.clearUndoState()
             }
         }
     }
 
-    // undoSenseHistoricY = -1.0f
-    private fun hideUndoDismiss() {
-        undoManager.clearUndoState()
-        undoLayout.visibility = View.GONE
-    }
-
     private fun onNumEventsUpdated() {
-        updateUndoVisibility()
         val hasEvents = adapter.itemCount > 0
         find<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
         this.invalidateOptionsMenu();
@@ -466,6 +448,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             lastEventDismissalScrollPosition = adapter.scrollPosition
 
             onNumEventsUpdated()
+
+            val coordinatorLayout = find<CoordinatorLayout>(R.id.main_activity_coordinator)
+
+            Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
+                    .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
+                    .show()
         }
         refreshReminderLastFired()
     }

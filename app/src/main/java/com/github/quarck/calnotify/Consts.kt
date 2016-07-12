@@ -49,6 +49,8 @@ object Consts {
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 
+    const val INTENT_TTS_TEXT = "text"
+
     // max number of notifications displayed on the screen at all the times
     const val MAX_NOTIFICATIONS = 8;
 

@@ -44,16 +44,6 @@ import com.github.quarck.calnotify.utils.*
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
-    private var textToSpeechManager: TextToSpeechNotificationManagerInterface? = null
-
-    private fun getTTS(ctx: Context): TextToSpeechNotificationManagerInterface {
-        synchronized(this) {
-            if (textToSpeechManager == null)
-                textToSpeechManager = TextToSpeechNotificationManager(ctx)
-        }
-        return textToSpeechManager!!
-    }
-
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
@@ -65,9 +55,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         postEventNotifications(ctx, formatter, false, event.eventId)
 
         if (Settings(ctx).notificationPlayTts) {
-            wakeLocked(ctx.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.TTS_WAKE_LOCK_NAME) {
-                getTTS(ctx).playText(event.title)
-            }
+            val text = "${event.title}\n${formatter.formatNotificationSecondaryText(event)}"
+            TextToSpeechService.playText(ctx, text)
         }
     }
 

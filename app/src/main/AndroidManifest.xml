@@ -96,6 +96,7 @@
 
         <service android:name=".notification.NotificationActionDismissService"/>
         <service android:name=".ui.UINotifierService"/>
+        <service android:name=".notification.TextToSpeechService" />
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>

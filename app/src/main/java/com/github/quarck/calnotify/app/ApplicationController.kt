@@ -105,6 +105,7 @@ object ApplicationController {
 
         if (event.calendarId == -1L || getSettings(context).getCalendarIsHandled(event.calendarId)) {
 
+            // 1st step - save event into DB
             EventsStorage(context).use {
                 db ->
 
@@ -112,12 +113,6 @@ object ApplicationController {
                     // repeating event - always simply add
                     db.addEvent(event)
                     notificationManager.onEventAdded(context, EventFormatter(context), event)
-
-                    // return true only if we can confirm, by reading event again from DB
-                    // that it is there
-                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
-                    val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
-                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L
                 } else {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents
@@ -138,14 +133,36 @@ object ApplicationController {
                     // add newly fired event
                     db.addEvent(event)
                     notificationManager.onEventAdded(context, EventFormatter(context), event)
+                }
+            }
 
+            // 2nd step - re-open new DB instance and make sure that event:
+            // * is there
+            // * is not set as visible
+            // * is not snoozed
+            EventsStorage(context).use {
+                db ->
+
+                if (event.isRepeating) {
+                    // return true only if we can confirm, by reading event again from DB
+                    // that it is there
+                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                    val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
+                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L && dbEvent.displayStatus == EventDisplayStatus.Hidden
+
+                } else {
                     // return true only if we can confirm, by reading event again from DB
                     // that it is there
                     // Caller is using our return value as "safeToRemoveOriginalReminder" flag
                     val dbEvents = db.getEventInstances(event.eventId)
-                    ret = dbEvents != null && dbEvents[0] != null && dbEvents[0].snoozedUntil == 0L
+                    ret = dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L && dbEvents[0].displayStatus == EventDisplayStatus.Hidden
                 }
             }
+
+            if (!ret)
+                logger.error("Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
+                        "instance st ${event.instanceStartTime}, repeating: " +
+                        "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 

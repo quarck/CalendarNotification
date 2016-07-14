@@ -57,11 +57,11 @@
         android:defaultValue="false"
         />
 
-    <CheckBoxPreference android:key="notification_tts"
+    <!-- CheckBoxPreference android:key="notification_tts"
         android:title="@string/notify_tts"
         android:summary="@string/notify_tts_summary"
         android:defaultValue="false"
-        />
+        / -->
 
     <PreferenceCategory
         android:title="@string/advanced"

@@ -112,10 +112,15 @@ object ApplicationController {
                     // repeating event - always simply add
                     db.addEvent(event)
                     notificationManager.onEventAdded(context, EventFormatter(context), event)
+
+                    // return true only if we can confirm, by reading event again from DB
+                    // that it is there
+                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                    val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
+                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L
                 } else {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents
-
                         = db.getEventInstances(event.eventId)
 
                     logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
@@ -133,12 +138,16 @@ object ApplicationController {
                     // add newly fired event
                     db.addEvent(event)
                     notificationManager.onEventAdded(context, EventFormatter(context), event)
+
+                    // return true only if we can confirm, by reading event again from DB
+                    // that it is there
+                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                    val dbEvents = db.getEventInstances(event.eventId)
+                    ret = dbEvents != null && dbEvents[0] != null && dbEvents[0].snoozedUntil == 0L
                 }
             }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
-            ret = true
 
             UINotifierService.notifyUI(context, false);
 

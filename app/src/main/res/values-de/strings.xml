@@ -17,7 +17,7 @@
     <string name="snooze">Schlummern</string>
 
     <string name="show_dismiss_button">\'Schließen\' Schaltfläche anzeigen</string>
-    <string name="show_dismiss_summary">Wenn aktiviert, wird \'Schließen\' bei jeder Benachrichtigung angezeigt; die Benachrichtigung kann dann nur durch diese Schaltfläche geschlossen werden</string>
+    <string name="show_dismiss_summary">Wenn aktiviert, wird \'Schließen\' bei jeder Benachrichtigung angezeigt. Die Benachrichtigung kann dann nur durch diese Schaltfläche geschlossen werden.</string>
 
     <string name="play_reminder_sound">Benachrichtungs-Ton</string>
     <string name="play_reminder_sound_summary">Aktivieren Sie diese Option, um einen Ton abzuspielen</string>
@@ -27,18 +27,18 @@
 
     <string name="vibra_on">Vibration</string>
 
-    <string name="notification_light_summary">Wenn Sie diese Option aktivieren, informiert Sie die LED über aktive Benachrichtigungen</string>
+    <string name="notification_light_summary">Wenn Sie diese Option aktivieren, informiert Sie die LED über aktive Benachrichtigungen-</string>
     <string name="notification_light_title">Benachrichtungs-LED</string>
 
     <string name="help_feedback">Hilfe und Feedback</string>
 
     <string name="feedback">Feedback</string>
 
-    <string name="help_title">Wenn Sie einen Fehler melden, eine Frage stellen, eine neue Funktion vorschlagen oder Feedback geben möchten, kontaktieren Sie den Entwickler per E-Mail.\n\nErwarten Sie bitte keine direkte Antwort. Ich entwickle diese Anwendung in meiner Freizeit und kann Ihnen nur antworten, wenn ich die Zeit dafür finde</string>
+    <string name="help_title">Wenn Sie einen Fehler melden, eine Frage stellen, eine neue Funktion vorschlagen oder Feedback geben möchten, kontaktieren Sie den Entwickler per E-Mail.\n\nErwarten Sie bitte keine direkte Antwort. Ich entwickle diese Anwendung in meiner Freizeit und kann Ihnen nur antworten, wenn ich die Zeit dafür finde.</string>
     <string name="email_developer">MAIL AN DEN ENTWICKLER</string>
 
     <string name="forward_to_pebble">An Pebble weiterleiten</string>
-    <string name="forward_to_pebble_summary">Aktivieren Sie diese Option, wenn Sie die Pebble Smartwatch nutzen - diese Einstellung wird die Benachrichtigungen an Pebble weiterleiten</string>
+    <string name="forward_to_pebble_summary">Aktivieren Sie diese Option, wenn Sie eine Pebble Smartwatch nutzen. Diese Einstellung wird die Benachrichtigungen an Pebble weiterleiten.</string>
 
     <string name="multiple_events">%d andere Termine</string>
     <string name="multiple_events_details">Tippen, um Details anzuzeigen</string>
@@ -71,13 +71,13 @@
     <string name="settings_name">Einstellungen</string>
     <string name="app_icon_credit">App-Icon:</string>
     <string name="app_created_with">App erstellt mit</string>
-    <string name="notification_settings">Benachrichtungs-Einstellungen</string>
-    <string name="snooze_presets">Einstellungen für \'Schlummern\'</string>
-    <string name="smartwatch_support">Support für Smartwatches</string>
+    <string name="notification_settings">Benachrichtigungen</string>
+    <string name="snooze_presets">Schlummern</string>
+    <string name="smartwatch_support">Smartwatches</string>
     <!-- string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'\n\nBis zu 6 Einträge werden unterstützt\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden</string -->
 
     <string name="error_cannot_parse_preset">Entschuldigung, Ihre Eingabe konnte nicht verarbeitet werden</string>
-    <string name="snooze_presets_title">\'Schlummern\'-Voreinstellungen</string>
+    <string name="snooze_presets_title">Voreinstellungen</string>
     <string name="snooze_presets_summary">Hier können Sie die \'Schlummern\'-Voreinstellungen bearbeiten</string>
 
     <string name="error_too_many_presets">Es werden höchstens 6 Voreinstellungen unterstützt, zusätzliche Einträge werden ignoriert</string>
@@ -88,15 +88,15 @@
     <string name="hour">Stunde</string>
     <string name="minutes">Minuten</string>
     <string name="minute">Minute</string>
-    <string name="no_events_to_display">Keine Benachrichtigung zum anzeigen\nAktive und schlummernde Benachrichtigung erscheinen hier</string>
+    <string name="no_events_to_display">Keine Benachrichtigung vorhanden.\nAktive und schlummernde Benachrichtigung erscheinen hier.</string>
     <string name="no_calendar_permissions_main">Die Anwendung hat keinen Zugriff auf Ihren Kalender</string>
     <string name="view_after_edit">Nach dem Bearbeiten anzeigen</string>
-    <string name="view_after_edit_summary">Aktivieren Sie diese Option, um einen Termin automatisch im Kalender zu öffnen, nachdem der Termin bearbeitet wurde</string>
-    <string name="misc_settings">Verschiedene Einstellungen</string>
+    <string name="view_after_edit_summary">Den Termin automatisch im Kalender öffnen, nachdem er bearbeitet wurde</string>
+    <string name="misc_settings">Verschiedenes</string>
     <string name="abort_broadcast">Broadcast abbrechen</string>
     <string name="abort_broadcast_summary">Wählen Sie diese Option, wenn Sie Standard-Benachrichtigungen zusätzlich zu den Benachrichtigungen dieser App sehen</string>
 
-    <string name="enable_reminders">Aktiviere Erinnerungen</string>
+    <string name="enable_reminders">Erinnerungen aktivieren</string>
     <string name="enable_reminders_summary">Wenn aktiviert, wird die App wiederholt über aktive Benachrichtigungen erinnern</string>
     <string name="remind_interval">Intervall</string>
     <string name="invalid_reminder_interval">Das Intervall kann nicht Null sein, es wird auf 1 Minute zurückgesetzt</string>
@@ -106,7 +106,7 @@
     <string name="pebble_notification_title">Kalender</string>
     <string name="heads_up_notification">Benachrichtigungen</string>
     <string name="heads_up_notification_summary">Zeige eine kurze Benachrichtigung als Hauptelement</string>
-    <string name="projectPageOnGitHub">Projekt auf GitHub</string>
+    <string name="projectPageOnGitHub">GitHub Projektseite</string>
     <string name="snooze_all">Alle Termine schlummern</string>
     <string name="change_all">Alle Termine bearbeiten</string>
     <string name="snooze_all_confirmation">Alle Termine schlummern?\nSchon auf \'Schlummern\' gesetzte Termine werden auch geändert, außer die Zeitspanne bis zur nächsten Erinnerung ist schon größer</string>
@@ -134,10 +134,10 @@
     <string name="quiet_hours">Ruhezeit</string>
 
     <string name="snoozed_time_inside_quiet_hours" formatted="false">Hinweis: Nächster \'Schlummern\' Zeitpunkt liegt in der Ruhezeit, es wird kein Ton und keine Vibration ausgelöst bis zum Ende der Zeit um %s</string>
-    <string name="quiet_hours_summary">Ruhezeit verwenden um alle Erinnerungen zu deaktivieren, direkte Erinnerungen werden trotzdem einen Ton und Vibration auslösen (je nach Einstellungen)</string>
+    <string name="quiet_hours_summary">Ruhezeit verwenden um alle Erinnerungen zu deaktivieren. Direkte Erinnerungen werden, je nach Einstellung, trotzdem einen Ton und/oder Vibration auslösen.</string>
 
     <string name="quiet_hours_mute_primary">Direkte Erinnerungen ruhig stellen</string>
-    <string name="quiet_hours_mute_primary_summary">Direkte Erinnerungen ruhig stellen. Die direkte Erinnerung ist die erste Erinnerung für den besonderen Termin</string>
+    <string name="quiet_hours_mute_primary_summary">Direkte Erinnerungen ruhig stellen. Die direkte Erinnerung ist die erste Erinnerung für den besonderen Termin.</string>
 
     <string name="quiet_hours_main_activity_status" formatted="false">Ruhezeit ist aktiv\nKeine Erinnerungen bis %s</string>
     <string name="hits_quiet_period">(Zeitraum Ruhezeit)</string>
@@ -148,7 +148,7 @@
     <string name="snooze_for">\'Schlummern\' für:</string>
     <string name="selected_time_is_in_the_past"><b>\'Schlummern\' nicht möglich:</b><br>ausgewählte Zeit liegt in der Vergangenheit</br></string>
     <string name="snooze_until_string">\'Schlummern\' bis Datum / Uhrzeit:</string>
-    <string name="custom_snooze_options_title">Benutzerdefinierte Schlummer Optionen</string>
+    <string name="custom_snooze_options_title">Benutzerdefinierte Optionen</string>
     <string name="custom_snooze_options_summary">Zeige benutzerdefinierte Schlummer Optionen bei der Benachrichtigung an</string>
 
     <string-array name="time_units_plurals">
@@ -166,11 +166,11 @@
     <string name="never_show_again">Nicht wieder anzeigen</string>
 
 
-    <string name="dialog_snooze_text_label_v2">Es wird eine durch Komma getrennte Liste von Zeitspannen erwartet\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\' auch negative Werte sind möglich \'-5m\' ("5 Minuten vor dem Termin")\n\nBis zu 6 Einträge werden unterstützt\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden</string>
+    <string name="dialog_snooze_text_label_v2">Es wird eine durch Komma getrennte Liste von Zeitspannen erwartet.\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'. Auch negative Werte sind möglich \'-5m\' ("5 Minuten vor dem Termin").\n\nBis zu 6 Einträge werden unterstützt.\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden.</string>
 
     <string name="before_event">Vor</string>
     <string name="menu_about">Über</string>
-    <string name="translation_contributors">Mitwirkende Übersetzung:</string>
+    <string name="translation_contributors">Mitwirkende bei der Übersetzung:</string>
 
     <!-- NOTE for translators: 'gplv3_notice' is a part of standard GPLv3 notice text. Most likely there is already official version of this text translated to your language -->
     <!-- no official translation under http://www.gnu.de/documents/gpl.de.html (checked at 2016-07-11) -->
@@ -185,8 +185,8 @@
     <string name="vibration_pattern">Vibrationsmuster</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2500ms</string>
-    <string name="led_on_time">LED An Zeit:</string>
-    <string name="led_off_time">LED Aus Zeit:</string>
+    <string name="led_on_time">LED An:</string>
+    <string name="led_off_time">LED Aus:</string>
     <string name="led_pattern">LED Muster</string>
 
     <string name="milliseconds_suffix">ms</string>
@@ -225,12 +225,12 @@
 
     <string name="until_event_time">Bis zum Termin</string>
     <string name="halo_light_theme_date_picker">Halo. Helles Thema für die Auswahl des Datums</string>
-    <string name="halo_light_theme_date_picker_summary">Android Jellybean Thema für die Auswahl des Datums</string>
+    <string name="halo_light_theme_date_picker_summary">Android Jellybean Thema</string>
     <string name="halo_light_theme_time_picker">Halo. Helles Thema für die Auswahl der Zeit</string>
-    <string name="halo_light_theme_time_picker_summary">Android Jellybean Thema für die Auswahl der Zeit</string>
+    <string name="halo_light_theme_time_picker_summary">Android Jellybean Thema</string>
 
     <string name="max_notifications_before_collapse">Maximale Anzahl Benachrichtigungen</string>
-    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen\n\nHinweis: Oberes Limit beträgt 8 um mögliche SystemUI Abstürze bei zu vielen Benachrichtigungen zu verhindern</string>
+    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen\n\nHinweis: Oberes Limit beträgt 8 um mögliche System-UI Abstürze bei zu vielen Benachrichtigungen zu verhindern</string>
     <string name="collapse_everything">Alle weiteren ausblenden</string>
     <string name="collapse_everything_summary">Wenn die Anzahl der Benachrichtigungen das Maximum überschreitet, werden alle ausgeblendet und zu einer Gruppenbenachrichtigung zusammengefasst</string>
 
@@ -242,9 +242,11 @@
 
     <string name="open_wiki">WIKI ÖFFNEN</string>
     <string name="dash_or_dash">— oder —</string>
-    <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst das Wiki prüfen ob diese vielleicht dort schob beantwortet wurde:</string>
-    <string name="lightweight_swipe">Leichtes wischen auf der Kompaktansicht</string>
+    <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst im Wiki schauen, ob diese vielleicht dort schob beantwortet wurde:</string>
+    <string name="lightweight_swipe">Leichtes Wischen auf der Kompaktansicht</string>
     <string name="lightweight_swipe_summary">Reduzierte Geschwindigkeit wird benötigt um einen Termin mit einem \'Schnellen Wisch\' zu verwerfen</string>
+    <string name="notify_tts">Text-in-Sprache</string>
+    <string name="notify_tts_summary">Termintitel laut vorlesen</string>
 
 
 </resources>

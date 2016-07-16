@@ -34,7 +34,7 @@
             android:summary="@string/ringtone_selection_summary"
             android:title="@string/ringtone_selection"
             android:ringtoneType="notification"
-            android:showSilent="false"
+            android:showSilent="true"
             android:showDefault="true"
             android:dependency="reminders_custom_ringtone"
             />

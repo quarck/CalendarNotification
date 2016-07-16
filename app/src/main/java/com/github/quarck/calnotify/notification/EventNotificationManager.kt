@@ -187,10 +187,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (!recentEvents.isEmpty()) {
                 // normal
+
+                val firstEvent = recentEvents.first()
+
+                context.notificationManager.cancel(firstEvent.notificationId)
+
                 postNotification(
                     context,
                     formatter,
-                    recentEvents.first(),
+                    firstEvent,
                     notificationSettings,
                     true, // force, so it won't randomly pop-up this notification
                     false // was collapsed
@@ -201,6 +206,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             } else if (!collapsedEvents.isEmpty()) {
                 // collapsed
                 val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+
+                context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
 
                 postEverythingCollapsed(
                     context,

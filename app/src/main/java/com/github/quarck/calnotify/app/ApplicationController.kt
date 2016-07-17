@@ -148,14 +148,14 @@ object ApplicationController {
                     // that it is there
                     // Caller is using our return value as "safeToRemoveOriginalReminder" flag
                     val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
-                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L && dbEvent.displayStatus == EventDisplayStatus.Hidden
+                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L
 
                 } else {
                     // return true only if we can confirm, by reading event again from DB
                     // that it is there
                     // Caller is using our return value as "safeToRemoveOriginalReminder" flag
                     val dbEvents = db.getEventInstances(event.eventId)
-                    ret = dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L && dbEvents[0].displayStatus == EventDisplayStatus.Hidden
+                    ret = dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L
                 }
             }
 

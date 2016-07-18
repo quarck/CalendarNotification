@@ -48,6 +48,7 @@ import com.github.quarck.calnotify.utils.scaleColor
 import java.util.*
 
 open class SnoozeActivityNoRecents : AppCompatActivity() {
+    var originalEvent: EventAlertRecord? = null
     var event: EventAlertRecord? = null
 
     lateinit var snoozePresets: LongArray
@@ -123,9 +124,11 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         if (!isSnoozeAll) {
             EventsStorage(this).use {
                 db ->
-                event = db.getEvent(eventId, instanceStartTime)
-//                if (event != null)
-//                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider) // would leave it for later for now
+                originalEvent = db.getEvent(eventId, instanceStartTime)
+                if (originalEvent != null) {
+                    event = originalEvent?.copy()
+                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider) // would leave it for later for now
+                }
             }
         }
 
@@ -180,17 +183,17 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     else
                         ev.title;
 
-            val (line1, line2) = formatter.formatDateTimeTwoLines(ev);
-
             val location = ev.location;
             if (location != "") {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
                 val locationView = find<TextView>(R.id.snooze_view_location)
                 locationView.text = location;
-                locationView.setOnClickListener { MapsIntents.openLocation(this, event?.location ?: "") }
+                locationView.setOnClickListener { MapsIntents.openLocation(this, ev.location) }
             }
 
             find<TextView>(R.id.snooze_view_title).text = title;
+
+            val (line1, line2) = formatter.formatDateTimeTwoLines(ev);
 
             val dateTimeFirstLine = find<TextView>(R.id.snooze_view_event_date_line1)
             val dateTimeSecondLine = find<TextView>(R.id.snooze_view_event_date_line2)
@@ -217,7 +220,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = color.scaleColor(0.7f)
             }
-
 
             if (!ev.isRepeating) {
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
@@ -398,9 +400,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     toastAboutSnoozeResult(result)
                     finish()
                 }
-            } else
+            } else {
                 finish()
-
+            }
 
         } else {
             AlertDialog.Builder(this)

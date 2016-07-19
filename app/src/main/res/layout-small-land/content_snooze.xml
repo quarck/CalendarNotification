@@ -56,6 +56,23 @@
             android:background="?android:attr/selectableItemBackground"
             />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:longClickable="false"
+            android:id="@+id/snooze_view_menu"
+            android:src="@drawable/ic_more_vert_white_24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:paddingTop="@dimen/snooze_view_img_padding_start"
+            android:paddingBottom="@dimen/snooze_view_img_padding_start"
+            android:paddingStart="@dimen/snooze_view_img_padding_start"
+            android:paddingEnd="@dimen/snooze_view_img_padding_end"
+            android:paddingRight="@dimen/snooze_view_img_padding_end"
+            android:paddingLeft="@dimen/snooze_view_img_padding_start"
+            android:background="?android:attr/selectableItemBackground"
+            />
+
     </RelativeLayout>
 
     <ScrollView

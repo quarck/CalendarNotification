@@ -176,13 +176,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             snoozeCustom.visibility = showCustomSnoozeVisibility
 
         if (!isSnoozeAll && ev != null) {
-
-            val title =
-                    if (ev.title == "")
-                        this.resources.getString(R.string.empty_title)
-                    else
-                        ev.title;
-
             val location = ev.location;
             if (location != "") {
                 find<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
@@ -190,6 +183,12 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 locationView.text = location;
                 locationView.setOnClickListener { MapsIntents.openLocation(this, ev.location) }
             }
+
+            val title =
+                    if (ev.title == "")
+                        this.resources.getString(R.string.empty_title)
+                    else
+                        ev.title;
 
             find<TextView>(R.id.snooze_view_title).text = title;
 
@@ -259,6 +258,38 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
+
+        if (event != null) {
+            val menuButton = find<ImageView?>(R.id.snooze_view_menu)
+            menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
+        }
+    }
+
+    fun showDismissEditPopup(v: View) {
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.snooze, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            item ->
+            when (item.itemId) {
+                R.id.action_dismiss_event -> {
+                    if (event != null)
+                        ApplicationController.dismissEvent(this, event!!)
+                    finish()
+                    true
+                }
+                R.id.action_edit_event -> {
+                    if (event != null)
+                        CalendarIntents.editCalendarEvent(this, event!!)
+                    finish()
+                    true
+                }
+                else -> false
+            }
+       }
+
+        popup.show()
     }
 
     private fun formatPreset(preset: Long): String {

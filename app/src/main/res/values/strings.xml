@@ -255,4 +255,6 @@
     <string name="notify_tts_summary">Read out aloud event title</string>
 
 
+    <string name="edit_event">Edit event</string>
+
 </resources>

@@ -140,21 +140,29 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
 
     private fun loadRingtoneUri(settingsKey: String): Uri? {
-        var notification: Uri? = null
+        var ringtone: Uri? = null
 
-        try {
-            val uriValue = prefs.getString(settingsKey, "")
+        val ringtoneNotSetValue = "--ringtone-not-set-value--"
 
-            if (uriValue != null && !uriValue.isEmpty())
-                notification = Uri.parse(uriValue)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val uriValue = prefs.getString(settingsKey, ringtoneNotSetValue)
+
+        if (uriValue == null || uriValue.isEmpty()) {
+            // Silent mode -- string is empty
+            ringtone = null;
+        } else if (uriValue == ringtoneNotSetValue) {
+            // use default -- not set
+            ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        } else {
+            // parse URL - custom ringtone
+            try {
+                ringtone = Uri.parse(uriValue)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            }
         }
 
-        if (notification == null)
-            notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        return notification
+        return ringtone
     }
 
     val ringtoneURI: Uri?

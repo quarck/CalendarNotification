@@ -1,0 +1,15 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.ActivityMain" >
+
+    <item
+        android:id="@+id/action_dismiss_event"
+        android:title="@string/dismiss" />
+
+    <item
+        android:id="@+id/action_edit_event"
+        android:title="@string/edit_event" />
+
+</menu>

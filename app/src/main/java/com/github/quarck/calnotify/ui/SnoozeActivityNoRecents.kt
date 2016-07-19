@@ -91,6 +91,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
     )
 
+    private val undoManager by lazy { UndoManager }
+
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -272,19 +274,25 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         popup.setOnMenuItemClickListener {
             item ->
+
+            val ev = event
+
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
-                    if (event != null)
-                        ApplicationController.dismissEvent(this, event!!)
+                    if (ev != null) {
+                        ApplicationController.dismissEvent(this, ev)
+                        undoManager.addUndoState(
+                                UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
+                    }
                     finish()
                     true
                 }
-                R.id.action_edit_event -> {
-                    if (event != null)
-                        CalendarIntents.editCalendarEvent(this, event!!)
+/*                R.id.action_edit_event -> {
+                    if (ev != null)
+                        CalendarIntents.editCalendarEvent(this, ev)
                     finish()
                     true
-                }
+                } */
                 else -> false
             }
        }

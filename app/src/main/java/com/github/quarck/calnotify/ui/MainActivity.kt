@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
 
-    private val undoManager by lazy { UndoManager() }
+    private val undoManager by lazy { UndoManager }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -197,6 +197,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         background {
             ApplicationController.onMainActivityResumed(this, shouldForceRepost)
             shouldForceRepost = false
+        }
+
+        if (undoManager.canUndo) {
+            val coordinatorLayout = find<CoordinatorLayout>(R.id.main_activity_coordinator)
+
+            Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
+                    .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
+                    .show()
         }
     }
 

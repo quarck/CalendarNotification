@@ -20,7 +20,7 @@
 
 package com.github.quarck.calnotify.app
 
-class UndoManager: UndoManagerInterface {
+object UndoManager: UndoManagerInterface {
 
     var undoState: UndoState? = null
 

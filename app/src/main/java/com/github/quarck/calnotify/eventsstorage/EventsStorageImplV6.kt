@@ -75,7 +75,7 @@ class EventsStorageImplV6()
     }
 
     override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
-        logger.debug("addEvent " + event.eventId)
+        logger.debug("addEventImpl " + event.eventId)
 
         if (event.notificationId == 0)
             event.notificationId = nextNotificationId(db);

@@ -24,12 +24,16 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 enum class EventDismissType(val code: Int) {
     ManuallyDismissedFromNotification(0),
     ManuallyDismissedFromActivity(1),
-    AutoDismissedDueToCalendarMove(2);
+    AutoDismissedDueToCalendarMove(2),
+    EventMovedUsingApp(3);
 
     companion object {
         @JvmStatic
         fun fromInt(v: Int) = values()[v]
     }
+
+    val shouldKeep: Boolean
+        get() = this != EventMovedUsingApp
 }
 
 data class DismissedEventAlertRecord(

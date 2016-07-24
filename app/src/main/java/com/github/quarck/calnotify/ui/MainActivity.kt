@@ -47,6 +47,7 @@ import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
@@ -449,7 +450,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, event);
+            ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event);
 
             undoManager.addUndoState(
                 UndoState(
@@ -475,7 +476,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         logger.debug("onItemRemoved, eventId=${event.eventId}")
 
         logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-        ApplicationController.dismissEvent(this, event)
+        ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
 

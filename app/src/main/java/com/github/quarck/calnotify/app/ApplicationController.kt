@@ -22,6 +22,8 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
+import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
@@ -304,13 +306,22 @@ object ApplicationController {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
-    fun dismissEvent(context: Context, db: EventsStorage, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean) {
+    fun dismissEvent(
+            context: Context,
+            db: EventsStorage,
+            event: EventAlertRecord,
+            dismissType: EventDismissType,
+            notifyActivity: Boolean) {
 
-        logger.debug("Removing event id $eventId from DB, and dismissing notification")
+        logger.debug("Removing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
-        db.deleteEvent(eventId, instanceStartTime)
+        if (dismissType.shouldKeep && Settings(context).keepHistory) {
+            DismissedEventsStorage(context).use { db -> db.addEvent(dismissType, event) }
+        }
 
-        notificationManager.onEventDismissed(context, EventFormatter(context), eventId, notificationId);
+        db.deleteEvent(event.eventId, event.instanceStartTime)
+
+        notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -318,23 +329,37 @@ object ApplicationController {
             UINotifierService.notifyUI(context, true);
     }
 
-    fun dismissEvent(context: Context, event: EventAlertRecord) {
+    fun dismissEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord) {
         EventsStorage(context).use {
-            dismissEvent(context, it, event.eventId, event.instanceStartTime, event.notificationId, false)
+            db -> dismissEvent(context,  db,  event,  dismissType, false)
         }
     }
 
-    fun dismissEvent(context: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, notifyActivity: Boolean = true) {
+    fun dismissEvent(
+            context: Context,
+            dismissType: EventDismissType,
+            eventId: Long,
+            instanceStartTime: Long,
+            notificationId: Int,
+            notifyActivity: Boolean = true) {
+
         EventsStorage(context).use {
-            dismissEvent(context, it, eventId, instanceStartTime, notificationId, notifyActivity)
+            db ->
+            val event = db.getEvent(eventId, instanceStartTime)
+            if (event != null)
+                dismissEvent(context, db, event, dismissType, notifyActivity)
         }
     }
 
     fun restoreEvent(context: Context, event: EventAlertRecord) {
         EventsStorage(context).use {
-            it.addEvent(event.copy(notificationId = 0)) // re-assign new notification ID since old one might already in use
+            db -> db.addEvent(event.copy(notificationId = 0)) // re-assign new notification ID since old one might already in use
         }
         notificationManager.onEventRestored(context, EventFormatter(context), event)
+
+        DismissedEventsStorage(context).use {
+            db -> db.deleteEvent(event)
+        }
     }
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
@@ -343,7 +368,10 @@ object ApplicationController {
 
         if (moved) {
             logger.info("moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
-            dismissEvent(context, event.eventId, event.instanceStartTime, event.notificationId)
+
+            EventsStorage(context).use {
+                db -> dismissEvent(context,  db,  event,  EventDismissType.EventMovedUsingApp, true)
+            }
         }
 
         return moved

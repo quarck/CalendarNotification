@@ -30,6 +30,8 @@ interface DismissedEventsStorageInterface {
 
     fun deleteEvent(entry: DismissedEventAlertRecord)
 
+    fun deleteEvent(event: EventAlertRecord)
+
     fun clearHistory()
 
     fun purgeOld(currentTime: Long, maxLiveTime: Long);

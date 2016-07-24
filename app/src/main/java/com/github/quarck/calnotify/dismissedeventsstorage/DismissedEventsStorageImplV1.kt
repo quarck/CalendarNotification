@@ -119,6 +119,15 @@ class DismissedEventsStorageImplV1()
         logger.debug("deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
     }
 
+    override fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
+        db.delete(
+                TABLE_NAME,
+                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
+                arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
+
+        logger.debug("deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
+    }
+
     override fun clearHistoryImpl(db: SQLiteDatabase) {
         db.delete(TABLE_NAME, null, null)
     }

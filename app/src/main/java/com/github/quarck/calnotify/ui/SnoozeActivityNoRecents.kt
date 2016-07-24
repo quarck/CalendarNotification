@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
@@ -280,9 +281,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
                     if (ev != null) {
-                        ApplicationController.dismissEvent(this, ev)
+                        ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, ev)
                         undoManager.addUndoState(
-                                UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
+                            UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
                     }
                     finish()
                     true

@@ -29,6 +29,8 @@ interface DismissedEventsStorageImplInterface {
 
     fun deleteEventImpl(db: SQLiteDatabase, entry: DismissedEventAlertRecord)
 
+    fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord)
+
     fun clearHistoryImpl(db: SQLiteDatabase)
 
     fun getEventsImpl(db: SQLiteDatabase): List<DismissedEventAlertRecord>

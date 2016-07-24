@@ -62,6 +62,9 @@ class DismissedEventsStorage(context: Context)
     override fun deleteEvent(entry: DismissedEventAlertRecord)
         = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
 
+    override fun deleteEvent(event: EventAlertRecord)
+        = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
+
     override fun clearHistory()
         = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.clearHistoryImpl(it) } }
 

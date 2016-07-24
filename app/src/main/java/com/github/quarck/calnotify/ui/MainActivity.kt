@@ -288,6 +288,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
+        val dismissedEvents = menu.findItem(R.id.action_dismiss_event)
+        if (dismissedEvents != null) {
+            dismissedEvents.isEnabled = settings.keepHistory
+        }
+
         return true
     }
 

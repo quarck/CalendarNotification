@@ -349,7 +349,7 @@ class Settings(ctx: Context) {
 
         private const val LIGHTWEIGHT_SWIPE_KEY = "lw_swipe"
 
-        private const val KEEP_HISTORY_KEY = "keep_history"
+        const val KEEP_HISTORY_KEY = "keep_history"
         private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"
 
         // Default values

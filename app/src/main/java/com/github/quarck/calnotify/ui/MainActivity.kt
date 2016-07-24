@@ -301,6 +301,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
                         .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
+            R.id.action_dismissed_events ->
+                startActivity(Intent(this, DismissedEventsActivity::class.java))
+
             R.id.action_settings -> {
                 shouldForceRepost = true // so onResume would re-post everything
                 startActivity(Intent(this, SettingsActivity::class.java))

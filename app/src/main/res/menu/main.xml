@@ -12,6 +12,12 @@
         android:title="@string/snooze_all" />
 
     <item
+        android:id="@+id/action_dismissed_events"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/dismissed_events" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="120"
         app:showAsAction="never"

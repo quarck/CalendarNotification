@@ -236,6 +236,15 @@ class Settings(ctx: Context) {
     val haloLightTimePicker: Boolean
         get() = prefs.getBoolean(HALO_LIGHT_TIMER_PICKER_KEY, false)
 
+    val keepHistory: Boolean
+        get() = prefs.getBoolean(KEEP_HISTORY_KEY, false)
+
+    val keepHistoryDays: Int
+        get() = prefs.getString(KEEP_HISTORY_DAYS_KEY, "").toIntOrNull() ?: 3
+
+    val keepHistoryMilliseconds: Long
+        get() = keepHistoryDays.toLong() * Consts.DAY_IN_MILLISECONDS
+
     var powerOptimisationWarningShown: Boolean
         get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
         set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
@@ -313,7 +322,7 @@ class Settings(ctx: Context) {
         private const val REMINDERS_CUSTOM_VIBRATION_KEY ="reminders_custom_vibration"
         private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone"
         private const val REMINDERS_VIBRATION_ENABLED_KEY = "reminder_vibra_on"
-        const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern"
+        private const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern"
 
 
         private const val ENABLE_QUIET_HOURS_KEY = "enable_quiet_hours"
@@ -339,6 +348,9 @@ class Settings(ctx: Context) {
         private const val HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY = "hide_sttng_m_doze_warning"
 
         private const val LIGHTWEIGHT_SWIPE_KEY = "lw_swipe"
+
+        private const val KEEP_HISTORY_KEY = "keep_history"
+        private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

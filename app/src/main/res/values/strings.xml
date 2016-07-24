@@ -13,7 +13,7 @@
     <string name="on">Enabled</string>
     <string name="off">Disabled</string>
 
-    <string name="empty" translatable="false"/>
+    <string name="empty" translatable="false" />
 
     <string name="dismiss">Dismiss</string>
     <string name="snooze">Snooze</string>
@@ -256,5 +256,12 @@
 
 
     <string name="edit_event">Edit event</string>
+
+    <string name="dismissed_events">Dismissed events</string>
+    <string name="keep_dismissed_events">Keep recently dismissed events</string>
+    <string name="keep_dismissed_events_summary">Keep recently dismissed events so you can review them (go to \'dismissed events\' from main window)</string>
+    <string name="keep_dismissed_events_days">Days to keep dismissed events</string>
+    <string name="keep_dismissed_events_days_summary">For how many days app should keep recently dismissed events</string>
+    <string name="app_behavior">Behavior</string>
 
 </resources>

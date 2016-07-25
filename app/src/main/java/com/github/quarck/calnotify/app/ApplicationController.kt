@@ -316,7 +316,10 @@ object ApplicationController {
         logger.debug("Removing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
         if (dismissType.shouldKeep && Settings(context).keepHistory) {
-            DismissedEventsStorage(context).use { db -> db.addEvent(dismissType, event) }
+            DismissedEventsStorage(context).use {
+                db ->
+                db.addEvent(dismissType, event)
+            }
         }
 
         db.deleteEvent(event.eventId, event.instanceStartTime)

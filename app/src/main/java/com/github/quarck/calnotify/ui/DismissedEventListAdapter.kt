@@ -54,10 +54,10 @@ fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
             String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.dismissTime))
 
         EventDismissType.AutoDismissedDueToCalendarMove ->
-            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.dismissNewTime))
+            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.instanceStartTime))
 
         EventDismissType.EventMovedUsingApp ->
-            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.dismissNewTime))
+            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.instanceStartTime))
 
         else ->
             String.format(ctx.resources.getString(R.string.dismissed_general), dateToStr(ctx, this.dismissTime))

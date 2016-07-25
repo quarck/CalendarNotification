@@ -47,6 +47,7 @@ import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
@@ -207,6 +208,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
                     .show()
         }
+
+        invalidateOptionsMenu();
     }
 
     private fun showPowerOptimisationWarning() {
@@ -288,9 +291,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
-        val dismissedEvents = menu.findItem(R.id.action_dismiss_event)
-        if (dismissedEvents != null) {
-            dismissedEvents.isEnabled = settings.keepHistory
+        val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
+        if (dismissedEventsMenuItem != null) {
+            dismissedEventsMenuItem.isEnabled = settings.keepHistory
+            dismissedEventsMenuItem.isVisible = settings.keepHistory
         }
 
         return true
@@ -328,6 +332,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun reloadData() {
 
         background {
+            if (!settings.keepHistory) {
+                DismissedEventsStorage(this).use { it.clearHistory() }
+            } else {
+                DismissedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), settings.keepHistoryMilliseconds) }
+            }
 
             val events =
                 EventsStorage(this).use {

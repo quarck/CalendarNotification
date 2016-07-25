@@ -35,7 +35,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 
-class SettingsActivity : PreferenceActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsActivity : PreferenceActivity() {
 
     private val delegate by lazy { AppCompatDelegate.create(this, null) }
 
@@ -113,33 +113,4 @@ class SettingsActivity : PreferenceActivity(), SharedPreferences.OnSharedPrefere
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    @Suppress("DEPRECATION")
-    override fun onResume() {
-        super.onResume();
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Suppress("DEPRECATION")
-    override fun onPause() {
-        super.onPause();
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-
-        if (key == null)
-            return
-
-        if (key == Settings.VIBRATION_PATTERN_KEY) {
-            val newPattern = Settings(this).vibrationPattern
-        } else if (key == Settings.KEEP_HISTORY_KEY) {
-            if (!Settings(this).keepHistory) {
-                DismissedEventsStorage(this).use { it.clearHistory() }
-            }
-        }
-    }
-
-
 }

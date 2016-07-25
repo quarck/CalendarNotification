@@ -264,4 +264,9 @@
     <string name="keep_dismissed_events_days_summary">For how many days app should keep recently dismissed events</string>
     <string name="app_behavior">Behavior</string>
 
+    <string name="dismissed_general" formatted="false">Dismissed on %s</string>
+    <string name="dismissed_from_the_app" formatted="false">Dismissed from the app on %s</string>
+    <string name="dismissed_from_notification" formatted="false">Dismissed via notification %s</string>
+    <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
+
 </resources>

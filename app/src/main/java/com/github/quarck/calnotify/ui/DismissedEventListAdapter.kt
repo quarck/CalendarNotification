@@ -26,6 +26,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,9 +37,31 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
+import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+
+private fun dateToStr(ctx: Context, time: Long) =
+    DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
+
+fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
+    when (this.dismissType) {
+        EventDismissType.ManuallyDismissedFromNotification ->
+            String.format(ctx.resources.getString(R.string.dismissed_from_notification), dateToStr(ctx, this.dismissTime))
+
+        EventDismissType.ManuallyDismissedFromActivity ->
+            String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.dismissTime))
+
+        EventDismissType.AutoDismissedDueToCalendarMove ->
+            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.dismissNewTime))
+
+        EventDismissType.EventMovedUsingApp ->
+            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.dismissNewTime))
+
+        else ->
+            String.format(ctx.resources.getString(R.string.dismissed_general), dateToStr(ctx, this.dismissTime))
+    }
 
 interface DismissedEventListCallback {
     fun onItemRestore(v: View, position: Int, eventId: Long): Unit
@@ -269,21 +292,22 @@ class DismissedEventListAdapter(
         val event = events[position]
 
          if (true){
-            holder.eventId = event.event.eventId;
+             holder.eventId = event.event.eventId;
 
-            holder.eventTitleText.text = event.event.title
+             holder.eventTitleText.text = event.event.title
 
-            holder.undoLayout?.visibility = View.GONE
-            holder.compactViewContentLayout?.visibility = View.VISIBLE
+             holder.undoLayout?.visibility = View.GONE
+             holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-            val time = eventFormatter.formatDateTimeOneLine(event.event)
-            holder.eventDateText.text = time
-            holder.eventTimeText.text = ""
+             val time = eventFormatter.formatDateTimeOneLine(event.event)
+             holder.eventDateText.text = time
+             holder.eventTimeText.text = ""
 
-            holder.snoozedUntilText?.text = "Event dismissed <details>"
-            holder.snoozedUntilText?.visibility = View.VISIBLE;
+             holder.snoozedUntilText?.text = event.formatReason(context)
+             holder.snoozedUntilText?.visibility = View.VISIBLE;
 
-            holder.compactViewCalendarColor?.background = holder.calendarColor
+             holder.calendarColor.color = if (event.event.color != 0) event.event.color.adjustCalendarColor() else primaryColor
+             holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }
 

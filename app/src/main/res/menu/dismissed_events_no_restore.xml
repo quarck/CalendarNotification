@@ -1,0 +1,17 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.DismissedEventsActivity" >
+
+    <item
+        android:id="@+id/action_restore"
+        android:title="@string/restore"
+        android:enabled="false"
+        />
+
+    <item
+        android:id="@+id/action_remove"
+        android:title="@string/delete" />
+
+</menu>

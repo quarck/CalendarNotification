@@ -34,6 +34,9 @@ enum class EventDismissType(val code: Int) {
 
     val shouldKeep: Boolean
         get() = this != EventMovedUsingApp
+
+    val canBeRestored: Boolean
+        get() = this != AutoDismissedDueToCalendarMove && this != EventMovedUsingApp
 }
 
 data class DismissedEventAlertRecord(

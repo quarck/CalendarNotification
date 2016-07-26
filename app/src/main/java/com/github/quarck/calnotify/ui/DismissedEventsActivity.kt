@@ -91,7 +91,10 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
         val popup = PopupMenu(this, v)
         val inflater = popup.menuInflater
 
-        inflater.inflate(R.menu.dismissed_events, popup.menu)
+        if (entry.dismissType.canBeRestored)
+            inflater.inflate(R.menu.dismissed_events, popup.menu)
+        else
+            inflater.inflate(R.menu.dismissed_events_no_restore, popup.menu)
 
         popup.setOnMenuItemClickListener {
             item ->

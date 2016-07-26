@@ -273,5 +273,8 @@
     <string name="remove_all">Remove all</string>
 
     <string name="remove_all_confirmation">Remove all entries?</string>
+    <string name="title_activity_privacy_policy">Privacy Policy</string>
+    <string name="context_policy">As part of normal operation, this app receives and stores information about events fired by Android Calendar\n\nNo such information ever leaves application:\n\n* it is not transmitted anywhere\n\n* not shared with anyone\n\n* not provided to any 3rd party\n\nAll event details are removed once event is dismissed\n\nIf user has enabled option to keep recently dismissed events - such information is removed as soon as timeout passes or history is cleared explicitly</string>
+    <string name="privacy_policy">PRIVACY POLICY</string>
 
 </resources>

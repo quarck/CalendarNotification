@@ -80,4 +80,5 @@
     <dimen name="compact_view_left_margin">10dp</dimen>
     <dimen name="compact_view_right_margin">10dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -56,6 +56,9 @@ class AboutActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER", "unused")
     fun OnTextViewGitHubClick(v: View) = startActivity(Intent.parseUri(githubUri, 0))
 
+    @Suppress("UNUSED_PARAMETER", "unused")
+    fun onPrivacyPolicy(v: View) = startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+
     companion object {
         val imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
         val kotlinUri = "https://kotlinlang.org/"

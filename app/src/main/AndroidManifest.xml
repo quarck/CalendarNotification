@@ -4,7 +4,8 @@
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" /> <!-- For HTC -->
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
+    <!-- For HTC -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
@@ -30,23 +31,23 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.SnoozeActivityNoRecents"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_activity_snooze"
             android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.SnoozeActivity"
             android:label="@string/title_activity_activity_snooze"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
@@ -74,19 +75,23 @@
         <activity
             android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.AboutActivity"
             android:label="@string/menu_about"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.DismissedEventsActivity"
             android:label="@string/dismissed_events"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".ui.PrivacyPolicyActivity"
+            android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".ui.MainActivity" >
-        </activity>
+            android:parentActivityName=".ui.AboutActivity"/>
 
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".ui.UINotifierService" />
@@ -103,9 +108,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" /> <!-- Well, HTC -->
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" /> <!-- Well, OLD HTC -->
-                <action android:name="android.intent.action.REBOOT" /> <!-- Well, MIUI -->
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <!-- Well, HTC -->
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <!-- Well, OLD HTC -->
+                <action android:name="android.intent.action.REBOOT" />
+                <!-- Well, MIUI -->
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

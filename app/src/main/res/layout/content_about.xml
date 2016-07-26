@@ -39,9 +39,22 @@
             android:layout_gravity="center_horizontal"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_view_privacy_polity"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/accent"
+            android:layout_margin="10dp"
+            android:text="@string/privacy_policy"
+            android:clickable="true"
+            android:onClick="onPrivacyPolicy"
+            android:layout_gravity="center_horizontal"
+            />
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="10dp"/>
+            android:layout_height="5dp"/>
 
         <TextView
             android:layout_width="wrap_content"

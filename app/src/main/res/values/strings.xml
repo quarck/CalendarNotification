@@ -270,5 +270,6 @@
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
     <string name="restore">Restore notification</string>
     <string name="delete">Delete from history</string>
+    <string name="remove_all">Remove all</string>
 
 </resources>

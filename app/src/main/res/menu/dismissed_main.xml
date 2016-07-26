@@ -1,0 +1,12 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.DismissedEventsActivity" >
+
+    <item
+        android:id="@+id/action_remove_all"
+        android:title="@string/remove_all"
+        app:showAsAction="never"/>
+
+</menu>

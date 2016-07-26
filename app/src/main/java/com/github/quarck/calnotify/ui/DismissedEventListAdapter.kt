@@ -113,7 +113,7 @@ class DismissedEventListAdapter(
 
 
             val itemClickListener = View.OnClickListener {
-                
+
                 if (entry != null)
                     callback.onItemClick(eventTitleText, adapterPosition, entry!!);
             }
@@ -317,4 +317,9 @@ class DismissedEventListAdapter(
             entries = entries.filter { ev -> ev != entry }.toTypedArray()
             notifyItemRemoved(idx)
         }
+
+    fun removeAll() {
+        entries = arrayOf<DismissedEventAlertRecord>()
+        notifyDataSetChanged()
+    }
 }

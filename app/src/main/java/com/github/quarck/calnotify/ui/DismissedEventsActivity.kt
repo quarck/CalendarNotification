@@ -1,5 +1,6 @@
 package com.github.quarck.calnotify.ui
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -10,9 +11,12 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
@@ -110,6 +114,24 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
 
         popup.show()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.dismissed_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.action_remove_all -> {
+                DismissedEventsStorage(this).use { db -> db.clearHistory() }
+                adapter.removeAll()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
 
     companion object {
         val logger = Logger("DismissedEventsActivity")

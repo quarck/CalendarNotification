@@ -1,5 +1,6 @@
 package com.github.quarck.calnotify.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -124,8 +125,20 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
 
         when (item.itemId) {
             R.id.action_remove_all -> {
-                DismissedEventsStorage(this).use { db -> db.clearHistory() }
-                adapter.removeAll()
+
+                AlertDialog.Builder(this)
+                    .setMessage(resources.getString(R.string.remove_all_confirmation))
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.ok) {
+                        x, y ->
+                        DismissedEventsStorage(this).use { db -> db.clearHistory() }
+                        adapter.removeAll()
+                    }
+                    .setNegativeButton(R.string.cancel) {
+                        x, y ->
+                    }
+                    .create()
+                    .show()
             }
         }
 

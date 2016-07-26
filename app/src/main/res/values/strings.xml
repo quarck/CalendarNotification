@@ -272,4 +272,6 @@
     <string name="delete">Delete from history</string>
     <string name="remove_all">Remove all</string>
 
+    <string name="remove_all_confirmation">Remove all entries?</string>
+
 </resources>

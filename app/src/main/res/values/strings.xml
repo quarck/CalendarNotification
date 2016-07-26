@@ -268,5 +268,7 @@
     <string name="dismissed_from_the_app" formatted="false">Dismissed from the app on %s</string>
     <string name="dismissed_from_notification" formatted="false">Dismissed via notification %s</string>
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
+    <string name="restore">Restore notification</string>
+    <string name="delete">Delete from history</string>
 
 </resources>

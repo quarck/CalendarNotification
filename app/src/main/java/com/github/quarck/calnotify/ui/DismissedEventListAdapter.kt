@@ -64,7 +64,8 @@ fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
     }
 
 interface DismissedEventListCallback {
-    fun onItemRestore(v: View, position: Int, eventId: Long): Unit
+    fun onItemClick(v: View, position: Int, entry: DismissedEventAlertRecord): Unit
+    fun onItemRemoved(entry: DismissedEventAlertRecord)
 }
 
 @Suppress("DEPRECATION")
@@ -77,7 +78,8 @@ class DismissedEventListAdapter(
 
     inner class ViewHolder(itemView: View)
     : RecyclerView.ViewHolder(itemView) {
-        var eventId: Long = 0;
+        //var eventId: Long = 0;
+        var entry: DismissedEventAlertRecord? = null
 
         var eventHolder: RelativeLayout?
         var eventTitleText: TextView
@@ -109,28 +111,18 @@ class DismissedEventListAdapter(
 
             calendarColor = ColorDrawable(0)
 
-/*
+
             val itemClickListener = View.OnClickListener {
-                callback.onItemClick(itemView, adapterPosition, eventId);
-            }
-*/
-
-/*            eventHolder?.setOnClickListener(itemClickListener)
-            eventLocatoinText?.setOnClickListener(itemClickListener)
-            eventDateText.setOnClickListener(itemClickListener)
-            eventTimeText.setOnClickListener(itemClickListener)
-
-            dismissButton?.setOnClickListener {
-                callback.onItemDismiss(itemView, adapterPosition, eventId);
+                
+                if (entry != null)
+                    callback.onItemClick(eventTitleText, adapterPosition, entry!!);
             }
 
-            snoozeButton?.setOnClickListener {
-                callback.onItemSnooze(itemView, adapterPosition, eventId);
-            }*/
+            eventHolder?.setOnClickListener(itemClickListener)
         }
     }
 
-    private var events = arrayOf<DismissedEventAlertRecord>();
+    private var entries = arrayOf<DismissedEventAlertRecord>();
 
     private var _recyclerView: RecyclerView? = null
     var recyclerView: RecyclerView?
@@ -157,7 +149,6 @@ class DismissedEventListAdapter(
     }
 
     private fun setUpItemTouchHelper(_recyclerView: RecyclerView?, context: Context) {
-/*
 
         val itemTouchCallback =
                 object: ItemTouchHelper.Callback() {
@@ -174,13 +165,9 @@ class DismissedEventListAdapter(
                     }
 
                     override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                        val position = viewHolder!!.adapterPosition
-                        val adapter = recyclerView?.adapter as EventListAdapter?
+                        val adapter = recyclerView?.adapter as DismissedEventListAdapter?
 
                         if (adapter == null)
-                            return 0
-
-                        if (adapter.isPendingRemoval(position))
                             return 0
 
                         return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
@@ -196,11 +183,15 @@ class DismissedEventListAdapter(
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;
 
-                            val event = getEventAtPosition(swipedPosition)
+                            val entry = getEntryAtPosition(swipedPosition)
+                            if (entry != null) {
 
-                            if (event != null) {
-                                removeWithUndo(event)
-                                callback.onItemRemoved(event)
+                                val idx = entries.indexOf(entry)
+                                entries = entries.filter { ev -> ev != entry }.toTypedArray()
+
+                                notifyItemRemoved(idx)
+
+                                callback.onItemRemoved(entry)
                             }
                         }
                     }
@@ -209,30 +200,9 @@ class DismissedEventListAdapter(
 
                     override fun isItemViewSwipeEnabled() = true
 
-                    */
-/* From documentation:
-                     * Defines the minimum velocity which will be considered as a swipe action by the user.
-                     * You can increase this value to make it harder to swipe or decrease it to make
-                     * it easier. *//*
-
                     override fun getSwipeEscapeVelocity(defaultValue: Float) = defaultValue * escapeVelocityMultiplier
 
-                    */
-/* From documentation:
-                     * Defines the maximum velocity ItemTouchHelper will ever calculate for pointer
-                     * movements.
-                     * If you increase the value, it will be easier for the user to swipe diagonally and
-                     * if you decrease the value, user will need to make a rather straight finger movement
-                     * to trigger a swipe.*//*
-
                     override fun getSwipeVelocityThreshold(defaultValue: Float) = defaultValue / 3.0f
-
-                    */
-/* From documentation:
-                     * Default value is .5f, which means, to swipe a View, user must move the View at
-                     * least half of RecyclerView's width or height, depending on the swipe direction. *//*
-
-//                override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder) = 0.5f
 
                     override fun onChildDraw(
                             c: Canvas, recyclerView: RecyclerView,
@@ -281,32 +251,32 @@ class DismissedEventListAdapter(
             val touchHelper = ItemTouchHelper(itemTouchCallback)
             touchHelper.attachToRecyclerView(_recyclerView)
         }
-*/
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         //
-        if (position < 0 || position >= events.size || holder == null)
+        if (position < 0 || position >= entries.size || holder == null)
             return
 
-        val event = events[position]
+        val entry = entries[position]
 
          if (true){
-             holder.eventId = event.event.eventId;
+             holder.entry = entry
 
-             holder.eventTitleText.text = event.event.title
+             holder.eventTitleText.text = entry.event.title
 
              holder.undoLayout?.visibility = View.GONE
              holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-             val time = eventFormatter.formatDateTimeOneLine(event.event)
+             val time = eventFormatter.formatDateTimeOneLine(entry.event)
              holder.eventDateText.text = time
              holder.eventTimeText.text = ""
 
-             holder.snoozedUntilText?.text = event.formatReason(context)
+             holder.snoozedUntilText?.text = entry.formatReason(context)
              holder.snoozedUntilText?.visibility = View.VISIBLE;
 
-             holder.calendarColor.color = if (event.event.color != 0) event.event.color.adjustCalendarColor() else primaryColor
+             holder.calendarColor.color = if (entry.event.color != 0) entry.event.color.adjustCalendarColor() else primaryColor
              holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }
@@ -316,35 +286,35 @@ class DismissedEventListAdapter(
         return ViewHolder(view);
     }
 
-    override fun getItemCount(): Int = events.size
+    override fun getItemCount(): Int = entries.size
 
-    fun setEventsToDisplay(newEvents: Array<DismissedEventAlertRecord>)
-            = synchronized(this) {
-        events = newEvents;
-        notifyDataSetChanged();
-    }
+    fun setEventsToDisplay(newEntries: Array<DismissedEventAlertRecord>)
+        = synchronized(this) {
+            entries = newEntries;
+            notifyDataSetChanged();
+        }
 
-    fun getEventAtPosition(position: Int, expectedEventId: Long): DismissedEventAlertRecord?
-            = synchronized(this) {
-        if (position >= 0 && position < events.size && events[position].event.eventId == expectedEventId)
-            events[position];
-        else
-            null
-    }
+    fun getEntryAtPosition(position: Int, expectedEventId: Long): DismissedEventAlertRecord?
+        = synchronized(this) {
+            if (position >= 0 && position < entries.size && entries[position].event.eventId == expectedEventId)
+                entries[position];
+            else
+                null
+        }
 
-    private fun getEventAtPosition(position: Int): DismissedEventAlertRecord?
-            = synchronized(this) {
-        if (position >= 0 && position < events.size)
-            events[position];
-        else
-            null
-    }
+    private fun getEntryAtPosition(position: Int): DismissedEventAlertRecord?
+        = synchronized(this) {
+            if (position >= 0 && position < entries.size)
+                entries[position];
+            else
+                null
+        }
 
 
-    fun removeEvent(event: DismissedEventAlertRecord)
-            = synchronized(this) {
-        val idx = events.indexOf(event)
-        events = events.filter { ev -> ev != event }.toTypedArray()
-        notifyItemRemoved(idx)
-    }
+    fun removeEntry(entry: DismissedEventAlertRecord)
+        = synchronized(this) {
+            val idx = entries.indexOf(entry)
+            entries = entries.filter { ev -> ev != entry }.toTypedArray()
+            notifyItemRemoved(idx)
+        }
 }

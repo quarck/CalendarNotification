@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
@@ -75,7 +76,39 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
         }
     }
 
-    override fun onItemRestore(v: View, position: Int, eventId: Long) {
+
+    override fun onItemRemoved(entry: DismissedEventAlertRecord) {
+        DismissedEventsStorage(this).use { db -> db.deleteEvent(entry) }
+    }
+
+    override fun onItemClick(v: View, position: Int, entry: DismissedEventAlertRecord) {
+
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+
+        inflater.inflate(R.menu.dismissed_events, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            item ->
+
+            when (item.itemId) {
+                R.id.action_restore -> {
+                    ApplicationController.restoreEvent(this, entry.event)
+                    adapter.removeEntry(entry)
+                    true
+                }
+
+                R.id.action_remove -> {
+                    DismissedEventsStorage(this).use { db -> db.deleteEvent(entry) }
+                    adapter.removeEntry(entry)
+                    true
+                }
+                else ->
+                    false
+            }
+        }
+
+        popup.show()
     }
 
     companion object {

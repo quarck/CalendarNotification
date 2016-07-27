@@ -355,10 +355,17 @@ object ApplicationController {
     }
 
     fun restoreEvent(context: Context, event: EventAlertRecord) {
+
+        val toRestore =
+                event.copy(
+                        notificationId = 0, // re-assign new notification ID since old one might already in use
+                        displayStatus = EventDisplayStatus.Hidden ) // ensure correct visibility is set
+
         EventsStorage(context).use {
-            db -> db.addEvent(event.copy(notificationId = 0)) // re-assign new notification ID since old one might already in use
+            db -> db.addEvent(toRestore)
         }
-        notificationManager.onEventRestored(context, EventFormatter(context), event)
+
+        notificationManager.onEventRestored(context, EventFormatter(context), toRestore)
 
         DismissedEventsStorage(context).use {
             db -> db.deleteEvent(event)

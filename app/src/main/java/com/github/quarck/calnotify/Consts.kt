@@ -46,6 +46,7 @@ object Consts {
     const val INTENT_INSTANCE_START_TIME_KEY = "instanceStartTime"
     const val INTENT_SNOOZE_ALL_IS_CHANGE = "snooze_all_is_change"
     const val INTENT_SNOOZE_FROM_MAIN_ACTIVITY = "snooze_by_main_activity"
+    const val INTENT_SNOOZE_PRESET = "snooze_preset"
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 

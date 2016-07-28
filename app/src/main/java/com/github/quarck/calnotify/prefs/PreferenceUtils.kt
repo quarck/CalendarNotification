@@ -33,6 +33,22 @@ object PreferenceUtils {
     fun unpackTime(tm: Int)
         = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
 
+    internal fun formatSnoozePreset(value: Long): String {
+        val minutes = value / 60L / 1000L
+
+        if (minutes % (60L*24) == 0L) {
+            val days = minutes / (60L*24)
+            return "${days}d"
+        }
+
+        if (minutes % 60L == 0L) {
+            val hours = minutes / 60L
+            return "${hours}h"
+        }
+
+        return "${minutes}m"
+    }
+
     internal fun parseSnoozePresets(value: String): LongArray? {
         val ret: LongArray?
 

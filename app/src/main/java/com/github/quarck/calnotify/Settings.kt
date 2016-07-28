@@ -134,7 +134,7 @@ class Settings(ctx: Context) {
             if (ret == null)
                 ret = PreferenceUtils.parseSnoozePresets(DEFAULT_SNOOZE_PRESET)
 
-            if (ret == null)
+            if (ret == null || ret.size == 0)
                 ret = Consts.DEFAULT_SNOOZE_PRESETS
 
             return ret;

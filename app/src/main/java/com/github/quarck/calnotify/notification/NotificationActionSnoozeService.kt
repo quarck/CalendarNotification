@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.toast
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.ui.UINotifierService
 
 class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeService") {
 
@@ -37,14 +38,13 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
             val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
             val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
+            val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
 
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
-
-                val snoozeDelay = Settings(this).snoozePresets.firstOrNull() ?: Consts.DEFAULT_SNOOZE_PRESETS[0]
-
                 ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay)
+                logger.info("event $eventId / $instanceStartTime snoozed by $snoozeDelay")
 
-                logger.info("event ${eventId} snoozed by $snoozeDelay")
+                UINotifierService.notifyUI(this, true);
             } else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
             }

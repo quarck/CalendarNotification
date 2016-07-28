@@ -279,4 +279,6 @@
     <string name="notification_swipe_does_snooze">Notification swipe does snooze</string>
     <string name="notification_swipe_does_snooze_summary">Allow swiping event off to snooze event using first pre-set snooze time</string>
 
+    <string name="dismiss_event">Dismiss event</string>
+
 </resources>

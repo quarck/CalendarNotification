@@ -25,6 +25,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.ui.UINotifierService
 
 class NotificationActionDismissService : IntentService("NotificationActionDismissService") {
 
@@ -44,6 +45,8 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
                         instanceStartTime,
                         notificationId)
                 logger.info("ServiceNotificationActionDismiss: event dismissed by user: $eventId")
+
+                UINotifierService.notifyUI(this, true);
             } else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
             }

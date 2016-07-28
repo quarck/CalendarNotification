@@ -8,6 +8,13 @@
         android:defaultValue="true"  />
 
     <CheckBoxPreference
+        android:key="pref_key_enable_swipe_to_snooze"
+        android:title="@string/notification_swipe_does_snooze"
+        android:summary="@string/notification_swipe_does_snooze_summary"
+        android:defaultValue="false"
+        android:dependency="pref_key_enable_dismiss_button"/>
+
+    <CheckBoxPreference
         android:key="notification_led"
         android:summary="@string/notification_light_summary"
         android:title="@string/notification_light_title"

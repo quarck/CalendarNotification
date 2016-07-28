@@ -45,16 +45,17 @@ fun SharedPreferences?.setLong(key: String, value: Long) {
 
 data class NotificationSettingsSnapshot
 (
-        val showDismissButton: Boolean,
-        val ringtoneUri: Uri?,
-        val vibrationOn: Boolean,
-        val vibrationPattern: LongArray,
-        val ledNotificationOn: Boolean,
-        val ledColor: Int,
-        val ledPattern: IntArray,
-        val headsUpNotification: Boolean,
-        val forwardToPebble: Boolean,
-        val pebbleOldFirmware: Boolean
+    val showDismissButton: Boolean,
+    val allowSwipeToSnooze: Boolean,
+    val ringtoneUri: Uri?,
+    val vibrationOn: Boolean,
+    val vibrationPattern: LongArray,
+    val ledNotificationOn: Boolean,
+    val ledColor: Int,
+    val ledPattern: IntArray,
+    val headsUpNotification: Boolean,
+    val forwardToPebble: Boolean,
+    val pebbleOldFirmware: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -76,6 +77,9 @@ class Settings(ctx: Context) {
 
     val showDismissButton: Boolean
         get() = prefs.getBoolean(DISMISS_ENABLED_KEY, true)
+
+    val allowSwipeToSnooze: Boolean
+        get() = prefs.getBoolean(ALLOW_SWIPE_TO_SNOOZE_KEY, false)
 
     val vibraOn: Boolean
         get() = prefs.getBoolean(VIBRATION_ENABLED_KEY, true)
@@ -271,6 +275,7 @@ class Settings(ctx: Context) {
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
             showDismissButton = showDismissButton,
+            allowSwipeToSnooze = allowSwipeToSnooze,
             ringtoneUri = ringtoneURI,
             vibrationOn = vibraOn,
             vibrationPattern = vibrationPattern,
@@ -290,6 +295,8 @@ class Settings(ctx: Context) {
 
         private const val REMOVE_ORIGINAL_KEY = "remove_original"
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
+
+        private const val ALLOW_SWIPE_TO_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
         private const val RINGTONE_KEY = "pref_key_ringtone"
         private const val VIBRATION_ENABLED_KEY = "vibra_on"

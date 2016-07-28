@@ -19,9 +19,44 @@
 
 package com.github.quarck.calnotify.app
 
+import android.content.Context
+import android.text.format.DateUtils
+import android.widget.Toast
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.textutils.dateToStr
+
 enum class SnoozeType {
     Snoozed,
     Moved
 }
 
 data class SnoozeResult(val type: SnoozeType, val snoozedUntil: Long, val quietUntil: Long)
+
+fun SnoozeResult.toast(context: Context) {
+
+    var msg = ""
+
+    val duration = Toast.LENGTH_LONG
+
+    if (this.type == SnoozeType.Snoozed) {
+
+        if (this.quietUntil != 0L) {
+
+            val dateTime = dateToStr(context, this.quietUntil)
+            val quietUntilFmt = context.resources.getString(R.string.snoozed_time_inside_quiet_hours)
+            msg = String.Companion.format(quietUntilFmt, dateTime)
+        } else {
+
+            val dateTime = dateToStr(context, this.snoozedUntil)
+            val snoozedUntil = context.resources.getString(R.string.snoozed_until_string)
+            msg = "$snoozedUntil $dateTime"
+        }
+    } else if (this.type == SnoozeType.Moved) {
+        val dateTime = dateToStr(context, this.snoozedUntil)
+        val snoozedUntil = context.resources.getString(R.string.moved_to_string)
+        msg ="$snoozedUntil $dateTime"
+    }
+
+    if (msg != "")
+        Toast.makeText(context, msg, duration).show();
+}

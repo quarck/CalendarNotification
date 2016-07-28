@@ -593,7 +593,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
             .setContentIntent(calendarPendingIntent)
             .setAutoCancel(!notificationSettings.showDismissButton)
-            .setOngoing(notificationSettings.showDismissButton)
+            .setOngoing(notificationSettings.showDismissButton && !notificationSettings.allowSwipeToSnooze)
             .setStyle(Notification.BigTextStyle()
                 .bigText(notificationText))
             .setWhen(event.lastEventVisibility)
@@ -622,6 +622,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DISMISS_OFFSET
                 )
             )
+
+            if (notificationSettings.allowSwipeToSnooze) {
+                builder.setDeleteIntent(
+                    pendingServiceIntent(ctx,
+                        defaultSnoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
+                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DELETE_OFFSET
+                    )
+                )
+            }
         } else {
             builder.setDeleteIntent(
                 pendingServiceIntent(ctx,
@@ -690,6 +699,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
         val intent = Intent(ctx, NotificationActionDismissService::class.java)
+        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
+        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
+        intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
+        return intent
+    }
+
+    private fun defaultSnoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
+
+        val intent = Intent(ctx, NotificationActionSnoozeService::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)

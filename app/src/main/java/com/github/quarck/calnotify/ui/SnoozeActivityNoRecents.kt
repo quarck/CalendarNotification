@@ -351,37 +351,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             CalendarIntents.viewCalendarEvent(this, ev)
     }
 
-    private fun dateToStr(time: Long)
-        = DateUtils.formatDateTime(this, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
-
-    private fun toastAboutSnoozeResult(res: SnoozeResult) {
-
-        var msg = ""
-
-        val duration = Toast.LENGTH_LONG
-
-        if (res.type == SnoozeType.Snoozed) {
-            if (res.quietUntil != 0L) {
-
-                val dateTime = dateToStr(res.quietUntil)
-                val quietUntilFmt = resources.getString(R.string.snoozed_time_inside_quiet_hours)
-                msg = String.format(quietUntilFmt, dateTime)
-            } else {
-
-                val dateTime = dateToStr(res.snoozedUntil)
-                val snoozedUntil = resources.getString(R.string.snoozed_until_string)
-                msg = "$snoozedUntil $dateTime"
-            }
-        } else if (res.type == SnoozeType.Moved) {
-            val dateTime = dateToStr(res.snoozedUntil)
-            val snoozedUntil = resources.getString(R.string.moved_to_string)
-            msg ="$snoozedUntil $dateTime"
-        }
-
-        if (msg != "")
-            Toast.makeText(this, msg, duration).show();
-    }
-
     private fun checkForMarshmallowWarningAndContinueWith(
             res: SnoozeResult,
             cont: () -> Unit ) {
@@ -437,7 +406,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             val result = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
             if (result != null) {
                 checkForMarshmallowWarningAndContinueWith(result) {
-                    toastAboutSnoozeResult(result)
+                    result.toast(this)
                     finish()
                 }
             } else {
@@ -460,7 +429,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
                     if (result != null) {
                         checkForMarshmallowWarningAndContinueWith(result) {
-                            toastAboutSnoozeResult(result)
+                            result.toast(this)
                             finish()
                         }
                     } else
@@ -610,7 +579,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 if (Settings(this).viewAfterEdit)
                     CalendarIntents.viewCalendarEvent(this, ev)
                 else
-                    toastAboutSnoozeResult(SnoozeResult(SnoozeType.Moved, ev.startTime, 0L))
+                    SnoozeResult(SnoozeType.Moved, ev.startTime, 0L).toast(this)
 
                 // terminate ourselves
                 finish();

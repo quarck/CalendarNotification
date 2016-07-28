@@ -22,11 +22,13 @@ package com.github.quarck.calnotify.notification
 import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.app.toast
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.logs.Logger
 
-class NotificationActionDismissService : IntentService("NotificationActionDismissService") {
+class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeService") {
 
     override fun onHandleIntent(intent: Intent?) {
         logger.debug("onHandleIntent")
@@ -37,13 +39,12 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
             val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
 
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
-                ApplicationController.dismissEvent(
-                        this,
-                        EventDismissType.ManuallyDismissedFromNotification,
-                        eventId,
-                        instanceStartTime,
-                        notificationId)
-                logger.info("ServiceNotificationActionDismiss: event dismissed by user: $eventId")
+
+                val snoozeDelay = Settings(this).snoozePresets.firstOrNull() ?: Consts.DEFAULT_SNOOZE_PRESETS[0]
+
+                ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay)
+
+                logger.info("event ${eventId} snoozed by $snoozeDelay")
             } else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
             }
@@ -53,6 +54,6 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
     }
 
     companion object {
-        private val logger = Logger("NotificationActionDismissService")
+        private val logger = Logger("NotificationActionSnoozeService")
     }
 }

@@ -94,6 +94,7 @@
             android:parentActivityName=".ui.AboutActivity"/>
 
         <service android:name=".notification.NotificationActionDismissService" />
+        <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".ui.UINotifierService" />
         <service android:name=".notification.TextToSpeechService" />
 

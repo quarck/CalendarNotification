@@ -39,11 +39,9 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
-
-private fun dateToStr(ctx: Context, time: Long) =
-    DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
 
 fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
     when (this.dismissType) {

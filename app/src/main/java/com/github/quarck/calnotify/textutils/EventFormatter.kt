@@ -30,6 +30,9 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.DateTimeUtils
 import java.util.*
 
+fun dateToStr(ctx: Context, time: Long)
+    = DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
+
 class EventFormatter(val ctx: Context): EventFormatterInterface {
 
     private val defaultLocale by lazy { Locale.getDefault() }

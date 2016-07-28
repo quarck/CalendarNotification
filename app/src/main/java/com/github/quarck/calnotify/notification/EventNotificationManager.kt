@@ -661,6 +661,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .addAction(defaultSnooze0Action)
 
         if (notificationSettings.showDismissButton && notificationSettings.allowSwipeToSnooze) {
+            // in this case regular "dismiss" would actually snooze
             val dismissEventAction =
                     NotificationCompat.Action.Builder(
                             R.drawable.ic_clear_white_24dp,

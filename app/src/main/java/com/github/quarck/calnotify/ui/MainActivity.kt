@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private lateinit var newStyleMessageLayout: View
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
-    private lateinit var refreshLayout: SwipeRefreshLayout
+    private var refreshLayout: SwipeRefreshLayout? = null
 
     private lateinit var adapter: EventListAdapter
 
@@ -105,9 +105,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         shouldForceRepost = (System.currentTimeMillis() - globalState.lastNotificationRePost) > Consts.MIN_FORCE_REPOST_INTERVAL
 
-        refreshLayout = find<SwipeRefreshLayout>(R.id.cardview_refresh_layout)
+        refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 
-        refreshLayout.setOnRefreshListener {
+        refreshLayout?.setOnRefreshListener {
             reloadLayout.visibility = View.GONE;
             refreshReminderLastFired()
             reloadData()
@@ -414,11 +414,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         newStyleMessageLayout.visibility = View.GONE
     }
 
-    override fun onScrollPositionChange(scrollPosition: Int) {
+    override fun onScrollPositionChange(newPos: Int) {
 
         val undoSense = lastEventDismissalScrollPosition
         if (undoSense != null) {
-            if (Math.abs(undoSense - scrollPosition) > undoDisappearSensitivity) {
+            if (Math.abs(undoSense - newPos) > undoDisappearSensitivity) {
                 lastEventDismissalScrollPosition = null
                 if (useCompactView)
                     adapter.clearUndoState()

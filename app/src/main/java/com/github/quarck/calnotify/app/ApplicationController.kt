@@ -338,6 +338,7 @@ object ApplicationController {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun dismissEvent(
             context: Context,
             dismissType: EventDismissType,

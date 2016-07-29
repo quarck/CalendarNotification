@@ -85,6 +85,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         return changesDetected
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun reloadCalendarEventInstanceFound(
         context: Context, db: EventsStorageInterface,
         calendar: CalendarProviderInterface,

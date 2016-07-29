@@ -148,7 +148,7 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
 
     private fun loadRingtoneUri(settingsKey: String): Uri? {
-        var ringtone: Uri? = null
+        val ringtone: Uri?
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
 

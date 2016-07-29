@@ -60,6 +60,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         startActivity(email);
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun OnButtonWiki(v: View) = startActivity(Intent.parseUri(wikiUri, 0))
 
     @Suppress("unused", "UNUSED_PARAMETER")

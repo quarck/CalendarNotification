@@ -246,8 +246,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             find<TextView>(R.id.snooze_view_event_date_line1).text = ""
             find<TextView>(R.id.snooze_view_event_date_line2).text = ""
 
-            find<ImageView>(R.id.snooze_view_img_custom_period)?.visibility = View.VISIBLE
-            find<ImageView>(R.id.snooze_view_img_until)?.visibility = View.VISIBLE
+            find<ImageView?>(R.id.snooze_view_img_custom_period)?.visibility = View.VISIBLE
+            find<ImageView?>(R.id.snooze_view_img_until)?.visibility = View.VISIBLE
 
 
             this.title =

@@ -55,7 +55,8 @@ data class NotificationSettingsSnapshot
     val ledPattern: IntArray,
     val headsUpNotification: Boolean,
     val forwardToPebble: Boolean,
-    val pebbleOldFirmware: Boolean
+    val pebbleOldFirmware: Boolean,
+    val pebbleForwardRemindersOnly: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -110,6 +111,9 @@ class Settings(ctx: Context) {
 
     val pebbleOldFirmware: Boolean
         get() = prefs.getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
+
+    val pebbleForwardRemindersOnly: Boolean
+        get() = prefs.getBoolean(PEBBLE_FORWARD_ONLY_REMINDER_KEY, false)
 
     val headsUpNotification: Boolean
         get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
@@ -274,17 +278,18 @@ class Settings(ctx: Context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-            showDismissButton = showDismissButton,
-            allowSwipeToSnooze = allowSwipeToSnooze,
-            ringtoneUri = ringtoneURI,
-            vibrationOn = vibraOn,
-            vibrationPattern = vibrationPattern,
-            ledNotificationOn = ledNotificationOn,
-            ledColor = ledColor,
-            ledPattern = ledPattern,
-            headsUpNotification = headsUpNotification,
-            forwardToPebble = forwardToPebble,
-            pebbleOldFirmware = pebbleOldFirmware
+                showDismissButton = showDismissButton,
+                allowSwipeToSnooze = allowSwipeToSnooze,
+                ringtoneUri = ringtoneURI,
+                vibrationOn = vibraOn,
+                vibrationPattern = vibrationPattern,
+                ledNotificationOn = ledNotificationOn,
+                ledColor = ledColor,
+                ledPattern = ledPattern,
+                headsUpNotification = headsUpNotification,
+                forwardToPebble = forwardToPebble,
+                pebbleOldFirmware = pebbleOldFirmware,
+                pebbleForwardRemindersOnly = pebbleForwardRemindersOnly
         )
 
     companion object {
@@ -324,6 +329,8 @@ class Settings(ctx: Context) {
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
+
+        private const val PEBBLE_FORWARD_ONLY_REMINDER_KEY = "pebble_forward_reminder_only"
 
         private const val REMINDERS_CUSTOM_RINGTONE_KEY="reminders_custom_ringtone"
         private const val REMINDERS_CUSTOM_VIBRATION_KEY ="reminders_custom_vibration"

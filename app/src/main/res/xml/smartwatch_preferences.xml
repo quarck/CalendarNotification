@@ -15,4 +15,10 @@
             android:defaultValue="false"
             android:dependency="forward_to_pebble"/>
 
+        <CheckBoxPreference
+            android:key="pebble_forward_reminder_only"
+            android:title="@string/pebble_forward_only_reminders"
+            android:summary="@string/pebble_forward_only_reminders_summary"
+            android:defaultValue="false"/>
+
 </PreferenceScreen>

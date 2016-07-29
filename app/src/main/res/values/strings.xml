@@ -279,6 +279,8 @@
     <string name="notification_swipe_does_snooze">Notification swipe does snooze</string>
     <string name="notification_swipe_does_snooze_summary">Allow swiping event off to snooze event using first pre-set snooze time</string>
 
-    <string name="dismiss_event">Dismiss event</string>
+    <string name="full_dismiss">Full Dismiss</string>
+    <string name="pebble_forward_only_reminders">Pebble - forward reminders only</string>
+    <string name="pebble_forward_only_reminders_summary">Let pebble handle calendars on it\'s own</string>
 
 </resources>

@@ -40,6 +40,7 @@ import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
+import com.github.quarck.calnotify.textutils.encodedMinuteTimestamp
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.*
@@ -201,7 +202,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         notificationSettings,
                         true, // force, so it won't randomly pop-up this notification
                         false, // was collapsed
-                        settings.snoozePresets
+                        settings.snoozePresets,
+                        true
                 )
 
                 wakeScreenIfRequired(context, settings)
@@ -514,7 +516,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     postNotification(context, formatter, event,
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
-                            force, wasCollapsed, settings.snoozePresets)
+                            force, wasCollapsed, settings.snoozePresets, false)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -531,7 +533,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postNotification(context, formatter, event,
-                        if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force, false, settings.snoozePresets)
+                        if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force,
+                        false, settings.snoozePresets, false)
 
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
@@ -570,7 +573,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationSettings: NotificationSettingsSnapshot,
             isForce: Boolean,
             wasCollapsed: Boolean,
-            snoozePresets: LongArray
+            snoozePresets: LongArray,
+            isReminder: Boolean
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -667,6 +671,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
             if (idx >= EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS)
                 break;
 
+            if (snoozePreset <= 0L) {
+                val targetTime = event.displayedStartTime - Math.abs(snoozePreset)
+                if (targetTime - System.currentTimeMillis() < 5 * 60 * 1000L) // at least minutes left until target
+                    continue;
+            }
+
             val snoozeIntent =
                     pendingServiceIntent(ctx,
                             defaultSnoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId, snoozePreset),
@@ -689,7 +699,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val dismissEventAction =
                     NotificationCompat.Action.Builder(
                             R.drawable.ic_clear_white_24dp,
-                            ctx.getString(com.github.quarck.calnotify.R.string.dismiss_event),
+                            ctx.getString(com.github.quarck.calnotify.R.string.full_dismiss),
                             dismissPendingIntent
                     ).build()
 
@@ -737,8 +747,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardToPebble)
+        if (notificationSettings.forwardToPebble
+                && (isReminder || !notificationSettings.pebbleForwardRemindersOnly)) {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
+        }
     }
 
     private fun snoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {

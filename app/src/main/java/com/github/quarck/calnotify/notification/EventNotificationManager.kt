@@ -621,7 +621,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val defaultSnooze0PendingIntent =
                 pendingServiceIntent(ctx,
                         defaultSnoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId, snoozePresets[0]),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE_OFFSET
+                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET
                 )
 
         val snoozeAction =
@@ -659,6 +659,30 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val extender =
                 NotificationCompat.WearableExtender()
                         .addAction(defaultSnooze0Action)
+
+        for ((idx, snoozePreset) in snoozePresets.withIndex()) {
+            if (idx == 0)
+                continue;
+
+            if (idx >= EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS)
+                break;
+
+            val snoozeIntent =
+                    pendingServiceIntent(ctx,
+                            defaultSnoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId, snoozePreset),
+                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET + idx
+                    )
+
+            val action =
+                    NotificationCompat.Action.Builder(
+                            R.drawable.ic_update_white_24dp,
+                            ctx.getString(com.github.quarck.calnotify.R.string.snooze) + " " +
+                                    PreferenceUtils.formatSnoozePreset(snoozePreset),
+                            snoozeIntent
+                    ).build()
+
+            extender.addAction(action)
+        }
 
         if (notificationSettings.showDismissButton && notificationSettings.allowSwipeToSnooze) {
             // in this case regular "dismiss" would actually snooze
@@ -842,10 +866,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         private val logger = Logger("EventNotificationManager")
 
         const val EVENT_CODE_SNOOOZE_OFFSET = 0
-        const val EVENT_CODE_DEFAULT_SNOOOZE_OFFSET = 1
-        const val EVENT_CODE_DISMISS_OFFSET = 2
-        const val EVENT_CODE_DELETE_OFFSET = 3
-        const val EVENT_CODE_OPEN_OFFSET = 4
-        const val EVENT_CODES_TOTAL = 5
+        const val EVENT_CODE_DISMISS_OFFSET = 1
+        const val EVENT_CODE_DELETE_OFFSET = 2
+        const val EVENT_CODE_OPEN_OFFSET = 3
+        const val EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET = 4
+        const val EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS = 10
+        const val EVENT_CODES_TOTAL = 16
     }
 }

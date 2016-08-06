@@ -282,5 +282,7 @@
     <string name="full_dismiss">Full Dismiss</string>
     <string name="pebble_forward_only_reminders">Pebble - forward reminders only</string>
     <string name="pebble_forward_only_reminders_summary">Let pebble handle calendars on it\'s own</string>
+    <string name="event_color_notification">Event color in notification</string>
+    <string name="event_color_notification_summary">Show event color in the notification icon</string>
 
 </resources>

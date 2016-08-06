@@ -733,6 +733,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
             logger.debug("No LED light")
         }
 
+        if (notificationSettings.showColorInNotification) {
+            logger.debug("Adding calendar color");
+            builder.setColor(event.color.adjustCalendarColor())
+        }
+
         val notification = builder.build()
 
         try {

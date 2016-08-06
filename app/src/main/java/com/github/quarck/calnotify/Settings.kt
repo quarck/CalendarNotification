@@ -56,7 +56,8 @@ data class NotificationSettingsSnapshot
     val headsUpNotification: Boolean,
     val forwardToPebble: Boolean,
     val pebbleOldFirmware: Boolean,
-    val pebbleForwardRemindersOnly: Boolean
+    val pebbleForwardRemindersOnly: Boolean,
+    val showColorInNotification: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -120,6 +121,9 @@ class Settings(ctx: Context) {
 
     val notificationWakeScreen: Boolean
         get() = prefs.getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
+
+    val showColorInNotification: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, false)
 
     val notificationPlayTts: Boolean
         get() = prefs.getBoolean(NOTIFICATION_TTS_KEY, false)
@@ -289,7 +293,8 @@ class Settings(ctx: Context) {
                 headsUpNotification = headsUpNotification,
                 forwardToPebble = forwardToPebble,
                 pebbleOldFirmware = pebbleOldFirmware,
-                pebbleForwardRemindersOnly = pebbleForwardRemindersOnly
+                pebbleForwardRemindersOnly = pebbleForwardRemindersOnly,
+                showColorInNotification = showColorInNotification
         )
 
     companion object {
@@ -315,6 +320,7 @@ class Settings(ctx: Context) {
         private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
         private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
         private const val NOTIFICATION_TTS_KEY = "notification_tts"
+        private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color"
 
         private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
         private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything"

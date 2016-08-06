@@ -64,6 +64,12 @@
         android:defaultValue="false"
         />
 
+    <CheckBoxPreference android:key="notification_cal_color"
+        android:title="@string/event_color_notification"
+        android:summary="@string/event_color_notification_summary"
+        android:defaultValue="false"
+        />
+
     <!-- CheckBoxPreference android:key="notification_tts"
         android:title="@string/notify_tts"
         android:summary="@string/notify_tts_summary"

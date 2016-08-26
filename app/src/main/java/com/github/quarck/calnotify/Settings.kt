@@ -57,7 +57,8 @@ data class NotificationSettingsSnapshot
     val forwardToPebble: Boolean,
     val pebbleOldFirmware: Boolean,
     val pebbleForwardRemindersOnly: Boolean,
-    val showColorInNotification: Boolean
+    val showColorInNotification: Boolean,
+    val notificationOpensSnooze: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -93,6 +94,12 @@ class Settings(ctx: Context) {
             val patterns = Consts.VIBRATION_PATTERNS
             return if (idx < patterns.size && idx >= 0) patterns[idx] else patterns[0]
         }
+
+    val notificationOpensSnooze: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_OPENS_SNOOZE_KEY, false)
+
+    val notificationAutoDismissOnReschedule: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_AUTO_DISMISS_KEY, false)
 
     val ledNotificationOn: Boolean
         get() = prefs.getBoolean(LED_ENABLED_KEY, true)
@@ -294,7 +301,8 @@ class Settings(ctx: Context) {
                 forwardToPebble = forwardToPebble,
                 pebbleOldFirmware = pebbleOldFirmware,
                 pebbleForwardRemindersOnly = pebbleForwardRemindersOnly,
-                showColorInNotification = showColorInNotification
+                showColorInNotification = showColorInNotification,
+                notificationOpensSnooze = notificationOpensSnooze
         )
 
     companion object {
@@ -314,6 +322,9 @@ class Settings(ctx: Context) {
         private const val LED_ENABLED_KEY = "notification_led"
         private const val LED_COLOR_KEY = "notification_led_color"
         private const val LED_PATTERN_KEY = "notification_led_v2pattern"
+
+        private const val NOTIFICATION_OPENS_SNOOZE_KEY = "notification_opens_snooze"
+        private const val NOTIFICATION_AUTO_DISMISS_KEY = "notification_auto_dismiss"
 
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"

@@ -587,6 +587,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
                                 event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
                                 PendingIntent.FLAG_UPDATE_CURRENT)
 
+        val snoozeActivityIntent =
+                pendingActivityIntent(ctx,
+                        snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
+                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
+                )
+
+        val dismissPendingIntent =
+                pendingServiceIntent(ctx,
+                        dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
+                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DISMISS_OFFSET
+                )
+
         val notificationText = formatter.formatNotificationSecondaryText(event)
 
         val builder = NotificationCompat.Builder(ctx)
@@ -599,27 +611,30 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         else
                             Notification.PRIORITY_DEFAULT
                 )
-                .setContentIntent(calendarPendingIntent)
-                .setAutoCancel(!notificationSettings.showDismissButton)
-                .setOngoing(notificationSettings.showDismissButton && !notificationSettings.allowSwipeToSnooze)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
-                .setWhen(event.lastEventVisibility)
-                .setShowWhen(false)
-                .setSortKey("${Long.MAX_VALUE - event.lastEventVisibility}") // hack to inverse it
-                .setCategory(NotificationCompat.CATEGORY_EVENT)
-
-        logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
-
-        val snoozeActivityIntent =
-                pendingActivityIntent(ctx,
-                        snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
+                .setContentIntent(
+                        if (notificationSettings.notificationOpensSnooze)
+                            snoozeActivityIntent
+                        else
+                            calendarPendingIntent
                 )
-
-        val dismissPendingIntent =
-                pendingServiceIntent(ctx,
-                        dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DISMISS_OFFSET
+                .setAutoCancel(
+                        false // !notificationSettings.showDismissButton // let user swipe to dismiss even if dismiss button is disabled - otherwise we would not receive any notification on dismiss when user clicks event
+                )
+                .setOngoing(
+                        notificationSettings.showDismissButton && !notificationSettings.allowSwipeToSnooze
+                )
+                .setStyle(
+                        NotificationCompat.BigTextStyle().bigText(notificationText)
+                )
+                .setWhen(
+                        event.lastEventVisibility
+                )
+                .setShowWhen(false)
+                .setSortKey(
+                        "${Long.MAX_VALUE - event.lastEventVisibility}" // hack to inverse it
+                )
+                .setCategory(
+                        NotificationCompat.CATEGORY_EVENT
                 )
 
         val defaultSnooze0PendingIntent =
@@ -650,7 +665,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         defaultSnooze0PendingIntent
                 ).build()
 
-        builder.addAction(snoozeAction)
+        if (!notificationSettings.notificationOpensSnooze) {
+            logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
+            builder.addAction(snoozeAction)
+        }
 
         if (notificationSettings.showDismissButton) {
             builder.addAction(dismissAction)

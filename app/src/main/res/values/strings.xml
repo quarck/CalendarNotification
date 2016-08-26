@@ -284,5 +284,9 @@
     <string name="pebble_forward_only_reminders_summary">Let pebble handle calendars on it\'s own</string>
     <string name="event_color_notification">Event color in notification</string>
     <string name="event_color_notification_summary">Show event color in the notification icon</string>
+    <string name="notfication_opens_snooze">Notification opens snooze dialog</string>
+    <string name="notfication_opens_snooze_summary">Enable if you want notification to open Snooze dialog directly\nClick on event title on Snooze dialog to go to actual event on Calendar</string>
+    <string name="notification_auto_dismiss_on_reschedule">Auto dismiss on reschedule</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Dismiss notification when event is rescheduled via Calendar app\n(Would not work if event is moved by less than 15 minutes)</string>
 
 </resources>

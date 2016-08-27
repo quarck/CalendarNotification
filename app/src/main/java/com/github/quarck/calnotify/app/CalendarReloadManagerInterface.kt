@@ -22,13 +22,43 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
+
+interface EventMovedHandler {
+    fun onEventMoved(
+            context: Context,
+            db: EventsStorageInterface,
+            oldEvent: EventAlertRecord,
+            newEvent: EventRecord,
+            newAlertTime: Long
+    ): Boolean
+
+    fun onEventMoved(
+            context: Context,
+            db: EventsStorageInterface,
+            oldEvent: EventAlertRecord,
+            newEvent: EventAlertRecord,
+            newAlertTime: Long
+    ): Boolean
+}
 
 interface CalendarReloadManagerInterface {
 
     // returns true if any changed detected
-    fun reloadCalendar(context: Context, db: EventsStorageInterface, calendar: CalendarProviderInterface): Boolean
+    fun reloadCalendar(
+            context: Context,
+            db: EventsStorageInterface,
+            calendar: CalendarProviderInterface,
+            movedHandler: EventMovedHandler?
+    ): Boolean
 
     // returns true if event has changed. Event is updated in place
-    fun reloadSingleEvent(context: Context, db: EventsStorageInterface, event: EventAlertRecord, calendar: CalendarProviderInterface): Boolean
+    fun reloadSingleEvent(
+            context: Context,
+            db: EventsStorageInterface,
+            event: EventAlertRecord,
+            calendar: CalendarProviderInterface,
+            movedHandler: EventMovedHandler?
+    ): Boolean
 }

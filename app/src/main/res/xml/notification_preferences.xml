@@ -15,18 +15,6 @@
         android:dependency="pref_key_enable_dismiss_button"/>
 
     <CheckBoxPreference
-        android:key="notification_opens_snooze"
-        android:title="@string/notfication_opens_snooze"
-        android:summary="@string/notfication_opens_snooze_summary"
-        android:defaultValue="false" />
-
-    <CheckBoxPreference
-        android:key="notification_auto_dismiss"
-        android:title="@string/notification_auto_dismiss_on_reschedule"
-        android:summary="@string/notification_auto_dismiss_on_reschedule_summary"
-        android:defaultValue="false" />
-
-    <CheckBoxPreference
         android:key="notification_led"
         android:summary="@string/notification_light_summary"
         android:title="@string/notification_light_title"
@@ -91,6 +79,19 @@
     <PreferenceCategory
         android:title="@string/advanced"
         android:key="_notifications_advanced">
+
+        <CheckBoxPreference
+            android:key="notification_opens_snooze"
+            android:title="@string/notfication_opens_snooze"
+            android:summary="@string/notfication_opens_snooze_summary"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="notification_auto_dismiss"
+            android:title="@string/notification_auto_dismiss_on_reschedule"
+            android:summary="@string/notification_auto_dismiss_on_reschedule_summary"
+            android:defaultValue="false" />
+
 
         <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
             android:key="max_notifications_before_collapse"

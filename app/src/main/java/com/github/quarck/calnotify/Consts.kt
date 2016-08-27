@@ -39,8 +39,12 @@ object Consts {
 
     const val NOTIFICATION_ID_COLLAPSED = 0;
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
+    const val NOTIFICATION_ID_DEBUG0 = Int.MAX_VALUE - 10
+    const val NOTIFICATION_ID_DEBUG1 = Int.MAX_VALUE - 11
+    const val NOTIFICATION_ID_DEBUG2 = Int.MAX_VALUE - 12
+    const val NOTIFICATION_ID_DEBUG3 = Int.MAX_VALUE - 13
 
-    //
+            //
     const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
     const val INTENT_EVENT_ID_KEY = "eventId";
     const val INTENT_INSTANCE_START_TIME_KEY = "instanceStartTime"
@@ -94,4 +98,7 @@ object Consts {
 
     const val MIN_FORCE_REPOST_INTERVAL = 60L*60L*1000L // minimum once an hour
     const val MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC = 10 * 60 * 1000L
+
+
+    const val  EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 }

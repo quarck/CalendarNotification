@@ -287,6 +287,6 @@
     <string name="notfication_opens_snooze">Notification opens snooze dialog</string>
     <string name="notfication_opens_snooze_summary">Enable if you want notification to open Snooze dialog directly\nClick on event title on Snooze dialog to go to actual event on Calendar</string>
     <string name="notification_auto_dismiss_on_reschedule">Auto dismiss on reschedule</string>
-    <string name="notification_auto_dismiss_on_reschedule_summary">Dismiss notification when event is rescheduled via Calendar app\n(Would not work if event is moved by less than 15 minutes)</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Dismiss notification when event is rescheduled via Calendar app\nEvent should be moved by at least 15 minutes for this functionality to work, event also must has any reminders that are still in the future</string>
 
 </resources>

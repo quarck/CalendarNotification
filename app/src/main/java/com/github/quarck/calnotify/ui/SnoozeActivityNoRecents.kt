@@ -130,7 +130,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 originalEvent = db.getEvent(eventId, instanceStartTime)
                 if (originalEvent != null) {
                     event = originalEvent?.copy()
-                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider) // would leave it for later for now
+                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider, null) // would leave it for later for now
                 }
             }
         }

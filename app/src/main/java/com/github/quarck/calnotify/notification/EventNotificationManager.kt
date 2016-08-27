@@ -47,6 +47,39 @@ import com.github.quarck.calnotify.utils.*
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
+    override fun postNotificationsAutoDismissedDebugMessage(context: Context) {
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val appPendingIntent = pendingActivityIntent(context,
+                Intent(context, MainActivity::class.java), Consts.NOTIFICATION_ID_DEBUG0)
+
+        val builder = NotificationCompat.Builder(context)
+                .setContentTitle("Events dismissed")
+                .setContentText("Some events were auto-dismisse due to calendar move")
+                .setSmallIcon(R.drawable.stat_notify_calendar)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setContentIntent(appPendingIntent)
+                .setAutoCancel(false)
+                .setShowWhen(false)
+                .setCategory(NotificationCompat.CATEGORY_ERROR)
+                .setLights(Consts.DEFAULT_LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+
+        val notification = builder.build()
+
+        try {
+            notificationManager.notify(
+                    Consts.NOTIFICATION_ID_DEBUG0,
+                    notification
+            )
+        } catch (ex: Exception) {
+            logger.error("Exception: ${ex.toString()}, stack:")
+            ex.printStackTrace()
+        }
+
+        PebbleUtils.forwardNotificationToPebble(context, "Cal DBG", "Events auto-dismissed", false)
+    }
+
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
         EventsStorage(ctx).use {
             // Update lastEventVisibility - we've just seen this event,
@@ -816,7 +849,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 /*      intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
         val pendingIntent =
-            TaskStackBuilder.create(ctx)
+            TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(intent)
                 .getPendingIntent(id, PendingIntent.FLAG_UPDATE_CURRENT);
 

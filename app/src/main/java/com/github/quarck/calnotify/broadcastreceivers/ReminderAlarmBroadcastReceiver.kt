@@ -145,7 +145,7 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
         /*
                 val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
-                ctx.vibratorService.vibrate(pattern, -1)
+                context.vibratorService.vibrate(pattern, -1)
 
                 if (settings.ringtoneURI != null) {
                     try {
@@ -153,7 +153,7 @@ class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
                         val mediaPlayer = MediaPlayer()
 
-                        mediaPlayer.setDataSource(ctx, notificationUri)
+                        mediaPlayer.setDataSource(context, notificationUri)
                         mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
                         mediaPlayer.prepare()
                         mediaPlayer.setOnCompletionListener { mp -> mp.release() }

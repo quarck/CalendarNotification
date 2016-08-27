@@ -20,11 +20,13 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.EventNotificationManager
@@ -37,7 +39,8 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.ui.UINotifierService
 
-object ApplicationController {
+object ApplicationController : EventMovedHandler {
+
     private val logger = Logger("EventsManager");
 
     private var settings: Settings? = null
@@ -70,7 +73,8 @@ object ApplicationController {
 
     fun onAppUpdated(context: Context) {
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
+        val changes = EventsStorage(context).use {
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -80,7 +84,7 @@ object ApplicationController {
     }
 
     fun onBootComplete(context: Context) {
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) };
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -91,7 +95,7 @@ object ApplicationController {
 
     fun onCalendarChanged(context: Context) {
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) }
+        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
         if (changes) {
             notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
@@ -178,6 +182,75 @@ object ApplicationController {
 
         return ret
     }
+
+    override fun onEventMoved(
+            context: Context,
+            db: EventsStorageInterface,
+            oldEvent: EventAlertRecord,
+            newEvent: EventRecord,
+            newAlertTime: Long
+    ): Boolean {
+
+        var ret = false
+
+        if (!getSettings(context).notificationAutoDismissOnReschedule)
+            return false
+
+        val oldTime = oldEvent.displayedStartTime
+        val newTime = newEvent.startTime
+
+        if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
+            logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
+
+            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOULD) {
+
+                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
+
+                dismissEvent(
+                        context, db, oldEvent,
+                        EventDismissType.AutoDismissedDueToCalendarMove,
+                        true)
+
+                ret = true
+
+                notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+            }
+        }
+
+        return ret
+    }
+
+    override fun onEventMoved(context: Context, db: EventsStorageInterface, oldEvent: EventAlertRecord, newEvent: EventAlertRecord, newAlertTime: Long): Boolean {
+        var ret = false
+
+        if (!getSettings(context).notificationAutoDismissOnReschedule)
+            return false
+
+        val oldTime = oldEvent.displayedStartTime
+        val newTime = newEvent.startTime
+
+        if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
+            logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
+
+            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOULD) {
+
+                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
+
+                dismissEvent(
+                        context, db, oldEvent,
+                        EventDismissType.AutoDismissedDueToCalendarMove,
+                        true)
+
+                ret = true
+
+                notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+            }
+        }
+
+        return ret
+    }
+
+
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
 
@@ -288,7 +361,7 @@ object ApplicationController {
 
     fun onMainActivityResumed(context: Context?, shouldRepost: Boolean) {
         if (context != null) {
-            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider) };
+            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) };
 
             if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
@@ -308,7 +381,7 @@ object ApplicationController {
 
     fun dismissEvent(
             context: Context,
-            db: EventsStorage,
+            db: EventsStorageInterface,
             event: EventAlertRecord,
             dismissType: EventDismissType,
             notifyActivity: Boolean) {

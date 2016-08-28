@@ -170,6 +170,10 @@ object ApplicationController : EventMovedHandler {
                         "instance st ${event.instanceStartTime}, repeating: " +
                         "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
 
+            // reload all the other events - check if there are any changes yet
+            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
+
+            //
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             UINotifierService.notifyUI(context, false);
@@ -215,7 +219,8 @@ object ApplicationController : EventMovedHandler {
 
                 ret = true
 
-                notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+                if (getSettings(context).debugNotificationAutoDismiss)
+                    notificationManager.postNotificationsAutoDismissedDebugMessage(context)
             }
         }
 

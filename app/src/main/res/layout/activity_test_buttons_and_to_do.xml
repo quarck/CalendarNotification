@@ -118,6 +118,17 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:padding="14dp"
                 />
 
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTestToggleDebugAutoDismiss"
+                android:onClick="OnButtonToggleAutoDismissDebugClick"
+                android:visibility="visible"
+                android:textOn="DEBUGGING AUTO DISMISS"
+                android:textOff="NOT DEBUGGING AUTO DISMISS"
+                android:padding="14dp"
+                />
+
 
         </LinearLayout>
 

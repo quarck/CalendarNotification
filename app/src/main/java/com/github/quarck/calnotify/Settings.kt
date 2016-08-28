@@ -101,6 +101,10 @@ class Settings(ctx: Context) {
     val notificationAutoDismissOnReschedule: Boolean
         get() = prefs.getBoolean(NOTIFICATION_AUTO_DISMISS_KEY, false)
 
+    var debugNotificationAutoDismiss: Boolean
+        get() = prefs.getBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, false)
+        set(value) = prefs.setBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, value)
+
     val ledNotificationOn: Boolean
         get() = prefs.getBoolean(LED_ENABLED_KEY, true)
 
@@ -325,6 +329,7 @@ class Settings(ctx: Context) {
 
         private const val NOTIFICATION_OPENS_SNOOZE_KEY = "notification_opens_snooze"
         private const val NOTIFICATION_AUTO_DISMISS_KEY = "notification_auto_dismiss"
+        private const val NOTIFICATION_AUTO_DISMISS_DEBUG_KEY = "auto_dismiss_debug"
 
         private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
         private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"

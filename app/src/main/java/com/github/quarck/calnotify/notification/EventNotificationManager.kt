@@ -55,8 +55,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 Intent(context, MainActivity::class.java), Consts.NOTIFICATION_ID_DEBUG0)
 
         val builder = NotificationCompat.Builder(context)
-                .setContentTitle("Events dismissed")
-                .setContentText("Some events were auto-dismisse due to calendar move")
+                .setContentTitle("DEBUG: Events dismissed")
+                .setContentText("DEBUG: Some events were auto-dismissed due to calendar move")
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setContentIntent(appPendingIntent)
@@ -77,7 +77,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        PebbleUtils.forwardNotificationToPebble(context, "Cal DBG", "Events auto-dismissed", false)
+        PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events auto-dismissed", false)
     }
 
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {

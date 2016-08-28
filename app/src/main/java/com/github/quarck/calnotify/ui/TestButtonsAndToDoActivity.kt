@@ -207,6 +207,11 @@ class TestButtonsAndToDoActivity : Activity() {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonToggleAutoDismissDebugClick(v: View) {
+        settings.debugNotificationAutoDismiss = find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleBroadcastAbortClick(v: View) {
         settings.abortBroadcast = find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked
     }

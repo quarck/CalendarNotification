@@ -22,15 +22,22 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.powerManager
+import com.github.quarck.calnotify.utils.wakeLocked
 
 class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         logger.debug("onReceive")
-        if (context != null)
-            ApplicationController.onCalendarChanged(context)
+
+        if (context == null)
+            return
+
+        ApplicationController.onCalendarChanged(context)
     }
 
     companion object {

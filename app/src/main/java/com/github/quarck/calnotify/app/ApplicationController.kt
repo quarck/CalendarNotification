@@ -207,7 +207,9 @@ object ApplicationController : EventMovedHandler {
                 logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
 
                 dismissEvent(
-                        context, db, oldEvent,
+                        context,
+                        db,
+                        oldEvent.copy(startTime = newEvent.startTime, endTime =  newEvent.endTime),
                         EventDismissType.AutoDismissedDueToCalendarMove,
                         true)
 
@@ -219,37 +221,6 @@ object ApplicationController : EventMovedHandler {
 
         return ret
     }
-
-    override fun onEventMoved(context: Context, db: EventsStorageInterface, oldEvent: EventAlertRecord, newEvent: EventAlertRecord, newAlertTime: Long): Boolean {
-        var ret = false
-
-        if (!getSettings(context).notificationAutoDismissOnReschedule)
-            return false
-
-        val oldTime = oldEvent.displayedStartTime
-        val newTime = newEvent.startTime
-
-        if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
-            logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
-
-            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOULD) {
-
-                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
-
-                dismissEvent(
-                        context, db, oldEvent,
-                        EventDismissType.AutoDismissedDueToCalendarMove,
-                        true)
-
-                ret = true
-
-                notificationManager.postNotificationsAutoDismissedDebugMessage(context)
-            }
-        }
-
-        return ret
-    }
-
 
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
@@ -454,7 +425,13 @@ object ApplicationController : EventMovedHandler {
             logger.info("moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
 
             EventsStorage(context).use {
-                db -> dismissEvent(context,  db,  event,  EventDismissType.EventMovedUsingApp, true)
+                db ->
+                dismissEvent(
+                    context,
+                        db,
+                        event,
+                        EventDismissType.EventMovedUsingApp,
+                        true)
             }
         }
 

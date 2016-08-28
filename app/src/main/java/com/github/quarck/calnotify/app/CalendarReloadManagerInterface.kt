@@ -33,14 +33,6 @@ interface EventMovedHandler {
             newEvent: EventRecord,
             newAlertTime: Long
     ): Boolean
-
-    fun onEventMoved(
-            context: Context,
-            db: EventsStorageInterface,
-            oldEvent: EventAlertRecord,
-            newEvent: EventAlertRecord,
-            newAlertTime: Long
-    ): Boolean
 }
 
 interface CalendarReloadManagerInterface {

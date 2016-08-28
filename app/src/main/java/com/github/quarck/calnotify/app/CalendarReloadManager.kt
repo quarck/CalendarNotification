@@ -88,13 +88,34 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         logger.debug("reloading event ${event.eventId} / ${event.instanceStartTime}")
 
+        var notificationRemoved = false
+
+        // check if event was moved
+        if (movedHandler != null && !event.isRepeating) {
+
+            val newEvent = calendarProvider.getEvent(context, event.eventId)
+
+            if (newEvent != null) {
+                val newAlertTime = newEvent.nextAlarmTime(currentTime)
+
+                if (event.startTime != newEvent.startTime) {
+                    logger.debug("Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
+                    notificationRemoved = movedHandler.onEventMoved(context, db, event, newEvent, newAlertTime)
+                }
+            }
+        }
+
+        if (notificationRemoved)
+            return true
+
         val newEventInstance = calendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
 
+        // reload actual event
         val changesDetected =
             if (newEventInstance != null )
-                reloadCalendarEventInstanceFound(context, db, calendarProvider, event, newEventInstance, currentTime, movedHandler)
+                reloadCalendarEventInstanceFound(context, db, calendarProvider, event, newEventInstance, currentTime)
             else
-                reloadCalendarEventInstanceNotFound(context, db, calendarProvider, event, currentTime, movedHandler)
+                reloadCalendarEventInstanceNotFound(context, db, calendarProvider, event, currentTime)
 
         return changesDetected
     }
@@ -105,8 +126,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         calendar: CalendarProviderInterface,
         event: EventAlertRecord,
         newEventAlert: EventAlertRecord,
-        currentTime: Long,
-        movedHandler: EventMovedHandler?
+        currentTime: Long
     ): Boolean {
 
         logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance found")
@@ -122,28 +142,18 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             if (event.updateFrom(newEventAlert)) {
 
                 if (event.instanceStartTime == newEventAlert.instanceStartTime) {
-
                     logger.debug("Non-repeating event ${event.eventId} / ${event.instanceStartTime} was updated");
 
                     db.updateEvent(
                         event,
                         displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
                 } else {
-
                     logger.debug("Non-repeating event ${event.eventId} / ${event.instanceStartTime} was updated, new instance start ${newEventAlert.instanceStartTime} -- event was moved");
 
-                    val notificationRemoved = movedHandler?.onEventMoved(
-                            context, db, event, newEventAlert,
-                            newEventAlert.alertTime) ?: false
-
-                    if (!notificationRemoved) {
-                        db.updateEventAndInstanceTimes(
-                                event.copy(displayStatus = EventDisplayStatus.Hidden), // so this will en-force event to be posted
-                                instanceStart = newEventAlert.instanceStartTime,
-                                instanceEnd = newEventAlert.instanceEndTime)
-                    } else {
-                        logger.info("Event notification was removed (auto-dismissed)")
-                    }
+                    db.updateEventAndInstanceTimes(
+                            event.copy(displayStatus = EventDisplayStatus.Hidden), // so this will en-force event to be posted
+                            instanceStart = newEventAlert.instanceStartTime,
+                            instanceEnd = newEventAlert.instanceEndTime)
                 }
 
                 changesDetected = true
@@ -175,8 +185,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         context: Context, db: EventsStorageInterface,
         calendar: CalendarProviderInterface,
         event: EventAlertRecord,
-        currentTime: Long,
-        movedHandler: EventMovedHandler?
+        currentTime: Long
     ): Boolean {
 
         logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance NOT found")
@@ -189,7 +198,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
             if (instances.size == 1) {
                 logger.debug("Non-repeating event ${event.eventId} was found at new alert time ${instances[0].alertTime}, instance start ${instances[0].instanceStartTime}");
-                changesDetected = reloadCalendarEventInstanceFound(context, db, calendar, event, instances[0], currentTime, movedHandler)
+                changesDetected = reloadCalendarEventInstanceFound(context, db, calendar, event, instances[0], currentTime)
             } else {
                 logger.debug("No instances of event ${event.eventId} were found in the future")
 
@@ -198,25 +207,18 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                 if (newEvent != null) {
                     val newAlertTime = newEvent.nextAlarmTime(currentTime)
 
-                    var notificationRemoved = false
-
                     if (event.startTime != newEvent.startTime) {
                         logger.debug("Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
-                        notificationRemoved = movedHandler?.onEventMoved(context, db, event, newEvent, newAlertTime) ?: false
                     }
 
-                    if (!notificationRemoved) {
-                        if (event.updateFrom(newEvent) || event.alertTime != newAlertTime) {
-                            logger.debug("Event ${event.eventId} for lost instance ${event.instanceStartTime} was updated, new start time ${newEvent.startTime}, alert time ${event.alertTime} -> $newAlertTime");
-                            event.alertTime = newAlertTime
-                            event.displayStatus = EventDisplayStatus.Hidden
-                            db.updateEventAndInstanceTimes(event, newEvent.startTime, newEvent.endTime)
-                            changesDetected = true
-                        } else {
-                            logger.debug("Event instance ${event.eventId} / ${event.instanceStartTime} disappeared, actual event is still exactly the same");
-                        }
+                    if (event.updateFrom(newEvent) || event.alertTime != newAlertTime) {
+                        logger.debug("Event ${event.eventId} for lost instance ${event.instanceStartTime} was updated, new start time ${newEvent.startTime}, alert time ${event.alertTime} -> $newAlertTime");
+                        event.alertTime = newAlertTime
+                        event.displayStatus = EventDisplayStatus.Hidden
+                        db.updateEventAndInstanceTimes(event, newEvent.startTime, newEvent.endTime)
+                        changesDetected = true
                     } else {
-                        logger.debug("Event instance ${event.eventId} / ${event.instanceStartTime}  - onEventMoved has removed notification");
+                        logger.debug("Event instance ${event.eventId} / ${event.instanceStartTime} disappeared, actual event is still exactly the same");
                     }
 
                 } else {

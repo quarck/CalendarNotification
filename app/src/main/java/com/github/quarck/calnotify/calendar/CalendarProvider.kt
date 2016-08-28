@@ -166,7 +166,7 @@ object CalendarProvider: CalendarProviderInterface {
         val cursor: Cursor? =
                 context.contentResolver.query(
                         CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                    alertFields,
+                        alertFields,
                         selection,
                         arrayOf(alertTime.toString()),
                         null

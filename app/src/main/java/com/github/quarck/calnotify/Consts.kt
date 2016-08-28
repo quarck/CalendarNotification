@@ -26,6 +26,7 @@ object Consts {
 
     const val REMINDER_WAKE_LOCK_NAME = "com.github.quarck.calnotify.reminderwakelock"
     const val SCREEN_WAKE_LOCK_NAME = "com.github.quarck.calnotify.screen.wake.notification"
+    const val RELOAD_WAKE_LOCK_NAME = "com.github.quarck.calnotify.calendar.reload"
     const val TTS_WAKE_LOCK_NAME = "com.github.quarck.calnotify.ttswakelock"
 
     const val MIN_REMINDER_INTERVAL = 60 * 1000

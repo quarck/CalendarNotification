@@ -45,7 +45,7 @@ object ApplicationController : EventMovedHandler {
 
     private var settings: Settings? = null
     private fun getSettings(ctx: Context): Settings {
-        synchronized(this) {
+        synchronized(this.SnoozeLock) {
             if (settings == null)
                 settings = Settings(ctx)
         }
@@ -66,10 +66,12 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
     fun onEventAlarm(context: Context) {
-        notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        synchronized(this) {
+            context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+            notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        }
     }
-
 
     fun onAppUpdated(context: Context) {
 
@@ -442,4 +444,7 @@ object ApplicationController : EventMovedHandler {
 
         return moved
     }
+
+    val ReminderLock = Unit
+    val SnoozeLock = Unit
 }

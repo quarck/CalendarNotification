@@ -82,6 +82,8 @@ inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: Strin
     }
 }
 
+val isMarshmallow: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
 
 fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: PendingIntent) {
 
@@ -90,12 +92,10 @@ fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: Pen
     if (build >= android.os.Build.VERSION_CODES.M) {
         // Marshmallow way of doing this
         return this.setExactAndAllowWhileIdle(type, triggerAtMillis, operation);
-    } else if (build >= android.os.Build.VERSION_CODES.KITKAT) {
-        // KitKat way
-        return this.setExact(type, triggerAtMillis, operation);
     }
-    // Old way
-    return this.set(type, triggerAtMillis, operation);
+
+    // KitKat way
+    return this.setExact(type, triggerAtMillis, operation);
 }
 
 fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder {

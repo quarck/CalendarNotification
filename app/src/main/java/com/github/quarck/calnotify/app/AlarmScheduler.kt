@@ -25,15 +25,15 @@ import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.app.ReminderAlarm
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.utils.alarmManager
-import com.github.quarck.calnotify.utils.setExactCompat
+import com.github.quarck.calnotify.utils.isMarshmallow
 
 
 object AlarmScheduler: AlarmSchedulerInterface {
@@ -64,10 +64,17 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                 logger.info("Scheduling next alarm at ${nextEventAlarm}, in ${(nextEventAlarm - currentTime) / 1000L} seconds");
 
-                val intent = Intent(context, SnoozeAlarmBroadcastReceiver::class.java);
+                val intent = Intent(context, SnoozeExactAlarmBroadcastReceiver::class.java);
                 val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);
+                context.alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);
+
+                if (isMarshmallow) {
+                    val intentMM = Intent(context, SnoozeAlarmBroadcastReceiver::class.java);
+                    val pendingIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                    context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextEventAlarm + Consts.ALARM_THRESHOULD / 2, pendingIntentMM);
+                }
 
             } else {
                 logger.info("No next events, keeping the alarm since it would make no difference if it would be cancelled");
@@ -98,10 +105,17 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                     logger.debug("Setting reminder alarm at $nextFire")
 
-                    val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
+                    val intent = Intent(context, ReminderExactAlarmBroadcastReceiver::class.java)
                     val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextFire, pendIntent)
+                    context.alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextFire, pendIntent)
+
+                    if (isMarshmallow) {
+                        val intentMM = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
+                        val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                        context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextFire + Consts.ALARM_THRESHOULD / 2, pendIntentMM)
+                    }
                 }
             }
         }

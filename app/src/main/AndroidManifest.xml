@@ -153,6 +153,10 @@
         </receiver>
         <receiver android:name=".broadcastreceivers.SnoozeAlarmBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver" />
+
+        <receiver android:name=".broadcastreceivers.SnoozeExactAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ReminderExactAlarmBroadcastReceiver" />
+
         <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />

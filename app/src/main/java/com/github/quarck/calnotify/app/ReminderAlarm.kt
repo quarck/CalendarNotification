@@ -24,10 +24,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.alarmManager
-import com.github.quarck.calnotify.utils.setExactCompat
+import com.github.quarck.calnotify.utils.isMarshmallow
 
 object ReminderAlarm {
 
@@ -37,13 +39,25 @@ object ReminderAlarm {
 
         logger.debug("Setting reminder alarm at ${nextMillis}")
 
-        val intent = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
+        val intent = Intent(context, ReminderExactAlarmBroadcastReceiver::class.java)
 
         val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        context.alarmManager.setExactCompat(
+        context.alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 nextMillis,
                 pendIntent)
+
+        if (isMarshmallow) {
+            val intentMM = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
+
+            val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            context.alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextMillis + Consts.ALARM_THRESHOULD / 2,
+                    pendIntentMM)
+
+        }
     }
 }

@@ -42,9 +42,7 @@ import com.github.quarck.calnotify.utils.wakeLocked
 open class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        synchronized(ApplicationController.ReminderLock) {
-            processOnReceive(context, intent)
-        }
+        processOnReceive(context, intent)
     }
 
     fun processOnReceive(context: Context?, intent: Intent?) {
@@ -181,8 +179,6 @@ open class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
 class ReminderExactAlarmBroadcastReceiver: ReminderAlarmBroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        synchronized(ApplicationController) {
-            super.processOnReceive(context, intent)
-        }
+        super.processOnReceive(context, intent)
     }
 }

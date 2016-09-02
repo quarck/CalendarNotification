@@ -49,6 +49,10 @@ object ReminderAlarm {
                 pendIntent)
 
         if (isMarshmallow) {
+            // For marshmallow - set another alarm that is allowed to fire in idle
+            // such alarm is not exact regardless of the name, so not good for regular daily usage
+            // that's why setting two alarms, one is to be guaranteed to run in non-power save mode
+            // at given time, and another - allowed in power saver mode
             val intentMM = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
 
             val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)

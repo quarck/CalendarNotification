@@ -45,7 +45,7 @@ object ApplicationController : EventMovedHandler {
 
     private var settings: Settings? = null
     private fun getSettings(ctx: Context): Settings {
-        synchronized(this.SnoozeLock) {
+        synchronized(this) {
             if (settings == null)
                 settings = Settings(ctx)
         }

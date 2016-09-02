@@ -59,9 +59,8 @@ object ReminderAlarm {
 
             context.alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    nextMillis + Consts.ALARM_THRESHOULD / 2,
+                    nextMillis + Consts.ALARM_THRESHOULD,
                     pendIntentMM)
-
         }
     }
 }

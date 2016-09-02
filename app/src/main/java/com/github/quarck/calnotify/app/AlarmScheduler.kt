@@ -78,7 +78,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
                     val intentMM = Intent(context, SnoozeAlarmBroadcastReceiver::class.java);
                     val pendingIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextEventAlarm + Consts.ALARM_THRESHOULD / 2, pendingIntentMM);
+                    context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextEventAlarm + Consts.ALARM_THRESHOULD, pendingIntentMM);
                 }
 
             } else {
@@ -124,7 +124,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
                         val intentMM = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
                         val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                        context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextFire + Consts.ALARM_THRESHOULD / 2, pendIntentMM)
+                        context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextFire + Consts.ALARM_THRESHOULD, pendIntentMM)
                     }
                 }
             }

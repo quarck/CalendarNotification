@@ -160,6 +160,7 @@
         <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
             </intent-filter>
         </receiver>
 

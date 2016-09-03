@@ -66,6 +66,7 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
     fun onEventAlarm(context: Context) {
+        logger.debug("onEventAlarm at ${System.currentTimeMillis()}");
         context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);

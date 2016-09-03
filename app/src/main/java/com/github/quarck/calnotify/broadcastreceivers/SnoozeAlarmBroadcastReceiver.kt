@@ -28,25 +28,15 @@ import com.github.quarck.calnotify.logs.Logger
 
 open class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
         if (context != null)
             ApplicationController.onEventAlarm(context)
-    }
-
-    companion object {
-        private val logger = Logger("SnoozeAlarmBroadcastReceiver");
     }
 }
 
 class SnoozeExactAlarmBroadcastReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
         if (context != null)
             ApplicationController.onEventAlarm(context)
-    }
-
-    companion object {
-        private val logger = Logger("SnoozeExactAlarmBroadcastReceiver");
     }
 }
 

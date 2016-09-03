@@ -39,13 +39,9 @@ import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.vibratorService
 import com.github.quarck.calnotify.utils.wakeLocked
 
-open class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
+open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        processOnReceive(context, intent)
-    }
-
-    fun processOnReceive(context: Context?, intent: Intent?) {
 
         logger.debug("Alarm received")
 
@@ -177,8 +173,10 @@ open class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-class ReminderExactAlarmBroadcastReceiver: ReminderAlarmBroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        super.processOnReceive(context, intent)
-    }
+class ReminderAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) =  super.onReceive(context, intent)
+}
+
+class ReminderExactAlarmBroadcastReceiver: ReminderAlarmGenericBroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) =  super.onReceive(context, intent)
 }

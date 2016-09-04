@@ -74,8 +74,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private lateinit var adapter: EventListAdapter
 
-    private var shouldShowPowerOptimisationWarning = false
-
     private val svcClient by lazy { UINotifierServiceClient() }
 
     private var lastEventDismissalScrollPosition: Int? = null
@@ -138,10 +136,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         newStyleMessageLayout = find<View>(R.id.activity_main_new_style_message_layout)
 
-        shouldShowPowerOptimisationWarning =
-            (Build.MANUFACTURER.indexOf(Consts.SAMSUNG_KEYWORD, ignoreCase=true) != -1) &&
-                !Settings(this).powerOptimisationWarningShown
-
         if (useCompactView && settings.showNewStyleMessage) {
             newStyleMessageLayout.visibility = View.VISIBLE
             if (settings.versionCodeFirstInstalled >= Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
@@ -191,9 +185,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         refreshReminderLastFired()
 
-        if (shouldShowPowerOptimisationWarning)
-            showPowerOptimisationWarning()
-
         checkPermissions()
 
         background {
@@ -210,23 +201,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         invalidateOptionsMenu();
-    }
-
-    private fun showPowerOptimisationWarning() {
-        shouldShowPowerOptimisationWarning = false
-
-        AlertDialog.Builder(this)
-            .setMessage(R.string.power_optimisation_warning)
-            .setCancelable(false)
-            .setPositiveButton(R.string.dismiss) {
-                x, y ->
-            }
-            .setNegativeButton(R.string.never_show_again) {
-                x, y ->
-                Settings(this@MainActivity).powerOptimisationWarningShown = true
-            }
-            .create()
-            .show()
     }
 
     private fun checkPermissions() {

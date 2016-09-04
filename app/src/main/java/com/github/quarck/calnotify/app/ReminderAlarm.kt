@@ -30,6 +30,7 @@ import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcas
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.isMarshmallow
+import com.github.quarck.calnotify.utils.setExactCompat
 
 object ReminderAlarm {
 
@@ -43,7 +44,7 @@ object ReminderAlarm {
 
         val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        context.alarmManager.setExact(
+        context.alarmManager.setExactCompat(
                 AlarmManager.RTC_WAKEUP,
                 nextMillis,
                 pendIntent)

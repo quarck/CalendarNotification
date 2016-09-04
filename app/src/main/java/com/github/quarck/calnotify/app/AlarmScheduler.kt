@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.isMarshmallow
+import com.github.quarck.calnotify.utils.setExactCompat
 
 
 object AlarmScheduler: AlarmSchedulerInterface {
@@ -67,7 +68,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
                 val intent = Intent(context, SnoozeExactAlarmBroadcastReceiver::class.java);
                 val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                context.alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);
+                context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);
 
                 if (isMarshmallow) {
                     // For marshmallow - set another alarm that is allowed to fire in idle
@@ -113,7 +114,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
                     val intent = Intent(context, ReminderExactAlarmBroadcastReceiver::class.java)
                     val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                    context.alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextFire, pendIntent)
+                    context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextFire, pendIntent)
 
                     if (isMarshmallow) {
                         // For marshmallow - set another alarm that is allowed to fire in idle

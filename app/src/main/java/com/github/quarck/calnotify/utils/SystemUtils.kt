@@ -112,3 +112,15 @@ fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
 fun isMarshmallowOrAbove(): Boolean {
     return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
 }
+
+fun AlarmManager.setExactCompat(type: Int, triggerAtMillis: Long, operation: PendingIntent) {
+
+    val build = android.os.Build.VERSION.SDK_INT
+
+    if (build >= android.os.Build.VERSION_CODES.KITKAT) {
+        // KitKat way
+        return this.setExact(type, triggerAtMillis, operation);
+    }
+    // Old way
+    return this.set(type, triggerAtMillis, operation);
+}

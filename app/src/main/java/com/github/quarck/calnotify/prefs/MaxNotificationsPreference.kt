@@ -50,7 +50,7 @@ class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : Dialog
 
         view.find<TextView?>(R.id.textViewTimeIntervalSummary)?.text = ""
 
-        picker = NumberPickerController(view, 1, 8)
+        picker = NumberPickerController(view, 1, Consts.MAX_NOTIFICATIONS)
         picker.value = value
     }
 
@@ -71,7 +71,7 @@ class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             // Restore existing state
-            value = this.getPersistedInt(Consts.MAX_NOTIFICATIONS)
+            value = this.getPersistedInt(Consts.DEFAULT_NOTIFICATIONS)
         } else if (defaultValue != null && defaultValue is Int) {
             // Set default state from the XML attribute
             value = defaultValue
@@ -80,7 +80,7 @@ class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : Dialog
     }
 
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInt(index, Consts.MAX_NOTIFICATIONS)
+        return a.getInt(index, Consts.DEFAULT_NOTIFICATIONS)
     }
 
     companion object {

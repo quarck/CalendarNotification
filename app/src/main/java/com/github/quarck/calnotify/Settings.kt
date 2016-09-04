@@ -213,7 +213,7 @@ class Settings(ctx: Context) {
         }
 
     val maxNotifications: Int
-        get() = prefs.getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.MAX_NOTIFICATIONS)
+        get() = prefs.getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.DEFAULT_NOTIFICATIONS)
 
     val collapseEverything: Boolean
         get() = prefs.getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)

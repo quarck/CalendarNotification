@@ -17,6 +17,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/main_activity_title"
@@ -27,27 +28,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_name"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme" />
+
         <activity
             android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.SnoozeActivityNoRecents"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_activity_snooze"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.SnoozeActivity"
             android:label="@string/title_activity_activity_snooze"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
@@ -60,6 +66,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".prefs.AppStylePrefActivity"
             android:label="@string/appearance"
@@ -72,15 +79,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.TestButtonsAndToDoActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.AboutActivity"
             android:label="@string/menu_about"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.DismissedEventsActivity"
             android:label="@string/dismissed_events"
@@ -93,9 +103,22 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".ui.AboutActivity"/>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.github.quarck.calnotify.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
         <service android:name=".notification.NotificationActionDismissService" />
+
         <service android:name=".notification.NotificationActionSnoozeService" />
+
         <service android:name=".ui.UINotifierService" />
+
         <service android:name=".notification.TextToSpeechService" />
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">

@@ -29,6 +29,8 @@ object Consts {
     const val RELOAD_WAKE_LOCK_NAME = "com.github.quarck.calnotify.calendar.reload"
     const val TTS_WAKE_LOCK_NAME = "com.github.quarck.calnotify.ttswakelock"
 
+    const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
+
     const val MIN_REMINDER_INTERVAL = 60 * 1000
 
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
@@ -102,4 +104,6 @@ object Consts {
 
 
     const val  EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
+
+    const val LOGS_FOLDER = "logs"
 }

@@ -21,12 +21,16 @@ package com.github.quarck.calnotify.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.CheckBox
+import android.widget.TextView
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.LogcatProvider
 import com.github.quarck.calnotify.logs.Logger
@@ -50,11 +54,24 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
         val isKK = isKitkatOrAbove
         if (!isKK) {
-            //find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
-            //find<CheckBox>(R.id.textViewLogFileNote).visibility = View.GONE
+            // this is to comply with privacy policy. KitKat and above
+            // would allow us accessing only our own logs
+            // we don't want to grab any other logs accidently and too lazy
+            // to implement proper filter :) 
+            find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
+            find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         }
 
         logger.debug("onCreate")
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnIncludeLogsClick(v: View) {
+
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+
+        find<TextView>(R.id.textViewLogFileNote).visibility =
+                if (shouldAttachLogs) View.VISIBLE else View.GONE
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -76,15 +93,23 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
             val logLines = LogcatProvider.getLog(this)
 
-            val file = File(this.getCacheDir(), logFileAttachmentName);
+            val logsPath = File(cacheDir, Consts.LOGS_FOLDER)
+            logsPath.mkdir()
 
-            PrintWriter(file).use {
+            val newFile = File(logsPath, logFileAttachmentName)
+
+            PrintWriter(newFile).use {
                 writer ->
                 for (line in logLines)
-                    writer.println(line)
+                    writer.printf("%s\r\n", line)
             }
 
-            email.putExtra(Intent.EXTRA_STREAM, file.toURI())
+            val contentUri = FileProvider.getUriForFile(this, Consts.FILE_PROVIDER_ID, newFile)
+
+            if (contentUri != null) {
+                email.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+                email.putExtra(Intent.EXTRA_STREAM, contentUri)
+            }
         }
 
         try {

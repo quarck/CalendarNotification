@@ -288,5 +288,7 @@
     <string name="notfication_opens_snooze_summary">Enable if you want notification to open Snooze dialog directly\nClick on event title on Snooze dialog to go to actual event on Calendar</string>
     <string name="notification_auto_dismiss_on_reschedule">Auto dismiss on reschedule</string>
     <string name="notification_auto_dismiss_on_reschedule_summary">Dismiss notification when event is rescheduled via Calendar app\nEvent should be moved by at least 15 minutes for this functionality to work\nEvent should have reminders that are still in the future\n\nNOTE: This functionality depends on Calendar Provider to notify app about calendar change, such notification is usually received with some delay causing some delay between event edit and notification auto-dismissal (up to 60 seconds)</string>
+    <string name="attach_applicatoin_log">Attach application log messages</string>
+    <string name="attach_applicatoin_log_perm">Logs are limited to this application logs\nAccessing (own) logs might require additional Android permissions</string>
 
 </resources>

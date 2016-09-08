@@ -76,7 +76,7 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
 
             val settings = Settings(context)
 
-            if (isMarshmallowOrAbove() &&
+            if (isMarshmallowOrAbove &&
                     timeValue * Consts.MINUTE_IN_SECONDS * 1000L < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC &&
                     !settings.dontShowMarshmallowWarningInSettings) {
 

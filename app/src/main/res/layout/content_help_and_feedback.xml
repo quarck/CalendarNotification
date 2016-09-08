@@ -75,8 +75,34 @@
         android:background="?android:attr/selectableItemBackground"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/accent"
-        android:layout_below="@id/help_and_feedback_text_view"
         />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/attach_applicatoin_log"
+        android:id="@+id/checkboxIncludeLogs"
+        android:visibility="visible"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_text"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/attach_applicatoin_log_perm"
+        android:id="@+id/textViewLogFileNote"
+        android:visibility="visible"
+        android:layout_gravity="center"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/primary_text"
+        />
+
 
 </LinearLayout>
 </ScrollView>

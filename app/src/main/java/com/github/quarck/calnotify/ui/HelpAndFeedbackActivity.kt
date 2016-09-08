@@ -26,9 +26,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.CheckBox
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.logs.LogcatProvider
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.isKitkatOrAbove
 
 class HelpAndFeedbackActivity : AppCompatActivity() {
     private var easterEggCount = 0;
@@ -43,6 +46,12 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        val isKK = isKitkatOrAbove
+        if (!isKK) {
+            find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
+            find<CheckBox>(R.id.textViewLogFileNote).visibility = View.GONE
+        }
+
         logger.debug("onCreate")
     }
 
@@ -50,14 +59,32 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
-        val email =
-            Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail))
-                .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
-                .putExtra(Intent.EXTRA_TEXT, emailText)
-                .setType(mimeType)
+        var content = emailText
 
-        startActivity(email);
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        if (shouldAttachLogs) {
+
+            val logLines = LogcatProvider.getLog(this).joinToString(separator = "\n")
+
+            content = "$content" +
+                    "\n\n\n\n" +
+                    "-------------------------- log messages ----------------------------" +
+                    "\n" +
+                    "$logLines"
+        }
+
+        val email =
+                Intent(Intent.ACTION_SEND)
+                        .putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail))
+                        .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+                        .putExtra(Intent.EXTRA_TEXT, emailText)
+                        .setType(content)
+
+        try {
+            startActivity(email);
+        } catch (ex: Exception) {
+            logger.error("cannot open email client", ex)
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")

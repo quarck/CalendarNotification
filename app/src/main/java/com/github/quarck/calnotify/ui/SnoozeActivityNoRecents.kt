@@ -355,7 +355,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             res: SnoozeResult,
             cont: () -> Unit ) {
 
-        if (!isMarshmallowOrAbove() || res.quietUntil != 0L || res.snoozedUntil == 0L) {
+        if (!isMarshmallowOrAbove || res.quietUntil != 0L || res.snoozedUntil == 0L) {
             cont()
             return
         }

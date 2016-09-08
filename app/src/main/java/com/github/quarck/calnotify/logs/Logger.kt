@@ -36,4 +36,6 @@ class Logger(tag: String) {
     fun info(message: String) = Log.i(fullTag, message)
 
     fun error(message: String) = Log.e(fullTag, message)
+
+    fun error(message: String, exception: Exception) = Log.e(fullTag, message, exception)
 }

@@ -39,7 +39,7 @@ object LogcatProvider {
             // -b all - all buffers
             // -v brief - format
             // *:V - filter, everything verbose
-            val args = arrayOf("logcat", "-v", "brief", "-d", "-b",  "all",  "*:V")
+            val args = arrayOf("logcat", "-v", "brief", "-d", "-b",  "main", "-b", "events", "-b", "system",  "*:V")
 
             val logcatProc: Process? = Runtime.getRuntime().exec(args)
 

@@ -32,6 +32,8 @@ import com.github.quarck.calnotify.logs.LogcatProvider
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isKitkatOrAbove
+import java.io.File
+import java.io.PrintWriter
 
 class HelpAndFeedbackActivity : AppCompatActivity() {
     private var easterEggCount = 0;
@@ -48,8 +50,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
         val isKK = isKitkatOrAbove
         if (!isKK) {
-            find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
-            find<CheckBox>(R.id.textViewLogFileNote).visibility = View.GONE
+            //find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
+            //find<CheckBox>(R.id.textViewLogFileNote).visibility = View.GONE
         }
 
         logger.debug("onCreate")
@@ -62,23 +64,28 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         var content = emailText
 
         val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
-        if (shouldAttachLogs) {
-
-            val logLines = LogcatProvider.getLog(this).joinToString(separator = "\n")
-
-            content = "$content" +
-                    "\n\n\n\n" +
-                    "-------------------------- log messages ----------------------------" +
-                    "\n" +
-                    "$logLines"
-        }
 
         val email =
                 Intent(Intent.ACTION_SEND)
                         .putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail))
                         .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                         .putExtra(Intent.EXTRA_TEXT, emailText)
-                        .setType(content)
+                        .setType(mimeType)
+
+        if (shouldAttachLogs) {
+
+            val logLines = LogcatProvider.getLog(this)
+
+            val file = File(this.getCacheDir(), logFileAttachmentName);
+
+            PrintWriter(file).use {
+                writer ->
+                for (line in logLines)
+                    writer.println(line)
+            }
+
+            email.putExtra(Intent.EXTRA_STREAM, file.toURI())
+        }
 
         try {
             startActivity(email);
@@ -132,5 +139,7 @@ App version: ${pInfo.versionName} (${pInfo.versionCode})
         val emailSubject = "Calendar Notification Plus Feedback"
 
         val wikiUri = "https://github.com/quarck/CalendarNotification/wiki"
+
+        val logFileAttachmentName = "calnotify.log"
     }
 }

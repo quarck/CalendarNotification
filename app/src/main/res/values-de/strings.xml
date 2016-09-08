@@ -6,7 +6,7 @@
     <string name="main_activity_title">Kalenderbenachrichtungen</string>
 
     <string name="settings">Einstellungen</string>
-    <string name="application_has_no_access">Diese Anwendung benötigt spezielle Berechtigungen, um auf die Kalender-Benachrichtigungen zugreifen zu können\n\nBitte erteilen Sie die Berechtigungen READ-CALENDAR und WRITE_CALENDAR\n\nWRITE_CALENDAR wird benötigt, um die Standard Benachrichtigungen zu verbergen</string>
+    <string name="application_has_no_access">Diese Anwendung benötigt spezielle Berechtigungen, um auf die Kalender-Benachrichtigungen zugreifen zu können.\n\nBitte erteilen Sie die Berechtigungen READ-CALENDAR und WRITE_CALENDAR.\n\nWRITE_CALENDAR wird benötigt, um die Standard Benachrichtigungen zu verbergen.</string>
 
     <string name="cancel">Abbrechen</string>
 
@@ -74,7 +74,7 @@
     <string name="notification_settings">Benachrichtigungen</string>
     <string name="snooze_presets">Schlummern</string>
     <string name="smartwatch_support">Smartwatches</string>
-    <!-- string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'\n\nBis zu 6 Einträge werden unterstützt\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden</string -->
+    <!-- string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet.\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'.\n\nBis zu 6 Einträge werden unterstützt.\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden.</string -->
 
     <string name="error_cannot_parse_preset">Entschuldigung, Ihre Eingabe konnte nicht verarbeitet werden</string>
     <string name="snooze_presets_title">Voreinstellungen</string>
@@ -110,7 +110,7 @@
     <string name="snooze_all">Alle Termine schlummern</string>
     <string name="change_all">Alle Termine bearbeiten</string>
     <string name="snooze_all_confirmation">Alle Termine schlummern?\nSchon auf \'Schlummern\' gesetzte Termine werden auch geändert, außer die Zeitspanne bis zur nächsten Erinnerung ist schon größer</string>
-    <string name="change_all_notification">Dies verändert die \'Schlummern\' Zeit für alle Termine\nFortsetzen?</string>
+    <string name="change_all_notification">Dies verändert die \'Schlummern\' Zeit für alle Termine.\nFortsetzen?</string>
 
     <string name="snooze_all_events">Setze \'Schlummern\' für alle Termine auf:</string>
     <string name="change_all_events">Bearbeite \'Schlummern\' Zeit für alle Termine:</string>
@@ -139,7 +139,7 @@
     <string name="quiet_hours_mute_primary">Direkte Erinnerungen ruhig stellen</string>
     <string name="quiet_hours_mute_primary_summary">Direkte Erinnerungen ruhig stellen. Die direkte Erinnerung ist die erste Erinnerung für den besonderen Termin.</string>
 
-    <string name="quiet_hours_main_activity_status" formatted="false">Ruhezeit ist aktiv\nKeine Erinnerungen bis %s</string>
+    <string name="quiet_hours_main_activity_status" formatted="false">Ruhezeit ist aktiv.\nKeine Erinnerungen bis %s</string>
     <string name="hits_quiet_period">(Zeitraum Ruhezeit)</string>
     <string name="custom_snooze_entry">Benutzerdefiniert</string> <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
 
@@ -162,7 +162,7 @@
 
     <string name="title_calendars_activity">Überwachte Kalender</string>
 
-    <string name="power_optimisation_warning"><b>Wichtige Information for Samsung Benutzer:</b>\n\nBei vielen neueren Geräten hat Samsung Optimierungen beim Energieverbrauch vorgenommen\nWenn diese Optimierungen für Calendar Notifications Plus aktiviert sind, können die Erinnerungen mit einer Verzögerung zum eigentlichen Termin angezeigt werden\n\nEs gibt keine Möglichkeit für die App herauszufinden ob die Optimierungen aktiv sind oder nicht. Es wird empfohlen dies manuell zu prüfen.\n\nDeaktivierung für diese App führt zu keinem erhöhten Verbrauch\n\nBitte öffnen sie\nEinstellungen -&gt; Akku -&gt; App Energiespardetails -&gt; Suche "Calendar Notifications Plus"\nund setze es auf \'Deaktiviert\'\n\nDiese Information trifft nicht bei Custom non-TouchWiz basierten ROMs zu.</string>
+    <string name="power_optimisation_warning"><b>Wichtige Information für Samsung Benutzer:</b>\n\nBei vielen neueren Geräten hat Samsung Optimierungen beim Energieverbrauch vorgenommen.\nWenn diese Optimierungen für Calendar Notifications Plus aktiviert sind, können die Erinnerungen mit einer Verzögerung zum eigentlichen Termin angezeigt werden.\n\nEs gibt keine Möglichkeit für die App herauszufinden ob die Optimierungen aktiv sind oder nicht. Es wird empfohlen dies manuell zu prüfen.\n\nDeaktivierung für diese App führt zu keinem erhöhten Verbrauch.\n\nBitte öffnen sie\nEinstellungen -&gt; Akku -&gt; App Energiespardetails -&gt; Suche "Calendar Notifications Plus"\nund setze es auf \'Deaktiviert\'\n\nDiese Information trifft nicht bei Custom non-TouchWiz basierten ROMs zu.</string>
     <string name="never_show_again">Nicht wieder anzeigen</string>
 
 
@@ -201,12 +201,12 @@
     <string name="event_list_style">Stil der Terminliste</string>
 
     <string name="restart_the_app_to_apply_changes">App neu starten um Änderungen zu übernehmen</string>
-    <string name="event_list_style_summary">Wähle zwischen Karten- und Kompaktansicht\nÄnderungen erfordern einen Neustart der App</string>
+    <string name="event_list_style_summary">Wähle zwischen Karten- und Kompaktansicht.\nÄnderungen erfordern einen Neustart der App.</string>
     <string name="compact_view">Kompaktansicht</string>
-    <string name="compact_view_explanation">— Termin wegwischen um ihn zu verwerfen\n— Anklicken um den Schlummerdialog zu öffnen\n— Schlummerdialog öffnen und auf den Titel klicken um den Termin im Kalender öffnen</string>
+    <string name="compact_view_explanation">— Termin wegwischen um ihn zu schließen\n— Anklicken um den Schlummerdialog zu öffnen\n— Schlummerdialog öffnen und auf den Titel klicken um den Termin im Kalender zu öffnen</string>
     <string name="list_item_look_like">Vorschau der Liste:</string>
     <string name="card_view">Kartenansicht</string>
-    <string name="card_view_explanation">— Auf die Karte klicken um den Termin im Kalender zu öffnen\n— Schaltflächen verwenden um einen Termin zu schlummern oder zu verwerfen</string>
+    <string name="card_view_explanation">— Auf die Karte klicken um den Termin im Kalender zu öffnen\n— Schaltflächen verwenden um einen Termin zu schlummern oder zu schließen</string>
     <string name="ok">OK</string>
     <string name="compact_view_is_a_default_style_now">Die Kompaktansicht ist ab jetzt Standard</string>
     <string name="switch_to_cards">ZUR KARTENANSICHT WECHSELN</string>
@@ -219,34 +219,68 @@
     <string name="dismissed">Verworfen</string>
     <string name="choose_date">Datum auswählen</string>
 
-    <string name="choose_time" formatted="false">Schlummern bis%s\nZeit auswählen</string>
+    <string name="choose_time" formatted="false">Schlummern bis %s\nZeit auswählen</string>
 
     <string name="next">Nächste</string>
 
     <string name="until_event_time">Bis zum Termin</string>
-    <string name="halo_light_theme_date_picker">Halo. Helles Thema für die Auswahl des Datums</string>
+    <string name="halo_light_theme_date_picker">Datumsauswahl nutzt helles Thema (Halo)</string>
     <string name="halo_light_theme_date_picker_summary">Android Jellybean Thema</string>
-    <string name="halo_light_theme_time_picker">Halo. Helles Thema für die Auswahl der Zeit</string>
+    <string name="halo_light_theme_time_picker">Zeitauswahl nutzt helles Thema (Halo)</string>
     <string name="halo_light_theme_time_picker_summary">Android Jellybean Thema</string>
 
     <string name="max_notifications_before_collapse">Maximale Anzahl Benachrichtigungen</string>
-    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen\n\nHinweis: Oberes Limit beträgt 8 um mögliche System-UI Abstürze bei zu vielen Benachrichtigungen zu verhindern</string>
+    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen.\n\nHinweis: Oberes Limit beträgt 8 um mögliche System-UI Abstürze bei zu vielen Benachrichtigungen zu verhindern.</string>
     <string name="collapse_everything">Alle weiteren ausblenden</string>
     <string name="collapse_everything_summary">Wenn die Anzahl der Benachrichtigungen das Maximum überschreitet, werden alle ausgeblendet und zu einer Gruppenbenachrichtigung zusammengefasst</string>
 
     <string name="multiple_events_single_notification">%d Kalender Benachrichtigungen</string>
     <string name="advanced">Erweitert</string>
 
-    <string name="reminders_not_accurate" formatted="false">WARNUNG:\nErinnerung wurde vor kurzem angezeigt\n\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), wird die nächste Erinnerung möglicherweise nicht früher als %d Minuten von jetzt an angezeigt\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
-    <string name="reminders_not_accurate_again">WARNUNG:\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), Erinnerungsabstände kürzer als 10 Minuten werden trotzdem erst all 10 Minuten angezeigt\nDurch diese Beschränkung von Android können die Abstände nicht verkürzt werden\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
+    <string name="reminders_not_accurate" formatted="false">WARNUNG:\nErinnerung wurde vor kurzem angezeigt.\n\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), wird die nächste Erinnerung möglicherweise nicht früher als %d Minuten von jetzt an angezeigt.\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
+    <string name="reminders_not_accurate_again">WARNUNG:\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), Erinnerungsabstände kürzer als 10 Minuten werden trotzdem erst all 10 Minuten angezeigt.\nDurch diese Beschränkung von Android können die Abstände nicht verkürzt werden.\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
 
     <string name="open_wiki">WIKI ÖFFNEN</string>
     <string name="dash_or_dash">— oder —</string>
     <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst im Wiki schauen, ob diese vielleicht dort schob beantwortet wurde:</string>
-    <string name="lightweight_swipe">Leichtes Wischen auf der Kompaktansicht</string>
-    <string name="lightweight_swipe_summary">Reduzierte Geschwindigkeit wird benötigt um einen Termin mit einem \'Schnellen Wisch\' zu verwerfen</string>
+    <string name="lightweight_swipe">Wischen auf der Kompaktansicht</string>
+    <string name="lightweight_swipe_summary">Reduzierte Geschwindigkeit wird benötigt um einen Termin mit einem \'Schnellen Wisch\' zu schließen</string>
     <string name="notify_tts">Text-in-Sprache</string>
     <string name="notify_tts_summary">Termintitel laut vorlesen</string>
 
+
+    <string name="edit_event">Termin bearbeiten</string>
+
+    <string name="dismissed_events">Geschlossene Termine</string>
+    <string name="keep_dismissed_events">Behalte geschlossene Termine</string>
+    <string name="keep_dismissed_events_summary">Kürzlich geschlossene Termine zur Kontrolle behalten (Siehe \'Geschlossene Termine\' im Hauptfenster)</string>
+    <string name="keep_dismissed_events_days">Anzahl der Tage</string>
+    <string name="keep_dismissed_events_days_summary">Für wie viele Tage sollen geschlossene Termine behalten werden</string>
+    <string name="app_behavior">Verhalten</string>
+
+    <string name="dismissed_general" formatted="false">Geschlossen am %s</string>
+    <string name="dismissed_from_the_app" formatted="false">Von der App geschlossen am %s</string>
+    <string name="dismissed_from_notification" formatted="false">Durch die Benachrichtigung geschlossen %s</string>
+    <string name="event_moved_new_time" formatted="false">Geändert, neue Zeit: %s</string>
+    <string name="restore">Benachrichtigung wiederherstellen</string>
+    <string name="delete">Verlauf löschen</string>
+    <string name="remove_all">Alle löschen</string>
+
+    <string name="remove_all_confirmation">Alle Einträge löschen?</string>
+    <string name="title_activity_privacy_policy">Datenschutzrichtlinie</string>
+    <string name="context_policy">Während der normalen Verwendung empfängt und speichert diese App Informationen über Termine des Android Kalenders.\n\nKeine dieser Informationen verlässt diese Anwendung:\n\n* Es wird nichts irgendwohin übertragen\n\n* Es wird nichts mit irgendjemand geteilt\n\n* Nichts an Dritte weitergegeben\n\nAlle Termindetails werden gelöscht, sobald der Termin geschlossen wurde.\n\nWenn der Benutzer die Option \'Behalte geschlossene Termine\' aktiviert hat, werden die Termindetails gelöscht sobald die Auszeit abgelaufen oder der Verlauf ausdrücklich gelöscht wurde.</string>
+    <string name="privacy_policy">DATENSCHUTZRICHTLINIE</string>
+    <string name="notification_swipe_does_snooze">Benachrichtigung wegwischen setzt Schlummern</string>
+    <string name="notification_swipe_does_snooze_summary">Wegwischen setzt erste vordefinierte Schlummerzeit</string>
+
+    <string name="full_dismiss">Alles schließen</string>
+    <string name="pebble_forward_only_reminders">Nur Erinnerungen weiterleiten</string>
+    <string name="pebble_forward_only_reminders_summary">Pebble ist selbst für die Kalender verantwortlich</string>
+    <string name="event_color_notification">Terminfarbe der Benachrichtigung</string>
+    <string name="event_color_notification_summary">Benachrichtigungsicon in der Terminfarbe anzeigen</string>
+    <string name="notfication_opens_snooze">Benachrichtigung öffnet Schlummerdialog</string>
+    <string name="notfication_opens_snooze_summary">Aktivieren um den Schlummerdialog direkt zu öffnen.\nAuf den Titel des Schlummerdialogs klicken um den Termin im Kalender zu öffnen.</string>
+    <string name="notification_auto_dismiss_on_reschedule">Schließen bei Wiedervorlage</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Benachrichtigung schließen, wenn der Termin über den Kalender verschoben wurde.\nDer Termin muss mindestens um 15 Minuten verschoben werden.\nDer Termin braucht Erinnerungen in der Zukunft.\n\nHinweis: Diese Funktion hängt vom Kalender ab, ob er die App über eine Verschiebung informiert. Diese Information kommt verzögert (bis zu 60 Sekunden).</string>
 
 </resources>

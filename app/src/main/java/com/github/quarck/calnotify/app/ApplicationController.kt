@@ -66,13 +66,17 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
 
     fun onEventAlarm(context: Context) {
-        logger.debug("onEventAlarm at ${System.currentTimeMillis()}");
+
+        logger.info("onEventAlarm at ${System.currentTimeMillis()} -- we need to remind about snoozed event");
+
         context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
 
     fun onAppUpdated(context: Context) {
+
+        logger.info("Application updated, reloading calendar")
 
         val changes = EventsStorage(context).use {
             calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
@@ -85,6 +89,9 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun onBootComplete(context: Context) {
+
+        logger.info("System rebooted - reloading calendar")
+
         val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) };
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
@@ -96,6 +103,8 @@ object ApplicationController : EventMovedHandler {
 
     fun onCalendarChanged(context: Context) {
 
+        logger.info("Calendar changed notification received")
+
         val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
         if (changes) {
             notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
@@ -103,6 +112,8 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             UINotifierService.notifyUI(context, false);
+        } else {
+            logger.info("No caclendar changes detected")
         }
     }
 
@@ -111,6 +122,8 @@ object ApplicationController : EventMovedHandler {
         var ret = false
 
         if (event.calendarId == -1L || getSettings(context).getCalendarIsHandled(event.calendarId)) {
+
+            logger.info("Calendar event fired, calendar id ${event.calendarId}, eventId ${event.eventId}, instance start time ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
             // 1st step - save event into DB
             EventsStorage(context).use {

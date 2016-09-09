@@ -57,7 +57,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             // this is to comply with privacy policy. KitKat and above
             // would allow us accessing only our own logs
             // we don't want to grab any other logs accidently and too lazy
-            // to implement proper filter :) 
+            // to implement proper filter :)
             find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
             find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         }

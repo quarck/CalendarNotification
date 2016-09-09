@@ -53,8 +53,10 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
-            if (!ApplicationController.hasActiveEvents(context))
+            if (!ApplicationController.hasActiveEvents(context)) {
+                logger.info("Reminder broadcast alarm received - no active events to remind, returning")
                 return@wakeLocked
+            }
 
             val settings = Settings(context)
 
@@ -69,55 +71,63 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             if (settings.quietHoursOneTimeReminderEnabled) {
 
                 if (silentUntil == 0L) {
-                    logger.debug("One-shot enabled, not in quiet hours, firing")
+                    logger.info("One-shot enabled, not in quiet hours, firing")
 
                     shouldFire = true
 
                     // Check if regular reminders are enabled and schedule reminder if necessary
                     if (settings.remindersEnabled) {
-                        logger.debug("Regular reminders enabled, arming")
                         nextFireAt = currentTime + reminderInterval
+                        logger.info("Regular reminders enabled, arming next fire at $nextFireAt")
                     }
 
                 } else {
-                    logger.debug("One-shot enabled, inside quiet hours, postpone until $silentUntil")
                     nextFireAt = silentUntil
+                    logger.info("One-shot enabled, inside quiet hours, postpone until $silentUntil")
                 }
 
             } else if (settings.remindersEnabled) {
 
-                logger.debug("Reminders are enabled")
+                val lastFireTime = Math.max( context.globalState.notificationLastFireTime,
+                        context.globalState.reminderLastFireTime)
 
-                val sinceLastFire =
-                    currentTime - Math.max( context.globalState.notificationLastFireTime,
-                            context.globalState.reminderLastFireTime);
+                val sinceLastFire = currentTime - lastFireTime;
 
                 val numRemindersFired = context.globalState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
+                logger.info("Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
+
                 if (maxFires == 0 || numRemindersFired <= maxFires) {
 
                     if (silentUntil != 0L) {
-                        logger.debug("Reminder postponed until $silentUntil due to quiet hours");
+                        logger.info("Reminder postponed until $silentUntil due to quiet hours");
                         nextFireAt = silentUntil
 
                     } else if (sinceLastFire < reminderInterval - Consts.ALARM_THRESHOULD)  {
                         // Schedule actual time to fire based on how long ago we have fired
                         val leftMillis = reminderInterval - sinceLastFire;
-                        logger.debug("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOULD}, left: ${leftMillis}");
                         nextFireAt = currentTime + leftMillis
 
+                        logger.info("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOULD}, left: ${leftMillis}, moving alarm to $nextFireAt");
                     } else {
-                        logger.debug("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}")
-
                         nextFireAt = currentTime + reminderInterval
                         shouldFire = true
+
+                        logger.info("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
+
+                        if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOULD) && (lastFireTime > 0L)) {
+                            logger.error("WARNING: timer delay detected, expected to receive timers with interval " +
+                                    "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
+                                    "lastFire=$lastFireTime (last reminder at ${context.globalState.reminderLastFireTime}, " +
+                                    "last event at ${context.globalState.notificationLastFireTime})")
+                        }
                     }
                 } else {
-                    logger.debug("Exceeded max fires $maxFires, fired $numRemindersFired times")
+                    logger.info("Exceeded max fires $maxFires, fired $numRemindersFired times")
                 }
             } else {
-                logger.debug("Reminders are disabled")
+                logger.info("Reminders are disabled")
             }
 
             if (nextFireAt != 0L)
@@ -130,7 +140,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     private fun fireReminder(context: Context, currentTime: Long, settings: Settings) {
 
-        logger.debug("Firing reminder")
+        logger.info("Firing reminder, current time ${System.currentTimeMillis()}")
 
         ApplicationController.fireEventReminder(context);
 
@@ -142,30 +152,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             context.globalState.numRemindersFired ++;
 
         context.globalState.reminderLastFireTime = currentTime
-
-        /*
-                val pattern = longArrayOf(0, Consts.VIBRATION_DURATION);
-                context.vibratorService.vibrate(pattern, -1)
-
-                if (settings.ringtoneURI != null) {
-                    try {
-                        val notificationUri = settings.ringtoneURI
-
-                        val mediaPlayer = MediaPlayer()
-
-                        mediaPlayer.setDataSource(context, notificationUri)
-                        mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
-                        mediaPlayer.prepare()
-                        mediaPlayer.setOnCompletionListener { mp -> mp.release() }
-                        mediaPlayer.start()
-
-                    } catch (e: Exception) {
-                        logger.debug("Exception while playing notification")
-                        e.printStackTrace()
-                    }
-                }
-        */
-
     }
 
     companion object {

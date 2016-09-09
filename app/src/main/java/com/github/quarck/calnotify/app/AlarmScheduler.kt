@@ -80,6 +80,8 @@ object AlarmScheduler: AlarmSchedulerInterface {
                     val pendingIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextEventAlarm + Consts.ALARM_THRESHOULD, pendingIntentMM);
+
+                    logger.info("MM style alarm added");
                 }
 
             } else {
@@ -102,14 +104,14 @@ object AlarmScheduler: AlarmSchedulerInterface {
                     val quietUntil = quietHoursManager.getSilentUntil(settings, nextFire)
 
                     if (quietUntil != 0L) {
-                        logger.info("Reminder alarm moved from $nextFire to ${quietUntil+15} due to silent period");
+                        logger.info("Reminder alarm moved from $nextFire to ${quietUntil+Consts.ALARM_THRESHOULD} due to silent period");
 
                         // give a little extra delay, so if events would fire precisely at the quietUntil,
                         // reminders would wait a bit longer
                         nextFire = quietUntil + Consts.ALARM_THRESHOULD
                     }
 
-                    logger.debug("Setting reminder alarm at $nextFire")
+                    logger.info("Setting reminder alarm at $nextFire")
 
                     val intent = Intent(context, ReminderExactAlarmBroadcastReceiver::class.java)
                     val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -126,6 +128,8 @@ object AlarmScheduler: AlarmSchedulerInterface {
                         val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
 
                         context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextFire + Consts.ALARM_THRESHOULD, pendIntentMM)
+
+                        logger.info("MM-style reminder alarm added")
                     }
                 }
             }

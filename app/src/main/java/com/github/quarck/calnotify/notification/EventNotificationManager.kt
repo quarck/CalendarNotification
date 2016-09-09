@@ -270,7 +270,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationsSettingsIn: NotificationSettingsSnapshot?,
             force: Boolean, isQuietPeriodActive: Boolean, primaryEventId: Long?, playReminderSound: Boolean): Boolean {
 
-        logger.debug("Posting ${events.size} notifications in collapsed view")
+        logger.info("Posting ${events.size} notifications in collapsed view")
 
         if (events.isEmpty()) {
             hideCollapsedEventsNotification(context)
@@ -491,7 +491,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             primaryEventId: Long?
     ): Boolean {
 
-        logger.debug("Posting ${events.size} notifications")
+        logger.info("Posting ${events.size} notifications")
 
         val notificationsSettings = settings.notificationSettingsSnapshot
 
@@ -513,20 +513,20 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
-                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
+                    logger.info("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
 
                     var shouldBeQuiet = false
 
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
-                        logger.debug("event ${event.eventId}: 'forced' notification - staying quiet")
+                        logger.info("event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
                     } else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
-                        logger.debug("event ${event.eventId}: notification was collapsed, not playing sound")
+                        logger.info("event ${event.eventId}: notification was collapsed, not playing sound")
                         shouldBeQuiet = true
                         wasCollapsed = true
 
@@ -536,11 +536,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
-                            logger.debug("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
+                            logger.info("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
                         } else {
                             // not a primary event -- always silent in silent period
-                            logger.debug("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
+                            logger.info("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
                         }
                     }
@@ -558,24 +558,36 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     playedAnySound = playedAnySound || !shouldBeQuiet
 
                 } else {
-                    logger.debug("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
+                    logger.info("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
                 }
             } else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
+                logger.info("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
-                postNotification(context, formatter, event,
-                        if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings, force,
-                        false, settings.snoozePresets, false)
+                postNotification(
+                        context,
+                        formatter,
+                        event,
+                        if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings,
+                        force,
+                        false,
+                        settings.snoozePresets,
+                        false)
 
+                val currentTime = System.currentTimeMillis()
+
+                if (event.snoozedUntil + Consts.ALARM_THRESHOULD < currentTime) {
+                    logger.error("WARNING: snooze alarm is very late: expected at ${event.snoozedUntil}, " +
+                            "received at $currentTime, late by ${currentTime - event.snoozedUntil} us")
+                }
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
                 // also update 'lastVisible' time since event just re-appeared
                 db.updateEvent(event,
                         snoozedUntil = 0,
                         displayStatus = EventDisplayStatus.DisplayedNormal,
-                        lastEventVisibility = System.currentTimeMillis())
+                        lastEventVisibility = currentTime)
 
                 postedNotification = true
                 playedAnySound = playedAnySound || !isQuietPeriodActive
@@ -590,7 +602,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 && !playedAnySound
                 && !settings.quietHoursOneTimeReminderEnabled) {
 
-            logger.debug("Would remind after snooze period")
+            logger.info("Was quiet due to quiet hours - would remind after snooze period")
 
             settings.quietHoursOneTimeReminderEnabled = true
         }

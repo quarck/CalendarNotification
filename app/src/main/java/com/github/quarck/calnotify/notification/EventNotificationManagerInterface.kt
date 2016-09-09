@@ -39,4 +39,6 @@ interface EventNotificationManagerInterface {
     fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord)
 
     fun postNotificationsAutoDismissedDebugMessage(context: Context)
+
+    fun postNotificationsAlarmDelayDebugMessage(context: Context, title: String, text: String)
 }

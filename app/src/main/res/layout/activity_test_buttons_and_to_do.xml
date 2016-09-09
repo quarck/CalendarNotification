@@ -129,6 +129,17 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:padding="14dp"
                 />
 
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTestToggleDebugAlarmDelays"
+                android:onClick="OnButtonToggleAlarmDelayDebugClick"
+                android:visibility="visible"
+                android:textOn="DEBUGGING ALARM DELAYS"
+                android:textOff="NOT DEBUGGING ALARM DELAYS"
+                android:padding="14dp"
+                />
+
 
         </LinearLayout>
 

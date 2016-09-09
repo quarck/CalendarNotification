@@ -121,6 +121,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                                     "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
                                     "lastFire=$lastFireTime (last reminder at ${context.globalState.reminderLastFireTime}, " +
                                     "last event at ${context.globalState.notificationLastFireTime})")
+
+                            ApplicationController.onReminderAlarmLate(context, sinceLastFire, reminderInterval, lastFireTime)
                         }
                     }
                 } else {

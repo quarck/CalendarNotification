@@ -241,6 +241,14 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
+    fun onReminderAlarmLate(context: Context, sinceLastFire: Long, reminderInterval: Long, lastFireTime: Long) {
+
+        if (getSettings(context).debugAlarmDelays) {
+            val warningMessage = "Reminder alarm is very late: last fired: $lastFireTime, interval: $reminderInterval, since last: $sinceLastFire"
+            notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
+        }
+    }
+
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
 

@@ -36,10 +36,17 @@ object LogcatProvider {
 
         try {
             // -d - don't block
-            // -b all - all buffers
-            // -v brief - format
+            // -b xxx - all buffers
+            // -v threadtime - format
             // *:V - filter, everything verbose
-            val args = arrayOf("logcat", "-v", "brief", "-d", "-b",  "main", "-b", "events", "-b", "system",  "*:V")
+            val args = arrayOf(
+                    "logcat",
+                    "-v", "threadtime",
+                    "-d",
+                    "-b",  "main",
+                    "-b", "events",
+                    "-b", "system",
+                    "*:V")
 
             val logcatProc: Process? = Runtime.getRuntime().exec(args)
 

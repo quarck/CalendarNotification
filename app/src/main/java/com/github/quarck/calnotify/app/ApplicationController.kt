@@ -272,8 +272,6 @@ object ApplicationController : EventMovedHandler {
                         snoozedUntil = snoozedUntil,
                         lastEventVisibility = currentTime,
                         displayStatus = EventDisplayStatus.Hidden)
-                } else {
-                    logger.error("Error: can't get event from DB");
                 }
 
                 event;

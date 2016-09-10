@@ -41,8 +41,8 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
 
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
-                ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay)
-                logger.info("event $eventId / $instanceStartTime snoozed by $snoozeDelay")
+                if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null)
+                    logger.info("event $eventId / $instanceStartTime snoozed by $snoozeDelay")
 
                 UINotifierService.notifyUI(this, true);
             } else {

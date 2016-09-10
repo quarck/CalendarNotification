@@ -237,12 +237,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationsSettingsIn: NotificationSettingsSnapshot?,
             force: Boolean, isQuietPeriodActive: Boolean, primaryEventId: Long?, playReminderSound: Boolean): Boolean {
 
-        logger.info("Posting ${events.size} notifications in collapsed view")
-
         if (events.isEmpty()) {
             hideCollapsedEventsNotification(context)
             return false
         }
+        logger.info("Posting ${events.size} notifications in collapsed view")
 
         val notificationsSettings = notificationsSettingsIn ?: settings.notificationSettingsSnapshot
 
@@ -297,8 +296,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             shouldBeQuiet = true
                         }
                     }
-
-                    logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
                     postedNotification = true
                     shouldPlayAndVibrate = shouldPlayAndVibrate || !shouldBeQuiet
@@ -366,28 +363,20 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (shouldPlayAndVibrate) {
             if (notificationsSettings.ringtoneUri != null) {
-                logger.debug("Adding ringtone uri ${notificationsSettings.ringtoneUri}")
                 builder.setSound(notificationsSettings.ringtoneUri)
-            } else {
-                logger.debug("No ringtone for this notification")
             }
 
             if (notificationsSettings.vibrationOn) {
-                logger.debug("adding vibration")
                 builder.setVibrate(notificationsSettings.vibrationPattern)
             } else {
-                logger.debug("no vibration")
                 builder.setVibrate(longArrayOf(0))
             }
 
             if (notificationsSettings.ledNotificationOn) {
-                logger.debug("Adding LED light")
                 if (notificationsSettings.ledPattern.size == 2)
                     builder.setLights(notificationsSettings.ledColor, notificationsSettings.ledPattern[0], notificationsSettings.ledPattern[1])
                 else
                     builder.setLights(notificationsSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
-            } else {
-                logger.debug("No LED light")
             }
         }
 
@@ -746,39 +735,30 @@ class EventNotificationManager : EventNotificationManagerInterface {
         builder.extend(extender)
 
         if (notificationSettings.ringtoneUri != null) {
-            logger.debug("Adding ringtone uri ${notificationSettings.ringtoneUri}")
             builder.setSound(notificationSettings.ringtoneUri)
-        } else {
-            logger.debug("No ringtone for this notification")
         }
 
         if (notificationSettings.vibrationOn) {
-            logger.debug("adding vibration")
             builder.setVibrate(notificationSettings.vibrationPattern)
         } else {
-            logger.debug("no vibration")
             builder.setVibrate(longArrayOf(0))
         }
 
         if (notificationSettings.ledNotificationOn) {
-            logger.debug("Adding LED light")
             if (notificationSettings.ledPattern.size == 2)
                 builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1])
             else
                 builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
-        } else {
-            logger.debug("No LED light")
         }
 
         if (notificationSettings.showColorInNotification) {
-            logger.debug("Adding calendar color");
             builder.setColor(event.color.adjustCalendarColor())
         }
 
         val notification = builder.build()
 
         try {
-            logger.debug("adding: notificationId=${event.notificationId}")
+            logger.info("adding: notificationId=${event.notificationId}")
 
             notificationManager.notify(
                     event.notificationId,

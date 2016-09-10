@@ -124,14 +124,9 @@ object QuietHoursManager: QuietHoursManagerInterface {
 
             var allPassed = true
 
-            logger.debug("Iterating $silentFrom")
-
             for ( (idx, cal) in cals.withIndex()) {
 
-                logger.debug("Idx=$idx, cal=$cal")
-
                 if (silentFrom.before(cal)) {
-                    logger.debug("Not passed")
                     allPassed = false
                 }
 

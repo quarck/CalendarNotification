@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.logs.Logger
 
 class UINotifierService : IntentService("ServiceUINotifier") {
     inner class ServiceBinder : Binder() {
-        val sevice: UINotifierService
+        val service: UINotifierService
             get() = this@UINotifierService
     }
 
@@ -38,31 +38,24 @@ class UINotifierService : IntentService("ServiceUINotifier") {
     public var updateActivity: ((Boolean) -> Unit)? = null
 
     override fun onBind(intent: Intent): IBinder? {
-        logger.debug("onBind")
         return binder
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        logger.debug("onUnbind")
         updateActivity = null
         return true
     }
 
     override fun onRebind(intent: Intent) {
-        logger.debug("onRebind")
         super.onRebind(intent)
     }
 
     override fun onHandleIntent(intent: Intent) {
-        logger.debug("onHandleIntent")
 
-        var action = updateActivity
+        val action = updateActivity
         if (action != null) {
-            var isUserAction = intent.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, true)
-            logger.debug("calling action, isUserAction=$isUserAction")
+            val isUserAction = intent.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, true)
             action(isUserAction);
-        } else {
-            logger.debug("action is null")
         }
     }
 
@@ -70,10 +63,9 @@ class UINotifierService : IntentService("ServiceUINotifier") {
         private val logger = Logger("ServiceUINotifier")
 
         fun notifyUI(context: Context?, isUserAction: Boolean) {
-            logger.debug("notifyUI called, isUserAction=$isUserAction")
 
             if (context != null) {
-                var serviceIntent = Intent(context, UINotifierService::class.java)
+                val serviceIntent = Intent(context, UINotifierService::class.java)
                 serviceIntent.putExtra(Consts.INTENT_IS_USER_ACTION, isUserAction);
                 context.startService(serviceIntent)
             }

@@ -37,7 +37,7 @@ class UINotifierServiceClient {
 
             val binder = service as UINotifierService.ServiceBinder
 
-            binder.sevice.updateActivity = {
+            binder.service.updateActivity = {
 
                 isUserAction ->
 

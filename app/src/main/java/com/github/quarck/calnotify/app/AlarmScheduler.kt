@@ -32,9 +32,10 @@ import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastR
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
+import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
-import com.github.quarck.calnotify.utils.isMarshmallow
-import com.github.quarck.calnotify.utils.setExactCompat
+import com.github.quarck.calnotify.utils.cancelExactAndAlarm
+import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
 object AlarmScheduler: AlarmSchedulerInterface {
@@ -65,73 +66,77 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                 logger.info("Scheduling next alarm at ${nextEventAlarm}, in ${(nextEventAlarm - currentTime) / 1000L} seconds");
 
-                val intent = Intent(context, SnoozeExactAlarmBroadcastReceiver::class.java);
-                val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                context.alarmManager.setExactAndAlarm(
+                        context,
+                        settings,
+                        nextEventAlarm,
+                        SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        SnoozeExactAlarmBroadcastReceiver::class.java,
+                        MainActivity::class.java,
+                        logger)
 
-                context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextEventAlarm, pendingIntent);
+            } else { // if (nextEventAlarm != null) {
 
-                if (isMarshmallow) {
-                    // For marshmallow - set another alarm that is allowed to fire in idle
-                    // such alarm is not exact regardless of the name, so not good for regular daily usage
-                    // that's why setting two alarms, one is to be guaranteed to run in non-power save mode
-                    // at given time, and another - allowed in power saver mode
+                logger.info("No next events, cancelling alarms");
 
-                    val intentMM = Intent(context, SnoozeAlarmBroadcastReceiver::class.java);
-                    val pendingIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
-
-                    context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextEventAlarm + Consts.ALARM_THRESHOULD, pendingIntentMM);
-
-                    logger.info("MM style alarm added");
-                }
-
-            } else {
-                logger.info("No next events, keeping the alarm since it would make no difference if it would be cancelled");
+                context.alarmManager.cancelExactAndAlarm(
+                        context,
+                        settings,
+                        SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        SnoozeExactAlarmBroadcastReceiver::class.java,
+                        logger)
             }
 
             // Schedule reminders alarm
+            var reminderAlarmNextFire: Long? = null
+
             if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
 
                 val hasActiveNotifications = events.filter { it.snoozedUntil == 0L }.any()
 
                 if (hasActiveNotifications) {
 
-                    val remindInterval = settings.remindersIntervalMillis
-                    var nextFire = System.currentTimeMillis() + remindInterval
+                    reminderAlarmNextFire = System.currentTimeMillis() + settings.remindersIntervalMillis
 
-                    if (settings.quietHoursOneTimeReminderEnabled)
-                        nextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOULD
+                    if (settings.quietHoursOneTimeReminderEnabled) {
+                        // a little bit of a hack to set it to fire "as soon as possible after quiet hours"
+                        reminderAlarmNextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOLD
+                    }
 
-                    val quietUntil = quietHoursManager.getSilentUntil(settings, nextFire)
+                    val quietUntil = quietHoursManager.getSilentUntil(settings, reminderAlarmNextFire)
 
                     if (quietUntil != 0L) {
-                        logger.info("Reminder alarm moved from $nextFire to ${quietUntil+Consts.ALARM_THRESHOULD} due to silent period");
-
-                        // give a little extra delay, so if events would fire precisely at the quietUntil,
-                        // reminders would wait a bit longer
-                        nextFire = quietUntil + Consts.ALARM_THRESHOULD
+                        logger.info("Reminder alarm moved from $reminderAlarmNextFire to ${quietUntil+Consts.ALARM_THRESHOLD} due to silent period");
+                        // give a little extra delay, so if events would fire precisely at the
+                        // quietUntil, reminders would wait a bit longer
+                        reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
                     }
 
-                    logger.info("Setting reminder alarm at $nextFire")
+                    logger.info("Reminder alarm: next fire at $reminderAlarmNextFire")
 
-                    val intent = Intent(context, ReminderExactAlarmBroadcastReceiver::class.java)
-                    val pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-                    context.alarmManager.setExactCompat(AlarmManager.RTC_WAKEUP, nextFire, pendIntent)
-
-                    if (isMarshmallow) {
-                        // For marshmallow - set another alarm that is allowed to fire in idle
-                        // such alarm is not exact regardless of the name, so not good for regular daily usage
-                        // that's why setting two alarms, one is to be guaranteed to run in non-power save mode
-                        // at given time, and another - allowed in power saver mode
-
-                        val intentMM = Intent(context, ReminderAlarmBroadcastReceiver::class.java)
-                        val pendIntentMM = PendingIntent.getBroadcast(context, 0, intentMM, PendingIntent.FLAG_UPDATE_CURRENT)
-
-                        context.alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextFire + Consts.ALARM_THRESHOULD, pendIntentMM)
-
-                        logger.info("MM-style reminder alarm added")
-                    }
+                } else {  // if (hasActiveNotifications)
+                    logger.info("Reminder alarm: no active events to remind about")
                 }
+            } else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
+                logger.info("Reminder alarm: reminders are not enabled")
+            }
+
+            if (reminderAlarmNextFire != null) {
+                context.alarmManager.setExactAndAlarm(
+                        context,
+                        settings,
+                        reminderAlarmNextFire,
+                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        ReminderExactAlarmBroadcastReceiver::class.java,
+                        MainActivity::class.java,
+                        logger)
+            } else {
+                context.alarmManager.cancelExactAndAlarm(
+                        context,
+                        settings,
+                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        ReminderExactAlarmBroadcastReceiver::class.java,
+                        logger)
             }
         }
     }

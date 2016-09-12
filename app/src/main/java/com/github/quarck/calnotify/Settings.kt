@@ -295,6 +295,9 @@ class Settings(ctx: Context) {
     val lightweightSwipe: Boolean
         get() = prefs.getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
 
+    val  useSetAlarmClock: Boolean
+        get() = prefs.getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -387,6 +390,8 @@ class Settings(ctx: Context) {
 
         private const val HIDE_MARSHMALLOW_WARNING_KEY = "hide_m_doze_warning"
         private const val HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY = "hide_sttng_m_doze_warning"
+
+        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock"
 
         private const val LIGHTWEIGHT_SWIPE_KEY = "lw_swipe"
 

@@ -631,7 +631,7 @@ object CalendarProvider: CalendarProviderInterface {
             var newStartTime = event.startTime + addTime
             var newEndTime = event.endTime + addTime
 
-            while (newStartTime < currentTime + Consts.ALARM_THRESHOULD) {
+            while (newStartTime < currentTime + Consts.ALARM_THRESHOLD) {
                 logger.error("Requested time is already in the past, adding another ${addTime/1000} sec")
 
                 newStartTime += addTime

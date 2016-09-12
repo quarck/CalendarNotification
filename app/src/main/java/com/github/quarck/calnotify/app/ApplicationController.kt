@@ -220,7 +220,7 @@ object ApplicationController : EventMovedHandler {
         if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
             logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
 
-            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOULD) {
+            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
 
                 logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
 
@@ -244,7 +244,7 @@ object ApplicationController : EventMovedHandler {
     fun onReminderAlarmLate(context: Context, sinceLastFire: Long, reminderInterval: Long, lastFireTime: Long) {
 
         if (getSettings(context).debugAlarmDelays) {
-            val warningMessage = "Reminder alarm is very late: last fired: $lastFireTime, interval: $reminderInterval, since last: $sinceLastFire"
+            val warningMessage = "Interval: ${reminderInterval/1000L}s since last: ${sinceLastFire/1000L}s"
             notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
         }
     }

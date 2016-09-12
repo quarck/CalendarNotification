@@ -536,7 +536,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                                 timePicker.currentMinute,
                                 0)
 
-                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOULD
+                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
 
                             if (snoozeFor > 0L) {
                                 snoozeEvent(snoozeFor)

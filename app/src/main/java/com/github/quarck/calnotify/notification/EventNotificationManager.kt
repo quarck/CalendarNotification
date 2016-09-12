@@ -116,7 +116,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 db.events
                         .filter {
                             (it.snoozedUntil == 0L)
-                                    || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOULD)
+                                    || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
                         }
                         .sortedBy { it.lastEventVisibility }
 
@@ -533,7 +533,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 val currentTime = System.currentTimeMillis()
 
-                if (event.snoozedUntil + Consts.ALARM_THRESHOULD < currentTime) {
+                if (event.snoozedUntil + Consts.ALARM_THRESHOLD < currentTime) {
 
                     val warningMessage = "snooze alarm is very late: expected at ${event.snoozedUntil}, " +
                             "received at $currentTime, late by ${currentTime - event.snoozedUntil} us"
@@ -541,7 +541,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     logger.error("WARNING: $warningMessage")
 
                     if (settings.debugAlarmDelays)
-                        postNotificationsAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
+                        postNotificationsAlarmDelayDebugMessage(context,
+                                "Snooze alarm was late!", "Late by ${(currentTime - event.snoozedUntil)/1000L}s")
 
                 }
                 // Update Db to indicate that event is currently displayed and no longer snoozed

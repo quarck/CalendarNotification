@@ -87,7 +87,7 @@ object Consts {
 
     const val DEFAULT_LED_COLOR = 0x7f0000ff;
 
-    const val ALARM_THRESHOULD = 15 * 1000L;
+    const val ALARM_THRESHOLD = 24 * 1000L; // multiple of both, 2 and 3
 
     val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000);
 

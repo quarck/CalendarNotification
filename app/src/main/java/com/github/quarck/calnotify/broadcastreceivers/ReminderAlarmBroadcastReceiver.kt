@@ -22,21 +22,17 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.PowerManager
-import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.app.ReminderAlarm
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.utils.audioManager
+import com.github.quarck.calnotify.ui.MainActivity
+import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.powerManager
-import com.github.quarck.calnotify.utils.vibratorService
+import com.github.quarck.calnotify.utils.setExactAndAlarm
 import com.github.quarck.calnotify.utils.wakeLocked
 
 open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
@@ -104,19 +100,19 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         logger.info("Reminder postponed until $silentUntil due to quiet hours");
                         nextFireAt = silentUntil
 
-                    } else if (sinceLastFire < reminderInterval - Consts.ALARM_THRESHOULD)  {
+                    } else if (sinceLastFire < reminderInterval - Consts.ALARM_THRESHOLD)  {
                         // Schedule actual time to fire based on how long ago we have fired
                         val leftMillis = reminderInterval - sinceLastFire;
                         nextFireAt = currentTime + leftMillis
 
-                        logger.info("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOULD}, left: ${leftMillis}, moving alarm to $nextFireAt");
+                        logger.info("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
                     } else {
                         nextFireAt = currentTime + reminderInterval
                         shouldFire = true
 
                         logger.info("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
 
-                        if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOULD) && (lastFireTime > 0L)) {
+                        if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOLD) && (lastFireTime > 0L)) {
                             logger.error("WARNING: timer delay detected, expected to receive timers with interval " +
                                     "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
                                     "lastFire=$lastFireTime (last reminder at ${context.globalState.reminderLastFireTime}, " +
@@ -132,8 +128,16 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                 logger.info("Reminders are disabled")
             }
 
-            if (nextFireAt != 0L)
-                ReminderAlarm.scheduleAlarmMillisAt(context, nextFireAt)
+            if (nextFireAt != 0L) {
+                context.alarmManager.setExactAndAlarm(
+                        context,
+                        Settings(context),
+                        nextFireAt,
+                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        ReminderExactAlarmBroadcastReceiver::class.java,
+                        MainActivity::class.java,
+                        logger)
+            }
 
             if (shouldFire)
                 fireReminder(context, currentTime, settings)

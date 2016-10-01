@@ -29,10 +29,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
-import com.github.quarck.calnotify.notification.TextToSpeechNotificationManager
-import com.github.quarck.calnotify.notification.TextToSpeechNotificationManagerInterface
+import com.github.quarck.calnotify.notification.*
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -61,6 +58,8 @@ object ApplicationController : EventMovedHandler {
     private val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
 
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
+
+    private val failbackReminder: FailbackAudioReminderInterface by lazy { FailbackAudioReminder() }
 
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
@@ -338,7 +337,12 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun fireEventReminder(context: Context) {
-        notificationManager.fireEventReminder(context, EventFormatter(context));
+        val settings = getSettings(context)
+
+        if (!settings.remindersUseFailbackMethod)
+            notificationManager.fireEventReminder(context, EventFormatter(context));
+        else
+            failbackReminder.fireReminder(settings, context)
     }
 
     fun onMainActivityCreate(context: Context?) {

@@ -225,6 +225,9 @@ class Settings(ctx: Context) {
     val remindersEnabled: Boolean
         get() = prefs.getBoolean(ENABLE_REMINDERS_KEY, false)
 
+    val remindersUseFailbackMethod: Boolean
+        get() = prefs.getBoolean(REMINDERS_FAILBACK_METHOD_KEY, false)
+
     val remindersIntervalMillis: Long
         get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
@@ -359,6 +362,7 @@ class Settings(ctx: Context) {
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
+        private const val REMINDERS_FAILBACK_METHOD_KEY = "failback_reminders_method"
 
         private const val PEBBLE_FORWARD_ONLY_REMINDER_KEY = "pebble_forward_reminder_only"
 

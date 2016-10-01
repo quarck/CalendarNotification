@@ -292,4 +292,6 @@
     <string name="attach_applicatoin_log_perm">Logs are limited to current application only\n\nNo textual information about event is visible in the log (there are no event titles, locations, etc)\n\nAny files sent over the email can be intercepted by 3rd parties!</string>
     <string name="use_set_alarm_clock_title">Use setAlarmClock for reminders</string>
     <string name="use_set_alarm_clock_summary">Marshmallow and above only!\nThis would trigger app to use setAlarmClock API call when scheduling reminders and snoozed events\nThis would increase reminders time accuracy\nAs a side effect, user would see \'alarm\' icon on UI when there are snoozed events or active reminders</string>
+    <string name="reminder_fallback_method_title">Fallback playback method</string>
+    <string name="reminder_fallback_method_summary">Try selecting this if reminders sound doesn\'t work</string>
 </resources>

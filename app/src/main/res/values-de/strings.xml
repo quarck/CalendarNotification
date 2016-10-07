@@ -282,5 +282,10 @@
     <string name="notfication_opens_snooze_summary">Aktivieren um den Schlummerdialog direkt zu öffnen.\nAuf den Titel des Schlummerdialogs klicken um den Termin im Kalender zu öffnen.</string>
     <string name="notification_auto_dismiss_on_reschedule">Schließen bei Wiedervorlage</string>
     <string name="notification_auto_dismiss_on_reschedule_summary">Benachrichtigung schließen, wenn der Termin über den Kalender verschoben wurde.\nDer Termin muss mindestens um 15 Minuten verschoben werden.\nDer Termin braucht Erinnerungen in der Zukunft.\n\nHinweis: Diese Funktion hängt vom Kalender ab, ob er die App über eine Verschiebung informiert. Diese Information kommt verzögert (bis zu 60 Sekunden).</string>
-
+    <string name="attach_applicatoin_log">Anwendungslog anhängen</string>
+    <string name="attach_applicatoin_log_perm">Logs sind auf dieses Anwendung begrenzt.\n\nEs sind keine Information, wie Titel, Orte o.ä., über Termine in den Logs sichtbar.\n\nAlle Dateien, welche per E-Mail versendet werden, können von Dritten abgefangen werden!</string>
+    <string name="use_set_alarm_clock_title">Verwende \'setAlarmClock\' für Erinnerungen</string>
+    <string name="use_set_alarm_clock_summary">Nur bei Android Marshmallow oder neueren Versionen!\nEs wird der \'setAlarmClock API\' Aufruf für geplante oder schlummernde Erinnnerungen verwendet.\nDies erhöht die Genauigkeit.\nAls Nebenefekt wird das \'Alarm\' Icon angezeigt, wenn aktive oder schlummernde Erinnnerungen vorhanden sind.</string>
+    <string name="reminder_fallback_method_title">Ausweichlösung</string>
+    <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert</string>
 </resources>

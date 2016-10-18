@@ -294,4 +294,6 @@
     <string name="use_set_alarm_clock_summary">Marshmallow and above only!\nThis would trigger app to use setAlarmClock API call when scheduling reminders and snoozed events\nThis would increase reminders time accuracy\nAs a side effect, user would see \'alarm\' icon on UI when there are snoozed events or active reminders</string>
     <string name="reminder_fallback_method_title">Fallback playback method</string>
     <string name="reminder_fallback_method_summary">Try selecting this if reminders sound doesn\'t work</string>
+    <string name="reminder_custom_ringtone">Custom ringtone</string>
+    <string name="reminder_custom_vibration">Custom vibration</string>
 </resources>

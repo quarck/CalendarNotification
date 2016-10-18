@@ -20,21 +20,21 @@
     <string name="show_dismiss_summary">Wenn aktiviert, wird \'Schließen\' bei jeder Benachrichtigung angezeigt. Die Benachrichtigung kann dann nur durch diese Schaltfläche geschlossen werden.</string>
 
     <string name="play_reminder_sound">Benachrichtungs-Ton</string>
-    <string name="play_reminder_sound_summary">Aktivieren Sie diese Option, um einen Ton abzuspielen</string>
+    <string name="play_reminder_sound_summary">Aktivieren Sie diese Option, um einen Ton abzuspielen.</string>
 
     <string name="ringtone_selection">Benachrichtungs-Ton</string>
-    <string name="ringtone_selection_summary">Wählen Sie einen Benachrichtungs-Ton</string>
+    <string name="ringtone_selection_summary">Wählen Sie einen Benachrichtungs-Ton.</string>
 
     <string name="vibra_on">Vibration</string>
 
-    <string name="notification_light_summary">Wenn Sie diese Option aktivieren, informiert Sie die LED über aktive Benachrichtigungen-</string>
+    <string name="notification_light_summary">Die LED informiert Sie über aktive Benachrichtigungen.</string>
     <string name="notification_light_title">Benachrichtungs-LED</string>
 
     <string name="help_feedback">Hilfe und Feedback</string>
 
     <string name="feedback">Feedback</string>
 
-    <string name="help_title">Wenn Sie einen Fehler melden, eine Frage stellen, eine neue Funktion vorschlagen oder Feedback geben möchten, kontaktieren Sie den Entwickler per E-Mail.\n\nErwarten Sie bitte keine direkte Antwort. Ich entwickle diese Anwendung in meiner Freizeit und kann Ihnen nur antworten, wenn ich die Zeit dafür finde.</string>
+    <string name="help_title">Wenn Sie einen Fehler melden, eine Frage stellen, eine neue Funktion vorschlagen oder Feedback geben möchten, kontaktieren Sie mich per E-Mail.\n\nErwarten Sie bitte keine direkte Antwort. Ich entwickle diese Anwendung in meiner Freizeit und kann Ihnen nur antworten, wenn ich die Zeit dafür finde.</string>
     <string name="email_developer">MAIL AN DEN ENTWICKLER</string>
 
     <string name="forward_to_pebble">An Pebble weiterleiten</string>
@@ -76,11 +76,11 @@
     <string name="smartwatch_support">Smartwatches</string>
     <!-- string name="dialog_snooze_text_label">Es wird eine durch Kommata getrennte Liste von Zeitspannen erwartet.\n\nErlaubt sind Einträge wie \'15m\', \'2h\' oder \'3d\'.\n\nBis zu 6 Einträge werden unterstützt.\n\nLassen Sie das Feld leer, um die Standardeinstellungen zu verwenden.</string -->
 
-    <string name="error_cannot_parse_preset">Entschuldigung, Ihre Eingabe konnte nicht verarbeitet werden</string>
+    <string name="error_cannot_parse_preset">Entschuldigung, Ihre Eingabe konnte nicht verarbeitet werden!</string>
     <string name="snooze_presets_title">Voreinstellungen</string>
-    <string name="snooze_presets_summary">Hier können Sie die \'Schlummern\'-Voreinstellungen bearbeiten</string>
+    <string name="snooze_presets_summary">Hier können Sie die \'Schlummern\'-Voreinstellungen bearbeiten.</string>
 
-    <string name="error_too_many_presets">Es werden höchstens 6 Voreinstellungen unterstützt, zusätzliche Einträge werden ignoriert</string>
+    <string name="error_too_many_presets">Es werden höchstens 6 Voreinstellungen unterstützt, zusätzliche Einträge werden ignoriert!</string>
 
     <string name="days">Tage</string>
     <string name="day">Tag</string>
@@ -91,21 +91,21 @@
     <string name="no_events_to_display">Keine Benachrichtigung vorhanden.\nAktive und schlummernde Benachrichtigung erscheinen hier.</string>
     <string name="no_calendar_permissions_main">Die Anwendung hat keinen Zugriff auf Ihren Kalender</string>
     <string name="view_after_edit">Nach dem Bearbeiten anzeigen</string>
-    <string name="view_after_edit_summary">Den Termin automatisch im Kalender öffnen, nachdem er bearbeitet wurde</string>
+    <string name="view_after_edit_summary">Den Termin automatisch im Kalender öffnen, nachdem er bearbeitet wurde.</string>
     <string name="misc_settings">Verschiedenes</string>
     <string name="abort_broadcast">Broadcast abbrechen</string>
     <string name="abort_broadcast_summary">Wählen Sie diese Option, wenn Sie Standard-Benachrichtigungen zusätzlich zu den Benachrichtigungen dieser App sehen</string>
 
     <string name="enable_reminders">Erinnerungen aktivieren</string>
-    <string name="enable_reminders_summary">Wenn aktiviert, wird die App wiederholt über aktive Benachrichtigungen erinnern</string>
+    <string name="enable_reminders_summary">Von der App wiederholt über aktive Benachrichtigungen erinnert werden.</string>
     <string name="remind_interval">Intervall</string>
     <string name="invalid_reminder_interval">Das Intervall kann nicht Null sein, es wird auf 1 Minute zurückgesetzt</string>
     <string name="max_reminders">Anzahl</string>
-    <string name="max_reminders_summary">Maximale Anzahl der Erinnerungen, 0 für Unendlich</string>
+    <string name="max_reminders_summary">Maximale Anzahl der Erinnerungen, 0 für Unendlich.</string>
 
     <string name="pebble_notification_title">Kalender</string>
     <string name="heads_up_notification">Benachrichtigungen</string>
-    <string name="heads_up_notification_summary">Zeige eine kurze Benachrichtigung als Hauptelement</string>
+    <string name="heads_up_notification_summary">Zeige eine kurze Benachrichtigung als Hauptelement.</string>
     <string name="projectPageOnGitHub">GitHub Projektseite</string>
     <string name="snooze_all">Alle Termine schlummern</string>
     <string name="change_all">Alle Termine bearbeiten</string>
@@ -122,7 +122,7 @@
 
     <string name="led_color">LED Farbe</string>
     <string name="wake_screen_title">Bildschirm aktivieren</string>
-    <string name="wake_screen_summary">Bildschirm kurz aktivieren wenn eine Benachrichtigung fällig wird</string>
+    <string name="wake_screen_summary">Bildschirm kurz aktivieren wenn eine Benachrichtigung fällig wird.</string>
 
     <string name="error_cannot_parse_pattern">Fehler beim Einlesen des Schemas</string>
     <string name="quiet_time_from">Ruhezeit von</string>
@@ -149,7 +149,7 @@
     <string name="selected_time_is_in_the_past"><b>\'Schlummern\' nicht möglich:</b><br>ausgewählte Zeit liegt in der Vergangenheit</br></string>
     <string name="snooze_until_string">\'Schlummern\' bis Datum / Uhrzeit:</string>
     <string name="custom_snooze_options_title">Benutzerdefinierte Optionen</string>
-    <string name="custom_snooze_options_summary">Zeige benutzerdefinierte Schlummer Optionen bei der Benachrichtigung an</string>
+    <string name="custom_snooze_options_summary">Zeige benutzerdefinierte Schlummer Optionen bei der Benachrichtigung an.</string>
 
     <string-array name="time_units_plurals">
         <item>Minuten</item>
@@ -158,7 +158,7 @@
     </string-array>
 
     <string name="pebble_event_text_in_the_title">Text des Termins im Titel</string>
-    <string name="pebble_event_text_in_the_title_summary">Nützlich für ältere Pebble Firmware</string>
+    <string name="pebble_event_text_in_the_title_summary">Nützlich für ältere Pebble Firmware Versionen.</string>
 
     <string name="title_calendars_activity">Überwachte Kalender</string>
 
@@ -224,15 +224,15 @@
     <string name="next">Nächste</string>
 
     <string name="until_event_time">Bis zum Termin</string>
-    <string name="halo_light_theme_date_picker">Datumsauswahl nutzt helles Thema (Halo)</string>
-    <string name="halo_light_theme_date_picker_summary">Android Jellybean Thema</string>
-    <string name="halo_light_theme_time_picker">Zeitauswahl nutzt helles Thema (Halo)</string>
-    <string name="halo_light_theme_time_picker_summary">Android Jellybean Thema</string>
+    <string name="halo_light_theme_date_picker">Datumsauswahl nutzt helles Thema</string>
+    <string name="halo_light_theme_date_picker_summary">Android Jellybean Thema (Halo)</string>
+    <string name="halo_light_theme_time_picker">Zeitauswahl nutzt helles Thema</string>
+    <string name="halo_light_theme_time_picker_summary">Android Jellybean Thema (Halo)</string>
 
     <string name="max_notifications_before_collapse">Maximale Anzahl Benachrichtigungen</string>
-    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen.\n\nHinweis: Oberes Limit beträgt 8 um mögliche System-UI Abstürze bei zu vielen Benachrichtigungen zu verhindern.</string>
+    <string name="max_notifications_before_collapse_summary">Maximale Anzahl der erlaubten gleichzeitig angezeigten Benachrichtigungen.\nHinweis: Das obere Limit beträgt 8 um mögliche System-UI Abstürze bei zu vielen Benachrichtigungen zu verhindern.</string>
     <string name="collapse_everything">Alle weiteren ausblenden</string>
-    <string name="collapse_everything_summary">Wenn die Anzahl der Benachrichtigungen das Maximum überschreitet, werden alle ausgeblendet und zu einer Gruppenbenachrichtigung zusammengefasst</string>
+    <string name="collapse_everything_summary">Wenn die Anzahl der Benachrichtigungen das Maximum überschreitet, werden alle ausgeblendet und zu einer Gruppenbenachrichtigung zusammengefasst.</string>
 
     <string name="multiple_events_single_notification">%d Kalender Benachrichtigungen</string>
     <string name="advanced">Erweitert</string>
@@ -242,9 +242,9 @@
 
     <string name="open_wiki">WIKI ÖFFNEN</string>
     <string name="dash_or_dash">— oder —</string>
-    <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst im Wiki schauen, ob diese vielleicht dort schob beantwortet wurde:</string>
+    <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst im Wiki schauen, ob diese vielleicht dort schon beantwortet wurde:</string>
     <string name="lightweight_swipe">Wischen auf der Kompaktansicht</string>
-    <string name="lightweight_swipe_summary">Reduzierte Geschwindigkeit wird benötigt um einen Termin mit einem \'Schnellen Wisch\' zu schließen</string>
+    <string name="lightweight_swipe_summary">Reduzierte Geschwindigkeit wird benötigt um einen Termin mit einem \'Schnellen Wisch\' zu schließen.</string>
     <string name="notify_tts">Text-in-Sprache</string>
     <string name="notify_tts_summary">Termintitel laut vorlesen</string>
 
@@ -253,9 +253,9 @@
 
     <string name="dismissed_events">Geschlossene Termine</string>
     <string name="keep_dismissed_events">Behalte geschlossene Termine</string>
-    <string name="keep_dismissed_events_summary">Kürzlich geschlossene Termine zur Kontrolle behalten (Siehe \'Geschlossene Termine\' im Hauptfenster)</string>
+    <string name="keep_dismissed_events_summary">Kürzlich geschlossene Termine zur Kontrolle behalten (Siehe \'Geschlossene Termine\' im Hauptfenster).</string>
     <string name="keep_dismissed_events_days">Anzahl der Tage</string>
-    <string name="keep_dismissed_events_days_summary">Für wie viele Tage sollen geschlossene Termine behalten werden</string>
+    <string name="keep_dismissed_events_days_summary">Für wie viele Tage sollen geschlossene Termine behalten werden.</string>
     <string name="app_behavior">Verhalten</string>
 
     <string name="dismissed_general" formatted="false">Geschlossen am %s</string>
@@ -270,22 +270,22 @@
     <string name="title_activity_privacy_policy">Datenschutzrichtlinie</string>
     <string name="context_policy">Während der normalen Verwendung empfängt und speichert diese App Informationen über Termine des Android Kalenders.\n\nKeine dieser Informationen verlässt diese Anwendung:\n\n* Es wird nichts irgendwohin übertragen\n\n* Es wird nichts mit irgendjemand geteilt\n\n* Nichts an Dritte weitergegeben\n\nAlle Termindetails werden gelöscht, sobald der Termin geschlossen wurde.\n\nWenn der Benutzer die Option \'Behalte geschlossene Termine\' aktiviert hat, werden die Termindetails gelöscht sobald die Auszeit abgelaufen oder der Verlauf ausdrücklich gelöscht wurde.</string>
     <string name="privacy_policy">DATENSCHUTZRICHTLINIE</string>
-    <string name="notification_swipe_does_snooze">Benachrichtigung wegwischen setzt Schlummern</string>
-    <string name="notification_swipe_does_snooze_summary">Wegwischen setzt erste vordefinierte Schlummerzeit</string>
+    <string name="notification_swipe_does_snooze">Wegwischen setzt Schlummern</string>
+    <string name="notification_swipe_does_snooze_summary">Wegwischen setzt erste vordefinierte Schlummerzeit.</string>
 
     <string name="full_dismiss">Alles schließen</string>
     <string name="pebble_forward_only_reminders">Nur Erinnerungen weiterleiten</string>
-    <string name="pebble_forward_only_reminders_summary">Pebble ist selbst für die Kalender verantwortlich</string>
+    <string name="pebble_forward_only_reminders_summary">Pebble ist selbst für die Kalender verantwortlich.</string>
     <string name="event_color_notification">Terminfarbe der Benachrichtigung</string>
-    <string name="event_color_notification_summary">Benachrichtigungsicon in der Terminfarbe anzeigen</string>
-    <string name="notfication_opens_snooze">Benachrichtigung öffnet Schlummerdialog</string>
-    <string name="notfication_opens_snooze_summary">Aktivieren um den Schlummerdialog direkt zu öffnen.\nAuf den Titel des Schlummerdialogs klicken um den Termin im Kalender zu öffnen.</string>
+    <string name="event_color_notification_summary">Benachrichtigungsicon in der Terminfarbe anzeigen.</string>
+    <string name="notfication_opens_snooze">Schlummerdialog öffnen</string>
+    <string name="notfication_opens_snooze_summary">Den Schlummerdialog direkt öffnen. Auf den Titel des Schlummerdialogs klicken um den Termin im Kalender zu öffnen.</string>
     <string name="notification_auto_dismiss_on_reschedule">Schließen bei Wiedervorlage</string>
-    <string name="notification_auto_dismiss_on_reschedule_summary">Benachrichtigung schließen, wenn der Termin über den Kalender verschoben wurde.\nDer Termin muss mindestens um 15 Minuten verschoben werden.\nDer Termin braucht Erinnerungen in der Zukunft.\n\nHinweis: Diese Funktion hängt vom Kalender ab, ob er die App über eine Verschiebung informiert. Diese Information kommt verzögert (bis zu 60 Sekunden).</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Benachrichtigung schließen, wenn der Termin über den Kalender verschoben wurde. Der Termin muss mindestens um 15 Minuten verschoben werden. Der Termin braucht Erinnerungen in der Zukunft.\nHinweis: Diese Funktion hängt vom Kalender ab, ob er die App über eine Verschiebung informiert. Diese Information kommt verzögert (bis zu 60 Sekunden).</string>
     <string name="attach_applicatoin_log">Anwendungslog anhängen</string>
     <string name="attach_applicatoin_log_perm">Logs sind auf dieses Anwendung begrenzt.\n\nEs sind keine Information, wie Titel, Orte o.ä., über Termine in den Logs sichtbar.\n\nAlle Dateien, welche per E-Mail versendet werden, können von Dritten abgefangen werden!</string>
-    <string name="use_set_alarm_clock_title">Verwende \'setAlarmClock\' für Erinnerungen</string>
-    <string name="use_set_alarm_clock_summary">Nur bei Android Marshmallow oder neueren Versionen!\nEs wird der \'setAlarmClock API\' Aufruf für geplante oder schlummernde Erinnnerungen verwendet.\nDies erhöht die Genauigkeit.\nAls Nebenefekt wird das \'Alarm\' Icon angezeigt, wenn aktive oder schlummernde Erinnnerungen vorhanden sind.</string>
+    <string name="use_set_alarm_clock_title">Verwende \'setAlarmClock\'</string>
+    <string name="use_set_alarm_clock_summary">Nur bei Android Marshmallow oder neueren Versionen! Es wird der \'setAlarmClock\' Aufruf für geplante oder schlummernde Erinnnerungen verwendet. Dies erhöht die Genauigkeit.\nAls Nebeneffekt wird das \'Alarm\' Icon angezeigt, wenn aktive oder schlummernde Erinnnerungen vorhanden sind.</string>
     <string name="reminder_fallback_method_title">Ausweichlösung</string>
-    <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert</string>
+    <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert.</string>
 </resources>

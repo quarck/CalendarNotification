@@ -48,5 +48,5 @@ object PermissionsManager
 
     fun requestPermissions(activity: Activity) =
         ActivityCompat.requestPermissions(activity,
-            arrayOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CALENDAR), 0)
+            arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR), 0)
 }

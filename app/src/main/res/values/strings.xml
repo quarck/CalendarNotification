@@ -296,4 +296,6 @@
     <string name="reminder_fallback_method_summary">Try selecting this if reminders sound doesn\'t work</string>
     <string name="reminder_custom_ringtone">Custom ringtone</string>
     <string name="reminder_custom_vibration">Custom vibration</string>
+    <string name="quiet_hours_mute_led">Mute LED</string>
+    <string name="quiet_hours_mute_led_summary">Led notification would be disabled during quiet hours</string>
 </resources>

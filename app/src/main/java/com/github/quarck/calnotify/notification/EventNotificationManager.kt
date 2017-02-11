@@ -161,7 +161,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             primaryEventId)
 
             if (!recentEvents.isEmpty())
-                collapseDisplayedNotifications(context, db, collapsedEvents, settings, force)
+                collapseDisplayedNotifications(context, db, collapsedEvents, settings, force, isQuietPeriodActive)
             else
                 updatedAnything = updatedAnything ||
                         postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false)
@@ -174,10 +174,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     override fun fireEventReminder(context: Context, formatter: EventFormatterInterface) {
 
+        val settings = Settings(context)
+        val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+
         EventsStorage(context).use {
             db ->
-
-            val settings = Settings(context)
 
             val notificationSettings =
                     settings.notificationSettingsSnapshot.copy(
@@ -203,15 +204,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         true, // force, so it won't randomly pop-up this notification
                         false, // was collapsed
                         settings.snoozePresets,
-                        true
+                        true,
+                        isQuietPeriodActive
                 )
 
                 wakeScreenIfRequired(context, settings)
 
             } else if (!collapsedEvents.isEmpty()) {
                 // collapsed
-                val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
-
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
 
                 postEverythingCollapsed(
@@ -372,7 +372,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 builder.setVibrate(longArrayOf(0))
             }
 
-            if (notificationsSettings.ledNotificationOn) {
+            if (notificationsSettings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
                 if (notificationsSettings.ledPattern.size == 2)
                     builder.setLights(notificationsSettings.ledColor, notificationsSettings.ledPattern[0], notificationsSettings.ledPattern[1])
                 else
@@ -407,7 +407,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun collapseDisplayedNotifications(
             context: Context, db: EventsStorage,
             events: List<EventAlertRecord>, settings: Settings,
-            force: Boolean) {
+            force: Boolean,
+            isQuietPeriodActive: Boolean) {
 
         logger.debug("Hiding notifications for ${events.size} notification")
 
@@ -431,7 +432,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-        postNumNotificationsCollapsed(context, db, settings, events)
+        postNumNotificationsCollapsed(context, db, settings, events, isQuietPeriodActive)
     }
 
     // force - if true - would re-post all active notifications. Normally only new notifications are posted to
@@ -505,7 +506,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     postNotification(context, formatter, event,
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
-                            force, wasCollapsed, settings.snoozePresets, false)
+                            force, wasCollapsed, settings.snoozePresets, false, isQuietPeriodActive)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -529,7 +530,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         force,
                         false,
                         settings.snoozePresets,
-                        false)
+                        false,
+                        isQuietPeriodActive)
 
                 val currentTime = System.currentTimeMillis()
 
@@ -583,7 +585,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isForce: Boolean,
             wasCollapsed: Boolean,
             snoozePresets: LongArray,
-            isReminder: Boolean
+            isReminder: Boolean,
+            isQuietPeriodActive: Boolean
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -745,7 +748,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.setVibrate(longArrayOf(0))
         }
 
-        if (notificationSettings.ledNotificationOn) {
+        if (notificationSettings.ledNotificationOn && (!isQuietPeriodActive || !notificationSettings.quietHoursMuteLED)) {
             if (notificationSettings.ledPattern.size == 2)
                 builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1])
             else
@@ -838,7 +841,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context: Context,
             db: EventsStorage,
             settings: Settings,
-            events: List<EventAlertRecord>
+            events: List<EventAlertRecord>,
+            isQuietPeriodActive: Boolean
     ) {
         logger.debug("Posting collapsed view notification for ${events.size} events")
 
@@ -880,7 +884,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setNumber(numEvents)
                         .setShowWhenCompat(false)
 
-        if (settings.ledNotificationOn) {
+        if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
             if (settings.ledPattern.size == 2)
                 builder.setLights(settings.ledColor, settings.ledPattern[0], settings.ledPattern[1])
             else

@@ -58,7 +58,8 @@ data class NotificationSettingsSnapshot
     val pebbleOldFirmware: Boolean,
     val pebbleForwardRemindersOnly: Boolean,
     val showColorInNotification: Boolean,
-    val notificationOpensSnooze: Boolean
+    val notificationOpensSnooze: Boolean,
+    val quietHoursMuteLED: Boolean
 )
 
 class Settings(ctx: Context) {
@@ -246,6 +247,9 @@ class Settings(ctx: Context) {
     val quietHoursMutePrimary: Boolean
         get() = prefs.getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
+    val quietHoursMuteLED: Boolean
+        get() = prefs.getBoolean(QUIET_HOURS_MUTE_LED, false)
+
     var quietHoursOneTimeReminderEnabled: Boolean
         get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
         set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
@@ -316,7 +320,8 @@ class Settings(ctx: Context) {
                 pebbleOldFirmware = pebbleOldFirmware,
                 pebbleForwardRemindersOnly = pebbleForwardRemindersOnly,
                 showColorInNotification = showColorInNotification,
-                notificationOpensSnooze = notificationOpensSnooze
+                notificationOpensSnooze = notificationOpensSnooze,
+                quietHoursMuteLED = quietHoursMuteLED
         )
 
     companion object {
@@ -378,6 +383,7 @@ class Settings(ctx: Context) {
         private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
         private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
         private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
+        private const val QUIET_HOURS_MUTE_LED = "quiet_hours_mute_led"
 
         private const val HALO_LIGHT_DATE_PICKER_KEY = "halo_light_date"
         private const val HALO_LIGHT_TIMER_PICKER_KEY = "halo_light_time"

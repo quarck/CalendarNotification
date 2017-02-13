@@ -288,4 +288,8 @@
     <string name="use_set_alarm_clock_summary">Nur bei Android Marshmallow oder neueren Versionen! Es wird der \'setAlarmClock\' Aufruf für geplante oder schlummernde Erinnnerungen verwendet. Dies erhöht die Genauigkeit.\nAls Nebeneffekt wird das \'Alarm\' Icon angezeigt, wenn aktive oder schlummernde Erinnnerungen vorhanden sind.</string>
     <string name="reminder_fallback_method_title">Ausweichlösung</string>
     <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert.</string>
+    <string name="reminder_custom_ringtone">Benutzerdefinierter Ton</string>
+    <string name="reminder_custom_vibration">Benutzerdefinierter Vibration</string>
+    <string name="quiet_hours_mute_led">Benachrichtungs-LED</string>
+    <string name="quiet_hours_mute_led_summary">Die LED wird in der Ruhezeit ausgeschaltet</string>
 </resources>

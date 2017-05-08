@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
@@ -46,11 +45,10 @@ import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.displayedStartTime
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.globalState
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -101,7 +99,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        shouldForceRepost = (System.currentTimeMillis() - globalState.lastNotificationRePost) > Consts.MIN_FORCE_REPOST_INTERVAL
+        shouldForceRepost = (System.currentTimeMillis() - persistentState.lastNotificationRePost) > Consts.MIN_FORCE_REPOST_INTERVAL
 
         refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 
@@ -154,7 +152,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun refreshReminderLastFired() {
         // avoid firing reminders when UI is active and user is interacting with it
-        applicationContext.globalState.reminderLastFireTime = System.currentTimeMillis()
+        applicationContext.persistentState.reminderLastFireTime = System.currentTimeMillis()
     }
 
     public override fun onStop() {

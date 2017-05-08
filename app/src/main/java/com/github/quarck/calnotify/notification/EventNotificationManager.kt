@@ -38,9 +38,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
-import com.github.quarck.calnotify.textutils.encodedMinuteTimestamp
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.*
@@ -385,7 +383,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 
         if (shouldPlayAndVibrate)
-            context.globalState.updateNotificationLastFiredTime()
+            context.persistentState.updateNotificationLastFiredTime()
 
         if (isQuietPeriodActive
                 && events.isNotEmpty()
@@ -561,7 +559,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (playedAnySound)
-            context.globalState.updateNotificationLastFiredTime()
+            context.persistentState.updateNotificationLastFiredTime()
 
         if (isQuietPeriodActive
                 && events.isNotEmpty()

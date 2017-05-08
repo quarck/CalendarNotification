@@ -26,7 +26,7 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.globalState
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.ui.MainActivity
@@ -45,7 +45,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             return;
         }
 
-        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.persistentState.lastTimerBroadcastReceived = System.currentTimeMillis()
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
@@ -84,12 +84,12 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
             } else if (settings.remindersEnabled) {
 
-                val lastFireTime = Math.max( context.globalState.notificationLastFireTime,
-                        context.globalState.reminderLastFireTime)
+                val lastFireTime = Math.max( context.persistentState.notificationLastFireTime,
+                        context.persistentState.reminderLastFireTime)
 
                 val sinceLastFire = currentTime - lastFireTime;
 
-                val numRemindersFired = context.globalState.numRemindersFired
+                val numRemindersFired = context.persistentState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
                 logger.info("Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
@@ -115,8 +115,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOLD) && (lastFireTime > 0L)) {
                             logger.error("WARNING: timer delay detected, expected to receive timers with interval " +
                                     "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
-                                    "lastFire=$lastFireTime (last reminder at ${context.globalState.reminderLastFireTime}, " +
-                                    "last event at ${context.globalState.notificationLastFireTime})")
+                                    "lastFire=$lastFireTime (last reminder at ${context.persistentState.reminderLastFireTime}, " +
+                                    "last event at ${context.persistentState.notificationLastFireTime})")
 
                             ApplicationController.onReminderAlarmLate(context, sinceLastFire, reminderInterval, lastFireTime)
                         }
@@ -155,9 +155,9 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         if (settings.quietHoursOneTimeReminderEnabled)
             settings.quietHoursOneTimeReminderEnabled = false;
         else
-            context.globalState.numRemindersFired ++;
+            context.persistentState.numRemindersFired ++;
 
-        context.globalState.reminderLastFireTime = currentTime
+        context.persistentState.reminderLastFireTime = currentTime
     }
 
     companion object {

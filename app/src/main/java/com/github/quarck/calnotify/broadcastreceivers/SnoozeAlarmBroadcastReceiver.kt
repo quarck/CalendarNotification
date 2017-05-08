@@ -23,8 +23,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.logs.Logger
 
 open class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {

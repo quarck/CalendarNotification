@@ -27,13 +27,12 @@ import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
-import com.github.quarck.calnotify.globalState
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.*
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.ui.UINotifierService
 
 object ApplicationController : EventMovedHandler {
@@ -68,7 +67,7 @@ object ApplicationController : EventMovedHandler {
 
         logger.info("onEventAlarm at ${System.currentTimeMillis()} -- we need to remind about snoozed event");
 
-        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.persistentState.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }
@@ -365,7 +364,7 @@ object ApplicationController : EventMovedHandler {
 
             if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
-                context.globalState.lastNotificationRePost = System.currentTimeMillis()
+                context.persistentState.lastNotificationRePost = System.currentTimeMillis()
             }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);

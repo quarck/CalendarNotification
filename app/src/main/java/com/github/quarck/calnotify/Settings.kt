@@ -27,21 +27,6 @@ import android.preference.PreferenceManager
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.toIntOrNull
 
-fun SharedPreferences?.setBoolean(key: String, value: Boolean) {
-    if (this != null) {
-        val editor = this.edit()
-        editor.putBoolean(key, value)
-        editor.commit()
-    }
-}
-
-fun SharedPreferences?.setLong(key: String, value: Long) {
-    if (this != null) {
-        val editor = this.edit()
-        editor.putLong(key, value)
-        editor.commit()
-    }
-}
 
 data class NotificationSettingsSnapshot
 (
@@ -62,12 +47,10 @@ data class NotificationSettingsSnapshot
     val quietHoursMuteLED: Boolean
 )
 
-class Settings(ctx: Context) {
-    private var context: Context
+class Settings(context: Context) {
     private var prefs: SharedPreferences
 
     init {
-        context = ctx
         prefs = PreferenceManager.getDefaultSharedPreferences(context)
     }
 
@@ -168,7 +151,7 @@ class Settings(ctx: Context) {
         get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
 
     private fun loadRingtoneUri(settingsKey: String): Uri? {
-        val ringtone: Uri?
+        var ringtone: Uri?
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
 

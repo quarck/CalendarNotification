@@ -50,7 +50,7 @@ object PreferenceUtils {
     }
 
     internal fun parseSnoozePresets(value: String): LongArray? {
-        val ret: LongArray?
+        var ret: LongArray?
 
         try {
             ret = value
@@ -81,7 +81,7 @@ object PreferenceUtils {
 
     fun parsePattern(pattern: String): LongArray? {
 
-        val ret: LongArray?
+        var ret: LongArray?
 
         try {
             ret = pattern

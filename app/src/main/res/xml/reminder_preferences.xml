@@ -7,14 +7,14 @@
             android:summary="@string/enable_reminders_summary"
             android:defaultValue="false"/>
 
-        <com.github.quarck.calnotify.prefs.ReminderIntervalPreference
+        <com.github.quarck.calnotify.state.ReminderIntervalPreference
             android:key="remind_interval_key2"
             android:title="@string/remind_interval"
             android:numeric="integer"
             android:defaultValue="10"
             android:dependency="enable_reminding_key" />
 
-        <com.github.quarck.calnotify.prefs.MaxRemindersPreference
+        <com.github.quarck.calnotify.state.MaxRemindersPreference
             android:key="reminder_max_reminders"
             android:title="@string/max_reminders"
             android:summary="@string/max_reminders_summary"

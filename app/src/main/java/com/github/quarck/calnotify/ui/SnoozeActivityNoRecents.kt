@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
@@ -36,7 +35,7 @@ import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.globalState
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -360,7 +359,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             return
         }
 
-        val lastAlarm = globalState.lastTimerBroadcastReceived
+        val lastAlarm = persistentState.lastTimerBroadcastReceived
         val currentTime = System.currentTimeMillis()
 
         val untilNextAlarmFromLastAlarm = res.snoozedUntil - lastAlarm

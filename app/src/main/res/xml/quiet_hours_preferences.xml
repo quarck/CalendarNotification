@@ -8,14 +8,14 @@
             android:summary="@string/quiet_hours_summary"
             />
 
-        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+        <com.github.quarck.calnotify.state.TimeOfDayPreference
             android:key="quiet_hours_from"
             android:title="@string/quiet_time_from"
             android:defaultValue="1320"
             android:dependency="enable_quiet_hours"
             />
 
-        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
+        <com.github.quarck.calnotify.state.TimeOfDayPreference
             android:key="quiet_hours_to"
             android:title="@string/quiet_time_to"
             android:defaultValue="360"

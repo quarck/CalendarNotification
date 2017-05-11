@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.calendar
 
+import android.content.ContentResolver
 import android.content.Context
 
 interface CalendarProviderInterface {
@@ -40,4 +41,8 @@ interface CalendarProviderInterface {
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean
 
     fun getCalendars(context: Context): List<CalendarRecord>
+
+    fun findNextAlarmTime(cr: ContentResolver, millis: Long): Long?
+
+    fun getEventAlertsManually(context: Context, from: Long, to: Long): List<ManualEventAlertEntry>
 }

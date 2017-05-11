@@ -288,6 +288,15 @@ class Settings(context: Context) {
     val  useSetAlarmClock: Boolean
         get() = prefs.getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
 
+    val shouldRemindForEventsWithNoReminders: Boolean
+        get() = prefs.getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
+
+    val defaultReminderTimeForEventWithNoReminder: Long
+        get() = prefs.getLong(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15L * 60L * 1000L)
+
+    val defaultReminderTimeForAllDayEventWithNoreminder: Long
+        get() = prefs.getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L * 3600L * 1000L)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -390,6 +399,10 @@ class Settings(context: Context) {
 
         const val KEEP_HISTORY_KEY = "keep_history"
         private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"
+
+        private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
+        private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_reminder_time"
+        private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_reminder_time"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

@@ -20,6 +20,8 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.*
 import com.github.quarck.calnotify.logs.Logger
@@ -50,6 +52,8 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                 logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
             }
         }
+
+        checkCalendarDirectly(context, db, calendar, movedHandler)
 
         return changedDetected
     }
@@ -234,5 +238,15 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         }
 
        return changesDetected;
+    }
+
+
+    fun checkCalendarDirectly(
+            context: Context,
+            db: EventsStorageInterface,
+            calendar: CalendarProviderInterface,
+            movedHandler: EventMovedHandler?
+    ) {
+        // not implemented yet
     }
 }

@@ -19,12 +19,14 @@
 
 package com.github.quarck.calnotify.calendar
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
@@ -699,6 +701,179 @@ object CalendarProvider: CalendarProviderInterface {
         }
 
         cursor?.close()
+
+        return ret
+    }
+
+    override fun findNextAlarmTime(cr: ContentResolver, millis: Long): Long? {
+
+        var alarmTime: Long? = null
+
+        val alarmTimeColumn = CalendarContract.CalendarAlerts.ALARM_TIME
+
+        val projection = arrayOf(alarmTimeColumn)
+        val selection = alarmTimeColumn + ">=?";
+        val sortOrder = alarmTimeColumn + " ASC";
+
+        val cursor = cr.query(
+                CalendarContract.CalendarAlerts.CONTENT_URI,
+                projection,
+                selection,
+                arrayOf(millis.toString()),
+                sortOrder)
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                alarmTime = cursor.getLong(0)
+            }
+        } finally {
+            cursor?.close()
+        }
+
+        return alarmTime
+    }
+
+    // TODO: not single calId, but list of calendars we handle / don't handle
+    override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<ManualEventAlertEntry> {
+        val ret = arrayListOf<ManualEventAlertEntry>()
+
+        // TODO: record last scanned from time, and scan all the events since the last scanned time
+        // and fire if there are any non-fires there!
+        // TODO: to be configurable
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            logger.error("getEventAlertsManually failed due to not sufficient permissions");
+            return ret;
+        }
+
+
+        val settings = Settings(context)
+
+        val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
+
+        val defaultReminderTimeForEventWithNoReminder =
+                settings.defaultReminderTimeForEventWithNoReminder
+
+        val defaultReminderTimeForAllDayEventWithNoreminder =
+                settings.defaultReminderTimeForAllDayEventWithNoreminder
+
+        logger.info("Start: $from, end: $to, len: ${(to-from)/1000L/60L/60L}hrs")
+
+        val nextAlarm = findNextAlarmTime(context.contentResolver, from)
+
+        logger.info("Next alarm: $nextAlarm")
+
+        try {
+            val projection =
+                    arrayOf(
+                            CalendarContract.Instances.EVENT_ID,
+                            CalendarContract.Events.CALENDAR_ID,
+                            CalendarContract.Events.DTSTART,
+                            CalendarContract.Instances.BEGIN,
+                            CalendarContract.Instances.END,
+                            CalendarContract.Events.ALL_DAY
+                    )
+            val PROJECTION_INDEX_INST_EVENT_ID = 0
+            val PROJECTION_INDEX_INST_CALENDAR_ID = 1
+            val PROJECTION_INDEX_INST_DT_START = 2
+            val PROJECTION_INDEX_INST_BEGIN = 3
+            val PROJECTION_INDEX_INST_END = 4
+            val PROJECTION_INDEX_INST_ALL_DAY = 5
+
+            logger.info("Manual event scan started, range: from $from to $to")
+
+            val instanceCursor: Cursor? =
+                    CalendarContract.Instances.query(
+                            context.contentResolver,
+                            projection,
+                            from,
+                            to
+                    )
+
+            if (instanceCursor != null && instanceCursor.moveToFirst()) {
+
+                do {
+                    val eventId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_EVENT_ID)
+                    val calendarId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_CALENDAR_ID)
+
+                    val eventStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_DT_START)
+
+                    val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
+                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
+
+                    var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
+
+                    if (instanceStart == null || eventStart == null || eventId == null || calendarId == null) {
+                        logger.info("Got entry with one of: instanceStart, eventStart, eventId or calendarId not present - skipping")
+                        continue;
+                    }
+
+                    if (!settings.getCalendarIsHandled(calendarId)) {
+                        logger.info("Event id $eventId - belongs to calendar $calendarId, which is not handled - skipping")
+                        continue
+                    }
+
+                    instanceEnd = instanceEnd ?: instanceStart + 3600L*1000L; // default duration - 1hr
+                    isAllDay = isAllDay ?: 0L
+
+                    val reminders = getEventReminders(context, eventId);
+
+                    var hasAnyReminders = false
+
+                    for (reminder in reminders) {
+                        if (reminder.method == CalendarContract.Reminders.METHOD_EMAIL ||
+                                reminder.method == CalendarContract.Reminders.METHOD_SMS)
+                            continue;
+
+                        val alertTime = instanceStart - reminder.millisecondsBefore;
+
+                        val entry = ManualEventAlertEntry(
+                                calendarId,
+                                eventId,
+                                isAllDay != 0L,
+                                alertTime,
+                                instanceStart,
+                                instanceEnd
+                        )
+
+                        ret.add(entry)
+                        hasAnyReminders = true
+
+                        logger.info("$entry")
+                    }
+
+                    if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
+
+                        val alertTime =
+                                if (isAllDay == 0L)
+                                    instanceStart - defaultReminderTimeForEventWithNoReminder
+                                else
+                                    instanceStart - defaultReminderTimeForAllDayEventWithNoreminder
+
+                        val entry = ManualEventAlertEntry(
+                                calendarId,
+                                eventId,
+                                isAllDay != 0L,
+                                alertTime,
+                                instanceStart,
+                                instanceEnd
+                        )
+
+                        ret.add(entry)
+                        logger.info("$entry")
+                    }
+
+                } while (instanceCursor.moveToNext())
+
+            } else {
+                logger.error("getEventInstances: no pending event alerts found")
+            }
+
+            instanceCursor?.close()
+        }
+        catch (ex: Exception) {
+            logger.error("getEventAlertsManually(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")
+        }
 
         return ret
     }

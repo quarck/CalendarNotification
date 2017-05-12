@@ -17,13 +17,25 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.calendar
+package com.github.quarck.calnotify.manualalertsstorage
 
-data class ManualEventAlertEntry(
-        val calendarId: Long,
-        val eventId: Long,
-        val isAllDay: Boolean,
-        val alertTime: Long,
-        val instanceStartTime: Long,
-        val alertCreatedByUs: Boolean
-)
+import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+
+interface ManualAlertsStorageInterface {
+
+    fun addAlert(entry: ManualEventAlertEntry)
+
+    fun addAlerts(entry: List<ManualEventAlertEntry>)
+
+    fun deleteAlert(entry: ManualEventAlertEntry)
+
+    fun deleteAlert(eventId: Long, alertTime: Long)
+
+    fun deleteAll()
+
+    fun getNextAlert(since: Long): Long?
+
+    fun getAlertsAt(time: Long): List<ManualEventAlertEntry>
+
+    val alerts: List<ManualEventAlertEntry> get
+}

@@ -61,8 +61,8 @@ class EventsStorageImplV7()
                 "$KEY_COLOR INTEGER, " +
                 "$KEY_IS_REPEATING TEXT, " +
 
-                "$KEY_ALL_DAY TEXT, " +
-                "$KEY_RESERVED_INT3 TEXT, " +
+                "$KEY_ALL_DAY TEXT, " +         // FIXME
+                "$KEY_RESERVED_INT3 TEXT, " +      // FIXME
 
                 "$KEY_RESERVED_STR1 TEXT, " +
                 "$KEY_RESERVED_STR2 TEXT, " +

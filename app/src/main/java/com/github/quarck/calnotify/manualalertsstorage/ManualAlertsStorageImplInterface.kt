@@ -17,13 +17,20 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.calendar
+package com.github.quarck.calnotify.manualalertsstorage
 
-data class ManualEventAlertEntry(
-        val calendarId: Long,
-        val eventId: Long,
-        val isAllDay: Boolean,
-        val alertTime: Long,
-        val instanceStartTime: Long,
-        val alertCreatedByUs: Boolean
-)
+import android.database.sqlite.SQLiteDatabase
+import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+
+interface ManualAlertsStorageImplInterface {
+    fun createDb(db: SQLiteDatabase)
+
+    fun addAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry)
+
+    fun addAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>)
+    fun  deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long)
+    fun deleteAll(db: SQLiteDatabase)
+    fun getNextAlert(db: SQLiteDatabase, since: Long): Long?
+    fun getAlertsAt(db: SQLiteDatabase, time: Long): List<ManualEventAlertEntry>
+    fun getAlerts(db: SQLiteDatabase): List<ManualEventAlertEntry>
+}

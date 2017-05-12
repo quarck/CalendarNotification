@@ -770,15 +770,13 @@ object CalendarProvider: CalendarProviderInterface {
                             CalendarContract.Events.CALENDAR_ID,
                             CalendarContract.Events.DTSTART,
                             CalendarContract.Instances.BEGIN,
-                            CalendarContract.Instances.END,
                             CalendarContract.Events.ALL_DAY
                     )
             val PROJECTION_INDEX_INST_EVENT_ID = 0
             val PROJECTION_INDEX_INST_CALENDAR_ID = 1
             val PROJECTION_INDEX_INST_DT_START = 2
             val PROJECTION_INDEX_INST_BEGIN = 3
-            val PROJECTION_INDEX_INST_END = 4
-            val PROJECTION_INDEX_INST_ALL_DAY = 5
+            val PROJECTION_INDEX_INST_ALL_DAY = 4
 
             logger.info("Manual event scan started, range: from $from to $to")
 
@@ -799,7 +797,6 @@ object CalendarProvider: CalendarProviderInterface {
                     val eventStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_DT_START)
 
                     val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
-                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
 
                     var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
@@ -813,7 +810,6 @@ object CalendarProvider: CalendarProviderInterface {
                         continue
                     }
 
-                    instanceEnd = instanceEnd ?: instanceStart + 3600L*1000L; // default duration - 1hr
                     isAllDay = isAllDay ?: 0L
 
                     val reminders = getEventReminders(context, eventId);
@@ -833,7 +829,7 @@ object CalendarProvider: CalendarProviderInterface {
                                 isAllDay != 0L,
                                 alertTime,
                                 instanceStart,
-                                instanceEnd
+                                false
                         )
 
                         ret.add(entry)
@@ -856,7 +852,7 @@ object CalendarProvider: CalendarProviderInterface {
                                 isAllDay != 0L,
                                 alertTime,
                                 instanceStart,
-                                instanceEnd
+                                true
                         )
 
                         ret.add(entry)

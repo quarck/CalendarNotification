@@ -106,6 +106,4 @@ object Consts {
     const val  EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 
     const val LOGS_FOLDER = "logs"
-
-    const val CALENDAR_MANUAL_RELOAD_INTERVAL = 7*24L*3600L*1000L
 }

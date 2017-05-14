@@ -297,11 +297,8 @@ class Settings(context: Context) {
     val defaultReminderTimeForAllDayEventWithNoreminder: Long
         get() = prefs.getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L * 3600L * 1000L)
 
-    val manualCalWatchEnabled: Boolean
-        get() = prefs.getBoolean(CALENDAR_MANUAL_WATCH_ENABLED_KEY, true)
-
     val manualCalWatchScanWindow: Long
-        get() = prefs.getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 7L * 24L * 3600L * 1000L) // 1wk by default
+        get() = prefs.getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
 
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
@@ -411,7 +408,6 @@ class Settings(context: Context) {
         private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_reminder_time"
         private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_reminder_time"
 
-        private const val CALENDAR_MANUAL_WATCH_ENABLED_KEY = "manually_watch_events"
         private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
 
         // Default values

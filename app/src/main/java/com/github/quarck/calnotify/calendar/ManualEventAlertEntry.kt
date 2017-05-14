@@ -25,5 +25,9 @@ data class ManualEventAlertEntry(
         val isAllDay: Boolean,
         val alertTime: Long,
         val instanceStartTime: Long,
-        val alertCreatedByUs: Boolean
+        val instanceEndTime: Long,
+        val alertCreatedByUs: Boolean,
+        val wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
+                                // alerting when reacting to different notification sources
+                                // (e.g. calendar provider vs our internal manual handler)
 )

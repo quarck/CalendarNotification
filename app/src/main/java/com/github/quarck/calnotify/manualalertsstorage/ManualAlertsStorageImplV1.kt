@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
 import com.github.quarck.calnotify.logs.Logger
 
 class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
+
     override fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
                 "CREATE " +
@@ -39,10 +40,13 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
                         "$KEY_ALERT_TIME INTEGER, " +
 
                         "$KEY_INSTANCE_START INTEGER, " +
+                        "$KEY_INSTANCE_END INTEGER, " +
 
                         "$KEY_ALL_DAY INTEGER, " +
 
                         "$KEY_WE_CREATED_ALERT INTEGER, " +
+
+                        "$KEY_WAS_HANDLED INTEGER, " +
 
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
@@ -64,6 +68,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
     }
 
     override fun addAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry) {
+
         logger.debug("addAlert $entry")
 
         val values =  recordToContentValues(entry)
@@ -75,12 +80,12 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
             // values
         }
         catch (ex: SQLiteConstraintException) {
-            logger.debug("This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!")
+            logger.debug("This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!, updating instead")
+            updateAlert(db, entry)
         }
         catch (ex: Exception) {
             logger.error("addAlert($entry): exception $ex, ${ex.stackTrace}")
         }
-
     }
 
     override fun addAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>) {
@@ -90,30 +95,61 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
 
     override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long) {
 
+        logger.debug("deleteAlert $eventId / $alertTime")
+
         try {
             db.delete(
                     TABLE_NAME,
-                    " $KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
+                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
                     arrayOf(eventId.toString(), alertTime.toString()))
         }
         catch (ex: Exception) {
             logger.error("deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
         }
-
-        logger.debug("deleteAlert $eventId / $alertTime")
     }
 
-    override fun deleteAll(db: SQLiteDatabase) {
+    override fun deleteAlertsOlderThan(db: SQLiteDatabase, time: Long) {
 
-        logger.debug("deleteAll")
+        logger.debug("deleteAlertsOlderThan $time")
 
         try {
-            db.delete(TABLE_NAME, null, null)
+            db.delete(
+                    TABLE_NAME,
+                    "$KEY_ALERT_TIME < ?",
+                    arrayOf(time.toString()))
         }
         catch (ex: Exception) {
-            logger.error("deleteAll: exceptino $ex, ${ex.stackTrace}")
+            logger.error("deleteAlertsOlderThan($time): exception $ex, ${ex.stackTrace}")
         }
     }
+
+    override fun updateAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry) {
+        val values = recordToContentValues(entry)
+
+        logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+
+        db.update(TABLE_NAME, // table
+                values, // column/value
+                "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
+                arrayOf(entry.eventId.toString(), entry.alertTime.toString()))
+    }
+
+    override fun updateAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>) {
+
+        logger.debug("Updating ${entries.size} alerts");
+
+        for (entry in entries) {
+            logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+
+            val values = recordToContentValues(entry)
+
+            db.update(TABLE_NAME, // table
+                    values, // column/value
+                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
+                    arrayOf(entry.eventId.toString(), entry.alertTime.toString()))
+        }
+    }
+
 
     override fun getNextAlert(db: SQLiteDatabase, since: Long): Long? {
 
@@ -150,7 +186,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         try {
             cursor = db.query(TABLE_NAME, // a. table
                     SELECT_COLUMNS, // b. column names
-                    " $KEY_ALERT_TIME = ?",
+                    "$KEY_ALERT_TIME = ?",
                     arrayOf(time.toString()),
                     null, // e. group by
                     null, // f. h aving
@@ -170,7 +206,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlertsAt($time), returnint ${ret.size} events")
+        logger.debug("getAlertsAt($time), returning ${ret.size} events")
 
         return ret
     }
@@ -215,8 +251,10 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         values.put(KEY_EVENTID, entry.eventId);
         values.put(KEY_ALERT_TIME, entry.alertTime)
         values.put(KEY_INSTANCE_START, entry.instanceStartTime);
+        values.put(KEY_INSTANCE_END, entry.instanceEndTime);
         values.put(KEY_ALL_DAY, if (entry.isAllDay) 1 else 0)
         values.put(KEY_WE_CREATED_ALERT, if (entry.alertCreatedByUs) 1 else 0)
+        values.put(KEY_WAS_HANDLED, if (entry.wasHandled) 1 else 0)
 
         // Fill reserved keys with some placeholders
         values.put(KEY_RESERVED_INT1, 0L)
@@ -232,8 +270,10 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
+                instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
-                alertCreatedByUs = cursor.getInt(PROJECTION_KEY_WE_CREATED_ALERT) != 0
+                alertCreatedByUs = cursor.getInt(PROJECTION_KEY_WE_CREATED_ALERT) != 0,
+                wasHandled =  cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
         )
     }
 
@@ -249,7 +289,9 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         private const val KEY_ALL_DAY = "allDay"
         private const val KEY_ALERT_TIME = "alertTime"
         private const val KEY_INSTANCE_START = "instanceStart"
+        private const val KEY_INSTANCE_END = "instanceEnd"
         private const val KEY_WE_CREATED_ALERT = "alertCreatedByUs"
+        private const val KEY_WAS_HANDLED = "wasHandled"
 
 
         private const val KEY_RESERVED_INT1 = "i1"
@@ -260,16 +302,20 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
                 KEY_EVENTID,
                 KEY_ALERT_TIME,
                 KEY_INSTANCE_START,
+                KEY_INSTANCE_END,
                 KEY_ALL_DAY,
-                KEY_WE_CREATED_ALERT
+                KEY_WE_CREATED_ALERT,
+                KEY_WAS_HANDLED
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0;
         const val PROJECTION_KEY_EVENTID = 1;
         const val PROJECTION_KEY_ALERT_TIME = 2;
         const val PROJECTION_KEY_INSTANCE_START = 3;
-        const val PROJECTION_KEY_ALL_DAY = 4;
-        const val PROJECTION_KEY_WE_CREATED_ALERT = 5;
+        const val PROJECTION_KEY_INSTANCE_END = 4;
+        const val PROJECTION_KEY_ALL_DAY = 5;
+        const val PROJECTION_KEY_WE_CREATED_ALERT = 6;
+        const val PROJECTION_KEY_WAS_HANDLED = 7;
     }
 
 }

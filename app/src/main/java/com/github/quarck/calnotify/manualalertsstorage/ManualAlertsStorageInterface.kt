@@ -24,17 +24,17 @@ import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
 interface ManualAlertsStorageInterface {
 
     fun addAlert(entry: ManualEventAlertEntry)
-
     fun addAlerts(entry: List<ManualEventAlertEntry>)
 
     fun deleteAlert(entry: ManualEventAlertEntry)
-
     fun deleteAlert(eventId: Long, alertTime: Long)
 
-    fun deleteAll()
+    fun deleteAlertsOlderThan(time: Long)
+
+    fun updateAlert(entry: ManualEventAlertEntry)
+    fun updateAlerts(entries: List<ManualEventAlertEntry>)
 
     fun getNextAlert(since: Long): Long?
-
     fun getAlertsAt(time: Long): List<ManualEventAlertEntry>
 
     val alerts: List<ManualEventAlertEntry> get

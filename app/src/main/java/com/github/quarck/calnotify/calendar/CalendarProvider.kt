@@ -613,6 +613,54 @@ object CalendarProvider: CalendarProviderInterface {
         return ret;
     }
 
+    override fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
+        var ret: Boolean? = null
+
+        val fields = arrayOf(
+                CalendarContract.CalendarAlerts.EVENT_ID,
+                CalendarContract.Events.RRULE,
+                CalendarContract.Events.RDATE
+        )
+
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+
+        val cursor: Cursor? =
+                context.contentResolver.query(
+                        uri,
+                        fields,
+                        null,
+                        null,
+                        null
+                );
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    val eventIdEvent = cursor.getLong(0)
+                    if (eventIdEvent != eventId)
+                        continue;
+
+                    val rRule: String? = cursor.getString(1);
+                    val rDate: String? = cursor.getString(2);
+
+                    if (rRule != null && rRule.isNotEmpty())
+                        ret = true;
+                    else if (rDate != null && rDate.isNotEmpty())
+                        ret = true;
+                    else
+                        ret = false;
+                    break;
+
+                } while (cursor.moveToNext())
+            }
+        } catch (ex: Exception) {
+            ret = null
+        }
+
+        cursor?.close()
+
+        return ret;
+    }
+
     override fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 
         var ret = false;
@@ -770,13 +818,15 @@ object CalendarProvider: CalendarProviderInterface {
                             CalendarContract.Events.CALENDAR_ID,
                             CalendarContract.Events.DTSTART,
                             CalendarContract.Instances.BEGIN,
+                            CalendarContract.Instances.END,
                             CalendarContract.Events.ALL_DAY
                     )
             val PROJECTION_INDEX_INST_EVENT_ID = 0
             val PROJECTION_INDEX_INST_CALENDAR_ID = 1
             val PROJECTION_INDEX_INST_DT_START = 2
             val PROJECTION_INDEX_INST_BEGIN = 3
-            val PROJECTION_INDEX_INST_ALL_DAY = 4
+            val PROJECTION_INDEX_INST_END = 4
+            val PROJECTION_INDEX_INST_ALL_DAY = 5
 
             logger.info("Manual event scan started, range: from $from to $to")
 
@@ -798,6 +848,8 @@ object CalendarProvider: CalendarProviderInterface {
 
                     val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
 
+                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
+
                     var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
                     if (instanceStart == null || eventStart == null || eventId == null || calendarId == null) {
@@ -811,6 +863,8 @@ object CalendarProvider: CalendarProviderInterface {
                     }
 
                     isAllDay = isAllDay ?: 0L
+
+                    instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L;
 
                     val reminders = getEventReminders(context, eventId);
 
@@ -829,6 +883,8 @@ object CalendarProvider: CalendarProviderInterface {
                                 isAllDay != 0L,
                                 alertTime,
                                 instanceStart,
+                                instanceEnd,
+                                false,
                                 false
                         )
 
@@ -852,7 +908,9 @@ object CalendarProvider: CalendarProviderInterface {
                                 isAllDay != 0L,
                                 alertTime,
                                 instanceStart,
-                                true
+                                instanceEnd,
+                                true,
+                                false
                         )
 
                         ret.add(entry)

@@ -45,4 +45,6 @@ interface CalendarProviderInterface {
     fun findNextAlarmTime(cr: ContentResolver, millis: Long): Long?
 
     fun getEventAlertsManually(context: Context, from: Long, to: Long): List<ManualEventAlertEntry>
+
+    fun isRepeatingEvent(context: Context, eventId: Long): Boolean?
 }

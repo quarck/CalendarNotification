@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
 
 
 interface CalendarManualMonitorInterface {
@@ -30,9 +31,13 @@ interface CalendarManualMonitorInterface {
 
     fun getAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<ManualEventAlertEntry>
 
-    fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord>
+//    fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord>
 
-    fun onAlertWasHandled(context: Context, eventId: Long, alertTime: Long)
+    fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean)
+
+    fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean
+
+    fun getAlertWasHandled(db: ManualAlertsStorage, ev: EventAlertRecord): Boolean
 
     fun performManualRescan(context: Context) // could fire alert immediately
 

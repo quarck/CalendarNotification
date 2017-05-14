@@ -52,14 +52,14 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
                         "$KEY_RESERVED_INT2 INTEGER, " +
 
 
-                        "PRIMARY KEY ($KEY_EVENTID, $KEY_ALERT_TIME)" +
+                        "PRIMARY KEY ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)" +
                         " )"
 
         logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
-        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_ALERT_TIME)"
+        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)"
 
         logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
 
@@ -93,15 +93,15 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
             addAlert(db, entry)
     }
 
-    override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long) {
+    override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
 
         logger.debug("deleteAlert $eventId / $alertTime")
 
         try {
             db.delete(
                     TABLE_NAME,
-                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
-                    arrayOf(eventId.toString(), alertTime.toString()))
+                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()))
         }
         catch (ex: Exception) {
             logger.error("deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
@@ -130,8 +130,8 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
 
         db.update(TABLE_NAME, // table
                 values, // column/value
-                "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
-                arrayOf(entry.eventId.toString(), entry.alertTime.toString()))
+                "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
     }
 
     override fun updateAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>) {
@@ -145,9 +145,41 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
 
             db.update(TABLE_NAME, // table
                     values, // column/value
-                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ?",
-                    arrayOf(entry.eventId.toString(), entry.alertTime.toString()))
+                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
         }
+    }
+
+    override fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): ManualEventAlertEntry? {
+
+        var ret: ManualEventAlertEntry? = null
+
+        var cursor: Cursor? = null
+
+        try {
+            cursor = db.query(TABLE_NAME, // a. table
+                    SELECT_COLUMNS, // b. column names
+                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()),
+                    null, // e. group by
+                    null, // f. h aving
+                    null, // g. order by
+                    null) // h. limit
+
+            if (cursor != null && cursor.moveToFirst()) {
+                ret = cursorToRecord(cursor)
+            }
+        }
+        catch (ex: Exception) {
+            logger.error("getAlert: exception $ex, stack: ${ex.stackTrace}")
+        }
+        finally {
+            cursor?.close()
+        }
+
+        logger.debug("getAlert($eventId, $alertTime), returning ${ret}")
+
+        return ret
     }
 
 

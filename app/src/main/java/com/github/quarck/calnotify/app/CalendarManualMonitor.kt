@@ -43,71 +43,100 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface): Ca
         return ret
     }
 
-    override fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord> {
-
-        val rawAlerts = getAlertsAt(context, time, mayRescan)
-
-        val ret = arrayListOf<EventAlertRecord>()
-
-        val deadAlerts = arrayListOf<ManualEventAlertEntry>()
-
-        for (alert in rawAlerts) {
-            if (!alert.alertCreatedByUs) {
-                // can go and read it directly from the provider
-                val event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
-
-                if (event != null) {
-                    ret.add(event)
-                }
-                else {
-                    logger.error("Can't find event for $alert, was event removed? Dropping from DB");
-                    deadAlerts.add(alert)
-                }
-            }
-            else {
-                // this is manually added alert - load event and manually populate EventAlertRecord!
-                val calEvent = calendarProvider.getEvent(context, alert.eventId)
-                if (calEvent != null) {
-
-                    val event = EventAlertRecord(
-                            calendarId = calEvent.calendarId,
-                            eventId = calEvent.eventId,
-                            isAllDay = calEvent.isAllDay,
-                            isRepeating = false, // fixme
-                            alertTime = alert.alertTime,
-                            notificationId = 0,
-                            title = calEvent.title,
-                            startTime = calEvent.startTime,
-                            endTime = calEvent.endTime,
-                            instanceStartTime = alert.instanceStartTime,
-                            instanceEndTime = alert.instanceEndTime,
-                            location = calEvent.location,
-                            lastEventVisibility = 0,
-                            snoozedUntil = 0
-                    )
-                    ret.add(event)
-                }
-                else {
-                    logger.error("Cant find event id ${alert.eventId}")
-                    deadAlerts.add(alert)
-                }
-
-            }
-        }
-
-        // TODO: check this
-//        ManualAlertsStorage(context).use {
-//            db ->
-//            for (dead in deadAlerts) {
-//                db.deleteAlert(dead)
+//    override fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord> {
+//
+//        val rawAlerts = getAlertsAt(context, time, mayRescan)
+//
+//        val ret = arrayListOf<EventAlertRecord>()
+//
+//        val deadAlerts = arrayListOf<ManualEventAlertEntry>()
+//
+//        for (alert in rawAlerts) {
+//            if (!alert.alertCreatedByUs) {
+//                // can go and read it directly from the provider
+//                val event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
+//
+//                if (event != null) {
+//                    ret.add(event)
+//                }
+//                else {
+//                    logger.error("Can't find event for $alert, was event removed? Dropping from DB");
+//                    deadAlerts.add(alert)
+//                }
+//            }
+//            else {
+//                // this is manually added alert - load event and manually populate EventAlertRecord!
+//                val calEvent = calendarProvider.getEvent(context, alert.eventId)
+//                if (calEvent != null) {
+//
+//                    val event = EventAlertRecord(
+//                            calendarId = calEvent.calendarId,
+//                            eventId = calEvent.eventId,
+//                            isAllDay = calEvent.isAllDay,
+//                            isRepeating = false, // fixme
+//                            alertTime = alert.alertTime,
+//                            notificationId = 0,
+//                            title = calEvent.title,
+//                            startTime = calEvent.startTime,
+//                            endTime = calEvent.endTime,
+//                            instanceStartTime = alert.instanceStartTime,
+//                            instanceEndTime = alert.instanceEndTime,
+//                            location = calEvent.location,
+//                            lastEventVisibility = 0,
+//                            snoozedUntil = 0
+//                    )
+//                    ret.add(event)
+//                }
+//                else {
+//                    logger.error("Cant find event id ${alert.eventId}")
+//                    deadAlerts.add(alert)
+//                }
+//
 //            }
 //        }
+//
+//        // TODO: check this
+////        ManualAlertsStorage(context).use {
+////            db ->
+////            for (dead in deadAlerts) {
+////                db.deleteAlert(dead)
+////            }
+////        }
+//
+//        return ret;
+//    }
 
-        return ret;
+    override fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
+
+        ManualAlertsStorage(context).use {
+            db ->
+            var alert: ManualEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
+
+            if (alert != null) {
+                alert.wasHandled = true
+                db.updateAlert(alert)
+            } else {
+                alert = ManualEventAlertEntry(
+                        calendarId = ev.calendarId,
+                        eventId = ev.eventId,
+                        alertTime = ev.alertTime,
+                        isAllDay = ev.isAllDay,
+                        instanceStartTime = ev.instanceStartTime,
+                        instanceEndTime = ev.instanceEndTime,
+                        wasHandled = true,
+                        alertCreatedByUs = createdByUs
+                        )
+                db.addAlert(alert)
+            }
+        }
     }
 
-    override fun onAlertWasHandled(context: Context, eventId: Long, alertTime: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getAlertWasHandled(db: ManualAlertsStorage, ev: EventAlertRecord): Boolean {
+        return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
+    }
+
+    override fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
+        return ManualAlertsStorage(context).use { db -> getAlertWasHandled(db, ev) }
     }
 
     override fun performManualRescan(context: Context) {

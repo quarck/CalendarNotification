@@ -58,7 +58,12 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
 
+    private val calendarMonitor: CalendarManualMonitorInterface by lazy { CalendarManualMonitor(calendarProvider) }
+
     private val failbackReminder: FailbackAudioReminderInterface by lazy { FailbackAudioReminder() }
+
+    val CalendarMonitorService: CalendarManualMonitorInterface
+        get() = calendarMonitor
 
     fun hasActiveEvents(context: Context) =
         EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
@@ -119,82 +124,85 @@ object ApplicationController : EventMovedHandler {
 
         var ret = false
 
-        if (event.calendarId == -1L || getSettings(context).getCalendarIsHandled(event.calendarId)) {
+        if (event.calendarId != -1L && !getSettings(context).getCalendarIsHandled(event.calendarId)) {
+            logger.info("Event ${event.eventId} belongs to calendar ${event.calendarId} which is not handled, skipping");
+            return ret;
+        }
 
-            logger.info("Calendar event fired, calendar id ${event.calendarId}, eventId ${event.eventId}, instance start time ${event.instanceStartTime}, alertTime=${event.alertTime}")
+        logger.info("Calendar event fired, calendar id ${event.calendarId}, eventId ${event.eventId}, instance start time ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
-            // 1st step - save event into DB
-            EventsStorage(context).use {
-                db ->
+        // 1st step - save event into DB
+        EventsStorage(context).use {
+            db ->
 
-                if (event.isRepeating) {
-                    // repeating event - always simply add
-                    db.addEvent(event)
-                    notificationManager.onEventAdded(context, EventFormatter(context), event)
-                } else {
-                    // non-repeating event - make sure we don't create two records with the same eventId
-                    val oldEvents
+            if (event.isRepeating) {
+                // repeating event - always simply add
+                db.addEvent(event)
+                notificationManager.onEventAdded(context, EventFormatter(context), event)
+            } else {
+                // non-repeating event - make sure we don't create two records with the same eventId
+                val oldEvents
                         = db.getEventInstances(event.eventId)
 
-                    logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+                logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
 
-                    try {
-                        // delete old instances for the same event id (should be only one, but who knows)
-                        for (oldEvent in oldEvents) {
-                            db.deleteEvent(oldEvent)
-                            notificationManager.onEventDismissed(context, EventFormatter(context), oldEvent.eventId, oldEvent.notificationId)
-                        }
-                    } catch (ex: Exception) {
-                        logger.error("exception while removing old events: ${ex.message}");
+                try {
+                    // delete old instances for the same event id (should be only one, but who knows)
+                    for (oldEvent in oldEvents) {
+                        db.deleteEvent(oldEvent)
+                        notificationManager.onEventDismissed(context, EventFormatter(context), oldEvent.eventId, oldEvent.notificationId)
                     }
-
-                    // add newly fired event
-                    db.addEvent(event)
-                    notificationManager.onEventAdded(context, EventFormatter(context), event)
+                } catch (ex: Exception) {
+                    logger.error("exception while removing old events: ${ex.message}");
                 }
+
+                // add newly fired event
+                db.addEvent(event)
+                notificationManager.onEventAdded(context, EventFormatter(context), event)
             }
-
-            // 2nd step - re-open new DB instance and make sure that event:
-            // * is there
-            // * is not set as visible
-            // * is not snoozed
-            EventsStorage(context).use {
-                db ->
-
-                if (event.isRepeating) {
-                    // return true only if we can confirm, by reading event again from DB
-                    // that it is there
-                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
-                    val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
-                    ret = dbEvent != null && dbEvent.snoozedUntil == 0L
-
-                } else {
-                    // return true only if we can confirm, by reading event again from DB
-                    // that it is there
-                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
-                    val dbEvents = db.getEventInstances(event.eventId)
-                    ret = dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L
-                }
-            }
-
-            if (!ret)
-                logger.error("Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
-                        "instance st ${event.instanceStartTime}, repeating: " +
-                        "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
-
-            // reload all the other events - check if there are any changes yet
-            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
-
-            //
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
-            UINotifierService.notifyUI(context, false);
-
-            logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
-
-        } else {
-            logger.info("Event ${event.eventId} belongs to calendar ${event.calendarId} which is not handled, skipping");
         }
+
+        // 2nd step - re-open new DB instance and make sure that event:
+        // * is there
+        // * is not set as visible
+        // * is not snoozed
+        EventsStorage(context).use {
+            db ->
+
+            if (event.isRepeating) {
+                // return true only if we can confirm, by reading event again from DB
+                // that it is there
+                // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
+                ret = dbEvent != null && dbEvent.snoozedUntil == 0L
+
+            } else {
+                // return true only if we can confirm, by reading event again from DB
+                // that it is there
+                // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                val dbEvents = db.getEventInstances(event.eventId)
+                ret = dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L
+            }
+        }
+
+        if (!ret)
+            logger.error("Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
+                    "instance st ${event.instanceStartTime}, repeating: " +
+                    "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
+
+        // reload all the other events - check if there are any changes yet
+        val changes = EventsStorage(context).use {
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+        }
+
+        // FIXME: move this to caller of this callback, as we can get multiple events firing at the same time
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+        // FIXME: this one too
+        UINotifierService.notifyUI(context, false);
+
+        logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
+
 
         return ret
     }

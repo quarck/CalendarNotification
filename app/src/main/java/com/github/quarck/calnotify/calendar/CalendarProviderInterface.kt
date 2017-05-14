@@ -24,7 +24,7 @@ import android.content.Context
 
 interface CalendarProviderInterface {
 
-    fun getAlertByTime(context: Context, alertTime: Long): List<EventAlertRecord>
+    fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord>
 
     fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord?
 

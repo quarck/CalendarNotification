@@ -130,10 +130,6 @@ class Settings(context: Context) {
     val viewAfterEdit: Boolean
         get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
 
-    var abortBroadcast: Boolean
-        get() = prefs.getBoolean(ABORT_BROADCAST_KEY, false)
-        set(value) = prefs.setBoolean(ABORT_BROADCAST_KEY, value)
-
     val snoozePresets: LongArray
         get() {
             var ret = PreferenceUtils.parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))

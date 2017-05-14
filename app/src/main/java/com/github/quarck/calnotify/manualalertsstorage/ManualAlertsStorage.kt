@@ -61,10 +61,10 @@ class ManualAlertsStorage(val context: Context)
         = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
 
     override fun deleteAlert(entry: ManualEventAlertEntry)
-        = deleteAlert(entry.eventId, entry.alertTime)
+        = deleteAlert(entry.eventId, entry.alertTime, entry.instanceStartTime)
 
-    override fun deleteAlert(eventId: Long, alertTime: Long)
-        = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime) } }
+    override fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
+        = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
 
     override fun deleteAlertsOlderThan(time: Long)
         = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlertsOlderThan(it, time) } }
@@ -74,6 +74,9 @@ class ManualAlertsStorage(val context: Context)
 
     override fun updateAlerts(entries: List<ManualEventAlertEntry>)
         = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
+
+    override fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): ManualEventAlertEntry?
+        = synchronized(ManualAlertsStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
 
     override fun getNextAlert(since: Long): Long?
         = synchronized(ManualAlertsStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }

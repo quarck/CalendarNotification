@@ -28,7 +28,9 @@ interface ManualAlertsStorageImplInterface {
     fun addAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry)
     fun addAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>)
 
-    fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long)
+    fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): ManualEventAlertEntry?
+
+    fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long)
     fun deleteAlertsOlderThan(db: SQLiteDatabase, time: Long)
 
     fun updateAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry)

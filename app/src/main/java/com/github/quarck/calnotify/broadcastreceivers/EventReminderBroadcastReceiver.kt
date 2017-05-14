@@ -24,16 +24,22 @@ import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.CalendarManualMonitor
+import com.github.quarck.calnotify.app.CalendarManualMonitorInterface
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.toLongOrNull
 
 class EventReminderBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
+
         if (context == null || intent == null)
             return;
 
-        var shouldAbortBroadcast = false;
+//        var shouldAbortBroadcast = false;
+
+        val calendarMonitor = ApplicationController.CalendarMonitorService
 
         val removeOriginal = Settings(context).removeOriginal
 
@@ -44,18 +50,29 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime != null) {
             try {
-                val events = CalendarProvider.getAlertByTime(context, alertTime)
+                val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
 
                 for (event in events) {
+
+                    if (calendarMonitor.getAlertWasHandled(context, event)) {
+                        logger.info("Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already, skipping")
+                        continue
+                    }
+
                     logger.info("Seen event ${event.eventId} / ${event.instanceStartTime}")
 
-                    val shouldRemove = ApplicationController.onCalendarEventFired(context, event);
+                    val wasHandled = ApplicationController.onCalendarEventFired(context, event);
 
-                    if (shouldRemove && removeOriginal) {
+                    if (wasHandled) {
+                        calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
+                        logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
+                    }
+
+                    if (wasHandled && removeOriginal) {
                         logger.info("Dismissing original reminder")
 
                         CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                        shouldAbortBroadcast = true;
+//                        shouldAbortBroadcast = true;
                     }
                 }
 
@@ -66,10 +83,10 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
             logger.error("ERROR alertTime is null!")
         }
 
-        if (shouldAbortBroadcast && Settings(context).abortBroadcast) {
-            logger.info("Aborting broadcast")
-            abortBroadcast();
-        }
+//        if (shouldAbortBroadcast && Settings(context).abortBroadcast) {
+//            logger.info("Aborting broadcast")
+//            abortBroadcast();
+//        }
     }
 
     companion object {

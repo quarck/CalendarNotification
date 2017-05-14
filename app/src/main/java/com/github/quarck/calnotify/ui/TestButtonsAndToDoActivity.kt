@@ -47,7 +47,7 @@ class TestButtonsAndToDoActivity : Activity() {
         setContentView(R.layout.activity_test_buttons_and_to_do)
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = settings.removeOriginal
-        find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked = settings.abortBroadcast
+        find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked = false
         find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
         find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
     }
@@ -215,7 +215,6 @@ class TestButtonsAndToDoActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleBroadcastAbortClick(v: View) {
-        settings.abortBroadcast = find<ToggleButton>(R.id.buttonTestToggleAbortBroadcast).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

@@ -103,7 +103,7 @@ object CalendarProvider: CalendarProviderInterface {
         return Pair(state, event)
     }
 
-    override fun getAlertByTime(context: Context, alertTime: Long): List<EventAlertRecord> {
+    override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getFiredEventsDetails failed due to not sufficient permissions");
@@ -130,7 +130,7 @@ object CalendarProvider: CalendarProviderInterface {
                 if (state != null && event != null) {
                     logger.info("Received event details: ${event.eventId}, st $state, from ${event.startTime} to ${event.endTime}")
 
-                    if (state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
+                    if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
                         ret.add(event)
                     } else {
                         logger.info("Ignored dismissed event ${event.eventId}")

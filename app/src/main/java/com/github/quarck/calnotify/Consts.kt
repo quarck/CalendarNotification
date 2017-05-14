@@ -106,4 +106,6 @@ object Consts {
     const val  EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 
     const val LOGS_FOLDER = "logs"
+
+    const val  ALERTS_DB_REMOVE_AFTER = 30L * 24L * 3600L * 1000L
 }

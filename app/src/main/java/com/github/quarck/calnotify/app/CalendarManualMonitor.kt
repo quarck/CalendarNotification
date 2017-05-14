@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
@@ -128,6 +129,10 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface): Ca
                         )
                 db.addAlert(alert)
             }
+
+            // some housekeeping
+            val currentTime = System.currentTimeMillis()
+            db.deleteAlertsOlderThan(currentTime - Consts.ALERTS_DB_REMOVE_AFTER)
         }
     }
 

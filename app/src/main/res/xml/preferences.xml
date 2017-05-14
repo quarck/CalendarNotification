@@ -8,14 +8,14 @@
 
     <Preference android:title="@string/title_calendars_activity" >
         <intent
-            android:action="com.github.quarck.calnotify.state.CalendarsActivity"/>
+            android:action="com.github.quarck.calnotify.prefs.CalendarsActivity"/>
     </Preference>
 
     <Preference
         android:title="@string/appearance"
         android:key="pref_key_appearance">
         <intent
-            android:action="com.github.quarck.calnotify.state.AppStylePrefActivity"/>
+            android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
     </Preference>
 
     <PreferenceScreen
@@ -34,12 +34,12 @@
             android:title="@string/notification_light_title"
             android:defaultValue="true" />
         
-        <com.github.quarck.calnotify.state.LEDColorPickerPreference
+        <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
             android:key="notification_led_color"
             android:title="@string/led_color"
             android:dependency="notification_led" />
 
-        <com.github.quarck.calnotify.state.LEDPatternPreference
+        <com.github.quarck.calnotify.prefs.LEDPatternPreference
             android:key="notification_led_v2pattern"
             android:title="@string/led_pattern"
             android:dependency="notification_led"
@@ -84,7 +84,7 @@
         android:title="@string/snooze_presets"
         android:key="pref_key_snooze_prs">
 
-        <com.github.quarck.calnotify.state.SnoozePresetPreference
+        <com.github.quarck.calnotify.prefs.SnoozePresetPreference
             android:key="pref_snooze_presets"
             android:title="@string/snooze_presets_title"
             android:summary="@string/snooze_presets_summary"
@@ -115,7 +115,7 @@
             android:summary="@string/enable_reminders_summary"
             android:defaultValue="false"/>
 
-        <com.github.quarck.calnotify.state.ReminderIntervalPreference
+        <com.github.quarck.calnotify.prefs.ReminderIntervalPreference
             android:key="remind_interval_key2"
             android:title="@string/remind_interval"
             android:numeric="integer"
@@ -142,14 +142,14 @@
             android:summary="@string/quiet_hours_summary"
             />
 
-        <com.github.quarck.calnotify.state.TimeOfDayPreference
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
             android:key="quiet_hours_from"
             android:title="@string/quiet_time_from"
             android:defaultValue="1320"
             android:dependency="enable_quiet_hours"
             />
 
-        <com.github.quarck.calnotify.state.TimeOfDayPreference
+        <com.github.quarck.calnotify.prefs.TimeOfDayPreference
             android:key="quiet_hours_to"
             android:title="@string/quiet_time_to"
             android:defaultValue="360"

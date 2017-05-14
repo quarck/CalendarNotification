@@ -6,7 +6,7 @@
         android:summary="@string/compact_vs_card_view"
         android:key="pref_key_appearance">
         <intent
-            android:action="com.github.quarck.calnotify.state.AppStylePrefActivity"/>
+            android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
     </Preference>
 
     

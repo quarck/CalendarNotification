@@ -20,12 +20,12 @@
         android:title="@string/notification_light_title"
         android:defaultValue="true" />
 
-    <com.github.quarck.calnotify.state.LEDColorPickerPreference
+    <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
         android:key="notification_led_color"
         android:title="@string/led_color"
         android:dependency="notification_led" />
 
-    <com.github.quarck.calnotify.state.LEDPatternPreference
+    <com.github.quarck.calnotify.prefs.LEDPatternPreference
         android:key="notification_led_v2pattern"
         android:title="@string/led_pattern"
         android:dependency="notification_led"
@@ -93,7 +93,7 @@
             android:defaultValue="false" />
 
 
-        <com.github.quarck.calnotify.state.MaxNotificationsPreference
+        <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
             android:key="max_notifications_before_collapse"
             android:title="@string/max_notifications_before_collapse"
             android:summary="@string/max_notifications_before_collapse_summary"

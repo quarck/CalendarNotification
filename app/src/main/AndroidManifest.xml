@@ -55,26 +55,26 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".state.CalendarsActivity"
+            android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
             android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             >
             <intent-filter>
-                <action android:name="com.github.quarck.calnotify.state.CalendarsActivity" />
+                <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".state.AppStylePrefActivity"
+            android:name=".prefs.AppStylePrefActivity"
             android:label="@string/appearance"
             android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             >
             <intent-filter>
-                <action android:name="com.github.quarck.calnotify.state.AppStylePrefActivity" />
+                <action android:name="com.github.quarck.calnotify.prefs.AppStylePrefActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

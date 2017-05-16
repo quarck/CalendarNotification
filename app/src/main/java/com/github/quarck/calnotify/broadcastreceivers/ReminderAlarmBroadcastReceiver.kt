@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
@@ -158,6 +159,17 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             context.persistentState.numRemindersFired ++;
 
         context.persistentState.reminderLastFireTime = currentTime
+
+        // auto-remove reminder notification after 15 seconds. All we need it for is to
+        // play a sound
+        val delayInMilliseconds = 15000L
+
+        Handler().postDelayed(
+                {
+                    ApplicationController.cleanupEventReminder(context)
+                },
+                delayInMilliseconds
+        )
     }
 
     companion object {

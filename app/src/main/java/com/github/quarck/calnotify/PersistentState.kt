@@ -77,10 +77,6 @@ class PersistentState(private val ctx: Context) {
         }
     }
 
-	var lastNotificationRePost: Long
-        get() = state.getLong(LAST_NOTIFICATION_RE_POST_KEY, 0)
-        set(value) = state.setLong(LAST_NOTIFICATION_RE_POST_KEY, value)
-
     var lastTimerBroadcastReceived: Long
         get() = state.getLong(LAST_TIMER_BROADCAST_RECEIVED_KEY, 0)
         set(value) = state.setLong(LAST_TIMER_BROADCAST_RECEIVED_KEY, value)
@@ -94,7 +90,6 @@ class PersistentState(private val ctx: Context) {
         const val REMINDER_LAST_FIRE_TIME_KEY = "reminderLastFireTime"
         const val NOTIFICATION_LAST_FIRE_TIME_KEY = "notificationLastFireTime"
         const val NUM_REMINDERS_FIRED_KEY = "numRemindersFired"
-        const val LAST_NOTIFICATION_RE_POST_KEY = "lastNotificationRePost"
         const val LAST_TIMER_BROADCAST_RECEIVED_KEY = "lastTimerBroadcastReceived"
     }
 }

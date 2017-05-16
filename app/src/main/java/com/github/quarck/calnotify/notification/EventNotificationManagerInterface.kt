@@ -34,7 +34,8 @@ interface EventNotificationManagerInterface {
 
     fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);
 
-    fun fireEventReminder(context: Context, formatter: EventFormatterInterface)
+    fun fireEventReminder(context: Context)
+    fun cleanupEventReminder(context: Context)
 
     fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord)
 

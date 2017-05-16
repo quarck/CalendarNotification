@@ -51,6 +51,8 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
         } else {
             logger.error("Intent is null!")
         }
+
+        ApplicationController.cleanupEventReminder(this)
     }
 
     companion object {

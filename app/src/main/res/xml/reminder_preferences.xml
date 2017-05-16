@@ -61,19 +61,5 @@
             android:defaultValue="0"
             android:dependency="reminders_custom_vibration"/>
 
-        <!--  -->
-
-        <PreferenceCategory
-            android:title="@string/advanced"
-            android:key="_notifications_advanced">
-
-        <CheckBoxPreference android:key="failback_reminders_method"
-            android:title="@string/reminder_fallback_method_title"
-            android:summary="@string/reminder_fallback_method_summary"
-            android:defaultValue="false"
-            android:dependency="enable_reminding_key"
-            />
-
-        </PreferenceCategory>
 
 </PreferenceScreen>

@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.*
@@ -59,8 +60,6 @@ object ApplicationController : EventMovedHandler {
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
 
     private val calendarMonitor: CalendarManualMonitorInterface by lazy { CalendarManualMonitor(calendarProvider) }
-
-    private val failbackReminder: FailbackAudioReminderInterface by lazy { FailbackAudioReminder() }
 
     val CalendarMonitorService: CalendarManualMonitorInterface
         get() = calendarMonitor
@@ -344,12 +343,11 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun fireEventReminder(context: Context) {
-        val settings = getSettings(context)
+        notificationManager.fireEventReminder(context);
+    }
 
-        if (!settings.remindersUseFailbackMethod)
-            notificationManager.fireEventReminder(context, EventFormatter(context));
-        else
-            failbackReminder.fireReminder(settings, context)
+    fun cleanupEventReminder(context: Context) {
+        notificationManager.cleanupEventReminder(context);
     }
 
     fun onMainActivityCreate(context: Context?) {
@@ -368,11 +366,16 @@ object ApplicationController : EventMovedHandler {
 
     fun onMainActivityResumed(context: Context?, shouldRepost: Boolean) {
         if (context != null) {
-            val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) };
+
+            cleanupEventReminder(context)
+
+            val changes = EventsStorage(context).use {
+                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+            };
 
             if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
-                context.persistentState.lastNotificationRePost = System.currentTimeMillis()
+                context.globalState.lastNotificationRePost = System.currentTimeMillis()
             }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);

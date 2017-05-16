@@ -170,7 +170,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             wakeScreenIfRequired(context, settings)
     }
 
-    override fun fireEventReminder(context: Context, formatter: EventFormatterInterface) {
+    override fun fireEventReminder(context: Context) {
 
         val settings = Settings(context)
         val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
@@ -185,48 +185,37 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             vibrationPattern = settings.reminderVibrationPattern
                     )
 
-            val (recentEvents, collapsedEvents) = arrangeEvents(db, System.currentTimeMillis(), settings)
+            val currentTime = System.currentTimeMillis()
 
-            if (!recentEvents.isEmpty()) {
-                // normal
+            val activeEvents =
+                    db.events
+                            .filter {
+                                (it.snoozedUntil == 0L)
+                                        || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
+                            }
 
-                val firstEvent = recentEvents.first()
+            val numActiveEvents = activeEvents.count()
+            val lastVisibility = activeEvents.map { it.lastEventVisibility }.max() ?: 0L
 
-                context.notificationManager.cancel(firstEvent.notificationId)
-
-                postNotification(
+            if (numActiveEvents > 0) {
+                postReminderNotification(
                         context,
-                        formatter,
-                        firstEvent,
+                        numActiveEvents,
+                        lastVisibility,
                         notificationSettings,
-                        true, // force, so it won't randomly pop-up this notification
-                        false, // was collapsed
-                        settings.snoozePresets,
-                        true,
                         isQuietPeriodActive
                 )
 
                 wakeScreenIfRequired(context, settings)
 
-            } else if (!collapsedEvents.isEmpty()) {
-                // collapsed
-                context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
-
-                postEverythingCollapsed(
-                        context,
-                        db,
-                        collapsedEvents,
-                        settings,
-                        notificationSettings,
-                        false,
-                        isQuietPeriodActive,
-                        null,
-                        true
-                )
-
-                wakeScreenIfRequired(context, settings)
+            } else {
+                context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
             }
         }
+    }
+
+    override fun cleanupEventReminder(context: Context) {
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
     }
 
     private fun postEverythingCollapsed(
@@ -575,6 +564,106 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     @Suppress("DEPRECATION")
+    private fun postReminderNotification(
+            ctx: Context,
+            numActiveEvents: Int,
+            lastVisibility: Long,
+            notificationSettings: NotificationSettingsSnapshot,
+            isQuietPeriodActive: Boolean
+    ) {
+        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val intent = Intent(ctx, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
+
+        val currentTime = System.currentTimeMillis()
+        val minutesAgo: Long = (currentTime - lastVisibility) / 1000L / 60L
+
+        val title = "Reminder: you have $numActiveEvents event"
+        val text = "Last notification $minutesAgo minutes ago" // FIXME - into resources!
+
+        val builder = NotificationCompat.Builder(ctx)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.stat_notify_calendar)
+                .setPriority(
+                        if (notificationSettings.headsUpNotification)
+                            Notification.PRIORITY_HIGH
+                        else
+                            Notification.PRIORITY_DEFAULT
+                )
+                .setContentIntent(
+                        pendingIntent
+                )
+                .setAutoCancel(true)
+                .setOngoing(false)
+                .setStyle(
+                        NotificationCompat.BigTextStyle().bigText(text)
+                )
+                .setWhen(
+                        lastVisibility
+                )
+                .setShowWhen(false)
+                .setSortKey(
+                        "${Long.MAX_VALUE - lastVisibility}" // hack to inverse it
+                )
+                .setCategory(
+                        NotificationCompat.CATEGORY_EVENT
+                )
+                .setOnlyAlertOnce(false)
+
+        if (notificationSettings.ringtoneUri != null) {
+            builder.setSound(notificationSettings.ringtoneUri)
+        }
+
+        if (notificationSettings.vibrationOn) {
+            builder.setVibrate(notificationSettings.vibrationPattern)
+        } else {
+            builder.setVibrate(longArrayOf(0))
+        }
+
+        if (notificationSettings.ledNotificationOn && (!isQuietPeriodActive || !notificationSettings.quietHoursMuteLED)) {
+            if (notificationSettings.ledPattern.size == 2)
+                builder.setLights(notificationSettings.ledColor, notificationSettings.ledPattern[0], notificationSettings.ledPattern[1])
+            else
+                builder.setLights(notificationSettings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+        }
+
+        val notification = builder.build()
+
+        try {
+            logger.info("adding reminder notification")
+
+            notificationManager.notify(
+                    Consts.NOTIFICATION_ID_REMINDER,
+                    notification
+            )
+        } catch (ex: Exception) {
+            logger.error("Exception: ${ex.toString()}, reminder notification stack:")
+            ex.printStackTrace()
+        }
+
+        if (notificationSettings.forwardToPebble
+                && !notificationSettings.pebbleForwardRemindersOnly) {
+            PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebbleOldFirmware)
+        }
+    }
+
+    private fun isNotificationVisible(ctx: Context, event: EventAlertRecord) : Boolean {
+
+        val intent = snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId)
+        val id = event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
+        val pendingIntent: PendingIntent? = PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_NO_CREATE)
+        return pendingIntent != null
+    }
+
+    private fun isCollapsedNotificationVisible(ctx: Context): Boolean {
+        val intent = Intent(ctx, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_NO_CREATE)
+
+        return pendingIntent != null
+    }
+
     private fun postNotification(
             ctx: Context,
             formatter: EventFormatterInterface,
@@ -776,6 +865,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
         }
     }
+
 
     private fun snoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 

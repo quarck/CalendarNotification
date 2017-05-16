@@ -122,7 +122,7 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
 
     val showColorInNotification: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, false)
+        get() = prefs.getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
 
     val notificationPlayTts: Boolean
         get() = prefs.getBoolean(NOTIFICATION_TTS_KEY, false)

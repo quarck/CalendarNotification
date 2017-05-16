@@ -108,18 +108,18 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         }
     }
 
-    override fun deleteAlertsOlderThan(db: SQLiteDatabase, time: Long) {
+    override fun deleteAlertsForEventsOlderThan(db: SQLiteDatabase, time: Long) {
 
-        logger.debug("deleteAlertsOlderThan $time")
+        logger.debug("deleteAlertsForEventsOlderThan $time")
 
         try {
             db.delete(
                     TABLE_NAME,
-                    "$KEY_ALERT_TIME < ?",
+                    "$KEY_INSTANCE_START < ?",
                     arrayOf(time.toString()))
         }
         catch (ex: Exception) {
-            logger.error("deleteAlertsOlderThan($time): exception $ex, ${ex.stackTrace}")
+            logger.error("deleteAlertsForEventsOlderThan($time): exception $ex, ${ex.stackTrace}")
         }
     }
 

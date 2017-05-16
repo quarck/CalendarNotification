@@ -66,8 +66,8 @@ class ManualAlertsStorage(val context: Context)
     override fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
         = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
 
-    override fun deleteAlertsOlderThan(time: Long)
-        = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlertsOlderThan(it, time) } }
+    override fun deleteAlertsForEventsOlderThan(time: Long)
+        = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.deleteAlertsForEventsOlderThan(it, time) } }
 
     override fun updateAlert(entry: ManualEventAlertEntry)
         = synchronized (ManualAlertsStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }

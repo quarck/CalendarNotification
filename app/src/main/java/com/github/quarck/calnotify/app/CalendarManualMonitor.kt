@@ -130,9 +130,10 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface): Ca
                 db.addAlert(alert)
             }
 
-            // some housekeeping
+            // some housekeeping - remove events that has instart start time older than 3 days
+            // (current design of this app is not expecting such events to have any outstanding alerts)
             val currentTime = System.currentTimeMillis()
-            db.deleteAlertsOlderThan(currentTime - Consts.ALERTS_DB_REMOVE_AFTER)
+            db.deleteAlertsForEventsOlderThan(currentTime - Consts.ALERTS_DB_REMOVE_AFTER)
         }
     }
 

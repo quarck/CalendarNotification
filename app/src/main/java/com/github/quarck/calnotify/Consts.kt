@@ -107,5 +107,5 @@ object Consts {
 
     const val LOGS_FOLDER = "logs"
 
-    const val  ALERTS_DB_REMOVE_AFTER = 30L * 24L * 3600L * 1000L
+    const val  ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
 }

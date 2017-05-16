@@ -31,7 +31,7 @@ interface ManualAlertsStorageInterface {
     fun deleteAlert(entry: ManualEventAlertEntry)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
 
-    fun deleteAlertsOlderThan(time: Long)
+    fun deleteAlertsForEventsOlderThan(time: Long)
 
     fun updateAlert(entry: ManualEventAlertEntry)
     fun updateAlerts(entries: List<ManualEventAlertEntry>)

@@ -49,6 +49,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import org.jetbrains.annotations.NotNull
@@ -149,7 +150,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun refreshReminderLastFired() {
         // avoid firing reminders when UI is active and user is interacting with it
-        applicationContext.persistentState.reminderLastFireTime = System.currentTimeMillis()
+        ReminderState(applicationContext).reminderLastFireTime = System.currentTimeMillis()
     }
 
     public override fun onStop() {

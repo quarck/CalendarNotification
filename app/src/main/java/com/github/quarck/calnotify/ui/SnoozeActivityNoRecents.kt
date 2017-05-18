@@ -28,14 +28,11 @@ import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -361,7 +358,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             return
         }
 
-        val lastAlarm = persistentState.lastTimerBroadcastReceived
+        val lastAlarm = globalState.lastTimerBroadcastReceived
         val currentTime = System.currentTimeMillis()
 
         val untilNextAlarmFromLastAlarm = res.snoozedUntil - lastAlarm

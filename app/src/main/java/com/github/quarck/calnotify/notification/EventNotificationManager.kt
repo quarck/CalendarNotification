@@ -38,6 +38,8 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.reminders.ReminderState
+import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
@@ -371,17 +373,25 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 
-        if (shouldPlayAndVibrate)
-            context.persistentState.updateNotificationLastFiredTime()
+        val reminderState = ReminderState(context)
+
+        // FIXME: should be ignoring reminderState.quietHoursOneTimeReminderEnabled here
+        // as we are now reminding using a different approach
+
+        if (shouldPlayAndVibrate) {
+            context.persistentState.notificationLastFireTime = System.currentTimeMillis()
+            reminderState.numRemindersFired = 0;
+        }
+
 
         if (isQuietPeriodActive
                 && events.isNotEmpty()
                 && !shouldPlayAndVibrate
-                && !settings.quietHoursOneTimeReminderEnabled) {
+                && !reminderState.quietHoursOneTimeReminderEnabled) {
 
             logger.debug("Would remind after snooze period")
 
-            settings.quietHoursOneTimeReminderEnabled = true
+            reminderState.quietHoursOneTimeReminderEnabled = true
         }
 
         if (shouldPlayAndVibrate && notificationsSettings.forwardToPebble)
@@ -547,17 +557,24 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-        if (playedAnySound)
-            context.persistentState.updateNotificationLastFiredTime()
+        val reminderState = ReminderState(context)
+
+        // FIXME: should be ignoring reminderState.quietHoursOneTimeReminderEnabled here
+        // as we are now reminding using a different approach
+
+        if (playedAnySound) {
+            context.persistentState.notificationLastFireTime = System.currentTimeMillis()
+            reminderState.numRemindersFired = 0;
+        }
 
         if (isQuietPeriodActive
                 && events.isNotEmpty()
                 && !playedAnySound
-                && !settings.quietHoursOneTimeReminderEnabled) {
+                && !reminderState.quietHoursOneTimeReminderEnabled) {
 
             logger.info("Was quiet due to quiet hours - would remind after snooze period")
 
-            settings.quietHoursOneTimeReminderEnabled = true
+            reminderState.quietHoursOneTimeReminderEnabled = true
         }
 
         return postedNotification
@@ -576,11 +593,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val intent = Intent(ctx, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
 
-        val currentTime = System.currentTimeMillis()
-        val minutesAgo: Long = (currentTime - lastVisibility) / 1000L / 60L
+        val persistentState = ctx.persistentState
 
-        val title = "Reminder: you have $numActiveEvents event"
-        val text = "Last notification $minutesAgo minutes ago" // FIXME - into resources!
+        val currentTime = System.currentTimeMillis()
+        val msAgo: Long = (currentTime - persistentState.notificationLastFireTime)
+
+        val resources = ctx.resources
+
+        val title =
+                if (numActiveEvents == 1)
+                    resources.getString(R.string.reminder_you_have_missed_event)
+                else
+                    resources.getString(R.string.reminder_you_have_missed_events)
+
+        val textTemplate = resources.getString(R.string.last_notification_s_ago)
+
+        val text = String.format(textTemplate,
+                EventFormatter(ctx).formatTimeDuration(msAgo))
 
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)

@@ -17,6 +17,8 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
+//TODO: when seeing a new event with alarm time in the past -- notify immediately
+
 package com.github.quarck.calnotify.app
 
 import android.content.Context

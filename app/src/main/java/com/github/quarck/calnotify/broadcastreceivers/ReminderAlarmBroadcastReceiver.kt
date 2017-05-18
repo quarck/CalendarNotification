@@ -27,9 +27,11 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
+import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.powerManager
@@ -46,7 +48,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             return;
         }
 
-        context.persistentState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
@@ -65,7 +67,9 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             var nextFireAt = 0L
             var shouldFire = false
 
-            if (settings.quietHoursOneTimeReminderEnabled) {
+            val reminderState = ReminderState(context)
+
+            if (reminderState.quietHoursOneTimeReminderEnabled) {
 
                 if (silentUntil == 0L) {
                     logger.info("One-shot enabled, not in quiet hours, firing")
@@ -86,11 +90,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             } else if (settings.remindersEnabled) {
 
                 val lastFireTime = Math.max( context.persistentState.notificationLastFireTime,
-                        context.persistentState.reminderLastFireTime)
+                        reminderState.reminderLastFireTime)
 
                 val sinceLastFire = currentTime - lastFireTime;
 
-                val numRemindersFired = context.persistentState.numRemindersFired
+                val numRemindersFired = reminderState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
                 logger.info("Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
@@ -116,7 +120,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOLD) && (lastFireTime > 0L)) {
                             logger.error("WARNING: timer delay detected, expected to receive timers with interval " +
                                     "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
-                                    "lastFire=$lastFireTime (last reminder at ${context.persistentState.reminderLastFireTime}, " +
+                                    "lastFire=$lastFireTime (last reminder at ${reminderState.reminderLastFireTime}, " +
                                     "last event at ${context.persistentState.notificationLastFireTime})")
 
                             ApplicationController.onReminderAlarmLate(context, sinceLastFire, reminderInterval, lastFireTime)
@@ -151,14 +155,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         ApplicationController.fireEventReminder(context);
 
-        // following will actually write xml to file, so check if it is 'true' at the moment
-        // before writing 'false' and so wasting flash memory cycles.
-        if (settings.quietHoursOneTimeReminderEnabled)
-            settings.quietHoursOneTimeReminderEnabled = false;
-        else
-            context.persistentState.numRemindersFired ++;
-
-        context.persistentState.reminderLastFireTime = currentTime
+        ReminderState(context).onReminderFired(currentTime)
 
         // auto-remove reminder notification after 15 seconds. All we need it for is to
         // play a sound

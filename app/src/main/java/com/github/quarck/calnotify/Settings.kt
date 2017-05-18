@@ -25,6 +25,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.preference.PreferenceManager
 import com.github.quarck.calnotify.prefs.PreferenceUtils
+import com.github.quarck.calnotify.utils.PersistentStorageBase
 import com.github.quarck.calnotify.utils.toIntOrNull
 
 
@@ -47,92 +48,87 @@ data class NotificationSettingsSnapshot
     val quietHoursMuteLED: Boolean
 )
 
-class Settings(context: Context) {
-    private var prefs: SharedPreferences
-
-    init {
-        prefs = PreferenceManager.getDefaultSharedPreferences(context)
-    }
+class Settings(context: Context): PersistentStorageBase(context) {
 
     var removeOriginal: Boolean
-        get() = prefs.getBoolean(REMOVE_ORIGINAL_KEY, true)
-        set(value) = prefs.setBoolean(REMOVE_ORIGINAL_KEY, value)
+        get() = getBoolean(REMOVE_ORIGINAL_KEY, true)
+        set(value) = setBoolean(REMOVE_ORIGINAL_KEY, value)
 
     var lastCustomSnoozeIntervalMillis: Long
-        get() = prefs.getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
-        set(value) = prefs.setLong(LAST_CUSTOM_INTERVAL_KEY, value)
+        get() = getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
+        set(value) = setLong(LAST_CUSTOM_INTERVAL_KEY, value)
 
     val showDismissButton: Boolean
-        get() = prefs.getBoolean(DISMISS_ENABLED_KEY, true)
+        get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
     val allowSwipeToSnooze: Boolean
-        get() = prefs.getBoolean(ALLOW_SWIPE_TO_SNOOZE_KEY, false)
+        get() = getBoolean(ALLOW_SWIPE_TO_SNOOZE_KEY, false)
 
     val vibraOn: Boolean
-        get() = prefs.getBoolean(VIBRATION_ENABLED_KEY, true)
+        get() = getBoolean(VIBRATION_ENABLED_KEY, true)
 
     val vibrationPattern: LongArray
         get() {
-            val idx = prefs.getString(VIBRATION_PATTERN_KEY, "0").toInt()
+            val idx = getString(VIBRATION_PATTERN_KEY, "0").toInt()
 
             val patterns = Consts.VIBRATION_PATTERNS
             return if (idx < patterns.size && idx >= 0) patterns[idx] else patterns[0]
         }
 
     val notificationOpensSnooze: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_OPENS_SNOOZE_KEY, false)
+        get() = getBoolean(NOTIFICATION_OPENS_SNOOZE_KEY, false)
 
     val notificationAutoDismissOnReschedule: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_AUTO_DISMISS_KEY, false)
+        get() = getBoolean(NOTIFICATION_AUTO_DISMISS_KEY, false)
 
     var debugNotificationAutoDismiss: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, false)
-        set(value) = prefs.setBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, value)
+        get() = getBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, false)
+        set(value) = setBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, value)
 
     var debugAlarmDelays: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, false)
-        set(value) = prefs.setBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, value)
+        get() = getBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, false)
+        set(value) = setBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, value)
 
     val ledNotificationOn: Boolean
-        get() = prefs.getBoolean(LED_ENABLED_KEY, true)
+        get() = getBoolean(LED_ENABLED_KEY, true)
 
     val ledColor: Int
-        get() = prefs.getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
+        get() = getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
 
     val ledPattern: IntArray
         get() =
-            prefs.getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
+            getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
                 .split(",")
                 .map { it.toInt() }
                 .toIntArray()
 
     val forwardToPebble: Boolean
-        get() = prefs.getBoolean(FORWARD_TO_PEBBLE_KEY, false)
+        get() = getBoolean(FORWARD_TO_PEBBLE_KEY, false)
 
     val pebbleOldFirmware: Boolean
-        get() = prefs.getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
+        get() = getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
 
     val pebbleForwardRemindersOnly: Boolean
-        get() = prefs.getBoolean(PEBBLE_FORWARD_ONLY_REMINDER_KEY, false)
+        get() = getBoolean(PEBBLE_FORWARD_ONLY_REMINDER_KEY, false)
 
     val headsUpNotification: Boolean
-        get() = prefs.getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
+        get() = getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
 
     val notificationWakeScreen: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
+        get() = getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
 
     val showColorInNotification: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
+        get() = getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
 
     val notificationPlayTts: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_TTS_KEY, false)
+        get() = getBoolean(NOTIFICATION_TTS_KEY, false)
 
     val viewAfterEdit: Boolean
-        get() = prefs.getBoolean(VIEW_AFTER_EDIT_KEY, true)
+        get() = getBoolean(VIEW_AFTER_EDIT_KEY, true)
 
     val snoozePresets: LongArray
         get() {
-            var ret = PreferenceUtils.parseSnoozePresets(prefs.getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
+            var ret = PreferenceUtils.parseSnoozePresets(getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET))
 
             if (ret == null)
                 ret = PreferenceUtils.parseSnoozePresets(DEFAULT_SNOOZE_PRESET)
@@ -144,14 +140,14 @@ class Settings(context: Context) {
         }
 
     val showCustomSnoozeAndUntil: Boolean
-        get() = prefs.getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
+        get() = getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
 
     private fun loadRingtoneUri(settingsKey: String): Uri? {
         var ringtone: Uri?
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
 
-        val uriValue = prefs.getString(settingsKey, ringtoneNotSetValue)
+        val uriValue = getString(settingsKey, ringtoneNotSetValue)
 
         if (uriValue == null || uriValue.isEmpty()) {
             // Silent mode -- string is empty
@@ -179,17 +175,17 @@ class Settings(context: Context) {
         get() = loadRingtoneUri (if (reminderCustomVibra) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
 
     val reminderCustomRingtone: Boolean
-        get() = prefs.getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
+        get() = getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
 
     val reminderCustomVibra: Boolean
-        get() = prefs.getBoolean(REMINDERS_CUSTOM_VIBRATION_KEY, false)
+        get() = getBoolean(REMINDERS_CUSTOM_VIBRATION_KEY, false)
 
     val reminderVibraOn: Boolean
-        get() = prefs.getBoolean(if (reminderCustomVibra) REMINDERS_VIBRATION_ENABLED_KEY else VIBRATION_ENABLED_KEY, true)
+        get() = getBoolean(if (reminderCustomVibra) REMINDERS_VIBRATION_ENABLED_KEY else VIBRATION_ENABLED_KEY, true)
 
     val reminderVibrationPattern: LongArray
         get() {
-            val idx = prefs.getString(
+            val idx = getString(
                     if (reminderCustomVibra) REMINDERS_VIBRATION_PATTERN_KEY else VIBRATION_PATTERN_KEY, "0").toInt()
 
             val patterns = Consts.VIBRATION_PATTERNS
@@ -197,101 +193,101 @@ class Settings(context: Context) {
         }
 
     val maxNotifications: Int
-        get() = prefs.getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.DEFAULT_NOTIFICATIONS)
+        get() = getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.DEFAULT_NOTIFICATIONS)
 
     val collapseEverything: Boolean
-        get() = prefs.getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)
+        get() = getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)
 
     val remindersEnabled: Boolean
-        get() = prefs.getBoolean(ENABLE_REMINDERS_KEY, false)
+        get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
     val remindersIntervalMillis: Long
-        get() = prefs.getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
+        get() = getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
     val maxNumberOfReminders: Int
-        get() = prefs.getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toIntOrNull() ?: 0
+        get() = getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toIntOrNull() ?: 0
 
     val quietHoursEnabled: Boolean
-        get() = prefs.getBoolean(ENABLE_QUIET_HOURS_KEY, false)
+        get() = getBoolean(ENABLE_QUIET_HOURS_KEY, false)
 
     val quietHoursFrom: Pair<Int, Int>
-        get() = PreferenceUtils.unpackTime( prefs.getInt(QUIET_HOURS_FROM_KEY, 0) )
+        get() = PreferenceUtils.unpackTime( getInt(QUIET_HOURS_FROM_KEY, 0) )
 
     val quietHoursTo: Pair<Int, Int>
-        get() = PreferenceUtils.unpackTime( prefs.getInt(QUIET_HOURS_TO_KEY, 0) )
+        get() = PreferenceUtils.unpackTime( getInt(QUIET_HOURS_TO_KEY, 0) )
 
     val quietHoursMutePrimary: Boolean
-        get() = prefs.getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
+        get() = getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
     val quietHoursMuteLED: Boolean
-        get() = prefs.getBoolean(QUIET_HOURS_MUTE_LED, false)
+        get() = getBoolean(QUIET_HOURS_MUTE_LED, false)
 
-    var quietHoursOneTimeReminderEnabled: Boolean
-        get() = prefs.getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
-        set(value) = prefs.setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
+//    var quietHoursOneTimeReminderEnabled: Boolean
+//        get() = getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
+//        set(value) = setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
     fun getCalendarIsHandled(calendarId: Long) =
-        prefs.getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
+        getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
 
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
-        prefs.setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
+        setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
     var useCompactView: Boolean
-        get() = prefs.getBoolean(USE_COMPACT_LAYOUT_KEY, true)
-        set(value) = prefs.setBoolean(USE_COMPACT_LAYOUT_KEY, value)
+        get() = getBoolean(USE_COMPACT_LAYOUT_KEY, true)
+        set(value) = setBoolean(USE_COMPACT_LAYOUT_KEY, value)
 
     val haloLightDatePicker: Boolean
-        get() = prefs.getBoolean(HALO_LIGHT_DATE_PICKER_KEY, false)
+        get() = getBoolean(HALO_LIGHT_DATE_PICKER_KEY, false)
 
     val haloLightTimePicker: Boolean
-        get() = prefs.getBoolean(HALO_LIGHT_TIMER_PICKER_KEY, false)
+        get() = getBoolean(HALO_LIGHT_TIMER_PICKER_KEY, false)
 
     val keepHistory: Boolean
-        get() = prefs.getBoolean(KEEP_HISTORY_KEY, false)
+        get() = getBoolean(KEEP_HISTORY_KEY, false)
 
     val keepHistoryDays: Int
-        get() = prefs.getString(KEEP_HISTORY_DAYS_KEY, "").toIntOrNull() ?: 3
+        get() = getString(KEEP_HISTORY_DAYS_KEY, "").toIntOrNull() ?: 3
 
     val keepHistoryMilliseconds: Long
         get() = keepHistoryDays.toLong() * Consts.DAY_IN_MILLISECONDS
 
     var powerOptimisationWarningShown: Boolean
-        get() = prefs.getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
-        set(value) = prefs.setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
+        get() = getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
+        set(value) = setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
 
     var versionCodeFirstInstalled: Long
-        get() = prefs.getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
-        set(value) = prefs.setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
+        get() = getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
+        set(value) = setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
 
     var showNewStyleMessage: Boolean
-        get() = prefs.getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
-        set(value) = prefs.setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
+        get() = getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
+        set(value) = setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
 
     var dontShowMarshmallowWarning: Boolean
-        get() = prefs.getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
-        set(value) = prefs.setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
+        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
+        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
 
     var dontShowMarshmallowWarningInSettings: Boolean
-        get() = prefs.getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
-        set(value) = prefs.setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
+        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
+        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
 
     val lightweightSwipe: Boolean
-        get() = prefs.getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
+        get() = getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
 
     val  useSetAlarmClock: Boolean
-        get() = prefs.getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
+        get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
 
     val shouldRemindForEventsWithNoReminders: Boolean
-        get() = prefs.getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
+        get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
 
     val defaultReminderTimeForEventWithNoReminder: Long
-        get() = prefs.getLong(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15L * 60L * 1000L)
+        get() = getLong(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15L * 60L * 1000L)
 
     val defaultReminderTimeForAllDayEventWithNoreminder: Long
-        get() = prefs.getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L * 3600L * 1000L)
+        get() = getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L * 3600L * 1000L)
 
     val manualCalWatchScanWindow: Long
-        get() = prefs.getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
+        get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
 
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot

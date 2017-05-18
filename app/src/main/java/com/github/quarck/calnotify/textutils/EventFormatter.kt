@@ -317,4 +317,50 @@ class EventFormatter(val ctx: Context): EventFormatterInterface {
 
         return ret
     }
+
+    fun formatTimeDuration(time: Long, granularity: Long = 1L): String {
+        val num: Long
+        val unit: String
+        var timeSeconds = time / 1000L;
+
+        timeSeconds -= timeSeconds % granularity
+
+        val resources = ctx.resources
+
+        if (timeSeconds == 0L)
+            return resources.getString(R.string.now)
+
+        if (timeSeconds < 60L) {
+            num = timeSeconds
+            unit =
+                    if (num != 1L)
+                        resources.getString(R.string.seconds)
+                    else
+                        resources.getString(R.string.second)
+        } else if (timeSeconds % Consts.DAY_IN_SECONDS == 0L) {
+            num = timeSeconds / Consts.DAY_IN_SECONDS;
+            unit =
+                    if (num != 1L)
+                        resources.getString(R.string.days)
+                    else
+                        resources.getString(R.string.day)
+        } else if (timeSeconds % Consts.HOUR_IN_SECONDS == 0L) {
+            num = timeSeconds / Consts.HOUR_IN_SECONDS;
+            unit =
+                    if (num != 1L)
+                        resources.getString(R.string.hours)
+                    else
+                        resources.getString(R.string.hour)
+        } else {
+            num = timeSeconds / Consts.MINUTE_IN_SECONDS;
+            unit =
+                    if (num != 1L)
+                        resources.getString(R.string.minutes)
+                    else
+                        resources.getString(R.string.minute)
+        }
+
+        return "$num $unit"
+    }
+
 }

@@ -87,12 +87,15 @@
 
     <string name="error_too_many_presets">Only up to 6 presets are supported, extra presets would be ignored</string>
 
+    <string name="now">now</string>
     <string name="days">days</string>
     <string name="day">day</string>
     <string name="hours">hours</string>
     <string name="hour">hour</string>
     <string name="minutes">minutes</string>
     <string name="minute">minute</string>
+    <string name="seconds">seconds</string>
+    <string name="second">second</string>
     <string name="no_events_to_display">No event notifications to display\nActive and snoozed notifications would appear here</string>
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
     <string name="view_after_edit">View after edit</string>
@@ -298,4 +301,8 @@
     <string name="reminder_custom_vibration">Custom vibration</string>
     <string name="quiet_hours_mute_led">Mute LED</string>
     <string name="quiet_hours_mute_led_summary">Led notification would be disabled during quiet hours</string>
+
+    <string name="reminder_you_have_missed_event">Reminder: you have missed event</string>
+    <string name="reminder_you_have_missed_events">Reminder: you have missed events</string>
+    <string name="last_notification_s_ago" formatted="false">Last notification: %s ago</string>
 </resources>

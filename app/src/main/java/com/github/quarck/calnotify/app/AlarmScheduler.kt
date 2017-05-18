@@ -31,7 +31,9 @@ import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiv
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
+import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
@@ -90,7 +92,10 @@ object AlarmScheduler: AlarmSchedulerInterface {
             // Schedule reminders alarm
             var reminderAlarmNextFire: Long? = null
 
-            if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
+            val quietHoursOneTimeReminderEnabled =
+                ReminderState(context).quietHoursOneTimeReminderEnabled
+
+            if (settings.remindersEnabled || quietHoursOneTimeReminderEnabled) {
 
                 val hasActiveNotifications = events.filter { it.snoozedUntil == 0L }.any()
 
@@ -98,7 +103,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                     reminderAlarmNextFire = System.currentTimeMillis() + settings.remindersIntervalMillis
 
-                    if (settings.quietHoursOneTimeReminderEnabled) {
+                    if (quietHoursOneTimeReminderEnabled) {
                         // a little bit of a hack to set it to fire "as soon as possible after quiet hours"
                         reminderAlarmNextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOLD
                     }

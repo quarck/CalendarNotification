@@ -71,7 +71,7 @@ object ApplicationController : EventMovedHandler {
 
         logger.info("onEventAlarm at ${System.currentTimeMillis()} -- we need to remind about snoozed event");
 
-        context.persistentState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
     }

@@ -503,7 +503,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     postNotification(context, formatter, event,
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
-                            force, wasCollapsed, settings.snoozePresets, false, isQuietPeriodActive)
+                            force, wasCollapsed, settings.snoozePresets, isQuietPeriodActive)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -527,7 +527,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         force,
                         false,
                         settings.snoozePresets,
-                        false,
                         isQuietPeriodActive)
 
                 val currentTime = System.currentTimeMillis()
@@ -672,8 +671,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardToPebble
-                && !notificationSettings.pebbleForwardRemindersOnly) {
+        if (notificationSettings.forwardToPebble) {
             PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebbleOldFirmware)
         }
     }
@@ -701,7 +699,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isForce: Boolean,
             wasCollapsed: Boolean,
             snoozePresets: LongArray,
-            isReminder: Boolean,
             isQuietPeriodActive: Boolean
     ) {
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -889,8 +886,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardToPebble
-                && (isReminder || !notificationSettings.pebbleForwardRemindersOnly)) {
+        if (notificationSettings.forwardToPebble && !notificationSettings.pebbleForwardRemindersOnly) {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
         }
     }

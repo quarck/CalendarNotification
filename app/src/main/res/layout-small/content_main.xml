@@ -8,39 +8,6 @@
                 tools:context=".ui.MainActivity"
                 tools:showIn="@layout/activity_main">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/cardview_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_events"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/cardview_light_background"
-            />
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textColor="@color/secondary_text"
-        android:text="@string/no_events_to_display" />
-
-    <TextView
-        android:id="@+id/no_permissions_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textColor="@color/secondary_text"
-        android:text="@string/no_calendar_permissions_main" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -305,6 +272,42 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/cardview_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/activity_main_bottom_indicators"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/secondary_text"
+        android:text="@string/no_events_to_display" />
+
+    <TextView
+        android:id="@+id/no_permissions_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/secondary_text"
+        android:text="@string/no_calendar_permissions_main" />
 
 
 </RelativeLayout>

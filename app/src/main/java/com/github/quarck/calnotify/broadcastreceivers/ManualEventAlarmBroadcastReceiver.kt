@@ -1,12 +1,12 @@
 //
-//   Calendar Notifications Plus  
-//   Copyright (C) 2016 Sergey Parshin (s.parshin.sc@gmail.com)
+//   Calendar Notifications Plus
+//   Copyright (C) 2017 Sergey Parshin (s.parshin.sc@gmail.com)
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
 //   the Free Software Foundation; either version 3 of the License, or
 //   (at your option) any later version.
-// 
+//
 //   This program is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,24 +23,32 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.toLongOrNull
 
-class EventReminderBroadcastReceiver : BroadcastReceiver() {
+
+open class ManualEventAlarmGenericBroadcastReceiver: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
         if (context == null || intent == null)
-            return;
+            return
 
-        logger.debug("Event reminder received, ${intent.data}, ${intent.action}");
-
-        ApplicationController.CalendarMonitorService.onProviderReminderBroadcast(context, intent)
+        ApplicationController.CalendarMonitorService.onAlarmBroadcast(context, intent)
     }
+}
 
-    companion object {
-        private val logger = Logger("BroadcastReceiverEventReminder");
+class ManualEventAlarmBroadcastReceiver: ManualEventAlarmGenericBroadcastReceiver() {
+}
+
+class ManualEventExactAlarmBroadcastReceiver: ManualEventAlarmGenericBroadcastReceiver() {
+}
+
+class ManualEventAlarmPerioidicRescanBroadcastReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+        if (context == null || intent == null)
+            return
+
+        ApplicationController.CalendarMonitorService.onPeriodicRescanBroadcast(context, intent)
     }
 }

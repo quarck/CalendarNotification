@@ -20,15 +20,17 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
+import android.os.Handler
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.calendarmonitor.CalendarManualMonitor
+import com.github.quarck.calnotify.calendarmonitor.CalendarManualMonitorInterface
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.*
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -81,12 +83,17 @@ object ApplicationController : EventMovedHandler {
         logger.info("Application updated, reloading calendar")
 
         val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+        }
+        // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
+
+        // this might fire new notifications
+        val monitorChanges = calendarMonitor.onUpgrade(context)
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes)
+        if (changes || monitorChanges)
             UINotifierService.notifyUI(context, false);
     }
 
@@ -94,20 +101,28 @@ object ApplicationController : EventMovedHandler {
 
         logger.info("System rebooted - reloading calendar")
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) };
+        val changes = EventsStorage(context).use {
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+        };
+        // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
+
+        // this might fire new notifications
+        val monitorChanges = calendarMonitor.onBoot(context)
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes)
+        if (changes || monitorChanges)
             UINotifierService.notifyUI(context, false);
     }
 
-    fun onCalendarChanged(context: Context) {
+    fun handleOnCalendarChanged(context: Context) {
 
-        logger.info("Calendar changed notification received")
+        val changes = EventsStorage(context).use {
+            db ->
+            calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
+        }
 
-        val changes = EventsStorage(context).use { calendarReloadManager.reloadCalendar(context, it, calendarProvider, this) }
         if (changes) {
             notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
@@ -117,6 +132,16 @@ object ApplicationController : EventMovedHandler {
         } else {
             logger.info("No caclendar changes detected")
         }
+    }
+
+    fun onCalendarChanged(context: Context) {
+
+        logger.info("Calendar changed notification received")
+
+        calendarMonitor.onCalendarChange(context)
+
+        val delayInMilliseconds = 2000L
+        Handler().postDelayed({ handleOnCalendarChanged(context) }, delayInMilliseconds)
     }
 
     fun onCalendarEventFired(context: Context, event: EventAlertRecord): Boolean {
@@ -373,7 +398,10 @@ object ApplicationController : EventMovedHandler {
                 calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
             };
 
-            if (shouldRepost || changes) {
+            // this might fire new notifications
+            val monitorChanges = calendarMonitor.onAppStarted(context)
+
+            if (shouldRepost || changes || monitorChanges) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
                 context.globalState.lastNotificationRePost = System.currentTimeMillis()
             }

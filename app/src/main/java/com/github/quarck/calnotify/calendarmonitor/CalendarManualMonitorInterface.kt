@@ -17,9 +17,10 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.app
+package com.github.quarck.calnotify.calendarmonitor
 
 import android.content.Context
+import android.content.Intent
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
 import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
@@ -27,9 +28,21 @@ import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
 
 interface CalendarManualMonitorInterface {
 
-    fun getNextAlertTime(context: Context, since: Long): Long?
+    fun onAlarmBroadcast(context: Context, intent: Intent)
 
-    fun getAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<ManualEventAlertEntry>
+    fun onPeriodicRescanBroadcast(context: Context, intent: Intent)
+
+    fun onBoot(context: Context): Boolean
+
+    fun onAppStarted(context: Context): Boolean
+
+    fun onUpgrade(context: Context): Boolean
+
+    fun onProviderReminderBroadcast(context: Context, intent: Intent)
+
+    fun onCalendarChange(context: Context)
+
+//    fun getAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<ManualEventAlertEntry>
 
 //    fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord>
 
@@ -38,8 +51,4 @@ interface CalendarManualMonitorInterface {
     fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean
 
     fun getAlertWasHandled(db: ManualAlertsStorage, ev: EventAlertRecord): Boolean
-
-    fun performManualRescan(context: Context) // could fire alert immediately
-
-    fun scheduleNextManualAlert(context: Context, alertsSince: Long) // could fire alert immediately
 }

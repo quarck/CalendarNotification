@@ -108,5 +108,8 @@ object Consts {
 
     const val LOGS_FOLDER = "logs"
 
-    const val  ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
+    const val ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
+
+    const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
+    const val CALENDAR_DEEP_RESCAN_INTERVAL = 2 * 3600L * 1000L  // 2hrs
 }

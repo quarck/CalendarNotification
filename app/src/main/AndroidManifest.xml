@@ -177,11 +177,16 @@
                 <data android:host="com.android.calendar" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".broadcastreceivers.SnoozeAlarmBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ManualEventAlarmBroadcastReceiver" />
 
         <receiver android:name=".broadcastreceivers.SnoozeExactAlarmBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.ReminderExactAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ManualEventExactAlarmBroadcastReceiver" />
+
+        <receiver android:name=".broadcastreceivers.ManualEventAlarmPerioidicRescanBroadcastReceiver" />
 
         <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>

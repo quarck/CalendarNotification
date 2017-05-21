@@ -48,7 +48,7 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
 
                 UINotifierService.notifyUI(this, true);
             } else {
-                logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
+                logger.error("notificationId=$notificationId, eventId=$eventId, instanceStartTime=$instanceStartTime, or type is null")
             }
         } else {
             logger.error("Intent is null!")

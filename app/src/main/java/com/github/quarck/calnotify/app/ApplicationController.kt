@@ -415,6 +415,7 @@ object ApplicationController : EventMovedHandler {
 
     fun onTimeChanged(context: Context) {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        calendarMonitor.onSystemTimeChange(context)
     }
 
     fun dismissEvent(
@@ -461,8 +462,12 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use {
             db ->
             val event = db.getEvent(eventId, instanceStartTime)
-            if (event != null)
+            if (event != null) {
+                logger.debug("Dismissing event ${event.eventId} / ${event.instanceStartTime}")
                 dismissEvent(context, db, event, dismissType, notifyActivity)
+            } else {
+                logger.error("dismissEvent: can't find event $eventId, $instanceStartTime")
+            }
         }
     }
 

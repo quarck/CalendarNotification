@@ -27,6 +27,8 @@ import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 
 interface CalendarMonitorInterface {
 
+    fun onSystemTimeChange(context: Context)
+
     fun onAlarmBroadcast(context: Context, intent: Intent)
 
     fun onPeriodicRescanBroadcast(context: Context, intent: Intent)

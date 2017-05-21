@@ -135,6 +135,7 @@ class EventsStorageImplV7
     }
 
     override fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
+
         val values = eventRecordToContentValues(event)
 
         logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");

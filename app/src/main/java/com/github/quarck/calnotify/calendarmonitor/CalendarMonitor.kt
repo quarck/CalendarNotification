@@ -49,6 +49,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
     private var lastScan = 0L
 
+    override fun onSystemTimeChange(context: Context) {
+        scanAndScheduleAlarms(context)
+    }
+
     // should return true if we have fired at new events, so UI should reload if it is open
     override fun onBoot(context: Context): Boolean {
         logger.debug("onBoot: scanning and setting alarms");
@@ -193,12 +197,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                 if (getAlertWasHandled(context, event)) {
                     logger.info("Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already [properly by Calendar Provider receiver]")
 
-                    if (settings.enableMonitorDebug) {
-                        event.origin = EventOrigin.ProviderBroadcastFollowingManual
-                        event.timeFirstSeen = System.currentTimeMillis()
-                        EventsStorage(context).use { it.updateEvent(event) }
-                        needsToRepostNotifications = true
-                    }
+//                    if (settings.enableMonitorDebug) {
+//                        event.origin = EventOrigin.ProviderBroadcastFollowingManual
+//                        event.timeFirstSeen = System.currentTimeMillis()
+//                        EventsStorage(context).use { it.updateEvent(event) }
+//                        needsToRepostNotifications = true
+//                    }
 
                     continue
                 }

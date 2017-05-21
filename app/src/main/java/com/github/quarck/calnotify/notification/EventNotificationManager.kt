@@ -29,10 +29,7 @@ import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.text.format.DateUtils
 import com.github.quarck.calnotify.*
-import com.github.quarck.calnotify.calendar.CalendarIntents
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.calendar.displayedStartTime
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
@@ -501,9 +498,16 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
-                    postNotification(context, formatter, event,
+                    postNotification(
+                            context,
+                            settings,
+                            formatter,
+                            event,
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
-                            force, wasCollapsed, settings.snoozePresets, isQuietPeriodActive)
+                            force,
+                            wasCollapsed,
+                            settings.snoozePresets,
+                            isQuietPeriodActive)
 
                     // Update db to indicate that this event is currently actively displayed
                     db.updateEvent(event, displayStatus = EventDisplayStatus.DisplayedNormal)
@@ -521,6 +525,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 postNotification(
                         context,
+                        settings,
                         formatter,
                         event,
                         if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings,
@@ -693,6 +698,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun postNotification(
             ctx: Context,
+            settings: Settings,
             formatter: EventFormatterInterface,
             event: EventAlertRecord,
             notificationSettings: NotificationSettingsSnapshot,
@@ -726,8 +732,16 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val notificationText = formatter.formatNotificationSecondaryText(event)
 
+        var title = event.title
+
+        if (settings.enableMonitorDebug
+                && event.origin != EventOrigin.ProviderBroadcast
+                && event.timeFirstSeen != 0L) {
+            title = "#${event.origin},${(event.timeFirstSeen - event.alertTime) / 60000L}m# ${event.title}"
+        }
+
         val builder = NotificationCompat.Builder(ctx)
-                .setContentTitle(event.title)
+                .setContentTitle(title)
                 .setContentText(notificationText)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(

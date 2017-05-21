@@ -23,15 +23,15 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-class EventsStorageImplV7()
-: EventsStorageImplInterface {
+class EventsStorageImplV7
+    : EventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -54,17 +54,17 @@ class EventsStorageImplV7()
                 "$KEY_INSTANCE_START INTEGER, " +
                 "$KEY_INSTANCE_END INTEGER, " +
 
-                "$KEY_LOCATION STRING, " +
+                "$KEY_LOCATION STRING, " +              // FIXME!!! Must be 'TEXT'
                 "$KEY_SNOOZED_UNTIL INTEGER, " +
                 "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
                 "$KEY_DISPLAY_STATUS INTEGER, " +
                 "$KEY_COLOR INTEGER, " +
                 "$KEY_IS_REPEATING TEXT, " +
 
-                "$KEY_ALL_DAY TEXT, " +         // FIXME
-                "$KEY_RESERVED_INT3 TEXT, " +      // FIXME
+                "$KEY_ALL_DAY TEXT, " +           // FIXME
+                "$KEY_EVENT_ORIGIN TEXT, " +      // FIXME
+                "$KEY_TIME_FIRST_SEEN TEXT, " +   // FIXME
 
-                "$KEY_RESERVED_STR1 TEXT, " +
                 "$KEY_RESERVED_STR2 TEXT, " +
                 "$KEY_RESERVED_STR3 TEXT, " +
 
@@ -112,7 +112,7 @@ class EventsStorageImplV7()
 
         var ret = 0;
 
-        val query = "SELECT MAX(${KEY_NOTIFICATIONID}) FROM " + TABLE_NAME
+        val query = "SELECT MAX($KEY_NOTIFICATIONID) FROM " + TABLE_NAME
 
         val cursor = db.rawQuery(query, null)
 
@@ -250,7 +250,7 @@ class EventsStorageImplV7()
             " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
             arrayOf(eventId.toString(), instanceStartTime.toString()))
 
-        logger.debug("deleteEventImpl ${eventId}, instance=${instanceStartTime} ")
+        logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
     }
 
     private fun eventRecordToContentValues(event: EventAlertRecord, includeKeyValues: Boolean = false): ContentValues {
@@ -274,11 +274,10 @@ class EventsStorageImplV7()
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
         values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
+        values.put(KEY_EVENT_ORIGIN, event.origin.code)
+        values.put(KEY_TIME_FIRST_SEEN, event.timeFirstSeen)
 
         // Fill reserved keys with some placeholders
-        values.put(KEY_RESERVED_INT3, 0L)
-
-        values.put(KEY_RESERVED_STR1, "")
         values.put(KEY_RESERVED_STR2, "")
         values.put(KEY_RESERVED_STR3, "")
 
@@ -303,7 +302,9 @@ class EventsStorageImplV7()
             displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
             color = cursor.getInt(PROJECTION_KEY_COLOR),
             isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,
-            isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
+            isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
+            origin = EventOrigin.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ORIGIN)),
+            timeFirstSeen = cursor.getLong(PROJECTION_KEY_TIME_FIRST_SEEN)
         )
     }
 
@@ -331,12 +332,12 @@ class EventsStorageImplV7()
         private const val KEY_LAST_EVENT_VISIBILITY = "lastSeen"
         private const val KEY_COLOR = "color"
         private const val KEY_ALERT_TIME = "alertTime"
+        private const val KEY_EVENT_ORIGIN = "i3"
+        private const val KEY_TIME_FIRST_SEEN = "s1"
 
-        private const val KEY_RESERVED_STR1 = "s1"
+
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
-
-        private const val KEY_RESERVED_INT3 = "i3"
 
         private val SELECT_COLUMNS = arrayOf<String>(
             KEY_CALENDAR_ID,
@@ -354,7 +355,9 @@ class EventsStorageImplV7()
             KEY_DISPLAY_STATUS,
             KEY_COLOR,
             KEY_IS_REPEATING,
-            KEY_ALL_DAY
+            KEY_ALL_DAY,
+            KEY_EVENT_ORIGIN,
+            KEY_TIME_FIRST_SEEN
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0;
@@ -373,5 +376,7 @@ class EventsStorageImplV7()
         const val PROJECTION_KEY_COLOR = 13;
         const val PROJECTION_KEY_IS_REPEATING = 14;
         const val PROJECTION_KEY_ALL_DAY = 15;
+        const val PROJECTION_KEY_EVENT_ORIGIN = 16;
+        const val PROJECTION_KEY_TIME_FIRST_SEEN = 17;
     }
 }

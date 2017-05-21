@@ -289,6 +289,10 @@ class Settings(context: Context): PersistentStorageBase(context) {
     val manualCalWatchScanWindow: Long
         get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
 
+    var enableMonitorDebug: Boolean
+        get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
+        set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
+
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
@@ -397,6 +401,8 @@ class Settings(context: Context): PersistentStorageBase(context) {
         private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_reminder_time"
 
         private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
+
+        private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

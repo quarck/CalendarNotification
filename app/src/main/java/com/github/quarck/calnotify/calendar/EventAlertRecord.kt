@@ -19,6 +19,26 @@
 
 package com.github.quarck.calnotify.calendar
 
+enum class EventOrigin(val code: Int) {
+    ProviderBroadcast(0),
+    ProviderManual(1),
+    FullManual(2);
+
+    override fun toString(): String
+        = when (this) {
+            ProviderBroadcast -> "PB"
+            ProviderManual -> "PM"
+            FullManual -> "FM"
+            else -> "UND"
+        }
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
+
+
 data class EventAlertRecord(
     val calendarId: Long,
     val eventId: Long,
@@ -35,7 +55,9 @@ data class EventAlertRecord(
     var lastEventVisibility: Long,
     var snoozedUntil: Long = 0,
     var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
-    var color: Int = 0
+    var color: Int = 0,
+    var origin: EventOrigin = EventOrigin.ProviderBroadcast,
+    var timeFirstSeen: Long = 0L
 )
 
 

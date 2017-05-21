@@ -99,17 +99,6 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
             <ToggleButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/buttonTestToggleAbortBroadcast"
-                android:onClick="OnButtonToggleBroadcastAbortClick"
-                android:visibility="visible"
-                android:textOn="ABORTING BROADCAST"
-                android:textOff="NOT ABORTING BROADCAST"
-                android:padding="14dp"
-                />
-
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/buttonTestToggleRemove"
                 android:onClick="OnButtonToggleRemoveClick"
                 android:visibility="visible"
@@ -140,6 +129,16 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:padding="14dp"
                 />
 
+            <ToggleButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonTestToggleDebugMonitor"
+                android:onClick="OnButtonToggleDebugMonitorClick"
+                android:visibility="visible"
+                android:textOn="DEBUGGING MONITOR"
+                android:textOff="NOT DEBUGGING MONITOR"
+                android:padding="14dp"
+                />
 
         </LinearLayout>
 

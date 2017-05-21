@@ -33,10 +33,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.AlarmScheduler
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.*
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.calendar.CalendarProviderInterface
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -149,6 +146,8 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
 
                 logger.info("Seen event ${event.eventId} / ${event.instanceStartTime}")
 
+                event.origin = EventOrigin.ProviderBroadcast
+                event.timeFirstSeen = System.currentTimeMillis()
                 val wasHandled = ApplicationController.onCalendarEventFired(context, event);
 
                 if (wasHandled) {
@@ -192,34 +191,10 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
                 logger.info("Warning: Calendar Privider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                 ret = true
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                // FIXME: REMOVE THIS LATER
-                val eventCopy = event.copy(title="!!MANUAL!!: ${event.title}")
 
-                val wasHandled = ApplicationController.onCalendarEventFired(context, eventCopy);
+                event.origin = EventOrigin.ProviderManual
+                event.timeFirstSeen = System.currentTimeMillis()
+                val wasHandled = ApplicationController.onCalendarEventFired(context, event);
 
                 if (wasHandled) {
                     setAlertWasHandled(context, event, createdByUs = false)
@@ -355,10 +330,17 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
             val now = System.currentTimeMillis()
 
             logger.info("Setting alarm at $time (${(time-now)/1000L/60L} mins from now)")
+
+            val exactTime =
+                    if (!settings.enableMonitorDebug)
+                        time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
+                    else
+                        time - Consts.ALARM_THRESHOLD / 2 // give calendar provider no chance! we want to handle it before it!
+
             context.alarmManager.setExactAndAlarm(
                     context,
                     settings,
-                    time + Consts.ALARM_THRESHOLD / 2, // give calendar provider a little chance - schedule alarm to a bit after
+                    exactTime,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                     ManualEventExactAlarmBroadcastReceiver::class.java,
                     MainActivity::class.java, // alarm info intent

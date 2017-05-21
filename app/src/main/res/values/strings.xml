@@ -305,4 +305,6 @@
     <string name="reminder_you_have_missed_event">Reminder: you have missed event</string>
     <string name="reminder_you_have_missed_events">Reminder: you have missed events</string>
     <string name="last_notification_s_ago" formatted="false">Last notification: %s ago</string>
+
+    <string name="build_time_string_format" formatted="false">Build time: %s</string>
 </resources>

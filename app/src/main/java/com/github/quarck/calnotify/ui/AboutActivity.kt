@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -29,6 +28,10 @@ import android.widget.TextView
 
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.BuildConfig
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class AboutActivity : AppCompatActivity() {
 
@@ -41,10 +44,16 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         val versionText = find<TextView?>(R.id.text_view_app_version)
-
         val pInfo = packageManager.getPackageInfo(packageName, 0);
+
         versionText?.text = pInfo.versionName
 
+        val buildTime = find<TextView?>(R.id.text_view_app_build_time)
+        buildTime?.text = String.format(resources.getString(R.string.build_time_string_format), getBuildDate())
+    }
+
+    fun getBuildDate(): String {
+        return SimpleDateFormat.getInstance().format(Date(BuildConfig.TIMESTAMP));
     }
 
     @Suppress("UNUSED_PARAMETER", "unused")

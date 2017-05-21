@@ -318,11 +318,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         for (iteration in 0..MAX_ITERATIONS) {
 
             if (nextAlert >= processEventsTo) {
-                logger.info("scanNextEventFromProvider: nextAlert=$nextAlert >= processEventsTo=$processEventsTo")
+                logger.info("scanNextEventFromProvider: nextAlert=$nextAlert >= processEventsTo=$processEventsTo, good to proceed next")
                 break
             }
 
-            logger.info("scanNextEventFromProvider: nextAlert $nextAlert is already in the past, firing")
+            logger.info("scanNextEventFromProvider: nextAlert $nextAlert is already in the past, firing at it")
 
             if (manualFireProviderEventsAt(context, state, nextAlert))
                 firedEvents = true

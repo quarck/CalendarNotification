@@ -33,6 +33,8 @@ class ReminderState(ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
 
     var quietHoursOneTimeReminderEnabled by BooleanProperty(false, QUIET_HOURS_ONE_TIME_REMINDER_KEY)
 
+    var nextFireExpectedAt by LongProperty(0, NEXT_FIRE_EXPECTED_AT_KEY)
+
 
     @SuppressLint("CommitPrefEdits")
     fun onReminderFired(currentTime: Long) {
@@ -59,6 +61,7 @@ class ReminderState(ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
         const val REMINDER_LAST_FIRE_TIME_KEY = "A"
         const val NUM_REMINDERS_FIRED_KEY = "B"
         const val QUIET_HOURS_ONE_TIME_REMINDER_KEY = "C"
+        const val NEXT_FIRE_EXPECTED_AT_KEY = "D"
     }
 }
 

@@ -42,4 +42,6 @@ interface EventNotificationManagerInterface {
     fun postNotificationsAutoDismissedDebugMessage(context: Context)
 
     fun postNotificationsAlarmDelayDebugMessage(context: Context, title: String, text: String)
+
+    fun postNotificationsSnoozeAlarmDelayDebugMessage(context: Context, title: String, text: String)
 }

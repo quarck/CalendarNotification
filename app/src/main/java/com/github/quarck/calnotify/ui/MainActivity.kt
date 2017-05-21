@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         refreshLayout?.setOnRefreshListener {
             reloadLayout.visibility = View.GONE;
-            refreshReminderLastFired()
             reloadData()
         }
 
@@ -241,9 +240,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     public override fun onPause() {
         logger.debug("onPause")
 
-        svcClient.unbindService(this)
-
         refreshReminderLastFired()
+
+        svcClient.unbindService(this)
 
         undoManager.clearUndoState()
 
@@ -357,7 +356,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onUndoButtonClick(v: View?) {
         undoManager.undo()
-        refreshReminderLastFired()
         reloadData()
     }
 
@@ -365,7 +363,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     fun onReloadButtonClick(v: View) {
         reloadLayout.visibility = View.GONE;
         reloadData();
-        refreshReminderLastFired()
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -422,8 +419,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 CalendarIntents.viewCalendarEvent(this, event)
             }
         }
-
-        refreshReminderLastFired()
     }
 
     // user clicks on 'dismiss' button, item still in the list
@@ -451,7 +446,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
                     .show()
         }
-        refreshReminderLastFired()
     }
 
     // Item was already removed from UI, we just have to dismiss it now
@@ -463,8 +457,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
-
-        refreshReminderLastFired()
     }
 
     override fun onItemRestored(event: EventAlertRecord) {
@@ -472,8 +464,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         ApplicationController.restoreEvent(this, event)
 
         onNumEventsUpdated()
-
-        refreshReminderLastFired()
     }
 
     override fun onItemSnooze(v: View, position: Int, eventId: Long) {
@@ -489,7 +479,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
                     .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
         }
-        refreshReminderLastFired()
     }
 
     companion object {

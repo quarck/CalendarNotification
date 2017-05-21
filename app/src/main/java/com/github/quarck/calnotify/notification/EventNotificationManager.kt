@@ -1080,6 +1080,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
         PebbleUtils.forwardNotificationToPebble(context, title, text, false)
     }
 
+    override fun postNotificationsSnoozeAlarmDelayDebugMessage(context: Context, title: String, text: String) {
+
+        postDebugNotification(
+                context,
+                Consts.NOTIFICATION_ID_DEBUG2_SNOOZE_ALARM_DELAYS,
+                title,
+                text
+        )
+
+        PebbleUtils.forwardNotificationToPebble(context, title, text, false)
+    }
+
 
     companion object {
         private val logger = Logger("EventNotificationManager")

@@ -77,6 +77,8 @@ object AlarmScheduler: AlarmSchedulerInterface {
                         MainActivity::class.java,
                         logger)
 
+                context.persistentState.nextSnoozeAlarmExpectedAt = nextEventAlarm
+
             } else { // if (nextEventAlarm != null) {
 
                 logger.info("No next events, cancelling alarms");
@@ -89,11 +91,13 @@ object AlarmScheduler: AlarmSchedulerInterface {
                         logger)
             }
 
+            val reminderState = ReminderState(context)
+
             // Schedule reminders alarm
             var reminderAlarmNextFire: Long? = null
 
             val quietHoursOneTimeReminderEnabled =
-                ReminderState(context).quietHoursOneTimeReminderEnabled
+                    reminderState.quietHoursOneTimeReminderEnabled
 
             if (settings.remindersEnabled || quietHoursOneTimeReminderEnabled) {
 
@@ -135,6 +139,9 @@ object AlarmScheduler: AlarmSchedulerInterface {
                         ReminderExactAlarmBroadcastReceiver::class.java,
                         MainActivity::class.java,
                         logger)
+
+                reminderState.nextFireExpectedAt = reminderAlarmNextFire
+
             } else {
                 context.alarmManager.cancelExactAndAlarm(
                         context,

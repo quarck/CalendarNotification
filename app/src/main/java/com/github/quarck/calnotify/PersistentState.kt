@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.utils.PersistentStorageBase
 class PersistentState(private val ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
 
 	var notificationLastFireTime by LongProperty(0, "A") // give a short name to simplify XML parsing
+	var nextSnoozeAlarmExpectedAt by LongProperty(0, "B")
 
 	companion object {
 		const val PREFS_NAME: String = "persistent_state"

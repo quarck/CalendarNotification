@@ -89,7 +89,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
             } else if (settings.remindersEnabled) {
 
-                val lastFireTime = Math.max( context.persistentState.notificationLastFireTime,
+                val lastFireTime = Math.max(
+                        context.persistentState.notificationLastFireTime,
                         reminderState.reminderLastFireTime)
 
                 val sinceLastFire = currentTime - lastFireTime;
@@ -105,7 +106,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         logger.info("Reminder postponed until $silentUntil due to quiet hours");
                         nextFireAt = silentUntil
 
-                    } else if (sinceLastFire < reminderInterval - Consts.ALARM_THRESHOLD)  {
+                    } else if (reminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD)  {
                         // Schedule actual time to fire based on how long ago we have fired
                         val leftMillis = reminderInterval - sinceLastFire;
                         nextFireAt = currentTime + leftMillis
@@ -117,13 +118,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
                         logger.info("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
 
-                        if ((sinceLastFire > reminderInterval + Consts.ALARM_THRESHOLD) && (lastFireTime > 0L)) {
-                            logger.error("WARNING: timer delay detected, expected to receive timers with interval " +
-                                    "$reminderInterval ms, but last fire was seen $sinceLastFire ms ago, " +
-                                    "lastFire=$lastFireTime (last reminder at ${reminderState.reminderLastFireTime}, " +
-                                    "last event at ${context.persistentState.notificationLastFireTime})")
+                        if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
+                            logger.error("WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
+                                    "received $currentTime, ${(currentTime-reminderState.nextFireExpectedAt)/1000L}s late")
 
-                            ApplicationController.onReminderAlarmLate(context, sinceLastFire, reminderInterval, lastFireTime)
+                            ApplicationController.onReminderAlarmLate(context, currentTime, reminderState.nextFireExpectedAt)
                         }
                     }
                 } else {
@@ -142,6 +141,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         ReminderExactAlarmBroadcastReceiver::class.java,
                         MainActivity::class.java,
                         logger)
+
+                reminderState.nextFireExpectedAt = nextFireAt
             }
 
             if (shouldFire)

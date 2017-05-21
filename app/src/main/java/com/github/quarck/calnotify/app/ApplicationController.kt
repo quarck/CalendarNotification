@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.notification.*
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -73,9 +74,17 @@ object ApplicationController : EventMovedHandler {
 
         logger.info("onEventAlarm at ${System.currentTimeMillis()} -- we need to remind about snoozed event");
 
+        val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
+        val currentTime = System.currentTimeMillis()
+
         context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+
+        if (currentTime > alarmWasExpectedAt + Consts.ALARM_THRESHOLD) {
+            this.onSnoozeAlarmLate(context, currentTime, alarmWasExpectedAt)
+        }
     }
 
     fun onAppUpdated(context: Context) {
@@ -271,14 +280,27 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
-    fun onReminderAlarmLate(context: Context, sinceLastFire: Long, reminderInterval: Long, lastFireTime: Long) {
+    fun onReminderAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
 
         if (getSettings(context).debugAlarmDelays) {
-            val warningMessage = "Interval: ${reminderInterval/1000L}s since last: ${sinceLastFire/1000L}s"
+
+            val warningMessage = "Expected: $alarmWasExpectedAt, " +
+                    "received: $currentTime, ${(currentTime-alarmWasExpectedAt)/1000L}s late"
+
             notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
         }
     }
 
+    fun onSnoozeAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
+
+        if (getSettings(context).debugAlarmDelays) {
+
+            val warningMessage = "Expected: $alarmWasExpectedAt, " +
+                    "received: $currentTime, ${(currentTime-alarmWasExpectedAt)/1000L}s late"
+
+            notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
+        }
+    }
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
 

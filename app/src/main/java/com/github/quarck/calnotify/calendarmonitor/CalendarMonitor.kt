@@ -21,6 +21,8 @@
 
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
 
+//TODO: need to skip not handled calendars! (Full scan only)
+
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.app.AlarmManager

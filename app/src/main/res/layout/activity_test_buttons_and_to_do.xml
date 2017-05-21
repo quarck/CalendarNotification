@@ -102,8 +102,8 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:id="@+id/buttonTestToggleRemove"
                 android:onClick="OnButtonToggleRemoveClick"
                 android:visibility="visible"
-                android:textOn="REMOVING ORIGINAL EVENT"
-                android:textOff="NOT REMOVING ORIGINAL EVENT"
+                android:textOn="MARK EVENTS AS HANDLED IN PROVIDER"
+                android:textOff="DO NOT MARK EVENTS AS HANDLED IN PROVIDER"
                 android:padding="14dp"
                 />
 

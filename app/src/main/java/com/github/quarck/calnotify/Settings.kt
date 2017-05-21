@@ -20,10 +20,8 @@
 package com.github.quarck.calnotify
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
-import android.preference.PreferenceManager
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import com.github.quarck.calnotify.utils.toIntOrNull
@@ -50,9 +48,9 @@ data class NotificationSettingsSnapshot
 
 class Settings(context: Context): PersistentStorageBase(context) {
 
-    var removeOriginal: Boolean
-        get() = getBoolean(REMOVE_ORIGINAL_KEY, true)
-        set(value) = setBoolean(REMOVE_ORIGINAL_KEY, value)
+    var markEventsAsHandledInProvider: Boolean
+        get() = getBoolean(MARK_EVENTS_AS_HANDLED_KEY, true)
+        set(value) = setBoolean(MARK_EVENTS_AS_HANDLED_KEY, value)
 
     var lastCustomSnoozeIntervalMillis: Long
         get() = getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
@@ -319,7 +317,7 @@ class Settings(context: Context): PersistentStorageBase(context) {
 
         private const val USE_COMPACT_LAYOUT_KEY = "compact_layout"
 
-        private const val REMOVE_ORIGINAL_KEY = "remove_original"
+        private const val MARK_EVENTS_AS_HANDLED_KEY = "remove_original"
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 
         private const val ALLOW_SWIPE_TO_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"

@@ -22,12 +22,14 @@ package com.github.quarck.calnotify.calendar
 enum class EventOrigin(val code: Int) {
     ProviderBroadcast(0),
     ProviderManual(1),
-    FullManual(2);
+    ProviderBroadcastFollowingManual(2),
+    FullManual(3);
 
     override fun toString(): String
         = when (this) {
             ProviderBroadcast -> "PB"
             ProviderManual -> "PM"
+            ProviderBroadcastFollowingManual -> "pbPM"
             FullManual -> "FM"
             else -> "UND"
         }

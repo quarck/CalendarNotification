@@ -504,4 +504,9 @@ object ApplicationController : EventMovedHandler {
 
         return moved
     }
+
+    // used for debug purpose
+    fun forceRepostNotifications(context: Context) {
+        notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
+    }
 }

@@ -159,9 +159,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (!recentEvents.isEmpty())
                 collapseDisplayedNotifications(context, db, collapsedEvents, settings, force, isQuietPeriodActive)
-            else
-                updatedAnything = updatedAnything ||
-                        postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false)
+            else {
+                if (postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false))
+                    updatedAnything = true
+            }
         }
 
         // If this is a new notification -- wake screen when required

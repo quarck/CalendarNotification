@@ -147,11 +147,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
             for (event in events) {
 
                 if (getAlertWasHandled(context, event)) {
-                    logger.info("Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already, skipping")
+                    logger.info("Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already, skipping")
                     continue
                 }
 
-                logger.info("Seen event ${event.eventId} / ${event.instanceStartTime}")
+                logger.info("Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
@@ -197,7 +197,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
             for (event in events) {
 
                 if (getAlertWasHandled(context, event)) {
-                    logger.info("Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already [properly by Calendar Provider receiver]")
+                    logger.info("Failback: Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already [properly by Calendar Provider receiver]")
 
 //                    if (settings.enableMonitorDebug) {
 //                        event.origin = EventOrigin.ProviderBroadcastFollowingManual
@@ -209,7 +209,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                     continue
                 }
 
-                logger.info("Warning: Calendar Privider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
+                logger.info("Failback: Calendar Provider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                 ret = true
 
@@ -249,25 +249,28 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         logger.debug("manualFireProviderEventsAt: ($nextEventFire, $prevEventFire)");
 
-        var currentPrevFire = prevEventFire
+        var currentPrevFire = prevEventFire ?: Long.MAX_VALUE
 
-        for (iteration in 0..MAX_ITERATIONS) {
+        if (currentPrevFire != Long.MAX_VALUE) {
 
-            if (currentPrevFire == null || currentPrevFire == Long.MAX_VALUE)
-                break;
+            for (iteration in 0..MAX_ITERATIONS) {
 
-            val nextSincePrev = calendarProvider.findNextAlarmTime(context.contentResolver, currentPrevFire + 1L)
+                val nextSincePrev = calendarProvider.findNextAlarmTime(context.contentResolver, currentPrevFire + 1L)
 
-            if (nextSincePrev == null || nextSincePrev >= nextEventFire)
-                break
+                if (nextSincePrev == null || nextSincePrev >= nextEventFire)
+                    break
 
-            logger.info("manualFireProviderEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
+                logger.info("manualFireProviderEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
 
-            ret = ret || doManualFireProviderEventsAt(context, state, nextSincePrev)
-            currentPrevFire = nextSincePrev
+                if (doManualFireProviderEventsAt(context, state, nextSincePrev))
+                    ret = true
+
+                currentPrevFire = nextSincePrev
+            }
         }
 
-        ret = ret || doManualFireProviderEventsAt(context, state, nextEventFire)
+        if (doManualFireProviderEventsAt(context, state, nextEventFire))
+            ret = true
 
         return ret
     }
@@ -314,24 +317,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         // for a while)
         for (iteration in 0..MAX_ITERATIONS) {
 
-            if (nextAlert < processEventsTo) {
-
-                logger.info("scanNextEventFromProvider: nextAlert $nextAlert is already in the past, firing")
-
-                firedEvents = firedEvents
-                        || manualFireProviderEventsAt(context, state, nextAlert)
-
-                nextAlert = calendarProvider.findNextAlarmTime(context.contentResolver, nextAlert + 1L) ?: Long.MAX_VALUE
-                continue
-            }
-
-            if (nextAlert == Long.MAX_VALUE) {
-                logger.info("scanNextEventFromProvider: no next alerts")
-                break;
-            } else if (nextAlert >= processEventsTo){
-                logger.info("scanNextEventFromProvider: nextAlert=$nextAlert")
+            if (nextAlert >= processEventsTo) {
+                logger.info("scanNextEventFromProvider: nextAlert=$nextAlert >= processEventsTo=$processEventsTo")
                 break
             }
+
+            logger.info("scanNextEventFromProvider: nextAlert $nextAlert is already in the past, firing")
+
+            if (manualFireProviderEventsAt(context, state, nextAlert))
+                firedEvents = true
+
+            nextAlert = calendarProvider.findNextAlarmTime(context.contentResolver, nextAlert + 1L) ?: Long.MAX_VALUE
         }
 
         // Now - scan for the next alert since currentTime, so we can see any newly added events, if any

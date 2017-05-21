@@ -45,8 +45,8 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
         for (event in db.events) {
             try {
-                changedDetected =  changedDetected ||
-                    reloadCalendarEvent(context, db, calendar, event, currentTime, movedHandler)
+                if (reloadCalendarEvent(context, db, calendar, event, currentTime, movedHandler))
+                    changedDetected = true
 
             } catch (ex: Exception) {
                 logger.error("Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");

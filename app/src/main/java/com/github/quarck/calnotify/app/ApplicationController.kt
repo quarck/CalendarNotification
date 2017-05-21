@@ -24,8 +24,8 @@ import android.os.Handler
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendarmonitor.CalendarManualMonitor
-import com.github.quarck.calnotify.calendarmonitor.CalendarManualMonitorInterface
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorInterface
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -61,9 +61,9 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
 
-    private val calendarMonitor: CalendarManualMonitorInterface by lazy { CalendarManualMonitor(calendarProvider) }
+    private val calendarMonitor: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
 
-    val CalendarMonitorService: CalendarManualMonitorInterface
+    val CalendarMonitorService: CalendarMonitorInterface
         get() = calendarMonitor
 
     fun hasActiveEvents(context: Context) =

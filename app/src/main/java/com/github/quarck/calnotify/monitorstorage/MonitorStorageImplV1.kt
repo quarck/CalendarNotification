@@ -18,16 +18,16 @@
 //
 
 
-package com.github.quarck.calnotify.manualalertsstorage
+package com.github.quarck.calnotify.monitorstorage
 
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.logs.Logger
 
-class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
+class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
@@ -67,7 +67,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
 
     }
 
-    override fun addAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry) {
+    override fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
 
         logger.debug("addAlert $entry")
 
@@ -88,7 +88,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         }
     }
 
-    override fun addAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>) {
+    override fun addAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>) {
         for (entry in entries)
             addAlert(db, entry)
     }
@@ -123,7 +123,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         }
     }
 
-    override fun updateAlert(db: SQLiteDatabase, entry: ManualEventAlertEntry) {
+    override fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
         val values = recordToContentValues(entry)
 
         logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
@@ -134,7 +134,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
                 arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
     }
 
-    override fun updateAlerts(db: SQLiteDatabase, entries: List<ManualEventAlertEntry>) {
+    override fun updateAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>) {
 
         logger.debug("Updating ${entries.size} alerts");
 
@@ -150,9 +150,9 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         }
     }
 
-    override fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): ManualEventAlertEntry? {
+    override fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry? {
 
-        var ret: ManualEventAlertEntry? = null
+        var ret: MonitorEventAlertEntry? = null
 
         var cursor: Cursor? = null
 
@@ -210,8 +210,8 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         return ret
     }
 
-    override fun getAlertsAt(db: SQLiteDatabase, time: Long): List<ManualEventAlertEntry> {
-        val ret = arrayListOf<ManualEventAlertEntry>()
+    override fun getAlertsAt(db: SQLiteDatabase, time: Long): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
 
@@ -243,8 +243,8 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         return ret
     }
 
-    override fun getAlerts(db: SQLiteDatabase): List<ManualEventAlertEntry> {
-        val ret = arrayListOf<ManualEventAlertEntry>()
+    override fun getAlerts(db: SQLiteDatabase): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
 
@@ -276,7 +276,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         return ret
     }
 
-    private fun recordToContentValues(entry: ManualEventAlertEntry): ContentValues {
+    private fun recordToContentValues(entry: MonitorEventAlertEntry): ContentValues {
         val values = ContentValues();
 
         values.put(KEY_CALENDAR_ID, entry.calendarId)
@@ -295,9 +295,9 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
         return values;
     }
 
-    private fun cursorToRecord(cursor: Cursor): ManualEventAlertEntry {
+    private fun cursorToRecord(cursor: Cursor): MonitorEventAlertEntry {
 
-        return ManualEventAlertEntry(
+        return MonitorEventAlertEntry(
                 calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
@@ -311,7 +311,7 @@ class ManualAlertsStorageImplV1: ManualAlertsStorageImplInterface {
 
 
     companion object {
-        private val logger = Logger("ManualAlertsStorageImplV1")
+        private val logger = Logger("MonitorStorageImplV1")
 
         private const val TABLE_NAME = "manualAlertsV1"
         private const val INDEX_NAME = "manualAlertsV1IdxV1"

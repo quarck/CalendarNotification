@@ -17,27 +17,27 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.manualalertsstorage
+package com.github.quarck.calnotify.monitorstorage
 
-import com.github.quarck.calnotify.calendar.ManualEventAlertEntry
+import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 
-interface ManualAlertsStorageInterface {
+interface MonitorStorageInterface {
 
-    fun addAlert(entry: ManualEventAlertEntry)
-    fun addAlerts(entry: List<ManualEventAlertEntry>)
+    fun addAlert(entry: MonitorEventAlertEntry)
+    fun addAlerts(entry: List<MonitorEventAlertEntry>)
 
-    fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): ManualEventAlertEntry?
+    fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
 
-    fun deleteAlert(entry: ManualEventAlertEntry)
+    fun deleteAlert(entry: MonitorEventAlertEntry)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
 
     fun deleteAlertsForEventsOlderThan(time: Long)
 
-    fun updateAlert(entry: ManualEventAlertEntry)
-    fun updateAlerts(entries: List<ManualEventAlertEntry>)
+    fun updateAlert(entry: MonitorEventAlertEntry)
+    fun updateAlerts(entries: List<MonitorEventAlertEntry>)
 
     fun getNextAlert(since: Long): Long?
-    fun getAlertsAt(time: Long): List<ManualEventAlertEntry>
+    fun getAlertsAt(time: Long): List<MonitorEventAlertEntry>
 
-    val alerts: List<ManualEventAlertEntry> get
+    val alerts: List<MonitorEventAlertEntry> get
 }

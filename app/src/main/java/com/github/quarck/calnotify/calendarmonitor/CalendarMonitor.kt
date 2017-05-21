@@ -34,7 +34,7 @@ import com.github.quarck.calnotify.app.AlarmScheduler
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.*
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage
+import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
@@ -43,8 +43,8 @@ import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 // ManualEventAlarmPerioidicRescanBroadcastReceiver
 
-class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
-        CalendarManualMonitorInterface {
+class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
+        CalendarMonitorInterface {
 
     private var lastScan = 0L
 
@@ -369,13 +369,13 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
         context.alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, next, interval, pendingIntent)
     }
 
-//    override fun getAlertsAt(context: android.content.Context, time: Long, mayRescan: Boolean): List<ManualEventAlertEntry> {
+//    override fun getAlertsAt(context: android.content.Context, time: Long, mayRescan: Boolean): List<MonitorEventAlertEntry> {
 //
 //        if (mayRescan) {
 //            performManualRescan(context)
 //        }
 //
-//        val ret = com.github.quarck.calnotify.manualalertsstorage.ManualAlertsStorage(context).use {
+//        val ret = com.github.quarck.calnotify.manualalertsstorage.MonitorStorage(context).use {
 //            db -> db.getAlertsAt(time)
 //        }
 //
@@ -388,7 +388,7 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
 //
 //        val ret = arrayListOf<EventAlertRecord>()
 //
-//        val deadAlerts = arrayListOf<ManualEventAlertEntry>()
+//        val deadAlerts = arrayListOf<MonitorEventAlertEntry>()
 //
 //        for (alert in rawAlerts) {
 //            if (!alert.alertCreatedByUs) {
@@ -435,7 +435,7 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
 //        }
 //
 //        // TODO: check this
-////        ManualAlertsStorage(context).use {
+////        MonitorStorage(context).use {
 ////            db ->
 ////            for (dead in deadAlerts) {
 ////                db.deleteAlert(dead)
@@ -449,15 +449,15 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
 
         logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
 
-        ManualAlertsStorage(context).use {
+        MonitorStorage(context).use {
             db ->
-            var alert: ManualEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
+            var alert: MonitorEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
 
             if (alert != null) {
                 alert.wasHandled = true
                 db.updateAlert(alert)
             } else {
-                alert = ManualEventAlertEntry(
+                alert = MonitorEventAlertEntry(
                         calendarId = ev.calendarId,
                         eventId = ev.eventId,
                         alertTime = ev.alertTime,
@@ -477,19 +477,19 @@ class CalendarManualMonitor(val calendarProvider: CalendarProviderInterface):
         }
     }
 
-    override fun getAlertWasHandled(db: ManualAlertsStorage, ev: EventAlertRecord): Boolean {
+    override fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean {
         logger.info("getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
         return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
     }
 
     override fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
-        return ManualAlertsStorage(context).use {
+        return MonitorStorage(context).use {
             db ->
             getAlertWasHandled(db, ev)
         }
     }
 
     companion object {
-        val logger = com.github.quarck.calnotify.logs.Logger("CalendarManualMonitor")
+        val logger = com.github.quarck.calnotify.logs.Logger("CalendarMonitor")
     }
 }

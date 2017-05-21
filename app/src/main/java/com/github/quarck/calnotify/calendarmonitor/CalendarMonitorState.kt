@@ -24,14 +24,14 @@ import com.github.quarck.calnotify.utils.PersistentStorageBase
 
 class CalendarMonitorState(ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
 
-    var nextEventFireFromProvider by LongProperty(Long.MAX_VALUE, "PN")
-    var prevEventFireFromProvider by LongProperty(Long.MAX_VALUE, "PP")
+    var nextEventFireFromProvider by LongProperty(Long.MAX_VALUE, "A")
+    var prevEventFireFromProvider by LongProperty(Long.MAX_VALUE, "B")
 
-    var nextEventFireFromScan by LongProperty(Long.MAX_VALUE, "MN")
-    var prevEventFireFromScan by LongProperty(Long.MAX_VALUE, "MP")
+    var nextEventFireFromScan by LongProperty(Long.MAX_VALUE, "C")
+    var prevEventFireFromScan by LongProperty(Long.MAX_VALUE, "D")
 
     companion object {
-        const val PREFS_NAME: String = "calendar_monitor"
+        const val PREFS_NAME: String = "cal_monitor"
     }
 }
 

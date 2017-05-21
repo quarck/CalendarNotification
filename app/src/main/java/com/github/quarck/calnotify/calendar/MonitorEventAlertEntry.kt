@@ -19,7 +19,7 @@
 
 package com.github.quarck.calnotify.calendar
 
-data class ManualEventAlertEntry(
+data class MonitorEventAlertEntry(
         val calendarId: Long,
         val eventId: Long,
         val isAllDay: Boolean,

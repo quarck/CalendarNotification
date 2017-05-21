@@ -782,8 +782,8 @@ object CalendarProvider: CalendarProviderInterface {
     }
 
     // TODO: not single calId, but list of calendars we handle / don't handle
-    override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<ManualEventAlertEntry> {
-        val ret = arrayListOf<ManualEventAlertEntry>()
+    override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
 
         // TODO: record last scanned from time, and scan all the events since the last scanned time
         // and fire if there are any non-fires there!
@@ -877,7 +877,7 @@ object CalendarProvider: CalendarProviderInterface {
 
                         val alertTime = instanceStart - reminder.millisecondsBefore;
 
-                        val entry = ManualEventAlertEntry(
+                        val entry = MonitorEventAlertEntry(
                                 calendarId,
                                 eventId,
                                 isAllDay != 0L,
@@ -902,7 +902,7 @@ object CalendarProvider: CalendarProviderInterface {
                                 else
                                     instanceStart - defaultReminderTimeForAllDayEventWithNoreminder
 
-                        val entry = ManualEventAlertEntry(
+                        val entry = MonitorEventAlertEntry(
                                 calendarId,
                                 eventId,
                                 isAllDay != 0L,

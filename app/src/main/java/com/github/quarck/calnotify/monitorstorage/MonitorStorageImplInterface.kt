@@ -26,18 +26,21 @@ interface MonitorStorageImplInterface {
     fun createDb(db: SQLiteDatabase)
 
     fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry)
-    fun addAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>)
+    fun addAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>)
 
     fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
 
     fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long)
+    fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>)
     fun deleteAlertsForEventsOlderThan(db: SQLiteDatabase, time: Long)
 
     fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry)
-    fun updateAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>)
+    fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>)
 
     fun getNextAlert(db: SQLiteDatabase, since: Long): Long?
     fun getAlertsAt(db: SQLiteDatabase, time: Long): List<MonitorEventAlertEntry>
 
     fun getAlerts(db: SQLiteDatabase): List<MonitorEventAlertEntry>
+    fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+    fun getAlertsForAlertRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
 }

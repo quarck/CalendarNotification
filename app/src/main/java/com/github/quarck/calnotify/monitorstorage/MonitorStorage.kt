@@ -57,11 +57,14 @@ class MonitorStorage(val context: Context)
     override fun addAlert(entry: MonitorEventAlertEntry)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.addAlert(it, entry) } }
 
-    override fun addAlerts(entries: List<MonitorEventAlertEntry>)
+    override fun addAlerts(entries: Collection<MonitorEventAlertEntry>)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
 
     override fun deleteAlert(entry: MonitorEventAlertEntry)
         = deleteAlert(entry.eventId, entry.alertTime, entry.instanceStartTime)
+
+    override fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
+        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlerts(it, entries) } }
 
     override fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
@@ -72,7 +75,7 @@ class MonitorStorage(val context: Context)
     override fun updateAlert(entry: MonitorEventAlertEntry)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }
 
-    override fun updateAlerts(entries: List<MonitorEventAlertEntry>)
+    override fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
 
     override fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
@@ -86,6 +89,12 @@ class MonitorStorage(val context: Context)
 
     override val alerts: List<MonitorEventAlertEntry>
         get() = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlerts(it) } }
+
+    override fun getAlertsForInstanceStartRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForInstanceStartRange(it, scanFrom, scanTo) } }
+
+    override fun getAlertsForAlertRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForAlertRange(it, scanFrom, scanTo) } }
 
     companion object {
         private val logger = Logger("MonitorStorage")

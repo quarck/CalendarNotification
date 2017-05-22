@@ -19,6 +19,12 @@
 
 package com.github.quarck.calnotify.calendar
 
+data class MonitorEventAlertEntryKey(
+        val eventId: Long,
+        val alertTime: Long,
+        val instanceStartTime: Long
+)
+
 data class MonitorEventAlertEntry(
         val calendarId: Long,
         val eventId: Long,
@@ -30,4 +36,7 @@ data class MonitorEventAlertEntry(
         var wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
                                 // alerting when reacting to different notification sources
                                 // (e.g. calendar provider vs our internal manual handler)
-)
+) {
+    val key: MonitorEventAlertEntryKey
+        get() = MonitorEventAlertEntryKey(eventId, alertTime, instanceStartTime)
+}

@@ -88,7 +88,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
         }
     }
 
-    override fun addAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>) {
+    override fun addAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
         for (entry in entries)
             addAlert(db, entry)
     }
@@ -106,6 +106,11 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
         catch (ex: Exception) {
             logger.error("deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
         }
+    }
+
+    override fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
+        for (entry in entries)
+            deleteAlert(db, entry.eventId, entry.alertTime, entry.instanceStartTime)
     }
 
     override fun deleteAlertsForEventsOlderThan(db: SQLiteDatabase, time: Long) {
@@ -134,7 +139,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
                 arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
     }
 
-    override fun updateAlerts(db: SQLiteDatabase, entries: List<MonitorEventAlertEntry>) {
+    override fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
         logger.debug("Updating ${entries.size} alerts");
 
@@ -253,6 +258,78 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
                     SELECT_COLUMNS, // b. column names
                     null, // c. selections
                     null,
+                    null, // e. group by
+                    null, // f. h aving
+                    null, // g. order by
+                    null) // h. limit
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    ret.add(cursorToRecord(cursor))
+                } while (cursor.moveToNext())
+            }
+        }
+        catch (ex: Exception) {
+            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+        }
+        finally {
+            cursor?.close()
+        }
+
+        logger.debug("getAlerts, returnint ${ret.size} events")
+
+        return ret
+    }
+
+    override fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
+
+        var cursor: Cursor? = null
+
+        val selection = "$KEY_INSTANCE_START >= ? AND $KEY_INSTANCE_START <= ?"
+        val selectionArgs = arrayOf(scanFrom.toString(), scanTo.toString())
+
+        try {
+            cursor = db.query(TABLE_NAME, // a. table
+                    SELECT_COLUMNS, // b. column names
+                    selection,
+                    selectionArgs,
+                    null, // e. group by
+                    null, // f. h aving
+                    null, // g. order by
+                    null) // h. limit
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    ret.add(cursorToRecord(cursor))
+                } while (cursor.moveToNext())
+            }
+        }
+        catch (ex: Exception) {
+            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+        }
+        finally {
+            cursor?.close()
+        }
+
+        logger.debug("getAlerts, returnint ${ret.size} events")
+
+        return ret
+    }
+
+    override fun getAlertsForAlertRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
+
+        var cursor: Cursor? = null
+
+        val selection = "$KEY_ALERT_TIME >= ? AND $KEY_ALERT_TIME <= ?"
+        val selectionArgs = arrayOf(scanFrom.toString(), scanTo.toString())
+
+        try {
+            cursor = db.query(TABLE_NAME, // a. table
+                    SELECT_COLUMNS, // b. column names
+                    selection,
+                    selectionArgs,
                     null, // e. group by
                     null, // f. h aving
                     null, // g. order by

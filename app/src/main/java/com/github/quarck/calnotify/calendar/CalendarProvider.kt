@@ -781,19 +781,13 @@ object CalendarProvider: CalendarProviderInterface {
         return alarmTime
     }
 
-    // TODO: not single calId, but list of calendars we handle / don't handle
     override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
-
-        // TODO: record last scanned from time, and scan all the events since the last scanned time
-        // and fire if there are any non-fires there!
-        // TODO: to be configurable
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             logger.error("getEventAlertsManually failed due to not sufficient permissions");
             return ret;
         }
-
 
         val settings = Settings(context)
 
@@ -806,10 +800,6 @@ object CalendarProvider: CalendarProviderInterface {
                 settings.defaultReminderTimeForAllDayEventWithNoreminder
 
         logger.info("Start: $from, end: $to, len: ${(to-from)/1000L/60L/60L}hrs")
-
-        val nextAlarm = findNextAlarmTime(context.contentResolver, from)
-
-        logger.info("Next alarm: $nextAlarm")
 
         try {
             val projection =

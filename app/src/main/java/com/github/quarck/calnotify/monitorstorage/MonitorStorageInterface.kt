@@ -24,20 +24,24 @@ import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 interface MonitorStorageInterface {
 
     fun addAlert(entry: MonitorEventAlertEntry)
-    fun addAlerts(entry: List<MonitorEventAlertEntry>)
+    fun addAlerts(entry: Collection<MonitorEventAlertEntry>)
 
     fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
 
     fun deleteAlert(entry: MonitorEventAlertEntry)
+    fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
 
     fun deleteAlertsForEventsOlderThan(time: Long)
 
     fun updateAlert(entry: MonitorEventAlertEntry)
-    fun updateAlerts(entries: List<MonitorEventAlertEntry>)
+    fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)
 
     fun getNextAlert(since: Long): Long?
     fun getAlertsAt(time: Long): List<MonitorEventAlertEntry>
 
     val alerts: List<MonitorEventAlertEntry> get
+
+    fun getAlertsForInstanceStartRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+    fun getAlertsForAlertRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
 }

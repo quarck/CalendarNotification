@@ -17,12 +17,6 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-//TODO: when seeing a new event with alarm time in the past -- notify immediately
-
-//TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
-
-//TODO: need to skip not handled calendars! (Full scan only)
-
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.app.AlarmManager
@@ -189,14 +183,24 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         logger.debug("scanAndScheduleAlarms");
 
+        val scanStart = System.currentTimeMillis()
+
         schedulePeriodicRescanAlarm(context)
 
         val state = CalendarMonitorState(context)
 
+        val scanPh1 = System.currentTimeMillis()
+
         val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent(context, state)
+
+        val scanPh2 = System.currentTimeMillis()
+
         val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent(context, state)
 
-        logger.info("Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual")
+        val scanPh3 = System.currentTimeMillis()
+
+        logger.info("Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
+                "scan statistics: total time: ${scanPh3 - scanStart}ms, phases: ${scanPh1-scanStart}ms, ${scanPh2-scanPh1}ms, ${scanPh3-scanPh2}ms")
 
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
@@ -253,81 +257,23 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         context.alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, next, interval, pendingIntent)
     }
 
-//    override fun getAlertsAt(context: android.content.Context, time: Long, mayRescan: Boolean): List<MonitorEventAlertEntry> {
-//
-//        if (mayRescan) {
-//            performManualRescan(context)
-//        }
-//
-//        val ret = com.github.quarck.calnotify.manualalertsstorage.MonitorStorage(context).use {
-//            db -> db.getAlertsAt(time)
-//        }
-//
-//        return ret
-//    }
+    override fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
 
-//    override fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord> {
-//
-//        val rawAlerts = getAlertsAt(context, time, mayRescan)
-//
-//        val ret = arrayListOf<EventAlertRecord>()
-//
-//        val deadAlerts = arrayListOf<MonitorEventAlertEntry>()
-//
-//        for (alert in rawAlerts) {
-//            if (!alert.alertCreatedByUs) {
-//                // can go and read it directly from the provider
-//                val event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
-//
-//                if (event != null) {
-//                    ret.add(event)
-//                }
-//                else {
-//                    logger.error("Can't find event for $alert, was event removed? Dropping from DB");
-//                    deadAlerts.add(alert)
-//                }
-//            }
-//            else {
-//                // this is manually added alert - load event and manually populate EventAlertRecord!
-//                val calEvent = calendarProvider.getEvent(context, alert.eventId)
-//                if (calEvent != null) {
-//
-//                    val event = EventAlertRecord(
-//                            calendarId = calEvent.calendarId,
-//                            eventId = calEvent.eventId,
-//                            isAllDay = calEvent.isAllDay,
-//                            isRepeating = false, // fixme
-//                            alertTime = alert.alertTime,
-//                            notificationId = 0,
-//                            title = calEvent.title,
-//                            startTime = calEvent.startTime,
-//                            endTime = calEvent.endTime,
-//                            instanceStartTime = alert.instanceStartTime,
-//                            instanceEndTime = alert.instanceEndTime,
-//                            location = calEvent.location,
-//                            lastEventVisibility = 0,
-//                            snoozedUntil = 0
-//                    )
-//                    ret.add(event)
-//                }
-//                else {
-//                    logger.error("Cant find event id ${alert.eventId}")
-//                    deadAlerts.add(alert)
-//                }
-//
-//            }
-//        }
-//
-//        // TODO: check this
-////        MonitorStorage(context).use {
-////            db ->
-////            for (dead in deadAlerts) {
-////                db.deleteAlert(dead)
-////            }
-////        }
-//
-//        return ret;
-//    }
+        val ret = MonitorStorage(context).use {
+            db -> db.getAlertsAt(time)
+        }
+
+        return ret
+    }
+
+    override fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+
+        val ret = MonitorStorage(context).use {
+            db -> db.getAlertsForAlertRange(scanFrom, scanTo)
+        }
+
+        return ret
+    }
 
     override fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
 

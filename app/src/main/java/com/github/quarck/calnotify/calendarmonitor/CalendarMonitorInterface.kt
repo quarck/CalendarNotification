@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.calendarmonitor
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 
 
@@ -43,7 +44,9 @@ interface CalendarMonitorInterface {
 
     fun onCalendarChange(context: Context)
 
-//    fun getAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<MonitorEventAlertEntry>
+    fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>
+
+    fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
 
 //    fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord>
 

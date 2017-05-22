@@ -395,7 +395,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary_text"
-            android:text="(c) 2016 Sergey Parshin"
+            android:text="(c) 2017 Sergey Parshin"
             android:layout_gravity="center_horizontal"
             />
         <TextView

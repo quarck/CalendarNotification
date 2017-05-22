@@ -36,7 +36,6 @@ import com.github.quarck.calnotify.app.AlarmScheduler
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.*
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -44,10 +43,16 @@ import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
-// ManualEventAlarmPerioidicRescanBroadcastReceiver
-
 class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         CalendarMonitorInterface {
+
+    private val providerScanner: CalendarMonitorProvider by lazy {
+        CalendarMonitorProvider(calendarProvider, this)
+    }
+
+    private val manualScanner: CalendarMonitorManual by lazy {
+        CalendarMonitorManual(calendarProvider, this)
+    }
 
     private var lastScan = 0L
 
@@ -105,13 +110,13 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         val nextEventFireFromProvider = state.nextEventFireFromProvider
         if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider is less than current time, checking what to fire")
-            manualFireProviderEventsAt(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
+            providerScanner.manualFireEventsAt(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
         }
 
         val nextEventFireFromScan = state.nextEventFireFromScan
         if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time, checking what to fire")
-            manualFireManualEventsAt(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+            manualScanner.manualFireEventsAt(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
         }
 
         scanAndScheduleAlarms(context)
@@ -126,6 +131,9 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         Handler().postDelayed({ scanAndScheduleAlarms(context) }, delayInMilliseconds)
     }
 
+    // proper broadcast from the Calendar Provider. Normally this is a proper
+    // way of receiving information about ongoing events. Apparently not always
+    // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
         logger.debug("onProviderReminderBroadcast");
@@ -161,13 +169,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                     setAlertWasHandled(context, event, createdByUs = false)
                     logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
 
-
                     if (markEventsAsHandledInProvider) {
                         logger.info("Dismissing original reminder")
                         CalendarProvider.dismissNativeEventAlert(context, event.eventId);
                     }
                 }
-
             }
 
         } catch (ex: Exception) {
@@ -178,111 +184,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
     }
 
 
-    // returns true if has fired any single new event
-    private fun doManualFireProviderEventsAt(context: Context, state: CalendarMonitorState, alertTime: Long): Boolean {
-
-        var ret = false
-
-        logger.debug("doManualFireProviderEventsAt, alertTime=$alertTime");
-
-        val settings = Settings(context)
-
-        val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
-
-        var needsToRepostNotifications = false
-
-        try {
-            val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
-
-            for (event in events) {
-
-                if (getAlertWasHandled(context, event)) {
-                    logger.info("Failback: Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already [properly by Calendar Provider receiver]")
-
-//                    if (settings.enableMonitorDebug) {
-//                        event.origin = EventOrigin.ProviderBroadcastFollowingManual
-//                        event.timeFirstSeen = System.currentTimeMillis()
-//                        EventsStorage(context).use { it.updateEvent(event) }
-//                        needsToRepostNotifications = true
-//                    }
-
-                    continue
-                }
-
-                logger.info("Failback: Calendar Provider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
-
-                ret = true
-
-                event.origin = EventOrigin.ProviderManual
-                event.timeFirstSeen = System.currentTimeMillis()
-                val wasHandled = ApplicationController.onCalendarEventFired(context, event);
-
-                if (wasHandled) {
-                    setAlertWasHandled(context, event, createdByUs = false)
-                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
-
-                    if (markEventsAsHandledInProvider) {
-                        logger.info("Dismissing original reminder - marking event as handled in the provider")
-                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                    }
-                }
-            }
-        }
-        catch (ex: Exception) {
-            logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
-        }
-        finally {
-            state.prevEventFireFromProvider = alertTime
-        }
-
-        if (needsToRepostNotifications) {
-            ApplicationController.forceRepostNotifications(context)
-        }
-
-        return ret
-    }
-
-    // should return true if we have fired at new events, so UI should reload if it is open
-    private fun manualFireProviderEventsAt(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
-
-        var ret = false
-
-        logger.debug("manualFireProviderEventsAt: ($nextEventFire, $prevEventFire)");
-
-        var currentPrevFire = prevEventFire ?: Long.MAX_VALUE
-
-        if (currentPrevFire != Long.MAX_VALUE) {
-
-            for (iteration in 0..MAX_ITERATIONS) {
-
-                val nextSincePrev = calendarProvider.findNextAlarmTime(context.contentResolver, currentPrevFire + 1L)
-
-                if (nextSincePrev == null || nextSincePrev >= nextEventFire)
-                    break
-
-                logger.info("manualFireProviderEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
-
-                if (doManualFireProviderEventsAt(context, state, nextSincePrev))
-                    ret = true
-
-                currentPrevFire = nextSincePrev
-            }
-        }
-
-        if (doManualFireProviderEventsAt(context, state, nextEventFire))
-            ret = true
-
-        return ret
-    }
-
-    // should return true if we have fired at new events, so UI should reload if it is open
-    private fun manualFireManualEventsAt(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
-
-        logger.debug("manualFireManualEventsAt - this is not implemented yet");
-
-        return false
-    }
-
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms(context: Context): Boolean {
 
@@ -292,56 +193,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         val state = CalendarMonitorState(context)
 
-        val (nextAlarmFromProvider, firedEvents) = scanNextEventFromProvider(context, state)
+        val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent(context, state)
+        val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent(context, state)
 
-        setOrCancelAlarm(context, nextAlarmFromProvider)
+        logger.info("Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual")
 
-        return firedEvents
-    }
+        setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
-    private val MAX_ITERATIONS = 1000L
-
-    private fun scanNextEventFromProvider(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
-
-        logger.debug("scanNextEventFromProvider");
-
-        val currentTime = System.currentTimeMillis()
-        val processEventsTo = currentTime + Consts.ALARM_THRESHOLD
-
-        var nextAlert = state.nextEventFireFromProvider
-
-        var firedEvents = false;
-
-        // First - scan past reminders that we have potentially missed,
-        // this is for the case where nextAlert is in the past already (e.g. device was off
-        // for a while)
-        for (iteration in 0..MAX_ITERATIONS) {
-
-            if (nextAlert >= processEventsTo) {
-                logger.info("scanNextEventFromProvider: nextAlert=$nextAlert >= processEventsTo=$processEventsTo, good to proceed next")
-                break
-            }
-
-            logger.info("scanNextEventFromProvider: nextAlert $nextAlert is already in the past, firing at it")
-
-            if (manualFireProviderEventsAt(context, state, nextAlert))
-                firedEvents = true
-
-            nextAlert = calendarProvider.findNextAlarmTime(context.contentResolver, nextAlert + 1L) ?: Long.MAX_VALUE
-        }
-
-        // Now - scan for the next alert since currentTime, so we can see any newly added events, if any
-        val nextAlertSinceCurrent = calendarProvider.findNextAlarmTime(context.contentResolver, processEventsTo )
-                ?: Long.MAX_VALUE
-
-        // finally - pick the first one
-        nextAlert = Math.min(nextAlert, nextAlertSinceCurrent)
-
-        logger.info("scanNextEventFromProvider: nextAlertSinceCurrent=$nextAlertSinceCurrent, resulting nextAlert=$nextAlert")
-
-        state.nextEventFireFromProvider = nextAlert
-
-        return Pair(nextAlert, firedEvents)
+        return firedEventsProvider || firedEventsManual
     }
 
     private fun setOrCancelAlarm(context: Context, time: Long) {
@@ -472,16 +331,19 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
     override fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
 
-        logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
-
         MonitorStorage(context).use {
             db ->
             var alert: MonitorEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
 
             if (alert != null) {
+
+                logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: seen this alert already, updating status to wasHandled");
                 alert.wasHandled = true
                 db.updateAlert(alert)
+
             } else {
+
+                logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
                 alert = MonitorEventAlertEntry(
                         calendarId = ev.calendarId,
                         eventId = ev.eventId,

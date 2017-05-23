@@ -328,7 +328,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
                 logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
                 alert = MonitorEventAlertEntry(
-                        calendarId = ev.calendarId,
                         eventId = ev.eventId,
                         alertTime = ev.alertTime,
                         isAllDay = ev.isAllDay,

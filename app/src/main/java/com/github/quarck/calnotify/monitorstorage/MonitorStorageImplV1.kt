@@ -385,7 +385,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     private fun recordToContentValues(entry: MonitorEventAlertEntry): ContentValues {
         val values = ContentValues();
 
-        values.put(KEY_CALENDAR_ID, entry.calendarId)
+        values.put(KEY_CALENDAR_ID, -1)
         values.put(KEY_EVENTID, entry.eventId);
         values.put(KEY_ALERT_TIME, entry.alertTime)
         values.put(KEY_INSTANCE_START, entry.instanceStartTime);
@@ -404,7 +404,6 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     private fun cursorToRecord(cursor: Cursor): MonitorEventAlertEntry {
 
         return MonitorEventAlertEntry(
-                calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),

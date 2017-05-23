@@ -26,7 +26,6 @@ data class MonitorEventAlertEntryKey(
 )
 
 data class MonitorEventAlertEntry(
-        val calendarId: Long,
         val eventId: Long,
         val isAllDay: Boolean,
         val alertTime: Long,

@@ -290,6 +290,40 @@ object CalendarProvider: CalendarProviderInterface {
         return ret
     }
 
+
+    fun getEventLocalReminders(context: Context, eventId: Long): List<Long> {
+
+        val ret = mutableListOf<Long>()
+
+        val fields = arrayOf(CalendarContract.Reminders.MINUTES)
+
+        val selection = "${CalendarContract.Reminders.EVENT_ID} = ?" +
+                " AND ${CalendarContract.Reminders.METHOD} != ${CalendarContract.Reminders.METHOD_EMAIL}" +
+                " AND ${CalendarContract.Reminders.METHOD} != ${CalendarContract.Reminders.METHOD_SMS}"
+
+        val selectionArgs = arrayOf(eventId.toString())
+
+        val cursor = context.contentResolver.query(
+                CalendarContract.Reminders.CONTENT_URI,
+                fields,
+                selection,
+                selectionArgs,
+                null);
+
+        while (cursor != null && cursor.moveToNext()) {
+            //
+            val minutes: Long? = cursor.getLong(0)
+
+            if (minutes != null && minutes != -1L) {
+                ret.add(minutes * Consts.MINUTE_IN_SECONDS * 1000L)
+            }
+        }
+
+        cursor?.close()
+
+        return ret
+    }
+
     override fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
@@ -788,7 +822,14 @@ object CalendarProvider: CalendarProviderInterface {
         return alarmTime
     }
 
-    // TODO: reduce number of fields we read off the calendar
+
+    data class EventEntry(
+            val eventId: Long,
+            val instanceStart: Long,
+            val instanceEnd: Long,
+            val isAllDay: Long
+    )
+
     override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
@@ -798,6 +839,12 @@ object CalendarProvider: CalendarProviderInterface {
         }
 
         val settings = Settings(context)
+
+        val handledCalendars =
+                    getCalendars(context)
+                            .filter { settings.getCalendarIsHandled(it.calendarId) }
+                            .map { it.calendarId }
+                            .toSet()
 
         val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
@@ -812,19 +859,20 @@ object CalendarProvider: CalendarProviderInterface {
                     arrayOf(
                             CalendarContract.Instances.EVENT_ID,
                             CalendarContract.Events.CALENDAR_ID,
-                            CalendarContract.Events.DTSTART,
                             CalendarContract.Instances.BEGIN,
                             CalendarContract.Instances.END,
                             CalendarContract.Events.ALL_DAY
                     )
             val PROJECTION_INDEX_INST_EVENT_ID = 0
             val PROJECTION_INDEX_INST_CALENDAR_ID = 1
-            val PROJECTION_INDEX_INST_DT_START = 2
-            val PROJECTION_INDEX_INST_BEGIN = 3
-            val PROJECTION_INDEX_INST_END = 4
-            val PROJECTION_INDEX_INST_ALL_DAY = 5
+            val PROJECTION_INDEX_INST_BEGIN = 2
+            val PROJECTION_INDEX_INST_END = 3
+            val PROJECTION_INDEX_INST_ALL_DAY = 4
 
             logger.info("getEventAlertsManually: Manual event scan started, range: from $from to $to")
+
+
+            val intermitEvents = arrayListOf<EventEntry>()
 
             val scanStart = System.currentTimeMillis()
 
@@ -842,77 +890,92 @@ object CalendarProvider: CalendarProviderInterface {
                     val eventId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_EVENT_ID)
                     val calendarId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_CALENDAR_ID)
 
-                    val eventStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_DT_START)
-
                     val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
 
-                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
+                    val instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
 
-                    var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
+                    val isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
-                    if (instanceStart == null || eventStart == null || eventId == null || calendarId == null) {
-                        logger.info("Got entry with one of: instanceStart, eventStart, eventId or calendarId not present - skipping")
+                    if (instanceStart == null || eventId == null || calendarId == null) {
+                        logger.info("Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
                         continue;
                     }
 
-                    if (!settings.getCalendarIsHandled(calendarId)) {
+                    if (!handledCalendars.contains(calendarId)) {
                         logger.info("Event id $eventId - belongs to calendar $calendarId, which is not handled - skipping")
                         continue
                     }
 
-                    isAllDay = isAllDay ?: 0L
+                    intermitEvents.add(
+                            EventEntry(
+                                eventId = eventId,
+                                instanceStart = instanceStart,
+                                instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L,
+                                isAllDay = isAllDay ?: 0L
+                        ))
 
-                    instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L;
+                } while (instanceCursor.moveToNext())
 
-                    val reminders = getEventReminders(context, eventId);
+                val knownReminders =
+                        intermitEvents
+                                .map { it.eventId }
+                                .toSet()
+                                .map {
+                                    eventId -> eventId to
+                                        getEventReminders(context, eventId)
+                                                .filter { reminder ->
+                                                            reminder.method != CalendarContract.Reminders.METHOD_EMAIL &&
+                                                            reminder.method != CalendarContract.Reminders.METHOD_SMS }
+                                                .map { reminder -> reminder.millisecondsBefore }
+                                                .toMutableList()
+                                }
+                                .toMap()
+
+                for (evt in intermitEvents) {
+                    val reminders = knownReminders[evt.eventId] // getEventLocalReminders(context, eventId);
 
                     var hasAnyReminders = false
 
-                    for (reminder in reminders) {
-                        if (reminder.method == CalendarContract.Reminders.METHOD_EMAIL ||
-                                reminder.method == CalendarContract.Reminders.METHOD_SMS)
-                            continue;
+                    if (reminders != null)
+                        for (reminder in reminders){
 
-                        val alertTime = instanceStart - reminder.millisecondsBefore;
+                            val alertTime = evt.instanceStart - reminder//s[reminderIdx];
 
-                        val entry = MonitorEventAlertEntry(
-                                calendarId,
-                                eventId,
-                                isAllDay != 0L,
-                                alertTime,
-                                instanceStart,
-                                instanceEnd,
-                                false,
-                                false
-                        )
+                            val entry = MonitorEventAlertEntry(
+                                    evt.eventId,
+                                    evt.isAllDay != 0L,
+                                    alertTime,
+                                    evt.instanceStart,
+                                    evt.instanceEnd,
+                                    false,
+                                    false
+                            )
 
-                        ret.add(entry)
-                        hasAnyReminders = true
-                    }
+                            ret.add(entry)
+                            hasAnyReminders = true
+                        }
 
                     if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
 
                         val alertTime =
-                                if (isAllDay == 0L)
-                                    instanceStart - defaultReminderTimeForEventWithNoReminder
+                                if (evt.isAllDay == 0L)
+                                    evt.instanceStart - defaultReminderTimeForEventWithNoReminder
                                 else
-                                    instanceStart - defaultReminderTimeForAllDayEventWithNoreminder
+                                    evt.instanceStart - defaultReminderTimeForAllDayEventWithNoreminder
 
                         val entry = MonitorEventAlertEntry(
-                                calendarId,
-                                eventId,
-                                isAllDay != 0L,
+                                evt.eventId,
+                                evt.isAllDay != 0L,
                                 alertTime,
-                                instanceStart,
-                                instanceEnd,
+                                evt.instanceStart,
+                                evt.instanceEnd,
                                 true,
                                 false
                         )
 
                         ret.add(entry)
                     }
-
-                } while (instanceCursor.moveToNext())
+                }
 
             } else {
                 logger.error("getEventInstances: no pending event alerts found")

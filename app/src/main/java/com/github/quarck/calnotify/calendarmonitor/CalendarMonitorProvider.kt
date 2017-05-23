@@ -19,12 +19,14 @@
 
 package com.github.quarck.calnotify.calendarmonitor
 
+import android.app.Application
 import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventOrigin
 
 class CalendarMonitorProvider(
@@ -34,16 +36,11 @@ class CalendarMonitorProvider(
 
     private val MAX_ITERATIONS = 1000L
 
-    // returns true if has fired any single new event
-    fun doManualFireProviderEventsAt(context: Context, state: CalendarMonitorState, alertTime: Long): Boolean {
-
-        var ret = false
+    fun registerFiredEventsInDB(context: Context, state: CalendarMonitorState, alertTime: Long): Collection<EventAlertRecord> {
 
         logger.debug("doManualFireProviderEventsAt, alertTime=$alertTime");
 
-        val settings = Settings(context)
-
-        val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
+        val ret = mutableListOf<EventAlertRecord>()
 
         try {
             val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
@@ -57,21 +54,11 @@ class CalendarMonitorProvider(
 
                 logger.info("WARNING: Calendar Provider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
-                ret = true
-
                 event.origin = EventOrigin.ProviderManual
                 event.timeFirstSeen = System.currentTimeMillis()
-                val wasHandled = ApplicationController.onCalendarEventFired(context, event);
 
-                if (wasHandled) {
-                    calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
-
-                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
-
-                    if (markEventsAsHandledInProvider) {
-                        logger.info("Dismissing original reminder - marking event as handled in the provider")
-                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                    }
+                if (ApplicationController.registerNewEvent(context, event)) {
+                    ret.add(event)
                 }
             }
         }
@@ -87,13 +74,15 @@ class CalendarMonitorProvider(
 
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    fun manualFireEventsAt(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
+    fun manualFireEventsAt_NoHousekeeping(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
         var ret = false
 
         logger.debug("manualFireEventsAt: ($nextEventFire, $prevEventFire)");
 
         var currentPrevFire = prevEventFire ?: Long.MAX_VALUE
+
+        val eventsToPost = mutableListOf<EventAlertRecord>()
 
         if (currentPrevFire != Long.MAX_VALUE) {
 
@@ -106,20 +95,48 @@ class CalendarMonitorProvider(
 
                 logger.info("manualFireEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
 
-                if (doManualFireProviderEventsAt(context, state, nextSincePrev))
-                    ret = true
+                val newFires = registerFiredEventsInDB(context, state, nextSincePrev)
+                eventsToPost.addAll(newFires)
+                //    ret = true
 
                 currentPrevFire = nextSincePrev
             }
         }
 
-        if (doManualFireProviderEventsAt(context, state, nextEventFire))
+        val newFires = registerFiredEventsInDB(context, state, nextEventFire)
+        eventsToPost.addAll(newFires)
+
+        if (!newFires.isEmpty()) {
             ret = true
+
+            val settings = Settings(context)
+
+            val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
+
+            try {
+                ApplicationController.postEventNotifications(context, newFires)
+
+
+                for (event in newFires) {
+                    calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
+
+                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
+
+                    if (markEventsAsHandledInProvider) {
+                        logger.info("Dismissing original reminder - marking event as handled in the provider")
+                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
+                    }
+                }
+            }
+            catch (ex: Exception) {
+                logger.error("Exception occured while posting notifications / firing events: $ex, ${ex.stackTrace}")
+            }
+        }
 
         return ret
     }
 
-    fun scanNextEvent(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
+    fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
         logger.debug("scanNextEvent");
 
@@ -142,7 +159,7 @@ class CalendarMonitorProvider(
 
             logger.info("scanNextEvent: nextAlert $nextAlert is already in the past, firing at it")
 
-            if (manualFireEventsAt(context, state, nextAlert))
+            if (manualFireEventsAt_NoHousekeeping(context, state, nextAlert))
                 firedEvents = true
 
             nextAlert = calendarProvider.findNextAlarmTime(context.contentResolver, nextAlert + 1L) ?: Long.MAX_VALUE

@@ -153,7 +153,29 @@ object ApplicationController : EventMovedHandler {
         Handler().postDelayed({ handleOnCalendarChanged(context) }, delayInMilliseconds)
     }
 
-    fun onCalendarEventFired(context: Context, event: EventAlertRecord): Boolean {
+    // some housekeeping that we have to do after firing calendar event
+    fun afterCalendarEventFired(context: Context) {
+
+        // reload all the other events - check if there are any changes yet
+        val changes = EventsStorage(context).use {
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+        }
+
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+        UINotifierService.notifyUI(context, false);
+    }
+
+    fun postEventNotifications(context: Context, events: Collection<EventAlertRecord>) {
+
+        if (events.size == 1)
+            notificationManager.onEventAdded(context, EventFormatter(context), events.first())
+        else
+            notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
+
+    }
+
+    fun registerNewEvent(context: Context, event: EventAlertRecord): Boolean {
 
         var ret = false
 
@@ -171,7 +193,7 @@ object ApplicationController : EventMovedHandler {
             if (event.isRepeating) {
                 // repeating event - always simply add
                 db.addEvent(event)
-                notificationManager.onEventAdded(context, EventFormatter(context), event)
+                //notificationManager.onEventAdded(context, EventFormatter(context), event)
             } else {
                 // non-repeating event - make sure we don't create two records with the same eventId
                 val oldEvents
@@ -191,7 +213,7 @@ object ApplicationController : EventMovedHandler {
 
                 // add newly fired event
                 db.addEvent(event)
-                notificationManager.onEventAdded(context, EventFormatter(context), event)
+                //notificationManager.onEventAdded(context, EventFormatter(context), event)
             }
         }
 
@@ -222,20 +244,8 @@ object ApplicationController : EventMovedHandler {
             logger.error("Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
                     "instance st ${event.instanceStartTime}, repeating: " +
                     "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
-
-        // reload all the other events - check if there are any changes yet
-        val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
-        }
-
-        // FIXME: move this to caller of this callback, as we can get multiple events firing at the same time
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
-        // FIXME: this one too
-        UINotifierService.notifyUI(context, false);
-
-        logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
-
+        else
+            logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
 
         return ret
     }

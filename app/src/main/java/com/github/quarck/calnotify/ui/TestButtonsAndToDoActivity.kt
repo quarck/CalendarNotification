@@ -116,8 +116,7 @@ class TestButtonsAndToDoActivity : Activity() {
         val start = nextDay + minutesFromMidnight * 60L * 1000L
         val end = start + duration * 60L * 1000L
 
-        ApplicationController.onCalendarEventFired(this,
-            EventAlertRecord(
+        val event = EventAlertRecord(
                 -1L,
                 eventId,
                 allDay,
@@ -134,7 +133,11 @@ class TestButtonsAndToDoActivity : Activity() {
                 0L, // snoozed
                 EventDisplayStatus.Hidden,
                 color
-            ));
+        )
+        ApplicationController.postEventNotifications(this, listOf(event))
+        ApplicationController.registerNewEvent(this, event);
+
+        ApplicationController.afterCalendarEventFired(this)
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -200,7 +203,9 @@ class TestButtonsAndToDoActivity : Activity() {
 
         cnt++;
 
-        ApplicationController.onCalendarEventFired(this, event)
+        ApplicationController.registerNewEvent(this, event)
+        ApplicationController.postEventNotifications(this, listOf(event))
+        ApplicationController.afterCalendarEventFired(this)
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

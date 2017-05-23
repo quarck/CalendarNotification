@@ -31,7 +31,7 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
 object CalendarProvider: CalendarProviderInterface {
-    private val logger = Logger("CalendarUtils");
+    private val logger = Logger("CalendarProvider");
 
     private val alertFields =
         arrayOf(
@@ -614,6 +614,7 @@ object CalendarProvider: CalendarProviderInterface {
     }
 
     override fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
+
         var ret: Boolean? = null
 
         val fields = arrayOf(
@@ -624,15 +625,18 @@ object CalendarProvider: CalendarProviderInterface {
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        uri,
-                        fields,
-                        null,
-                        null,
-                        null
-                );
+        var cursor: Cursor? = null
+
         try {
+            cursor =
+                    context.contentResolver.query(
+                    uri,
+                    fields,
+                    null,
+                    null,
+                    null
+            );
+
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     val eventIdEvent = cursor.getLong(0)
@@ -652,11 +656,14 @@ object CalendarProvider: CalendarProviderInterface {
 
                 } while (cursor.moveToNext())
             }
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             ret = null
         }
+        finally {
+            cursor?.close()
+        }
 
-        cursor?.close()
 
         return ret;
     }
@@ -799,8 +806,6 @@ object CalendarProvider: CalendarProviderInterface {
         val defaultReminderTimeForAllDayEventWithNoreminder =
                 settings.defaultReminderTimeForAllDayEventWithNoreminder
 
-        logger.info("Start: $from, end: $to, len: ${(to-from)/1000L/60L/60L}hrs")
-
         try {
             val projection =
                     arrayOf(
@@ -818,7 +823,9 @@ object CalendarProvider: CalendarProviderInterface {
             val PROJECTION_INDEX_INST_END = 4
             val PROJECTION_INDEX_INST_ALL_DAY = 5
 
-            logger.info("Manual event scan started, range: from $from to $to")
+            logger.info("getEventAlertsManually: Manual event scan started, range: from $from to $to")
+
+            val scanStart = System.currentTimeMillis()
 
             val instanceCursor: Cursor? =
                     CalendarContract.Instances.query(
@@ -880,8 +887,6 @@ object CalendarProvider: CalendarProviderInterface {
 
                         ret.add(entry)
                         hasAnyReminders = true
-
-                        logger.info("$entry")
                     }
 
                     if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
@@ -914,6 +919,9 @@ object CalendarProvider: CalendarProviderInterface {
             }
 
             instanceCursor?.close()
+
+            val scanEnd = System.currentTimeMillis()
+            logger.info("getEventAlertsManually(): scan finished, got ${ret.size} entries, scan time: ${scanEnd-scanStart}ms")
         }
         catch (ex: Exception) {
             logger.error("getEventAlertsManually(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")

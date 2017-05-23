@@ -69,7 +69,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
 
-        logger.debug("addAlert $entry")
+        //logger.debug("addAlert $entry")
 
         val values =  recordToContentValues(entry)
 
@@ -95,7 +95,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
 
-        logger.debug("deleteAlert $eventId / $alertTime")
+        //logger.debug("deleteAlert $eventId / $alertTime")
 
         try {
             db.delete(
@@ -131,7 +131,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     override fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
         val values = recordToContentValues(entry)
 
-        logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+        //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
         db.update(TABLE_NAME, // table
                 values, // column/value
@@ -141,10 +141,10 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
-        logger.debug("Updating ${entries.size} alerts");
+        //logger.debug("Updating ${entries.size} alerts");
 
         for (entry in entries) {
-            logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+            //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
             val values = recordToContentValues(entry)
 
@@ -182,7 +182,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlert($eventId, $alertTime), returning ${ret}")
+        //logger.debug("getAlert($eventId, $alertTime), returning ${ret}")
 
         return ret
     }
@@ -210,7 +210,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getNextAlert, returning $ret")
+        //logger.debug("getNextAlert, returning $ret")
 
         return ret
     }
@@ -243,7 +243,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlertsAt($time), returning ${ret.size} events")
+        //logger.debug("getAlertsAt($time), returning ${ret.size} events")
 
         return ret
     }
@@ -276,7 +276,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlerts, returnint ${ret.size} events")
+        //logger.debug("getAlerts, returnint ${ret.size} events")
 
         return ret
     }
@@ -312,7 +312,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlerts, returnint ${ret.size} events")
+        //logger.debug("getAlerts, returnint ${ret.size} events")
 
         return ret
     }
@@ -348,7 +348,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        logger.debug("getAlerts, returnint ${ret.size} events")
+        //logger.debug("getAlerts, returnint ${ret.size} events")
 
         return ret
     }

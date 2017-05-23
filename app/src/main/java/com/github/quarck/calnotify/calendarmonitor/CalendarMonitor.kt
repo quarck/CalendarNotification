@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.app.AlarmManager
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -104,14 +105,16 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         val nextEventFireFromProvider = state.nextEventFireFromProvider
         if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider is less than current time, checking what to fire")
-            providerScanner.manualFireEventsAt(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
+            providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
         }
 
         val nextEventFireFromScan = state.nextEventFireFromScan
         if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time, checking what to fire")
-            manualScanner.manualFireEventsAt(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+            manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
         }
+
+        ApplicationController.afterCalendarEventFired(context)
 
         scanAndScheduleAlarms(context)
         lastScan = System.currentTimeMillis()
@@ -143,6 +146,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
             return
         }
 
+        val eventsToPost = mutableListOf<EventAlertRecord>()
+
         try {
             val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
 
@@ -157,21 +162,34 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
-                val wasHandled = ApplicationController.onCalendarEventFired(context, event);
 
-                if (wasHandled) {
-                    setAlertWasHandled(context, event, createdByUs = false)
-                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
-
-                    if (markEventsAsHandledInProvider) {
-                        logger.info("Dismissing original reminder")
-                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                    }
+                if (ApplicationController.registerNewEvent(context, event)) {
+                    eventsToPost.add(event)
                 }
             }
 
         } catch (ex: Exception) {
             logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
+        }
+
+        try {
+            ApplicationController.postEventNotifications(context, eventsToPost)
+
+            for (event in eventsToPost) {
+                setAlertWasHandled(context, event, createdByUs = false)
+                logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
+
+                if (markEventsAsHandledInProvider) {
+                    logger.info("Dismissing original reminder")
+                    CalendarProvider.dismissNativeEventAlert(context, event.eventId);
+                }
+
+            }
+
+            ApplicationController.afterCalendarEventFired(context)
+        }
+        catch (ex: Exception) {
+            logger.error("Exception while posting notifications: $ex, ${ex.stackTrace}")
         }
 
         scanAndScheduleAlarms(context)
@@ -181,7 +199,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms(context: Context): Boolean {
 
-        logger.debug("scanAndScheduleAlarms");
+        logger.debug("scanAndScheduleAlarms, dropping DB to debug performance");
+
+        MonitorStorage(context).use {
+            db -> db.deleteAlertsForEventsOlderThan(System.currentTimeMillis() + 10L*365L*24L*3600L*1000L) // kill them all
+        }
 
         val scanStart = System.currentTimeMillis()
 
@@ -191,11 +213,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         val scanPh1 = System.currentTimeMillis()
 
-        val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent(context, state)
+        val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent_NoHousekeping(context, state)
 
         val scanPh2 = System.currentTimeMillis()
 
-        val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent(context, state)
+        val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent_NoHousekeping(context, state)
 
         val scanPh3 = System.currentTimeMillis()
 
@@ -203,6 +225,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                 "scan statistics: total time: ${scanPh3 - scanStart}ms, phases: ${scanPh1-scanStart}ms, ${scanPh2-scanPh1}ms, ${scanPh3-scanPh2}ms")
 
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
+
+        ApplicationController.afterCalendarEventFired(context)
+
+        val scanPh4 = System.currentTimeMillis()
+        logger.info("afterCalendarEventFired took ${scanPh4-scanPh3}ms")
 
         return firedEventsProvider || firedEventsManual
     }

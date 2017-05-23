@@ -90,7 +90,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         movedHandler: EventMovedHandler?
     ): Boolean {
 
-        logger.info("reloading event ${event.eventId} / ${event.instanceStartTime}")
+        //logger.info("reloading event ${event.eventId} / ${event.instanceStartTime}")
 
         var notificationRemoved = false
 
@@ -133,7 +133,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         currentTime: Long
     ): Boolean {
 
-        logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance found")
+//        logger.debug("event ${event.eventId} / ${event.instanceStartTime} - instance found")
 
         var changesDetected = false
 
@@ -162,9 +162,9 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
                 changesDetected = true
 
-            } else {
+            } /*else {
                 logger.info("Non-repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
-            }
+            }*/
 
         } else {
             if (event.updateFrom(newEventAlert)) {
@@ -177,9 +177,9 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
 
                 changesDetected = true
 
-            } else {
+            } /*else {
                 logger.info("Repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
-            }
+            }*/
         }
 
         return changesDetected

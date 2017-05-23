@@ -239,7 +239,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         for (event in events) {
             // make sure we remove full notifications
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
-                logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
+                //logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId)
             }
 
@@ -414,10 +414,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         for (event in events) {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
-                logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
+                //logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId)
             } else {
-                logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
+                //logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
             }
 
             if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {

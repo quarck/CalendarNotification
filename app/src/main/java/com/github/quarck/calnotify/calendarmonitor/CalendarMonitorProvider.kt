@@ -116,7 +116,6 @@ class CalendarMonitorProvider(
             try {
                 ApplicationController.postEventNotifications(context, newFires)
 
-
                 for (event in newFires) {
                     calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
 

@@ -30,12 +30,7 @@ import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 
 
-//TODO: when seeing a new event with alarm time in the past -- notify immediately
-
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
-
-//TODO: need to skip not handled calendars! (Full scan only)
-
 
 class CalendarMonitorManual(
         val calendarProvider: CalendarProviderInterface,
@@ -87,11 +82,11 @@ class CalendarMonitorManual(
                 logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
             }
 
+            markAlertsAsHandledInDB(context, firedAlerts.map { it.first })
+
             for ((alert, event) in firedAlerts) {
 
-                markAlertAsHandledInDB(context, alert)
-
-                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB")
+                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
 
                 if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
                     logger.info("Dismissing original reminder - marking event as handled in the provider")
@@ -163,18 +158,21 @@ class CalendarMonitorManual(
         } else {
             logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
             // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
-            markAlertAsHandledInDB(context, alert)
+            markAlertsAsHandledInDB(context, listOf(alert))
         }
 
         return ret
     }
 
-    private fun markAlertAsHandledInDB(context: Context, alert: MonitorEventAlertEntry) {
+    private fun markAlertsAsHandledInDB(context: Context, alerts: Collection<MonitorEventAlertEntry>) {
         MonitorStorage(context).use {
             db ->
-            logger.info("marking as handled alert: $alert");
-            alert.wasHandled = true
-            db.updateAlert(alert)
+            logger.info("marking ${alerts.size} alerts as handled in the manual alerts DB");
+
+            for (alert in alerts)
+                alert.wasHandled = true
+
+            db.updateAlerts(alerts)
         }
     }
 
@@ -185,8 +183,6 @@ class CalendarMonitorManual(
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
         var hasFiredAnything = false
-
-        // TODO: timestamp, how long it takes!!
 
         val settings = Settings(context)
 
@@ -211,7 +207,7 @@ class CalendarMonitorManual(
         val alertsMerged = filterAndMergeAlerts(context, alerts, scanFrom, scanTo)
                 .sortedBy { it.alertTime }
 
-        logger.info("scanNextEvent: merged conut: $alertsMerged")
+        logger.info("scanNextEvent: merged count: ${alertsMerged.size}")
 
         // now we only need to simply fire at all missed events,
         // and pick the nearest future event,
@@ -237,7 +233,11 @@ class CalendarMonitorManual(
             hasFiredAnything = true
 
             try {
+                val start = System.currentTimeMillis()
                 ApplicationController.postEventNotifications(context, firedDueAlerts.map { it.second } )
+                val end = System.currentTimeMillis()
+
+                logger.debug("ApplicationController.postEventNotifications took ${end-start}ms");
             }
             catch (ex: Exception) {
                 logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
@@ -247,11 +247,11 @@ class CalendarMonitorManual(
 
             val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
 
+            markAlertsAsHandledInDB(context, firedDueAlerts.map { it.first } )
+
             for ((alert, event) in firedDueAlerts) {
 
-                markAlertAsHandledInDB(context, alert)
-
-                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB")
+                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
 
                 if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
                     logger.info("Dismissing original reminder - marking event as handled in the provider")
@@ -269,6 +269,7 @@ class CalendarMonitorManual(
         val nextAlert = alertsMerged.filter { !it.wasHandled && it.alertTime > fireAlertsUpTo }
                 .minBy { it.alertTime }
 
+        // TODO TODO TODO
         // TODO: below: -- calendar provider handles most of it, we need to
         // make sure we re-scan on setting change, to update alert times
         val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
@@ -286,22 +287,36 @@ class CalendarMonitorManual(
 
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
+        val ts0 = System.currentTimeMillis()
+
         val providedAlerts = alerts.associateBy { it.key }
+
+        val ts1 = System.currentTimeMillis()
 
         MonitorStorage(context).use {
             db ->
             val knownAlerts = db.getAlertsForInstanceStartRange(scanFrom, scanTo).associateBy { it.key }
 
+            val ts2 = System.currentTimeMillis()
+
             val newAlerts = providedAlerts - knownAlerts.keys
             val disappearedAlerts = knownAlerts - providedAlerts.keys
+
+            val ts3 = System.currentTimeMillis()
 
             logger.info("filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
 
             db.deleteAlerts(disappearedAlerts.values)
             db.addAlerts(newAlerts.values)
 
+            val ts4 = System.currentTimeMillis()
+
             // Presumably this would be faster than re-reading SQLite again
             ret.addAll((knownAlerts - disappearedAlerts.keys + newAlerts).values)
+
+            val ts5 = System.currentTimeMillis()
+
+            logger.debug("filterAndMergeAlerts: performance: ${ts1-ts0}, ${ts2-ts1}, ${ts3-ts2}, ${ts4-ts3}, ${ts5-ts4}")
         }
 
         return ret

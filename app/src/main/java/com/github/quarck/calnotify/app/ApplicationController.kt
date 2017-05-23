@@ -245,7 +245,7 @@ object ApplicationController : EventMovedHandler {
                     "instance st ${event.instanceStartTime}, repeating: " +
                     "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
         else
-            logger.info("event added: ${event.eventId} (cal id: ${event.calendarId}");
+            logger.info("event added: ${event.eventId} (cal id: ${event.calendarId})");
 
         return ret
     }

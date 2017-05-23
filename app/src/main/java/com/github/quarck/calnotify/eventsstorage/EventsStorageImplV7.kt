@@ -88,7 +88,7 @@ class EventsStorageImplV7
     }
 
     override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
-        logger.debug("addEventImpl " + event.eventId)
+        // logger.debug("addEventImpl " + event.eventId)
 
         if (event.notificationId == 0)
             event.notificationId = nextNotificationId(db);
@@ -129,7 +129,7 @@ class EventsStorageImplV7
         if (ret == 0)
             ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
 
-        logger.debug("nextNotificationId, returning $ret")
+        // logger.debug("nextNotificationId, returning $ret")
 
         return ret
     }
@@ -138,7 +138,7 @@ class EventsStorageImplV7
 
         val values = eventRecordToContentValues(event)
 
-        logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
+        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
 
         db.update(TABLE_NAME, // table
             values, // column/value
@@ -147,7 +147,7 @@ class EventsStorageImplV7
     }
 
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
-        logger.debug("Updating ${events.size} events");
+        //logger.debug("Updating ${events.size} events");
 
         for (event in events) {
             val values = eventRecordToContentValues(event)
@@ -165,7 +165,7 @@ class EventsStorageImplV7
             event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
             includeKeyValues = true )
 
-        logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
+        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
 
         db.update(TABLE_NAME, // table
             values, // column/value
@@ -215,7 +215,7 @@ class EventsStorageImplV7
         }
         cursor.close()
 
-        logger.debug("eventsImpl, returnint ${ret.size} events")
+        //logger.debug("eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -239,7 +239,7 @@ class EventsStorageImplV7
         }
         cursor.close()
 
-        logger.debug("eventsImpl, returnint ${ret.size} events")
+        //logger.debug("eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -251,7 +251,7 @@ class EventsStorageImplV7
             " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
             arrayOf(eventId.toString(), instanceStartTime.toString()))
 
-        logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
+        //logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
     }
 
     private fun eventRecordToContentValues(event: EventAlertRecord, includeKeyValues: Boolean = false): ContentValues {

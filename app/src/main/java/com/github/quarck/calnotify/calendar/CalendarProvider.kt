@@ -788,6 +788,7 @@ object CalendarProvider: CalendarProviderInterface {
         return alarmTime
     }
 
+    // TODO: reduce number of fields we read off the calendar
     override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
@@ -909,7 +910,6 @@ object CalendarProvider: CalendarProviderInterface {
                         )
 
                         ret.add(entry)
-                        logger.info("$entry")
                     }
 
                 } while (instanceCursor.moveToNext())

@@ -89,8 +89,18 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     }
 
     override fun addAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
-        for (entry in entries)
-            addAlert(db, entry)
+
+        try {
+            db.beginTransaction()
+
+            for (entry in entries)
+                addAlert(db, entry)
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
     }
 
     override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
@@ -109,8 +119,18 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     }
 
     override fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
-        for (entry in entries)
-            deleteAlert(db, entry.eventId, entry.alertTime, entry.instanceStartTime)
+
+        try {
+            db.beginTransaction()
+
+            for (entry in entries)
+                deleteAlert(db, entry.eventId, entry.alertTime, entry.instanceStartTime)
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
     }
 
     override fun deleteAlertsForEventsOlderThan(db: SQLiteDatabase, time: Long) {
@@ -143,15 +163,24 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
         //logger.debug("Updating ${entries.size} alerts");
 
-        for (entry in entries) {
-            //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+        try {
+            db.beginTransaction()
 
-            val values = recordToContentValues(entry)
+            for (entry in entries) {
+                //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
-            db.update(TABLE_NAME, // table
-                    values, // column/value
-                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                    arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
+                val values = recordToContentValues(entry)
+
+                db.update(TABLE_NAME, // table
+                        values, // column/value
+                        "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                        arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
         }
     }
 

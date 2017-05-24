@@ -52,7 +52,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
     private var lastScan = 0L
 
     override fun onSystemTimeChange(context: Context) {
-        scanAndScheduleAlarms(context)
+
+        lastScan = System.currentTimeMillis()
+
+        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        if (firedAnything) {
+            // no need to reload calendar here, it would be reloaded from other places
+            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+        }
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
@@ -60,7 +67,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         logger.debug("onBoot: scanning and setting alarms");
 
         lastScan = System.currentTimeMillis()
-        return scanAndScheduleAlarms(context)
+
+        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+
+        if (firedAnything) {
+            // no need to reload calendar here, it would be reloaded from other places
+            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+        }
+        return firedAnything
     }
 
     override fun onPeriodicRescanBroadcast(context: Context, intent: Intent) {
@@ -71,7 +85,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
             return
         lastScan = currentTime
 
-        scanAndScheduleAlarms(context)
+        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        if (firedAnything) {
+            ApplicationController.afterCalendarEventFired(context, reloadCalendar = true)
+        }
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
@@ -83,7 +100,13 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
             return false
         lastScan = currentTime
 
-        return scanAndScheduleAlarms(context)
+        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        if (firedAnything) {
+            // no need to reload calendar here, it would be reloaded from other places
+            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+        }
+
+        return firedAnything
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
@@ -91,7 +114,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         logger.debug("onUpgrade: scanning and setting alarms");
 
         lastScan = System.currentTimeMillis()
-        return scanAndScheduleAlarms(context)
+
+        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        if (firedAnything) {
+            // no need to reload calendar here, it would be reloaded from other places
+            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+        }
+
+        return firedAnything
     }
 
     override fun onAlarmBroadcast(context: Context, intent: Intent) {
@@ -102,22 +132,28 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         val currentTime = System.currentTimeMillis()
 
+        var firedProvider = false
+        var firedManual = false
+
         val nextEventFireFromProvider = state.nextEventFireFromProvider
         if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider is less than current time, checking what to fire")
-            providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
+            firedProvider = providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
         }
 
         val nextEventFireFromScan = state.nextEventFireFromScan
         if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
             logger.info("onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time, checking what to fire")
-            manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+            firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
         }
 
-        ApplicationController.afterCalendarEventFired(context)
-
-        scanAndScheduleAlarms(context)
         lastScan = System.currentTimeMillis()
+        val firedAnythingElse = scanAndScheduleAlarms_noAfterFire(context)
+
+        if (firedProvider || firedManual || firedAnythingElse) {
+            ApplicationController.afterCalendarEventFired(context)
+        }
+
     }
 
     override fun onCalendarChange(context: Context) {
@@ -125,7 +161,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         logger.debug("onCalendarChange");
 
         val delayInMilliseconds = 1500L
-        Handler().postDelayed({ scanAndScheduleAlarms(context) }, delayInMilliseconds)
+        Handler().postDelayed(
+                {
+                    val fired = scanAndScheduleAlarms_noAfterFire(context)
+                    if (fired) {
+                        // no neeed to reload calendar here -- another thread would be doing it
+                        ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+                    }
+                }, delayInMilliseconds)
     }
 
     // proper broadcast from the Calendar Provider. Normally this is a proper
@@ -142,7 +185,9 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime == null) {
             logger.error("ERROR alertTime is null!")
-            scanAndScheduleAlarms(context)
+            val fired = scanAndScheduleAlarms_noAfterFire(context)
+            if (fired)
+                ApplicationController.afterCalendarEventFired(context, reloadCalendar = true)
             return
         }
 
@@ -183,21 +228,20 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                     logger.info("Dismissing original reminder")
                     CalendarProvider.dismissNativeEventAlert(context, event.eventId);
                 }
-
             }
-
-            ApplicationController.afterCalendarEventFired(context)
         }
         catch (ex: Exception) {
             logger.error("Exception while posting notifications: $ex, ${ex.stackTrace}")
         }
 
-        scanAndScheduleAlarms(context)
+        scanAndScheduleAlarms_noAfterFire(context)
+
+        ApplicationController.afterCalendarEventFired(context)
     }
 
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    private fun scanAndScheduleAlarms(context: Context): Boolean {
+    private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
 
         logger.debug("scanAndScheduleAlarms, dropping DB to debug performance");
 
@@ -222,7 +266,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
-        ApplicationController.afterCalendarEventFired(context)
+//        if (firedEventsProvider || firedEventsManual) {
+//            // no need to reload calendar here, it would be reloaded from other places
+//            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+//        }
 
         val scanPh4 = System.currentTimeMillis()
         logger.info("afterCalendarEventFired took ${scanPh4-scanPh3}ms")

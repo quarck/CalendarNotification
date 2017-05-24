@@ -154,11 +154,13 @@ object ApplicationController : EventMovedHandler {
     }
 
     // some housekeeping that we have to do after firing calendar event
-    fun afterCalendarEventFired(context: Context) {
+    fun afterCalendarEventFired(context: Context, reloadCalendar: Boolean = true) {
 
-        // reload all the other events - check if there are any changes yet
-        val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+        if (reloadCalendar) {
+            // reload all the other events - check if there are any changes yet
+            EventsStorage(context).use {
+                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+            }
         }
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);

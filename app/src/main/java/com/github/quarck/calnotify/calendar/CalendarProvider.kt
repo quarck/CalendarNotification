@@ -252,44 +252,46 @@ object CalendarProvider: CalendarProviderInterface {
 
         val ret = mutableListOf<EventReminderRecord>()
 
-        if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEvent failed due to not sufficient permissions");
-            return ret;
-        }
+        var cursor: Cursor? = null
 
-        val fields = arrayOf(
-            CalendarContract.Reminders.MINUTES,
-            CalendarContract.Reminders.METHOD )
+        try {
+            val fields = arrayOf(
+                    CalendarContract.Reminders.MINUTES,
+                    CalendarContract.Reminders.METHOD)
 
-        val selection = "${CalendarContract.Reminders.EVENT_ID} = ?"
+            val selection = "${CalendarContract.Reminders.EVENT_ID} = ?"
 
-        val selectionArgs = arrayOf(eventId.toString())
+            val selectionArgs = arrayOf(eventId.toString())
 
-        val cursor = context.contentResolver.query(
-            CalendarContract.Reminders.CONTENT_URI,
-            fields,
-            selection,
-            selectionArgs,
-            null);
+            cursor = context.contentResolver.query(
+                    CalendarContract.Reminders.CONTENT_URI,
+                    fields,
+                    selection,
+                    selectionArgs,
+                    null);
 
-        while (cursor != null && cursor.moveToNext()) {
-            //
-            val minutes: Long? = cursor.getLong(0)
-            val method: Int? = cursor.getInt(1)
+            while (cursor != null && cursor.moveToNext()) {
+                //
+                val minutes: Long? = cursor.getLong(0)
+                val method: Int? = cursor.getInt(1)
 
-            if (minutes != null && minutes != -1L && method != null) {
-                ret.add(
-                    EventReminderRecord(
-                        minutes * Consts.MINUTE_IN_SECONDS * 1000L,
-                        method))
+                if (minutes != null && minutes != -1L && method != null) {
+                    ret.add(
+                            EventReminderRecord(
+                                    minutes * Consts.MINUTE_IN_SECONDS * 1000L,
+                                    method))
+                }
             }
         }
-
-        cursor?.close()
+        catch (ex: Exception) {
+            logger.error("Exception while reading event $eventId reminders: $ex, ${ex.stackTrace}")
+        }
+        finally {
+            cursor?.close()
+        }
 
         return ret
     }
-
 
     fun getEventLocalReminders(context: Context, eventId: Long): List<Long> {
 
@@ -922,12 +924,13 @@ object CalendarProvider: CalendarProviderInterface {
                                 .toSet()
                                 .map {
                                     eventId -> eventId to
-                                        getEventReminders(context, eventId)
-                                                .filter { reminder ->
-                                                            reminder.method != CalendarContract.Reminders.METHOD_EMAIL &&
-                                                            reminder.method != CalendarContract.Reminders.METHOD_SMS }
-                                                .map { reminder -> reminder.millisecondsBefore }
-                                                .toMutableList()
+                                        getEventLocalReminders(context, eventId)
+//                                        getEventReminders(context, eventId)
+//                                                .filter { reminder ->
+//                                                            reminder.method != CalendarContract.Reminders.METHOD_EMAIL &&
+//                                                            reminder.method != CalendarContract.Reminders.METHOD_SMS }
+//                                                .map { reminder -> reminder.millisecondsBefore }
+//                                                .toLongArray()
                                 }
                                 .toMap()
 

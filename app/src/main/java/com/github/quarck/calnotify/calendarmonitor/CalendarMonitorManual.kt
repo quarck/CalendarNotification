@@ -196,6 +196,8 @@ class CalendarMonitorManual(
         val scanFrom = min3(currentTime, prevScanTo, prevFire) - scanWindowBackward
         val scanTo = scanFrom + scanWindow
 
+        val firstScanEver = state.firstScanEver
+
         state.prevEventScanTo = scanTo
 
         logger.info("scanNextEvent: scan range: $scanFrom, $scanTo")
@@ -217,52 +219,59 @@ class CalendarMonitorManual(
 
         val dueAlerts = alertsMerged.filter { !it.wasHandled && it.alertTime <= fireAlertsUpTo }
 
-        val firedDueAlerts = mutableListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+        if (firstScanEver) {
+            state.firstScanEver = false
+            logger.info("This is a first deep scan ever, not posting 'due' events as these are reminders for past events")
+            markAlertsAsHandledInDB(context, dueAlerts )
 
-        logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
+        } else {
+            logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
 
-        for (alert in dueAlerts) {
-            val event = registerFiredEventInDB(context, alert)
-            if (event != null) {
-                firedDueAlerts.add(Pair(alert, event))
-            }
-        }
+            val firedDueAlerts = mutableListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
 
-        if (!firedDueAlerts.isEmpty()) {
-
-            hasFiredAnything = true
-
-            try {
-                val start = System.currentTimeMillis()
-                ApplicationController.postEventNotifications(context, firedDueAlerts.map { it.second } )
-                val end = System.currentTimeMillis()
-
-                logger.debug("ApplicationController.postEventNotifications took ${end-start}ms");
-            }
-            catch (ex: Exception) {
-                logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
+            for (alert in dueAlerts) {
+                val event = registerFiredEventInDB(context, alert)
+                if (event != null) {
+                    firedDueAlerts.add(Pair(alert, event))
+                }
             }
 
-            var lastFiredAlert = 0L
+            if (!firedDueAlerts.isEmpty()) {
 
-            val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
+                hasFiredAnything = true
 
-            markAlertsAsHandledInDB(context, firedDueAlerts.map { it.first } )
+                try {
+                    val start = System.currentTimeMillis()
+                    ApplicationController.postEventNotifications(context, firedDueAlerts.map { it.second } )
+                    val end = System.currentTimeMillis()
 
-            for ((alert, event) in firedDueAlerts) {
-
-                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
-
-                if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
-                    logger.info("Dismissing original reminder - marking event as handled in the provider")
-                    calendarProvider.dismissNativeEventAlert(context, event.eventId);
+                    logger.debug("ApplicationController.postEventNotifications took ${end-start}ms");
+                }
+                catch (ex: Exception) {
+                    logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
                 }
 
-                lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
-            }
+                var lastFiredAlert = 0L
 
-            state.prevEventFireFromScan = lastFiredAlert
-            logger.info("scanNextEvent: prevEventFireFromScan was set to $lastFiredAlert")
+                val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
+
+                markAlertsAsHandledInDB(context, firedDueAlerts.map { it.first } )
+
+                for ((alert, event) in firedDueAlerts) {
+
+                    logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
+
+                    if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
+                        logger.info("Dismissing original reminder - marking event as handled in the provider")
+                        calendarProvider.dismissNativeEventAlert(context, event.eventId);
+                    }
+
+                    lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
+                }
+
+                state.prevEventFireFromScan = lastFiredAlert
+                logger.info("scanNextEvent: prevEventFireFromScan was set to $lastFiredAlert")
+            }
         }
 
         // Finally - find the next nearest alert
@@ -271,7 +280,8 @@ class CalendarMonitorManual(
 
         // TODO TODO TODO
         // TODO: below: -- calendar provider handles most of it, we need to
-        // make sure we re-scan on setting change, to update alert times
+        // make sure we re-scan on setting change, to update alert times.
+        // most likely we are re-scanning on onResume, then just make sure!!
         val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
 

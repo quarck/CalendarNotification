@@ -201,20 +201,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         logger.debug("scanAndScheduleAlarms, dropping DB to debug performance");
 
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        MonitorStorage(context).use {
-            db -> db.deleteAlertsForEventsOlderThan(System.currentTimeMillis() + 10L*365L*24L*3600L*1000L) // kill them all
-        }
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-        // FIXME REMOVE DBEUG CODE
-
         val scanStart = System.currentTimeMillis()
 
         schedulePeriodicRescanAlarm(context)

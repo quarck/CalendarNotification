@@ -824,6 +824,15 @@ object CalendarProvider: CalendarProviderInterface {
         return alarmTime
     }
 
+    override fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long> {
+        val handledCalendars =
+                getCalendars(context)
+                        .filter { settings.getCalendarIsHandled(it.calendarId) }
+                        .map { it.calendarId }
+                        .toSet()
+
+        return handledCalendars
+    }
 
     data class EventEntry(
             val eventId: Long,
@@ -842,11 +851,7 @@ object CalendarProvider: CalendarProviderInterface {
 
         val settings = Settings(context)
 
-        val handledCalendars =
-                    getCalendars(context)
-                            .filter { settings.getCalendarIsHandled(it.calendarId) }
-                            .map { it.calendarId }
-                            .toSet()
+        val handledCalendars = getHandledCalendarsIds(context, settings)
 
         val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
@@ -903,7 +908,7 @@ object CalendarProvider: CalendarProviderInterface {
                         continue;
                     }
 
-                    if (!handledCalendars.contains(calendarId)) {
+                    if (!handledCalendars.contains(calendarId) || calendarId == -1L) {
                         logger.info("Event id $eventId - belongs to calendar $calendarId, which is not handled - skipping")
                         continue
                     }

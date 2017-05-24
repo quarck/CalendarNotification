@@ -108,6 +108,22 @@ class EventsStorageImplV7
         }
     }
 
+    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
+
+        try {
+            db.beginTransaction()
+
+            for (event in events)
+                addEventImpl(db, event)
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+
+    }
+
     private fun nextNotificationId(db: SQLiteDatabase): Int {
 
         var ret = 0;

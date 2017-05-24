@@ -92,7 +92,7 @@ object ApplicationController : EventMovedHandler {
         logger.info("Application updated, reloading calendar")
 
         val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS)
         }
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
@@ -111,7 +111,7 @@ object ApplicationController : EventMovedHandler {
         logger.info("System rebooted - reloading calendar")
 
         val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS)
         };
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
@@ -129,7 +129,7 @@ object ApplicationController : EventMovedHandler {
 
         val changes = EventsStorage(context).use {
             db ->
-            calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
+            calendarReloadManager.reloadCalendar(context, db, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_CALENDAR_CHANGED_MILLIS)
         }
 
         if (changes) {
@@ -159,7 +159,7 @@ object ApplicationController : EventMovedHandler {
         if (reloadCalendar) {
             // reload all the other events - check if there are any changes yet
             EventsStorage(context).use {
-                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS)
             }
         }
 
@@ -250,6 +250,109 @@ object ApplicationController : EventMovedHandler {
 
         return ret
     }
+
+    fun registerNewEvents(
+            context: Context,
+            pairs: ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>>
+    ): ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
+
+        val settings = getSettings(context)
+
+        val ret = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+
+        val handledCalendars = calendarProvider.getHandledCalendarsIds(context, settings)
+
+        val handledPairs = pairs.filter {
+            (_, event) -> handledCalendars.contains(event.calendarId) || event.calendarId == -1L
+        }
+
+        val pairsToAdd = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+        val eventsToDismiss = arrayListOf<EventAlertRecord>()
+
+        // 1st step - save event into DB
+        EventsStorage(context).use {
+            db ->
+
+            for ((alert, event) in handledPairs) {
+
+                logger.info("Calendar event fired, calendar id ${event.calendarId}, eventId ${event.eventId}, instance start time ${event.instanceStartTime}, alertTime=${event.alertTime}")
+
+                if (event.isRepeating) {
+                    // repeating event - always simply add
+                    pairsToAdd.add(Pair(alert, event))
+                } else {
+                    // non-repeating event - make sure we don't create two records with the same eventId
+                    val oldEvents = db.getEventInstances(event.eventId)
+
+                    logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+
+                    try {
+                        // delete old instances for the same event id (should be only one, but who knows)
+                        eventsToDismiss.addAll(oldEvents)
+                    } catch (ex: Exception) {
+                        logger.error("exception while removing old events: ${ex.message}");
+                    }
+
+                    // add newly fired event
+                    pairsToAdd.add(Pair(alert, event))
+                }
+            }
+
+            if (!eventsToDismiss.isEmpty()) {
+                // delete old instances for the same event id (should be only one, but who knows)
+                db.deleteEvents(eventsToDismiss)
+
+                notificationManager.onEventsDismissed(
+                        context,
+                        EventFormatter(context),
+                        eventsToDismiss,
+                        postNotifications = false   // don't repost notifications at this stage, but only dismiss currently active
+                )
+            }
+
+            if (!pairsToAdd.isEmpty()) {
+                db.addEvents(pairsToAdd.map { it.second })
+            }
+        }
+
+        // 2nd step - re-open new DB instance and make sure that event:
+        // * is there
+        // * is not set as visible
+        // * is not snoozed
+
+        val validPairs = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+
+        EventsStorage(context).use {
+            db ->
+
+            for ((alert, event) in pairsToAdd) {
+
+                if (event.isRepeating) {
+                    // return true only if we can confirm, by reading event again from DB
+                    // that it is there
+                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                    val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
+                    if (dbEvent != null && dbEvent.snoozedUntil == 0L)
+                        validPairs.add(Pair(alert, event))
+
+                } else {
+                    // return true only if we can confirm, by reading event again from DB
+                    // that it is there
+                    // Caller is using our return value as "safeToRemoveOriginalReminder" flag
+                    val dbEvents = db.getEventInstances(event.eventId)
+                    if (dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L)
+                        validPairs.add(Pair(alert, event))
+                }
+            }
+        }
+
+        logger.info("registerNewEvents: Added ${validPairs.size} events out of ${pairs.size}")
+
+        return ret
+
+    }
+
+
 
 //    override fun onEventMoved(
 //            context: Context,
@@ -468,7 +571,7 @@ object ApplicationController : EventMovedHandler {
             cleanupEventReminder(context)
 
             val changes = EventsStorage(context).use {
-                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this)
+                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS)
             };
 
             // this might fire new notifications

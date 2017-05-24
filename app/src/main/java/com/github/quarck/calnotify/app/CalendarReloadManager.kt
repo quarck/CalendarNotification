@@ -54,7 +54,8 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             db: EventsStorageInterface,
             events: List<EventAlertRecord>,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?
+            movedHandler: EventMovedHandler?,
+            maxProviderPollingTimeMillis: Long
     ): Boolean {
 
         logger.debug("Reloading calendar")
@@ -67,7 +68,17 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
         val eventsToUpdate = arrayListOf<ReloadCalendarResult>()
         val eventsToUpdateWithTime = arrayListOf<ReloadCalendarResult>()
 
+        val scanUntil =
+                if (maxProviderPollingTimeMillis != 0L)
+                    System.currentTimeMillis() + maxProviderPollingTimeMillis
+                else
+                    0L
+
         for (event in events) {
+
+            if (scanUntil != 0L && System.currentTimeMillis() > scanUntil)
+                break
+
             try {
                 val reloadResult = reloadCalendarEvent(context, db, calendar, event, currentTime, movedHandler)
 
@@ -155,12 +166,13 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             context: Context,
             db: EventsStorageInterface,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?
+            movedHandler: EventMovedHandler?,
+            maxProviderPollingTimeMillis: Long
     ): Boolean {
 
         // don't rescan manually created events - we won't find most of them
         val events = db.events.filter { event -> event.origin != EventOrigin.FullManual }
-        return reloadCalendarInternal(context, db, events, calendar, movedHandler)
+        return reloadCalendarInternal(context, db, events, calendar, movedHandler, maxProviderPollingTimeMillis)
     }
     // returns true if event has changed. Event is updated in place
     override fun reloadSingleEvent(
@@ -170,7 +182,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
             calendar: CalendarProviderInterface,
             movedHandler: EventMovedHandler?
     ): Boolean {
-        return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler)
+        return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler, 0L)
     }
 
     fun reloadCalendarEvent(

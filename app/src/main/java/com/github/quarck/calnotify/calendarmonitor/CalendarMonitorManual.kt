@@ -29,6 +29,7 @@ import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
@@ -38,12 +39,41 @@ class CalendarMonitorManual(
         val calendarMonitor: CalendarMonitorInterface
 ) {
 
-    // should return true if we have fired at new events, so UI should reload if it is open
-    fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
+    private fun manualFireAlertList_NoHousekeeping(context: Context, alerts: List<MonitorEventAlertEntry>): Boolean {
 
         var fired = false
 
-        var lastFiredAlert = 0L
+        val firedAlerts = registerFiredEventsInDB(context, alerts)
+
+        if (!firedAlerts.isEmpty()) {
+
+            fired = true
+
+            try {
+                ApplicationController.postEventNotifications(context, firedAlerts.map { it.second })
+            }
+            catch (ex: Exception) {
+                logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
+            }
+
+            markAlertsAsHandledInDB(context, firedAlerts.map { it.first })
+
+            val lastFiredAlert = firedAlerts.map { (alert, _) -> alert.alertTime }.max() ?: 0L
+
+            val state = CalendarMonitorState(context)
+            if (state.prevEventFireFromScan < lastFiredAlert)
+                state.prevEventFireFromScan = lastFiredAlert
+
+            logger.info("${firedAlerts.size} events were marked in DB as handled, not dismissing original " +
+                    "reminder for manual fired alerts - provider didn't know about these alerts (otherwise we would not be here)" +
+                    ", prevEventFireFromScan was set to $lastFiredAlert")
+        }
+
+        return fired
+    }
+
+    // should return true if we have fired at new events, so UI should reload if it is open
+    fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
         var alerts =
                 MonitorStorage(context).use {
@@ -58,139 +88,144 @@ class CalendarMonitorManual(
                 .filter { !it.wasHandled }
                 .sortedBy { it.alertTime }
 
-        val firedAlerts = mutableListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
-
         logger.info("manualFireEventsAt: got ${alerts.size} alerts to fire at");
 
-        if (!alerts.isEmpty()) {
+        return manualFireAlertList_NoHousekeeping(context, alerts)
+    }
 
-            for (alert in alerts) {
-                val event = registerFiredEventInDB(context, alert)
+//    private fun registerFiredEventInDB(context: Context, alert: MonitorEventAlertEntry): EventAlertRecord? {
+//
+//        var ret: EventAlertRecord? = null
+//
+//        if (alert.wasHandled)
+//            return null
+//
+//        logger.info("manualFireAlert: firing at alert $alert")
+//
+//        var event: EventAlertRecord? = null
+//
+//        if (!alert.alertCreatedByUs) {
+//            // not manually created -- can read directly from the provider!
+//            logger.debug("Alert was not created by the app, so trying to read alert off the provider")
+//            event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
+//        }
+//
+//        if (event == null) {
+//            logger.debug("Still has no alert info from provider - reading event off the provider")
+//
+//            val calEvent = calendarProvider.getEvent(context, alert.eventId)
+//            if (calEvent != null) {
+//                event = EventAlertRecord(
+//                        calendarId = calEvent.calendarId,
+//                        eventId = calEvent.eventId,
+//                        isAllDay = calEvent.isAllDay,
+//                        isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId) ?: false,
+//                        alertTime = alert.alertTime,
+//                        notificationId = 0,
+//                        title = calEvent.title,
+//                        startTime = calEvent.startTime,
+//                        endTime = calEvent.endTime,
+//                        instanceStartTime = alert.instanceStartTime,
+//                        instanceEndTime = alert.instanceEndTime,
+//                        location = calEvent.location,
+//                        lastEventVisibility = 0,
+//                        snoozedUntil = 0
+//                )
+//            }
+//        }
+//
+//        if (event != null) {
+//
+//            logger.info("Full manual scan: seen event ${event.eventId} / ${event.instanceStartTime} / ${event.alertTime}")
+//
+//            // found an event
+//            event.origin = EventOrigin.FullManual
+//            event.timeFirstSeen = System.currentTimeMillis()
+//
+//            if (ApplicationController.registerNewEvent(context, event))
+//                ret = event
+//
+//        } else {
+//            logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
+//            // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
+//            markAlertsAsHandledInDB(context, listOf(alert))
+//        }
+//
+//        return ret
+//    }
+
+    private fun registerFiredEventsInDB(
+            context: Context,
+            alerts: Collection<MonitorEventAlertEntry>
+    ): List<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
+
+        val pairs = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+
+        var numAlertsFound = 0
+        var numAlertsNotFound = 0
+        var numErrors = 0
+
+        for (alert in alerts) {
+            if (alert.wasHandled)
+                continue
+
+            logger.info("registerFiredEventsInDB: processing at alert $alert")
+
+            var event: EventAlertRecord? = null
+
+            if (!alert.alertCreatedByUs) {
+                // not manually created -- can read directly from the provider!
+                logger.debug("Alert was not created by the app, so trying to read alert off the provider")
+                event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
+
                 if (event != null)
-                    firedAlerts.add(Pair(alert, event))
-            }
-        }
-
-        if (!firedAlerts.isEmpty()) {
-            fired = true
-
-            val settings = Settings(context)
-            val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
-
-            try {
-                ApplicationController.postEventNotifications(context, firedAlerts.map { it.second })
-            }
-            catch (ex: Exception) {
-                logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
+                    numAlertsFound ++
+                else
+                    numAlertsNotFound ++
             }
 
-            markAlertsAsHandledInDB(context, firedAlerts.map { it.first })
+            if (event == null) {
+                logger.debug("Still has no alert info from provider - reading event off the provider")
 
-            for ((alert, event) in firedAlerts) {
-
-                logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
-
-                if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
-                    logger.info("Dismissing original reminder - marking event as handled in the provider")
-                    calendarProvider.dismissNativeEventAlert(context, event.eventId);
+                val calEvent = calendarProvider.getEvent(context, alert.eventId)
+                if (calEvent != null) {
+                    event = EventAlertRecord(
+                            calendarId = calEvent.calendarId,
+                            eventId = calEvent.eventId,
+                            isAllDay = calEvent.isAllDay,
+                            isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId) ?: false,
+                            alertTime = alert.alertTime,
+                            notificationId = 0,
+                            title = calEvent.title,
+                            startTime = calEvent.startTime,
+                            endTime = calEvent.endTime,
+                            instanceStartTime = alert.instanceStartTime,
+                            instanceEndTime = alert.instanceEndTime,
+                            location = calEvent.location,
+                            lastEventVisibility = 0,
+                            snoozedUntil = 0
+                    )
                 }
-
-                lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
             }
 
-            val state = CalendarMonitorState(context)
-            if (state.prevEventFireFromScan < lastFiredAlert)
-                state.prevEventFireFromScan = lastFiredAlert
-            logger.info("manualFireEventsAt: prevEventFireFromScan was set to $lastFiredAlert")
-        }
+            if (event != null) {
+                event.origin = EventOrigin.FullManual
+                event.timeFirstSeen = System.currentTimeMillis()
 
-        return fired
-    }
-
-    private fun registerFiredEventInDB(context: Context, alert: MonitorEventAlertEntry): EventAlertRecord? {
-
-        var ret: EventAlertRecord? = null
-
-        if (alert.wasHandled)
-            return null
-
-        logger.info("manualFireAlert: firing at alert $alert")
-
-        var event: EventAlertRecord? = null
-
-        if (!alert.alertCreatedByUs) {
-            // not manually created -- can read directly from the provider!
-            logger.debug("Alert was not created by the app, so trying to read alert off the provider")
-            event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
-        }
-
-        if (event == null) {
-            logger.debug("Still has no alert info from provider - reading event off the provider")
-
-            val calEvent = calendarProvider.getEvent(context, alert.eventId)
-            if (calEvent != null) {
-                event = EventAlertRecord(
-                        calendarId = calEvent.calendarId,
-                        eventId = calEvent.eventId,
-                        isAllDay = calEvent.isAllDay,
-                        isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId) ?: false,
-                        alertTime = alert.alertTime,
-                        notificationId = 0,
-                        title = calEvent.title,
-                        startTime = calEvent.startTime,
-                        endTime = calEvent.endTime,
-                        instanceStartTime = alert.instanceStartTime,
-                        instanceEndTime = alert.instanceEndTime,
-                        location = calEvent.location,
-                        lastEventVisibility = 0,
-                        snoozedUntil = 0
-                )
+                pairs.add(Pair(alert, event))
+            } else {
+                logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
+                // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
+                markAlertsAsHandledInDB(context, listOf(alert))
+                numErrors ++
             }
         }
 
-        if (event != null) {
+        logger.info("Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
 
-            logger.info("Full manual scan: seen event ${event.eventId} / ${event.instanceStartTime} / ${event.alertTime}")
-
-            // found an event
-            event.origin = EventOrigin.FullManual
-            event.timeFirstSeen = System.currentTimeMillis()
-
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            // FIXME: should be a vector version of this method
-            if (ApplicationController.registerNewEvent(context, event))
-                ret = event
-
-        } else {
-            logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
-            // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
-            markAlertsAsHandledInDB(context, listOf(alert))
-        }
-
-        return ret
+        return ApplicationController.registerNewEvents(context, pairs)
     }
+
 
     private fun markAlertsAsHandledInDB(context: Context, alerts: Collection<MonitorEventAlertEntry>) {
         MonitorStorage(context).use {
@@ -228,7 +263,6 @@ class CalendarMonitorManual(
         val alerts =
                 calendarProvider.getEventAlertsForInstancesInRange(context, scanFrom, scanTo)
 
-
         val alertsMerged = filterAndMergeAlerts(context, alerts, scanFrom, scanTo)
                 .sortedBy { it.alertTime }
 
@@ -251,52 +285,8 @@ class CalendarMonitorManual(
         } else {
             logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
 
-            val firedDueAlerts = mutableListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
-
-            for (alert in dueAlerts) {
-                val event = registerFiredEventInDB(context, alert)
-                if (event != null) {
-                    firedDueAlerts.add(Pair(alert, event))
-                }
-            }
-
-            if (!firedDueAlerts.isEmpty()) {
-
+            if (manualFireAlertList_NoHousekeeping(context, dueAlerts))
                 hasFiredAnything = true
-
-                try {
-                    val start = System.currentTimeMillis()
-                    ApplicationController.postEventNotifications(context, firedDueAlerts.map { it.second } )
-                    val end = System.currentTimeMillis()
-
-                    logger.debug("ApplicationController.postEventNotifications took ${end-start}ms");
-                }
-                catch (ex: Exception) {
-                    logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
-                }
-
-                var lastFiredAlert = 0L
-
-                val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
-
-                markAlertsAsHandledInDB(context, firedDueAlerts.map { it.first } )
-
-                for ((alert, event) in firedDueAlerts) {
-
-                    logger.info("Event ${alert.eventId} / ${alert.instanceStartTime} / ${alert.alertTime} is marked as handled in the DB (earlier)")
-
-                    if (markEventsAsHandledInProvider && !alert.alertCreatedByUs) {
-                        logger.info("Dismissing original reminder - marking event as handled in the provider")
-                        calendarProvider.dismissNativeEventAlert(context, event.eventId);
-                    }
-
-                    lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
-                }
-
-                if (state.prevEventFireFromScan < lastFiredAlert)
-                    state.prevEventFireFromScan = lastFiredAlert
-                logger.info("scanNextEvent: prevEventFireFromScan was set to $lastFiredAlert")
-            }
         }
 
         // Finally - find the next nearest alert

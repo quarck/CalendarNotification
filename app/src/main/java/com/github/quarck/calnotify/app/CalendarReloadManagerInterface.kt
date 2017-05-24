@@ -26,14 +26,6 @@ import com.github.quarck.calnotify.calendar.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 
 interface EventMovedHandler {
-//    fun onEventMoved(
-//            context: Context,
-//            db: EventsStorageInterface,
-//            oldEvent: EventAlertRecord,
-//            newEvent: EventRecord,
-//            newAlertTime: Long
-//    ): Boolean
-
     fun checkShouldRemoveMovedEvent(
             context: Context,
             oldEvent: EventAlertRecord,
@@ -49,7 +41,8 @@ interface CalendarReloadManagerInterface {
             context: Context,
             db: EventsStorageInterface,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?
+            movedHandler: EventMovedHandler?,
+            maxProviderPollingTimeMillis: Long = 0
     ): Boolean
 
     // returns true if event has changed. Event is updated in place

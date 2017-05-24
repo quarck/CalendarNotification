@@ -99,6 +99,9 @@ class EventsStorage(context: Context)
     override fun addEvent(event: EventAlertRecord)
         = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
 
+    override fun addEvents(events: List<EventAlertRecord>)
+        = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, events) } }
+
     override fun updateEvent(event: EventAlertRecord,
                              alertTime: Long?,
                              title: String?,

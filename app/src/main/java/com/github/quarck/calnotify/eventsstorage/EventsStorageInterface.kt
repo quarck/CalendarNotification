@@ -33,6 +33,8 @@ interface EventsStorageInterface {
 
     fun addEvent(event: EventAlertRecord)
 
+    fun addEvents(events: List<EventAlertRecord>)
+
     fun updateEvent(
         event: EventAlertRecord,
         alertTime: Long? = null,

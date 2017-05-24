@@ -252,6 +252,10 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         throw NotImplementedError("Don't suppose to use this for V6")
     }
 
+    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
+        throw NotImplementedError("Don't suppose to use this for V6")
+    }
+
     private fun eventRecordToContentValues(event: EventAlertRecord, includeId: Boolean = false): ContentValues {
         val values = ContentValues();
 

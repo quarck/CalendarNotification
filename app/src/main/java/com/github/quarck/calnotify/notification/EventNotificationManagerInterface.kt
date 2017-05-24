@@ -28,7 +28,7 @@ interface EventNotificationManagerInterface {
 
     fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
-    fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>);
+    fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>, postNotifications: Boolean = true);
 
     fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
@@ -37,6 +37,7 @@ interface EventNotificationManagerInterface {
     fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);
 
     fun fireEventReminder(context: Context)
+
     fun cleanupEventReminder(context: Context)
 
     fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord)

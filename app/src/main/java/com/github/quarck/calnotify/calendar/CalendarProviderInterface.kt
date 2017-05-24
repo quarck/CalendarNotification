@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.calendar
 
 import android.content.ContentResolver
 import android.content.Context
+import com.github.quarck.calnotify.Settings
 
 interface CalendarProviderInterface {
 
@@ -47,4 +48,6 @@ interface CalendarProviderInterface {
     fun getEventAlertsForInstancesInRange(context: Context, instanceFrom: Long, instanceTo: Long): List<MonitorEventAlertEntry>
 
     fun isRepeatingEvent(context: Context, eventId: Long): Boolean?
+
+    fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long>
 }

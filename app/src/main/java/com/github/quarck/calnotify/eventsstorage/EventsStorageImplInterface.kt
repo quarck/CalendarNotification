@@ -27,6 +27,8 @@ interface EventsStorageImplInterface {
 
     fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord)
 
+    fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>)
+
     fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord)
 
     fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>)

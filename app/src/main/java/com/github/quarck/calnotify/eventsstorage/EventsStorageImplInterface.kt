@@ -33,6 +33,8 @@ interface EventsStorageImplInterface {
 
     fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
 
+    fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>)
+
     fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord?
 
     fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord>
@@ -41,5 +43,8 @@ interface EventsStorageImplInterface {
 
     fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long)
 
+    fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>)
+
     fun dropAll(db: SQLiteDatabase)
+
 }

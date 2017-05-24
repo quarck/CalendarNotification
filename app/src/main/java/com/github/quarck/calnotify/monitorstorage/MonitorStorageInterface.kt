@@ -32,7 +32,7 @@ interface MonitorStorageInterface {
     fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
 
-    fun deleteAlertsForEventsOlderThan(time: Long)
+    fun deleteHandledAlertsForInstanceStartOlderThan(instanceStartTime: Long)
 
     fun updateAlert(entry: MonitorEventAlertEntry)
     fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)
@@ -43,5 +43,6 @@ interface MonitorStorageInterface {
     val alerts: List<MonitorEventAlertEntry> get
 
     fun getAlertsForInstanceStartRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+
     fun getAlertsForAlertRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
 }

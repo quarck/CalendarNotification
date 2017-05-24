@@ -76,6 +76,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
         postEventNotifications(context, formatter, false, null)
     }
 
+    override fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>) {
+
+        for (event in events) {
+            removeNotification(context, event.eventId, event.notificationId)
+        }
+        postEventNotifications(context, formatter, false, null)
+    }
+
     override fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, eventId, notificationId)
         postEventNotifications(context, formatter, false, null)

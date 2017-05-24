@@ -26,9 +26,16 @@ import com.github.quarck.calnotify.calendar.EventRecord
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 
 interface EventMovedHandler {
-    fun onEventMoved(
+//    fun onEventMoved(
+//            context: Context,
+//            db: EventsStorageInterface,
+//            oldEvent: EventAlertRecord,
+//            newEvent: EventRecord,
+//            newAlertTime: Long
+//    ): Boolean
+
+    fun checkShouldRemoveMovedEvent(
             context: Context,
-            db: EventsStorageInterface,
             oldEvent: EventAlertRecord,
             newEvent: EventRecord,
             newAlertTime: Long

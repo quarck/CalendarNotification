@@ -110,6 +110,22 @@ class DismissedEventsStorageImplV1()
         }
     }
 
+    override fun addEventsImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, events: Collection<EventAlertRecord>) {
+
+        try {
+            db.beginTransaction()
+
+            for (event in events)
+                addEventImpl(db, type, changeTime, event)
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+    }
+
+
     override fun deleteEventImpl(db: SQLiteDatabase, entry: DismissedEventAlertRecord) {
         db.delete(
                 TABLE_NAME,

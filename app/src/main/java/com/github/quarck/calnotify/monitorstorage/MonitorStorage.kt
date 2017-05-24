@@ -69,8 +69,8 @@ class MonitorStorage(val context: Context)
     override fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
 
-    override fun deleteAlertsForEventsOlderThan(time: Long)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlertsForEventsOlderThan(it, time) } }
+    override fun deleteHandledAlertsForInstanceStartOlderThan(instanceStartTime: Long)
+        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteHandledAlertsForInstanceStartOlderThan(it, instanceStartTime) } }
 
     override fun updateAlert(entry: MonitorEventAlertEntry)
         = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }

@@ -19,8 +19,15 @@
 
 package com.github.quarck.calnotify.eventsstorage
 
+import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
+
+data class EventWithNewInstanceTime(
+        val event: EventAlertRecord,
+        val newInstanceStartTime: Long,
+        val newInstanceEndTime: Long
+)
 
 interface EventsStorageInterface {
 
@@ -54,6 +61,8 @@ interface EventsStorageInterface {
 
     fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
 
+    fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>)
+
     fun updateEvent(event: EventAlertRecord)
 
     fun updateEvents(events: List<EventAlertRecord>)
@@ -65,6 +74,8 @@ interface EventsStorageInterface {
     fun deleteEvent(eventId: Long, instanceStartTime: Long)
 
     fun deleteEvent(ev: EventAlertRecord)
+
+    fun deleteEvents(events: Collection<EventAlertRecord>)
 
     val events: List<EventAlertRecord> get
 }

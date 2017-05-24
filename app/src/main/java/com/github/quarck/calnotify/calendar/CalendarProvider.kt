@@ -832,11 +832,11 @@ object CalendarProvider: CalendarProviderInterface {
             val isAllDay: Long
     )
 
-    override fun getEventAlertsManually(context: Context, from: Long, to: Long): List<MonitorEventAlertEntry> {
+    override fun getEventAlertsForInstancesInRange(context: Context, instanceFrom: Long, instanceTo: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEventAlertsManually failed due to not sufficient permissions");
+            logger.error("getEventAlertsForInstancesInRange failed due to not sufficient permissions");
             return ret;
         }
 
@@ -871,7 +871,7 @@ object CalendarProvider: CalendarProviderInterface {
             val PROJECTION_INDEX_INST_END = 3
             val PROJECTION_INDEX_INST_ALL_DAY = 4
 
-            logger.info("getEventAlertsManually: Manual event scan started, range: from $from to $to")
+            logger.info("getEventAlertsForInstancesInRange: Manual event scan started, range: from $instanceFrom to $instanceTo")
 
 
             val intermitEvents = arrayListOf<EventEntry>()
@@ -882,8 +882,8 @@ object CalendarProvider: CalendarProviderInterface {
                     CalendarContract.Instances.query(
                             context.contentResolver,
                             projection,
-                            from,
-                            to
+                            instanceFrom,
+                            instanceTo
                     )
 
             if (instanceCursor != null && instanceCursor.moveToFirst()) {
@@ -905,6 +905,11 @@ object CalendarProvider: CalendarProviderInterface {
 
                     if (!handledCalendars.contains(calendarId)) {
                         logger.info("Event id $eventId - belongs to calendar $calendarId, which is not handled - skipping")
+                        continue
+                    }
+
+                    if (instanceStart < instanceFrom) {
+                        logger.info("Event id $eventId: instanceStart $instanceStart is actully before instanceFrom $instanceFrom, skipping")
                         continue
                     }
 
@@ -987,10 +992,10 @@ object CalendarProvider: CalendarProviderInterface {
             instanceCursor?.close()
 
             val scanEnd = System.currentTimeMillis()
-            logger.info("getEventAlertsManually(): scan finished, got ${ret.size} entries, scan time: ${scanEnd-scanStart}ms")
+            logger.info("getEventAlertsForInstancesInRange(): scan finished, got ${ret.size} entries, scan time: ${scanEnd-scanStart}ms")
         }
         catch (ex: Exception) {
-            logger.error("getEventAlertsManually(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")
+            logger.error("getEventAlertsForInstancesInRange(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")
         }
 
         return ret

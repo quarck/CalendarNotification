@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.app.AlarmManager
-import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -371,11 +370,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                 )
                 db.addAlert(alert)
             }
-
-            // some housekeeping - remove events that has instart start time older than 3 days
-            // (current design of this app is not expecting such events to have any outstanding alerts)
-            val currentTime = System.currentTimeMillis()
-            db.deleteAlertsForEventsOlderThan(currentTime - Consts.ALERTS_DB_REMOVE_AFTER)
         }
     }
 

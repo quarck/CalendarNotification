@@ -198,8 +198,7 @@ object ApplicationController : EventMovedHandler {
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
             } else {
                 // non-repeating event - make sure we don't create two records with the same eventId
-                val oldEvents
-                        = db.getEventInstances(event.eventId)
+                val oldEvents = db.getEventInstances(event.eventId)
 
                 logger.info("Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
 
@@ -252,14 +251,52 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
-    override fun onEventMoved(
+//    override fun onEventMoved(
+//            context: Context,
+//            db: EventsStorageInterface,
+//            oldEvent: EventAlertRecord,
+//            newEvent: EventRecord,
+//            newAlertTime: Long
+//    ): Boolean {
+//
+//        var ret = false
+//
+//        if (!getSettings(context).notificationAutoDismissOnReschedule)
+//            return false
+//
+//        val oldTime = oldEvent.displayedStartTime
+//        val newTime = newEvent.newInstanceStartTime
+//
+//        if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
+//            logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
+//
+//            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
+//
+//                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
+//
+//                dismissEvent(
+//                        context,
+//                        db,
+//                        oldEvent.copy(newInstanceStartTime = newEvent.newInstanceStartTime, newInstanceEndTime =  newEvent.newInstanceEndTime),
+//                        EventDismissType.AutoDismissedDueToCalendarMove,
+//                        true)
+//
+//                ret = true
+//
+//                if (getSettings(context).debugNotificationAutoDismiss)
+//                    notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+//            }
+//        }
+//
+//        return ret
+//    }
+
+    override fun checkShouldRemoveMovedEvent(
             context: Context,
-            db: EventsStorageInterface,
             oldEvent: EventAlertRecord,
             newEvent: EventRecord,
             newAlertTime: Long
     ): Boolean {
-
         var ret = false
 
         if (!getSettings(context).notificationAutoDismissOnReschedule)
@@ -269,28 +306,30 @@ object ApplicationController : EventMovedHandler {
         val newTime = newEvent.startTime
 
         if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
-            logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms")
-
             if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
 
-                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, auto-dismissing notification")
+                logger.info("Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
 
-                dismissEvent(
-                        context,
-                        db,
-                        oldEvent.copy(startTime = newEvent.startTime, endTime =  newEvent.endTime),
-                        EventDismissType.AutoDismissedDueToCalendarMove,
-                        true)
+//                dismissEvent(
+//                        context,
+//                        db,
+//                        oldEvent.copy(newInstanceStartTime = newEvent.newInstanceStartTime, newInstanceEndTime =  newEvent.newInstanceEndTime),
+//                        EventDismissType.AutoDismissedDueToCalendarMove,
+//                        true)
 
                 ret = true
 
-                if (getSettings(context).debugNotificationAutoDismiss)
-                    notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+//                if (getSettings(context).debugNotificationAutoDismiss)
+//                    notificationManager.postNotificationsAutoDismissedDebugMessage(context)
+            }
+            else {
+                logger.info("Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms - not enought to auto-dismiss")
             }
         }
 
         return ret
     }
+
 
     fun onReminderAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
 
@@ -452,6 +491,32 @@ object ApplicationController : EventMovedHandler {
         calendarMonitor.onSystemTimeChange(context)
     }
 
+    fun dismissEvents(
+            context: Context,
+            db: EventsStorageInterface,
+            events: Collection<EventAlertRecord>,
+            dismissType: EventDismissType,
+            notifyActivity: Boolean) {
+
+        logger.debug("Dismissing ${events.size}  events")
+
+        if (dismissType.shouldKeep && Settings(context).keepHistory) {
+            DismissedEventsStorage(context).use {
+                db ->
+                db.addEvents(dismissType, events)
+            }
+        }
+
+        db.deleteEvents(events)
+
+        notificationManager.onEventsDismissed(context, EventFormatter(context), events);
+
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+        if (notifyActivity)
+            UINotifierService.notifyUI(context, true);
+    }
+
     fun dismissEvent(
             context: Context,
             db: EventsStorageInterface,
@@ -547,5 +612,10 @@ object ApplicationController : EventMovedHandler {
     // used for debug purpose
     fun forceRepostNotifications(context: Context) {
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
+    }
+
+    // debug purpose
+    fun postNotificationsAutoDismissedDebugMessage(context: Context) {
+        notificationManager.postNotificationsAutoDismissedDebugMessage(context)
     }
 }

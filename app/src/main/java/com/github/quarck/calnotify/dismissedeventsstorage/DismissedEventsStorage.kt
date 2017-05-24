@@ -59,6 +59,9 @@ class DismissedEventsStorage(context: Context)
     override fun addEvent(type: EventDismissType, changeTime: Long, event: EventAlertRecord)
         = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, type, changeTime, event) } }
 
+    override fun addEvents(type: EventDismissType, events: Collection<EventAlertRecord>)
+        = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, type, System.currentTimeMillis(), events) } }
+
     override fun deleteEvent(entry: DismissedEventAlertRecord)
         = synchronized (DismissedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
 

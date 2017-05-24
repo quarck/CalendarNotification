@@ -149,13 +149,22 @@ class EventsStorageImplV7
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
         //logger.debug("Updating ${events.size} events");
 
-        for (event in events) {
-            val values = eventRecordToContentValues(event)
+        try {
+            db.beginTransaction()
 
-            db.update(TABLE_NAME, // table
-                values, // column/value
-                "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
-                arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+            for (event in events) {
+                val values = eventRecordToContentValues(event)
+
+                db.update(TABLE_NAME, // table
+                        values, // column/value
+                        "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
+                        arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
         }
     }
 
@@ -171,6 +180,31 @@ class EventsStorageImplV7
             values, // column/value
             "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
             arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+    }
+
+    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>) {
+
+        try {
+            db.beginTransaction()
+
+            for ((event, instanceStart, instanceEnd) in events) {
+                val values = eventRecordToContentValues(
+                        event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
+                        includeKeyValues = true )
+
+                //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
+
+                db.update(TABLE_NAME, // table
+                        values, // column/value
+                        "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
+                        arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
     }
 
     override fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
@@ -253,6 +287,23 @@ class EventsStorageImplV7
 
         //logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
     }
+
+    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>) {
+
+        try {
+            db.beginTransaction()
+
+            for (event in events) {
+                deleteEventImpl(db, event.eventId, event.instanceStartTime)
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+    }
+
 
     private fun eventRecordToContentValues(event: EventAlertRecord, includeKeyValues: Boolean = false): ContentValues {
         val values = ContentValues();

@@ -165,6 +165,9 @@ class EventsStorage(context: Context)
     override fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
         = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventAndInstanceTimesImpl(it, event, instanceStart, instanceEnd) } }
 
+    override fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>)
+        = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventsAndInstanceTimesImpl(it, events) } }
+
     override fun updateEvent(event: EventAlertRecord)
         = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventImpl(it, event) } }
 
@@ -183,6 +186,9 @@ class EventsStorage(context: Context)
     @Suppress("unused")
     override fun deleteEvent(ev: EventAlertRecord)
         = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, ev.eventId, ev.instanceStartTime) } }
+
+    override fun deleteEvents(events: Collection<EventAlertRecord>)
+        = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
 
     override val events: List<EventAlertRecord>
         get() = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }

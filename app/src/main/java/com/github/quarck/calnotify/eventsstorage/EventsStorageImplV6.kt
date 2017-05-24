@@ -29,8 +29,7 @@ import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-class EventsStorageImplV6()
-: EventsStorageImplInterface {
+class EventsStorageImplV6() : EventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -243,6 +242,14 @@ class EventsStorageImplV6()
         db.delete(TABLE_NAME, selection, selectionArgs)
 
         logger.debug("deleteNotification ${eventId}")
+    }
+
+    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>) {
+        throw NotImplementedError("Don't suppose to use this for V6")
+    }
+
+    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>) {
+        throw NotImplementedError("Don't suppose to use this for V6")
     }
 
     private fun eventRecordToContentValues(event: EventAlertRecord, includeId: Boolean = false): ContentValues {

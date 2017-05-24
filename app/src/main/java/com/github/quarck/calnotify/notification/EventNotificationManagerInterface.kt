@@ -28,6 +28,8 @@ interface EventNotificationManagerInterface {
 
     fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
+    fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>);
+
     fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
     fun onAllEventsSnoozed(context: Context)

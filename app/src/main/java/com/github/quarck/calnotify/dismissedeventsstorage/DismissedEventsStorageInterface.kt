@@ -28,6 +28,8 @@ interface DismissedEventsStorageInterface {
 
     fun addEvent(type: EventDismissType, event: EventAlertRecord)
 
+    fun addEvents(type: EventDismissType, events: Collection<EventAlertRecord>)
+
     fun deleteEvent(entry: DismissedEventAlertRecord)
 
     fun deleteEvent(event: EventAlertRecord)
@@ -37,4 +39,5 @@ interface DismissedEventsStorageInterface {
     fun purgeOld(currentTime: Long, maxLiveTime: Long);
 
     val events: List<DismissedEventAlertRecord> get
+
 }

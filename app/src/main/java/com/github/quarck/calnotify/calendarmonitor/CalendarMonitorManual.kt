@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
+import java.util.*
 
 
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
@@ -53,7 +54,8 @@ class CalendarMonitorManual(
                         db.getAlertsForAlertRange(prevEventFire, nextEventFire)
                 }
 
-        alerts = alerts.filter { !it.wasHandled }
+        alerts = alerts
+                .filter { !it.wasHandled }
                 .sortedBy { it.alertTime }
 
         val firedAlerts = mutableListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
@@ -96,7 +98,9 @@ class CalendarMonitorManual(
                 lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
             }
 
-            CalendarMonitorState(context).prevEventFireFromScan = lastFiredAlert
+            val state = CalendarMonitorState(context)
+            if (state.prevEventFireFromScan < lastFiredAlert)
+                state.prevEventFireFromScan = lastFiredAlert
             logger.info("manualFireEventsAt: prevEventFireFromScan was set to $lastFiredAlert")
         }
 
@@ -152,6 +156,30 @@ class CalendarMonitorManual(
             event.origin = EventOrigin.FullManual
             event.timeFirstSeen = System.currentTimeMillis()
 
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
+            // FIXME: should be a vector version of this method
             if (ApplicationController.registerNewEvent(context, event))
                 ret = event
 
@@ -176,10 +204,6 @@ class CalendarMonitorManual(
         }
     }
 
-    private fun min3(v1: Long, v2: Long, v3: Long): Long {
-        return Math.min(Math.min(v1, v2), v3);
-    }
-
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
         var hasFiredAnything = false
@@ -187,29 +211,29 @@ class CalendarMonitorManual(
         val settings = Settings(context)
 
         val scanWindow = settings.manualCalWatchScanWindow
-        val scanWindowBackward = Consts.ALERTS_DB_REMOVE_AFTER
 
         val prevScanTo = state.prevEventScanTo
-        val prevFire = state.prevEventFireFromScan
         val currentTime = System.currentTimeMillis()
 
-        val scanFrom = min3(currentTime, prevScanTo, prevFire) - scanWindowBackward
+        val scanFrom = Math.min(
+                currentTime - Consts.ALERTS_DB_REMOVE_AFTER, // look backwards a little to make sure nothing is missing
+                prevScanTo // we we didn't scan for long time - do a full re-scan since last 'scanned to'
+                )
         val scanTo = scanFrom + scanWindow
 
         val firstScanEver = state.firstScanEver
 
-        state.prevEventScanTo = scanTo
+        state.prevEventScanTo = currentTime + scanWindow
 
-        logger.info("scanNextEvent: scan range: $scanFrom, $scanTo")
+        val alerts =
+                calendarProvider.getEventAlertsForInstancesInRange(context, scanFrom, scanTo)
 
-        val alerts = calendarProvider.getEventAlertsManually(context, scanFrom, scanTo)
-
-        logger.info("scanNextEvent: got ${alerts.size} events off the provider")
 
         val alertsMerged = filterAndMergeAlerts(context, alerts, scanFrom, scanTo)
                 .sortedBy { it.alertTime }
 
-        logger.info("scanNextEvent: merged count: ${alertsMerged.size}")
+        logger.info("scanNextEvent: scan range: $scanFrom, $scanTo (${Date(scanFrom)} - ${Date(scanTo)})," +
+                " got ${alerts.size} events off the provider, merged count: ${alertsMerged.size}")
 
         // now we only need to simply fire at all missed events,
         // and pick the nearest future event,
@@ -269,7 +293,8 @@ class CalendarMonitorManual(
                     lastFiredAlert = Math.max(lastFiredAlert, alert.alertTime)
                 }
 
-                state.prevEventFireFromScan = lastFiredAlert
+                if (state.prevEventFireFromScan < lastFiredAlert)
+                    state.prevEventFireFromScan = lastFiredAlert
                 logger.info("scanNextEvent: prevEventFireFromScan was set to $lastFiredAlert")
             }
         }
@@ -289,6 +314,13 @@ class CalendarMonitorManual(
         state.nextEventFireFromScan = nextAlertTime
 
         logger.info("scanNextEvent: next alert $nextAlertTime");
+
+        // Very finally - delete events that we are no longer interested in:
+        // * events that were handled already
+        // * and old enough (before this iteration's 'scanFrom'
+        MonitorStorage(context).use {
+            it.deleteHandledAlertsForInstanceStartOlderThan(scanFrom)
+        }
 
         return Pair(nextAlertTime, hasFiredAnything)
     }

@@ -32,7 +32,7 @@ interface MonitorStorageImplInterface {
 
     fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long)
     fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>)
-    fun deleteAlertsForEventsOlderThan(db: SQLiteDatabase, time: Long)
+    fun deleteHandledAlertsForInstanceStartOlderThan(db: SQLiteDatabase, instanceStartTime: Long)
 
     fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry)
     fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>)

@@ -258,8 +258,6 @@ object ApplicationController : EventMovedHandler {
 
         val settings = getSettings(context)
 
-        val ret = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
-
         val handledCalendars = calendarProvider.getHandledCalendarsIds(context, settings)
 
         val handledPairs = pairs.filter {
@@ -348,7 +346,7 @@ object ApplicationController : EventMovedHandler {
 
         logger.info("registerNewEvents: Added ${validPairs.size} events out of ${pairs.size}")
 
-        return ret
+        return validPairs
 
     }
 

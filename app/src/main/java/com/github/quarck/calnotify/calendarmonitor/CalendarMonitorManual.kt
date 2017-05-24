@@ -29,7 +29,6 @@ import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
@@ -309,7 +308,10 @@ class CalendarMonitorManual(
         // * events that were handled already
         // * and old enough (before this iteration's 'scanFrom'
         MonitorStorage(context).use {
-            it.deleteHandledAlertsForInstanceStartOlderThan(scanFrom)
+            it.deleteAlertsMatching {
+                alert ->
+                    alert.instanceStartTime < scanFrom && alert.wasHandled
+            }
         }
 
         return Pair(nextAlertTime, hasFiredAnything)

@@ -133,18 +133,25 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
         }
     }
 
-    override fun deleteHandledAlertsForInstanceStartOlderThan(db: SQLiteDatabase, instanceStartTime: Long) {
-
-        logger.debug("deleteHandledAlertsForInstanceStartOlderThan $instanceStartTime")
+    override fun deleteAlertsMatching(db: SQLiteDatabase, filter: (MonitorEventAlertEntry)-> Boolean) {
 
         try {
-            db.delete(
-                    TABLE_NAME,
-                    "$KEY_INSTANCE_START < ? and $KEY_WAS_HANDLED != ?",
-                    arrayOf(instanceStartTime.toString(), "0"))
+            val alerts = getAlerts(db)
+
+            db.beginTransaction()
+
+            for (alert in alerts) {
+                if (filter(alert))
+                    deleteAlert(db, alert.eventId, alert.alertTime, alert.instanceStartTime)
+            }
+
+            db.setTransactionSuccessful()
         }
         catch (ex: Exception) {
-            logger.error("deleteHandledAlertsForInstanceStartOlderThan($instanceStartTime): exception $ex, ${ex.stackTrace}")
+            logger.error("deleteAlertsMatching: exception $ex, ${ex.stackTrace}")
+        }
+        finally {
+            db.endTransaction()
         }
     }
 

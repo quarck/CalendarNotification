@@ -274,6 +274,7 @@
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
     <string name="restore">Restore notification</string>
     <string name="delete">Delete from history</string>
+    <string name="swipe_to_delete">Swipe to delete from history</string>
     <string name="remove_all">Remove all</string>
 
     <string name="remove_all_confirmation">Remove all entries?</string>

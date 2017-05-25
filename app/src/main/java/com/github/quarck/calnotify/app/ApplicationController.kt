@@ -697,6 +697,7 @@ object ApplicationController : EventMovedHandler {
 
         EventsStorage(context).use {
             db -> db.addEvent(toRestore)
+            calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
         }
 
         notificationManager.onEventRestored(context, EventFormatter(context), toRestore)

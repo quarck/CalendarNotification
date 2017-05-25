@@ -9,7 +9,9 @@
         android:title="@string/restore" />
 
     <item
-        android:id="@+id/action_remove"
-    android:title="@string/delete" />
+        android:id="@+id/action_swipe_hint"
+        android:title="@string/swipe_to_delete"
+        android:enabled="false"
+        />
 
 </menu>

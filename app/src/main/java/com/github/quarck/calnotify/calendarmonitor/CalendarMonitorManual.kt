@@ -293,6 +293,12 @@ class CalendarMonitorManual(
         val nextAlert = alertsMerged.filter { !it.wasHandled && it.alertTime > fireAlertsUpTo }
                 .minBy { it.alertTime }
 
+        // TODO TODO TODO First - need settings for this
+        // TODO TODO TODO
+        // TODO TODO TODO
+        // TODO TODO TODO
+        // TODO TODO TODO
+        // TODO TODO TODO
         // TODO TODO TODO
         // TODO: below: -- calendar provider handles most of it, we need to
         // make sure we re-scan on setting change, to update alert times.

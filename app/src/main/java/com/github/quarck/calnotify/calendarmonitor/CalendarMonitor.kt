@@ -177,7 +177,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         logger.debug("onProviderReminderBroadcast");
 
-        val markEventsAsHandledInProvider = Settings(context).markEventsAsHandledInProvider
+        if (Settings(context).enableMonitorDebug)
+            return
 
         val uri = intent.data;
 
@@ -221,12 +222,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
             for (event in eventsToPost) {
                 setAlertWasHandled(context, event, createdByUs = false)
-                logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
-
-                if (markEventsAsHandledInProvider) {
-                    logger.info("Dismissing original reminder")
-                    CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                }
+                CalendarProvider.dismissNativeEventAlert(context, event.eventId);
+                logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
             }
         }
         catch (ex: Exception) {
@@ -265,11 +262,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
-//        if (firedEventsProvider || firedEventsManual) {
-//            // no need to reload calendar here, it would be reloaded from other places
-//            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
-//        }
-
         val scanPh4 = System.currentTimeMillis()
         logger.info("afterCalendarEventFired took ${scanPh4-scanPh3}ms")
 
@@ -288,11 +280,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
             logger.info("Setting alarm at $time (${(time-now)/1000L/60L} mins from now)")
 
-            val exactTime =
-                    if (!settings.enableMonitorDebug)
-                        time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
-                    else
-                        time - Consts.ALARM_THRESHOLD / 2 // give calendar provider no chance! we want to handle it before it!
+            val exactTime = time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
 
             context.alarmManager.setExactAndAlarm(
                     context,

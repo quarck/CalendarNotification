@@ -111,20 +111,14 @@ class CalendarMonitorProvider(
 
             val settings = Settings(context)
 
-            val markEventsAsHandledInProvider = settings.markEventsAsHandledInProvider
-
             try {
                 ApplicationController.postEventNotifications(context, newFires)
 
                 for (event in newFires) {
                     calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
+                    CalendarProvider.dismissNativeEventAlert(context, event.eventId);
 
-                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB")
-
-                    if (markEventsAsHandledInProvider) {
-                        logger.info("Dismissing original reminder - marking event as handled in the provider")
-                        CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                    }
+                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
                 }
             }
             catch (ex: Exception) {

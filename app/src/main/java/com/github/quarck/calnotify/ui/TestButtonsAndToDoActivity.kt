@@ -46,7 +46,7 @@ class TestButtonsAndToDoActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_buttons_and_to_do)
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = settings.markEventsAsHandledInProvider
+        find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = false
         find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
         find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
         find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
@@ -210,7 +210,6 @@ class TestButtonsAndToDoActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleRemoveClick(v: View) {
-        settings.markEventsAsHandledInProvider = find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

@@ -48,10 +48,6 @@ data class NotificationSettingsSnapshot
 
 class Settings(context: Context): PersistentStorageBase(context) {
 
-    var markEventsAsHandledInProvider: Boolean
-        get() = getBoolean(MARK_EVENTS_AS_HANDLED_KEY, true)
-        set(value) = setBoolean(MARK_EVENTS_AS_HANDLED_KEY, value)
-
     var lastCustomSnoozeIntervalMillis: Long
         get() = getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
         set(value) = setLong(LAST_CUSTOM_INTERVAL_KEY, value)
@@ -317,7 +313,6 @@ class Settings(context: Context): PersistentStorageBase(context) {
 
         private const val USE_COMPACT_LAYOUT_KEY = "compact_layout"
 
-        private const val MARK_EVENTS_AS_HANDLED_KEY = "remove_original"
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 
         private const val ALLOW_SWIPE_TO_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"

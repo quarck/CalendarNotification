@@ -402,6 +402,13 @@ class EventListAdapter(
             notifyItemRemoved(idx)
         }
 
+    fun removeAll() {
+        synchronized(this) {
+            events = arrayOf<EventAlertRecord>();
+            notifyDataSetChanged()
+        }
+    }
+
     fun removeWithUndo(event: EventAlertRecord) {
 
         if (!eventsPendingRemoval.contains(event)) {

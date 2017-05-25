@@ -15,7 +15,7 @@
         android:id="@+id/action_dismissed_events"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="@string/dismissed_events" />
+        android:title="@string/deleted_events" />
 
     <item
         android:id="@+id/action_settings"
@@ -34,8 +34,14 @@
 
     <item
         android:id="@+id/action_about"
-        android:orderInCategory="1000"
+        android:orderInCategory="140"
         app:showAsAction="never"
         android:title="@string/menu_about" />
+
+    <item
+        android:id="@+id/action_dismiss_all"
+        android:orderInCategory="150"
+        app:showAsAction="never"
+        android:title="@string/dismiss_all_events" />
 
 </menu>

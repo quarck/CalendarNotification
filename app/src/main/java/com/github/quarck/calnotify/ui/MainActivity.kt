@@ -249,6 +249,31 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         super.onPause()
     }
 
+    private fun onDismissAll() {
+        AlertDialog.Builder(this)
+                .setMessage(R.string.dismiss_all_events_confirmation)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes) {
+                    x, y ->
+                    doDismissAll()
+                }
+                .setNegativeButton(R.string.cancel) {
+                    x, y ->
+                }
+                .create()
+                .show()
+    }
+
+    private fun doDismissAll() {
+
+        ApplicationController.dismissAllButRecent(this, EventDismissType.ManuallyDismissedFromActivity);
+
+        reloadData()
+        lastEventDismissalScrollPosition = null
+
+        onNumEventsUpdated()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
 
@@ -293,6 +318,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_about ->
                 startActivity(Intent(this, AboutActivity::class.java))
+
+            R.id.action_dismiss_all ->
+                onDismissAll()
         }
 
         return super.onOptionsItemSelected(item)

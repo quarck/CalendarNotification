@@ -213,6 +213,7 @@ object ApplicationController : EventMovedHandler {
                 }
 
                 // add newly fired event
+                event.lastEventVisibility = System.currentTimeMillis()
                 db.addEvent(event)
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
             }
@@ -309,6 +310,11 @@ object ApplicationController : EventMovedHandler {
             }
 
             if (!pairsToAdd.isEmpty()) {
+
+                var currentTime = System.currentTimeMillis()
+                for ((_, event) in pairsToAdd)
+                    event.lastEventVisibility = currentTime++
+
                 db.addEvents(pairsToAdd.map { it.second })
             }
         }
@@ -616,6 +622,17 @@ object ApplicationController : EventMovedHandler {
 
         if (notifyActivity)
             UINotifierService.notifyUI(context, true);
+    }
+
+    fun dismissAllButRecent(context: Context, dismissType: EventDismissType) {
+
+        val currentTime = System.currentTimeMillis()
+
+        EventsStorage(context).use {
+            db ->
+            val events = db.events.filter { it.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD }
+            dismissEvents(context, db, events, dismissType, false)
+        }
     }
 
     fun dismissEvent(

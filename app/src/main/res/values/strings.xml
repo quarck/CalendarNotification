@@ -261,6 +261,7 @@
     <string name="edit_event">Edit event</string>
 
     <string name="dismissed_events">Dismissed events</string>
+    <string name="deleted_events">Bin</string>
     <string name="keep_dismissed_events">Keep recently dismissed events</string>
     <string name="keep_dismissed_events_summary">Keep recently dismissed events so you can review them (go to \'dismissed events\' from main window)</string>
     <string name="keep_dismissed_events_days">Days to keep dismissed events</string>
@@ -307,4 +308,6 @@
     <string name="last_notification_s_ago" formatted="false">Last notification: %s ago</string>
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
+    <string name="dismiss_all_events">Dismiss all events</string>
+    <string name="dismiss_all_events_confirmation">Dismiss all events? Cannot be undone!</string>
 </resources>

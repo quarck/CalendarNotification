@@ -90,6 +90,8 @@ object Consts {
 
     const val ALARM_THRESHOLD = 24 * 1000L; // multiple of both, 2 and 3
 
+    const val DISMISS_ALL_THRESHOLD = 3000L
+
     val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000);
 
     const val MAX_SUPPORTED_PRESETS = 6

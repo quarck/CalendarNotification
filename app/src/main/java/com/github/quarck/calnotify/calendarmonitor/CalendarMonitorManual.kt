@@ -201,6 +201,7 @@ class CalendarMonitorManual(
                             instanceStartTime = alert.instanceStartTime,
                             instanceEndTime = alert.instanceEndTime,
                             location = calEvent.location,
+                            color = calEvent.color,
                             lastEventVisibility = 0,
                             snoozedUntil = 0
                     )

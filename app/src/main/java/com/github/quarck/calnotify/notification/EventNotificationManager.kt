@@ -45,12 +45,6 @@ import com.github.quarck.calnotify.utils.*
 class EventNotificationManager : EventNotificationManagerInterface {
 
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
-        EventsStorage(ctx).use {
-            // Update lastEventVisibility - we've just seen this event,
-            // not using threshold when event is just added
-            it.updateEvent(event,
-                    lastEventVisibility = System.currentTimeMillis())
-        }
 
         postEventNotifications(ctx, formatter, false, event.eventId)
 

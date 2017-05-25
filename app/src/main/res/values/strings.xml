@@ -262,8 +262,8 @@
 
     <string name="dismissed_events">Dismissed events</string>
     <string name="deleted_events">Bin</string>
-    <string name="keep_dismissed_events">Keep recently dismissed events</string>
-    <string name="keep_dismissed_events_summary">Keep recently dismissed events so you can review them (go to \'dismissed events\' from main window)</string>
+    <string name="keep_dismissed_events">Enable Bin</string>
+    <string name="keep_dismissed_events_summary">Keep recently dismissed events so you can review them (go to \'Bin\' from main window)</string>
     <string name="keep_dismissed_events_days">Days to keep dismissed events</string>
     <string name="keep_dismissed_events_days_summary">For how many days app should keep recently dismissed events</string>
     <string name="app_behavior">Behavior</string>

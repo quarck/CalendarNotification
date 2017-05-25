@@ -35,8 +35,7 @@ object CalendarIntents {
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
         val intent = Intent(action).setData(uri)
 
-        if (event.isRepeating &&
-            event.instanceStartTime != 0L &&
+        if (event.instanceStartTime != 0L &&
             event.instanceEndTime != 0L &&
             event.instanceStartTime < event.instanceEndTime) {
             // only add if it is a valid instance start / end time, and we need both
@@ -44,6 +43,7 @@ object CalendarIntents {
             intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.instanceStartTime)
             intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.instanceEndTime)
         }
+
         return intent
     }
 

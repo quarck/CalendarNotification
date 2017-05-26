@@ -252,10 +252,6 @@
     <string name="edit_event">Termin bearbeiten</string>
 
     <string name="dismissed_events">Geschlossene Termine</string>
-    <string name="keep_dismissed_events">Behalte geschlossene Termine</string>
-    <string name="keep_dismissed_events_summary">Kürzlich geschlossene Termine zur Kontrolle behalten (Siehe \'Geschlossene Termine\' im Hauptfenster).</string>
-    <string name="keep_dismissed_events_days">Anzahl der Tage</string>
-    <string name="keep_dismissed_events_days_summary">Für wie viele Tage sollen geschlossene Termine behalten werden.</string>
     <string name="app_behavior">Verhalten</string>
 
     <string name="dismissed_general" formatted="false">Geschlossen am %s</string>

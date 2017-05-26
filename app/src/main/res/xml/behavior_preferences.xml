@@ -14,6 +14,29 @@
         android:defaultValue="3"
         />
 
+    <CheckBoxPreference android:key="remind_events_no_rmdnrs"
+        android:title="@string/handle_events_with_no_reminders"
+        android:summary="@string/handle_events_with_no_reminders_summary"
+        android:defaultValue="true"/>
+
+    <EditTextPreference
+        android:key="default_reminder_time"
+        android:title="@string/default_reminder_time"
+        android:summary="@string/default_reminder_time_summary"
+        android:dependency="remind_events_no_rmdnrs"
+        android:numeric="integer"
+        android:defaultValue="15"
+        />
+
+    <EditTextPreference
+        android:key="default_all_day_reminder_time"
+        android:title="@string/default_all_day_reminder_time"
+        android:summary="@string/default_all_day_reminder_time_summary"
+        android:dependency="remind_events_no_rmdnrs"
+        android:numeric="integer"
+        android:defaultValue="-8"
+        />
+
     <!-- use_set_alarm_clock -->
     <CheckBoxPreference
         android:key="use_set_alarm_clock"

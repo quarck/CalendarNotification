@@ -275,10 +275,10 @@ class Settings(context: Context): PersistentStorageBase(context) {
         get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
 
     val defaultReminderTimeForEventWithNoReminder: Long
-        get() = getLong(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15L * 60L * 1000L)
+        get() = getLong(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15L) * 60L * 1000L
 
     val defaultReminderTimeForAllDayEventWithNoreminder: Long
-        get() = getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L * 3600L * 1000L)
+        get() = getLong(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -8L) * 3600L * 1000L
 
     val manualCalWatchScanWindow: Long
         get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default

@@ -112,6 +112,9 @@ fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
 val isMarshmallowOrAbove: Boolean
     get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
 
+val isLollipopOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
+
 val isKitkatOrAbove: Boolean
     get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT
 

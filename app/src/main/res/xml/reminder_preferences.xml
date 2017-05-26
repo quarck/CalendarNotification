@@ -26,7 +26,7 @@
 
         <CheckBoxPreference android:key="reminders_custom_ringtone"
             android:title="@string/reminder_custom_ringtone"
-            android:summary="Use custom ringtone for notifications"
+            android:summary="@string/reminder_custom_ringtone_summary"
             android:defaultValue="false"
             android:dependency="enable_reminding_key"/>
 
@@ -42,7 +42,7 @@
 
         <CheckBoxPreference android:key="reminders_custom_vibration"
             android:title="@string/reminder_custom_vibration"
-            android:summary="Use custom vibration for notifications"
+            android:summary="@string/reminder_custom_vibration_summary"
             android:defaultValue="false"
             android:dependency="enable_reminding_key"/>
 

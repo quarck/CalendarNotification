@@ -3,14 +3,12 @@
 
     <CheckBoxPreference
         android:key="keep_history"
-        android:title="@string/keep_dismissed_events"
-        android:summary="@string/keep_dismissed_events_summary"
+        android:title="@string/enable_bin"
         android:defaultValue="false" />
 
     <EditTextPreference
         android:key="keep_history_days"
-        android:title="@string/keep_dismissed_events_days"
-        android:summary="@string/keep_dismissed_events_days_summary"
+        android:title="@string/keep_bin_events_days"
         android:dependency="keep_history"
         android:numeric="integer"
         android:defaultValue="3"

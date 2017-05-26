@@ -264,7 +264,7 @@
     <string name="deleted_events">Bin</string>
     <string name="keep_dismissed_events">Enable Bin</string>
     <string name="keep_dismissed_events_summary">Keep recently dismissed events so you can review them (go to \'Bin\' from main window)</string>
-    <string name="keep_dismissed_events_days">Days to keep dismissed events</string>
+    <string name="keep_dismissed_events_days">Days to keep events in the Bin</string>
     <string name="keep_dismissed_events_days_summary">For how many days app should keep recently dismissed events</string>
     <string name="app_behavior">Behavior</string>
 
@@ -310,5 +310,5 @@
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
     <string name="dismiss_all_events">Dismiss all events</string>
-    <string name="dismiss_all_events_confirmation">Dismiss all events? Cannot be undone!</string>
+    <string name="dismiss_all_events_confirmation">Dismiss all events? Cannot be undone! Snoozed events would not be removed</string>
 </resources>

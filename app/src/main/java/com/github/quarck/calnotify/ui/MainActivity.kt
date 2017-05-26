@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun doDismissAll() {
 
-        ApplicationController.dismissAllButRecent(this, EventDismissType.ManuallyDismissedFromActivity);
+        ApplicationController.dismissAllButRecentAndSnoozed(this, EventDismissType.ManuallyDismissedFromActivity);
 
         reloadData()
         lastEventDismissalScrollPosition = null
@@ -289,6 +289,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         if (dismissedEventsMenuItem != null) {
             dismissedEventsMenuItem.isEnabled = settings.keepHistory
             dismissedEventsMenuItem.isVisible = settings.keepHistory
+        }
+
+        val dismissAll = menu.findItem(R.id.action_dismiss_all)
+        if (dismissAll != null) {
+            dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
         }
 
         return true

@@ -34,6 +34,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -440,4 +441,9 @@ class EventListAdapter(
             runnable.run()
         pendingEventRemoveRunnables.clear()
     }
+
+    val anyForDismissAllButRecentAndSnoozed: Boolean
+        get() {
+            return ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
+        }
 }

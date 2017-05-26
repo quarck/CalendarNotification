@@ -624,14 +624,31 @@ object ApplicationController : EventMovedHandler {
             UINotifierService.notifyUI(context, true);
     }
 
-    fun dismissAllButRecent(context: Context, dismissType: EventDismissType) {
+    fun anyForDismissAllButRecentAndSnoozed(events: Array<EventAlertRecord>): Boolean {
+
+        val currentTime = System.currentTimeMillis()
+
+        val ret = events.any {
+            event ->
+            (event.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
+                    (event.snoozedUntil == 0L)
+        }
+
+        return ret
+    }
+
+    fun dismissAllButRecentAndSnoozed(context: Context, dismissType: EventDismissType) {
 
         val currentTime = System.currentTimeMillis()
 
         EventsStorage(context).use {
             db ->
-            val events = db.events.filter { it.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD }
-            dismissEvents(context, db, events, dismissType, false)
+            val eventsToDismiss = db.events.filter {
+                event ->
+                (event.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
+                        (event.snoozedUntil == 0L)
+            }
+            dismissEvents(context, db, eventsToDismiss, dismissType, false)
         }
     }
 
@@ -737,4 +754,5 @@ object ApplicationController : EventMovedHandler {
     fun postNotificationsAutoDismissedDebugMessage(context: Context) {
         notificationManager.postNotificationsAutoDismissedDebugMessage(context)
     }
+
 }

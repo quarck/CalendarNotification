@@ -14,23 +14,6 @@
         android:defaultValue="false"
         android:dependency="pref_key_enable_dismiss_button"/>
 
-    <CheckBoxPreference
-        android:key="notification_led"
-        android:summary="@string/notification_light_summary"
-        android:title="@string/notification_light_title"
-        android:defaultValue="true" />
-
-    <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
-        android:key="notification_led_color"
-        android:title="@string/led_color"
-        android:dependency="notification_led" />
-
-    <com.github.quarck.calnotify.prefs.LEDPatternPreference
-        android:key="notification_led_v2pattern"
-        android:title="@string/led_pattern"
-        android:dependency="notification_led"
-        android:defaultValue="300,2000"/>
-
     <RingtonePreference
         android:key="pref_key_ringtone"
         android:summary="@string/ringtone_selection_summary"
@@ -51,6 +34,23 @@
         android:entries="@array/pref_vibration_pattern_entries"
         android:entryValues="@array/pref_vibration_pattern_values"
         android:defaultValue="0" />
+
+    <CheckBoxPreference
+        android:key="notification_led"
+        android:summary="@string/notification_light_summary"
+        android:title="@string/notification_light_title"
+        android:defaultValue="true" />
+
+    <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
+        android:key="notification_led_color"
+        android:title="@string/led_color"
+        android:dependency="notification_led" />
+
+    <com.github.quarck.calnotify.prefs.LEDPatternPreference
+        android:key="notification_led_v2pattern"
+        android:title="@string/led_pattern"
+        android:dependency="notification_led"
+        android:defaultValue="300,2000"/>
 
 
     <CheckBoxPreference android:key="heads_up_notification"

@@ -25,17 +25,17 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 interface EventsStorageImplInterface {
     fun createDb(db: SQLiteDatabase)
 
-    fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord)
+    fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean
 
-    fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>)
+    fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean
 
-    fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord)
+    fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean
 
-    fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>)
+    fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean
 
-    fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
+    fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean
 
-    fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>)
+    fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>): Boolean
 
     fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord?
 
@@ -43,10 +43,10 @@ interface EventsStorageImplInterface {
 
     fun getEventInstancesImpl(db: SQLiteDatabase, eventId: Long): List<EventAlertRecord>
 
-    fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long)
+    fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean
 
-    fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>)
+    fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>): Int
 
-    fun dropAll(db: SQLiteDatabase)
+    fun dropAll(db: SQLiteDatabase): Boolean
 
 }

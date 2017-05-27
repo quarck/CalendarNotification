@@ -26,12 +26,11 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
-import java.security.InvalidParameterException
 
 class EventsStorage(context: Context)
 : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, EventsStorageInterface {
 
-    private lateinit var impl: EventsStorageImplInterface
+    private var impl: EventsStorageImplInterface
 
     init  {
         when (DATABASE_CURRENT_VERSION) {
@@ -53,63 +52,57 @@ class EventsStorage(context: Context)
         = impl.createDb(db)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+
         logger.debug("onUpgrade $oldVersion -> $newVersion")
 
-        if (oldVersion != newVersion) {
-            if (oldVersion < DATABASE_VERSION_V6) {
-                throw Exception("Not known version -- this was never released to public")
-            }
-            else if (oldVersion in DATABASE_VERSION_V6..DATABASE_VERSION_V7 &&
-                    newVersion  == DATABASE_VERSION_V8 &&
-                    oldVersion < newVersion) {
+        if (oldVersion == newVersion)
+            return
 
-                logger.debug("V${oldVersion} to V${newVersion} upgrade")
+        if (newVersion != DATABASE_VERSION_V8)
+            throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
-                try {
-                    impl.createDb(db)
+        logger.debug("V$oldVersion to V$newVersion upgrade")
 
-                    val implOld =
-                            when (oldVersion) {
-                                DATABASE_VERSION_V6 -> EventsStorageImplV6()
-                                DATABASE_VERSION_V7 -> EventsStorageImplV7()
-                                else -> throw Exception() // placeholder - would never happen
-                            }
-
-                    val events = implOld.getEventsImpl(db)
-
-                    logger.debug("${events.size} events to convert")
-
-                    for (event in events) {
-                        impl.addEventImpl(db, event)
-                        implOld.deleteEventImpl(db, event.eventId, event.instanceStartTime)
-
-                        logger.debug("Done event ${event.eventId}, inst ${event.instanceStartTime}")
-                    }
-
-                    if (implOld.getEventsImpl(db).isEmpty()) {
-                        logger.debug("Finally - dropping old tables")
-                        implOld.dropAll(db)
-                    } else {
-                        throw Exception("DB Upgrade failed: some events are still in the old version of DB")
-                    }
-
-                } catch (ex: Exception) {
-                    logger.error("Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
-                    throw ex
+        val implOld =
+                when (oldVersion) {
+                    DATABASE_VERSION_V6 -> EventsStorageImplV6()
+                    DATABASE_VERSION_V7 -> EventsStorageImplV7()
+                    else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
+        try {
+            impl.createDb(db)
+
+            val events = implOld.getEventsImpl(db)
+
+            logger.debug("${events.size} events to convert")
+
+            for (event in events) {
+                if (impl.addEventImpl(db, event)) {
+                    implOld.deleteEventImpl(db, event.eventId, event.instanceStartTime)
+                }
+
+                logger.debug("Done event ${event.eventId}, inst ${event.instanceStartTime}")
             }
-            else {
-                throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
+
+            if (implOld.getEventsImpl(db).isEmpty()) {
+                logger.debug("Finally - dropping old tables")
+                implOld.dropAll(db)
+            } else {
+                throw Exception("DB Upgrade failed: some events are still in the old version of DB")
             }
+
+        } catch (ex: Exception) {
+            logger.error("Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
+            throw ex
         }
     }
 
 
-    override fun addEvent(event: EventAlertRecord)
+    override fun addEvent(event: EventAlertRecord): Boolean
         = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
 
-    override fun addEvents(events: List<EventAlertRecord>)
+    override fun addEvents(events: List<EventAlertRecord>): Boolean
         = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, events) } }
 
     override fun updateEvent(event: EventAlertRecord,
@@ -123,7 +116,7 @@ class EventsStorage(context: Context)
                              displayStatus: EventDisplayStatus?,
                              color: Int?,
                              isRepeating: Boolean?
-    ): EventAlertRecord {
+    ): Pair<Boolean, EventAlertRecord> {
         val newEvent =
             event.copy(
                 alertTime = alertTime ?: event.alertTime,
@@ -138,9 +131,9 @@ class EventsStorage(context: Context)
                 isRepeating = isRepeating ?: event.isRepeating
             );
 
-        updateEvent(newEvent)
+        val success = updateEvent(newEvent)
 
-        return newEvent
+        return Pair(success, newEvent)
     }
 
     @Suppress("unused")
@@ -154,7 +147,7 @@ class EventsStorage(context: Context)
                               lastEventVisibility: Long?,
                               displayStatus: EventDisplayStatus?,
                               color: Int?,
-                              isRepeating: Boolean?) {
+                              isRepeating: Boolean?): Boolean {
 
         val newEvents =
             events.map {
@@ -172,19 +165,19 @@ class EventsStorage(context: Context)
                     isRepeating = isRepeating ?: event.isRepeating)
                 }
 
-        updateEvents(newEvents)
+        return updateEvents(newEvents)
     }
 
-    override fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
+    override fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean
         = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventAndInstanceTimesImpl(it, event, instanceStart, instanceEnd) } }
 
-    override fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>)
+    override fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>): Boolean
         = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventsAndInstanceTimesImpl(it, events) } }
 
-    override fun updateEvent(event: EventAlertRecord)
+    override fun updateEvent(event: EventAlertRecord): Boolean
         = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventImpl(it, event) } }
 
-    override fun updateEvents(events: List<EventAlertRecord>)
+    override fun updateEvents(events: List<EventAlertRecord>): Boolean
         = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
 
     override fun getEvent(eventId: Long, instanceStartTime: Long): EventAlertRecord?
@@ -193,14 +186,14 @@ class EventsStorage(context: Context)
     override fun getEventInstances(eventId: Long): List<EventAlertRecord>
         = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventInstancesImpl(it, eventId) } }
 
-    override fun deleteEvent(eventId: Long, instanceStartTime: Long)
+    override fun deleteEvent(eventId: Long, instanceStartTime: Long): Boolean
         = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, eventId, instanceStartTime) } }
 
     @Suppress("unused")
-    override fun deleteEvent(ev: EventAlertRecord)
+    override fun deleteEvent(ev: EventAlertRecord): Boolean
         = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, ev.eventId, ev.instanceStartTime) } }
 
-    override fun deleteEvents(events: Collection<EventAlertRecord>)
+    override fun deleteEvents(events: Collection<EventAlertRecord>): Int
         = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
 
     override val events: List<EventAlertRecord>

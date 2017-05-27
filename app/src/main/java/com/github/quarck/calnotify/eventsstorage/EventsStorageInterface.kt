@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.eventsstorage
 
-import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 
@@ -31,9 +30,9 @@ data class EventWithNewInstanceTime(
 
 interface EventsStorageInterface {
 
-    fun addEvent(event: EventAlertRecord)
+    fun addEvent(event: EventAlertRecord): Boolean
 
-    fun addEvents(events: List<EventAlertRecord>)
+    fun addEvents(events: List<EventAlertRecord>): Boolean
 
     fun updateEvent(
         event: EventAlertRecord,
@@ -46,7 +45,7 @@ interface EventsStorageInterface {
         lastEventVisibility: Long? = null,
         displayStatus: EventDisplayStatus? = null,
         color: Int? = null,
-        isRepeating: Boolean? = null ): EventAlertRecord
+        isRepeating: Boolean? = null ): Pair<Boolean, EventAlertRecord>
 
     fun updateEvents(
         events: List<EventAlertRecord>,
@@ -59,25 +58,25 @@ interface EventsStorageInterface {
         lastEventVisibility: Long? = null,
         displayStatus: EventDisplayStatus? = null,
         color: Int? = null,
-        isRepeating: Boolean? = null)
+        isRepeating: Boolean? = null): Boolean
 
-    fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long)
+    fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean
 
-    fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>)
+    fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>): Boolean
 
-    fun updateEvent(event: EventAlertRecord)
+    fun updateEvent(event: EventAlertRecord): Boolean
 
-    fun updateEvents(events: List<EventAlertRecord>)
+    fun updateEvents(events: List<EventAlertRecord>): Boolean
 
     fun getEvent(eventId: Long, instanceStartTime: Long): EventAlertRecord?
 
     fun getEventInstances(eventId: Long): List<EventAlertRecord>
 
-    fun deleteEvent(eventId: Long, instanceStartTime: Long)
+    fun deleteEvent(eventId: Long, instanceStartTime: Long): Boolean
 
-    fun deleteEvent(ev: EventAlertRecord)
+    fun deleteEvent(ev: EventAlertRecord): Boolean
 
-    fun deleteEvents(events: Collection<EventAlertRecord>)
+    fun deleteEvents(events: Collection<EventAlertRecord>): Int
 
     val events: List<EventAlertRecord> get
 }

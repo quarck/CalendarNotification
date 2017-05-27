@@ -134,7 +134,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
                         res.event
                     }
 
-            db.updateEvents(newEvents)
+            db.updateEvents(newEvents) // nothing major would happen if this fails - just ignore
         }
 
         if (!eventsToUpdateWithTime.isEmpty()) {

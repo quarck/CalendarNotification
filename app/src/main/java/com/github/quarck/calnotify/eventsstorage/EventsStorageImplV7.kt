@@ -82,12 +82,13 @@ class EventsStorageImplV7
         db.execSQL(CREATE_INDEX)
     }
 
-    override fun dropAll(db: SQLiteDatabase) {
+    override fun dropAll(db: SQLiteDatabase): Boolean {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
+        return true
     }
 
-    override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
+    override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
         // logger.debug("addEventImpl " + event.eventId)
 
         if (event.notificationId == 0)
@@ -106,9 +107,10 @@ class EventsStorageImplV7
             event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
             updateEventImpl(db, event)
         }
+        return true
     }
 
-    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
+    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
 
         try {
             db.beginTransaction()
@@ -122,6 +124,7 @@ class EventsStorageImplV7
             db.endTransaction()
         }
 
+        return true
     }
 
     private fun nextNotificationId(db: SQLiteDatabase): Int {
@@ -150,7 +153,7 @@ class EventsStorageImplV7
         return ret
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
+    override fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
 
         val values = eventRecordToContentValues(event)
 
@@ -160,9 +163,11 @@ class EventsStorageImplV7
             values, // column/value
              "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
             arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+
+        return true
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>) {
+    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
         //logger.debug("Updating ${events.size} events");
 
         try {
@@ -182,9 +187,11 @@ class EventsStorageImplV7
         finally {
             db.endTransaction()
         }
+
+        return true
     }
 
-    override fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long) {
+    override fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean {
 
         val values = eventRecordToContentValues(
             event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
@@ -196,9 +203,11 @@ class EventsStorageImplV7
             values, // column/value
             "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
             arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
+
+        return true
     }
 
-    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>) {
+    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>): Boolean {
 
         try {
             db.beginTransaction()
@@ -221,6 +230,8 @@ class EventsStorageImplV7
         finally {
             db.endTransaction()
         }
+
+        return true
     }
 
     override fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
@@ -294,7 +305,7 @@ class EventsStorageImplV7
         return ret
     }
 
-    override fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long) {
+    override fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
 
         db.delete(
             TABLE_NAME,
@@ -302,9 +313,11 @@ class EventsStorageImplV7
             arrayOf(eventId.toString(), instanceStartTime.toString()))
 
         //logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
+
+        return true
     }
 
-    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>) {
+    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>): Int {
 
         try {
             db.beginTransaction()
@@ -318,6 +331,8 @@ class EventsStorageImplV7
         finally {
             db.endTransaction()
         }
+
+        return events.size
     }
 
 

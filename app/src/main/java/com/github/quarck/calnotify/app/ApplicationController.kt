@@ -194,7 +194,7 @@ object ApplicationController : EventMovedHandler {
 
             if (event.isRepeating) {
                 // repeating event - always simply add
-                db.addEvent(event)
+                db.addEvent(event) // ignoring result as we are using other way of validating
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
             } else {
                 // non-repeating event - make sure we don't create two records with the same eventId
@@ -315,7 +315,7 @@ object ApplicationController : EventMovedHandler {
                 for ((_, event) in pairsToAdd)
                     event.lastEventVisibility = currentTime++
 
-                db.addEvents(pairsToAdd.map { it.second })
+                db.addEvents(pairsToAdd.map { it.second }) // ignoring result of add - here we are using another way to validate succesfull add
             }
         }
 
@@ -466,7 +466,7 @@ object ApplicationController : EventMovedHandler {
 
         val currentTime = System.currentTimeMillis()
 
-        val snoozedEvent =
+        val snoozedEvent: EventAlertRecord? =
             EventsStorage(context).use {
                 db ->
                 var event = db.getEvent(eventId, instanceStartTime)
@@ -478,10 +478,12 @@ object ApplicationController : EventMovedHandler {
                         else
                             event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
-                    event = db.updateEvent(event,
-                        snoozedUntil = snoozedUntil,
-                        lastEventVisibility = currentTime,
-                        displayStatus = EventDisplayStatus.Hidden)
+                    val (success, newEvent) = db.updateEvent(event,
+                            snoozedUntil = snoozedUntil,
+                            lastEventVisibility = currentTime,
+                            displayStatus = EventDisplayStatus.Hidden)
+
+                    event = if (success) newEvent else null
                 }
 
                 event;
@@ -508,6 +510,8 @@ object ApplicationController : EventMovedHandler {
 
         var snoozedUntil = 0L
 
+        var allSuccess = true
+
         EventsStorage(context).use {
             db ->
             val events = db.events
@@ -523,9 +527,12 @@ object ApplicationController : EventMovedHandler {
                 val newSnoozeUntil = currentTime + snoozeDelay + snoozeAdjust
 
                 if (isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil) {
-                    db.updateEvent(event,
+                    val (success, _) = db.updateEvent(event,
                         snoozedUntil = newSnoozeUntil,
                         lastEventVisibility = currentTime)
+
+                    allSuccess = allSuccess && success;
+
                     ++snoozeAdjust
 
                     snoozedUntil = newSnoozeUntil
@@ -533,7 +540,7 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
-        if (snoozedUntil != 0L) {
+        if (allSuccess && snoozedUntil != 0L) {
 
             notificationManager.onAllEventsSnoozed(context)
 
@@ -614,14 +621,15 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
-        db.deleteEvents(events)
+        if (db.deleteEvents(events) == events.size) {
 
-        notificationManager.onEventsDismissed(context, EventFormatter(context), events);
+            notificationManager.onEventsDismissed(context, EventFormatter(context), events);
 
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (notifyActivity)
-            UINotifierService.notifyUI(context, true);
+            if (notifyActivity)
+                UINotifierService.notifyUI(context, true);
+        }
     }
 
     fun anyForDismissAllButRecentAndSnoozed(events: Array<EventAlertRecord>): Boolean {
@@ -668,14 +676,15 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
-        db.deleteEvent(event.eventId, event.instanceStartTime)
+        if (db.deleteEvent(event.eventId, event.instanceStartTime)) {
 
-        notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
+            notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
 
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (notifyActivity)
-            UINotifierService.notifyUI(context, true);
+            if (notifyActivity)
+                UINotifierService.notifyUI(context, true);
+        }
     }
 
     fun dismissEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord) {
@@ -712,15 +721,21 @@ object ApplicationController : EventMovedHandler {
                         notificationId = 0, // re-assign new notification ID since old one might already in use
                         displayStatus = EventDisplayStatus.Hidden ) // ensure correct visibility is set
 
-        EventsStorage(context).use {
-            db -> db.addEvent(toRestore)
-            calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
-        }
+        val successOnAdd =
+                EventsStorage(context).use {
+                    db ->
+                    val ret = db.addEvent(toRestore)
+                    calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
+                    ret
+                }
 
-        notificationManager.onEventRestored(context, EventFormatter(context), toRestore)
+        if (successOnAdd) {
+            notificationManager.onEventRestored(context, EventFormatter(context), toRestore)
 
-        DismissedEventsStorage(context).use {
-            db -> db.deleteEvent(event)
+            DismissedEventsStorage(context).use {
+                db ->
+                db.deleteEvent(event)
+            }
         }
     }
 

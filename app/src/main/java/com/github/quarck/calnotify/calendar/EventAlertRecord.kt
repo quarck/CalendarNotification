@@ -40,6 +40,16 @@ enum class EventOrigin(val code: Int) {
     }
 }
 
+enum class AttendanceStatus(val code: Int) {
+    Tentative(0),
+    Confirmed(1),
+    Cancelled(2);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
 
 data class EventAlertRecord(
     val calendarId: Long,
@@ -59,7 +69,9 @@ data class EventAlertRecord(
     var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
     var color: Int = 0,
     var origin: EventOrigin = EventOrigin.ProviderBroadcast,
-    var timeFirstSeen: Long = 0L
+    var timeFirstSeen: Long = 0L,
+    val attendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed,
+    val ownerAttendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed
 )
 
 

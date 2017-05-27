@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
+import java.security.InvalidParameterException
 
 class EventsStorage(context: Context)
 : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, EventsStorageInterface {
@@ -40,6 +41,9 @@ class EventsStorage(context: Context)
             DATABASE_VERSION_V7 ->
                 impl = EventsStorageImplV7();
 
+            DATABASE_VERSION_V8 ->
+                impl = EventsStorageImplV8();
+
             else ->
                 throw NotImplementedError("DB Version $DATABASE_CURRENT_VERSION is not supported")
         }
@@ -53,33 +57,38 @@ class EventsStorage(context: Context)
 
         if (oldVersion != newVersion) {
             if (oldVersion < DATABASE_VERSION_V6) {
+                throw Exception("Not known version -- this was never released to public")
+            }
+            else if (oldVersion in DATABASE_VERSION_V6..DATABASE_VERSION_V7 &&
+                    newVersion  == DATABASE_VERSION_V8 &&
+                    oldVersion < newVersion) {
 
-                logger.debug("Version too old - dropping everything");
-                EventsStorageImplV6().dropAll(db)
-                impl.createDb(db)
-
-            } else if (oldVersion == DATABASE_VERSION_V6 && newVersion == DATABASE_VERSION_V7){
-
-                logger.debug("V6 to V7 upgrade")
+                logger.debug("V${oldVersion} to V${newVersion} upgrade")
 
                 try {
                     impl.createDb(db)
 
-                    val implv6 = EventsStorageImplV6()
-                    val events = implv6.getEventsImpl(db)
+                    val implOld =
+                            when (oldVersion) {
+                                DATABASE_VERSION_V6 -> EventsStorageImplV6()
+                                DATABASE_VERSION_V7 -> EventsStorageImplV7()
+                                else -> throw Exception() // placeholder - would never happen
+                            }
+
+                    val events = implOld.getEventsImpl(db)
 
                     logger.debug("${events.size} events to convert")
 
                     for (event in events) {
                         impl.addEventImpl(db, event)
-                        implv6.deleteEventImpl(db, event.eventId, event.instanceStartTime)
+                        implOld.deleteEventImpl(db, event.eventId, event.instanceStartTime)
 
                         logger.debug("Done event ${event.eventId}, inst ${event.instanceStartTime}")
                     }
 
-                    if (implv6.getEventsImpl(db).isEmpty()) {
+                    if (implOld.getEventsImpl(db).isEmpty()) {
                         logger.debug("Finally - dropping old tables")
-                        implv6.dropAll(db)
+                        implOld.dropAll(db)
                     } else {
                         throw Exception("DB Upgrade failed: some events are still in the old version of DB")
                     }
@@ -89,7 +98,8 @@ class EventsStorage(context: Context)
                     throw ex
                 }
 
-            } else {
+            }
+            else {
                 throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
             }
         }
@@ -205,7 +215,9 @@ class EventsStorage(context: Context)
 
         private const val DATABASE_VERSION_V6 = 6
         private const val DATABASE_VERSION_V7 = 7
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V7
+        private const val DATABASE_VERSION_V8 = 8
+
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V8
 
         private const val DATABASE_NAME = "Events"
     }

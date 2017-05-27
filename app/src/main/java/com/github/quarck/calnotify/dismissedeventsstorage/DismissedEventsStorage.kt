@@ -23,14 +23,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
 class DismissedEventsStorage(context: Context)
 : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, DismissedEventsStorageInterface {
 
-    private lateinit var impl: DismissedEventsStorageImplInterface
+    private var impl: DismissedEventsStorageImplInterface
 
     init  {
         when (DATABASE_CURRENT_VERSION) {

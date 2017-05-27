@@ -241,6 +241,7 @@ class CalendarMonitorManual(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
+        // TODO: handle thousands of reminders from the past!!
 
         // TODO: Warning: last calendar scan was performed XXX UU ago. Missed events from the last month only are displayed
         // ^^ never display it in the notification, only in the list (first)
@@ -250,11 +251,10 @@ class CalendarMonitorManual(
 
         // TODO: Collapse everything if over 30 events
 
-        // TODO: Dismiss all while scan is in progress???? 
+        // TODO: Dismiss all while scan is in progress????
 
 //        MonitorStorage(context).use { it.deleteAlertsMatching { _ -> true } } ; state.firstScanEver = false
 //        state.prevEventScanTo = System.currentTimeMillis() - 2L*365L*24L*3600L*1000L // YAHOOOOO!!!!
-
 
         var hasFiredAnything = false
 

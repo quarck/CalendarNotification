@@ -96,7 +96,7 @@ class DismissedEventsStorageImplV1()
 
     override fun addEventImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, event: EventAlertRecord) {
 
-        logger.debug("addEventImpl " + event.eventId)
+//        logger.debug("addEventImpl " + event.eventId)
 
         val values = eventRecordToContentValues(event, changeTime, type)
 
@@ -106,7 +106,7 @@ class DismissedEventsStorageImplV1()
                     values) // key/value -> keys = column names/ values = column
             // values
         } catch (ex: SQLiteConstraintException) {
-            logger.debug("This entry (${event.eventId}) is already in the DB!")
+//            logger.debug("This entry (${event.eventId}) is already in the DB!")
         }
     }
 
@@ -132,7 +132,7 @@ class DismissedEventsStorageImplV1()
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
                 arrayOf(entry.event.eventId.toString(), entry.event.instanceStartTime.toString()))
 
-        logger.debug("deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
+//        logger.debug("deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
     }
 
     override fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
@@ -141,7 +141,7 @@ class DismissedEventsStorageImplV1()
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
                 arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
 
-        logger.debug("deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
+//        logger.debug("deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
     }
 
     override fun clearHistoryImpl(db: SQLiteDatabase) {
@@ -169,7 +169,7 @@ class DismissedEventsStorageImplV1()
         }
         cursor.close()
 
-        logger.debug("eventsImpl, returnint ${ret.size} events")
+        logger.debug("eventsImpl, returning ${ret.size} events")
 
         return ret
     }

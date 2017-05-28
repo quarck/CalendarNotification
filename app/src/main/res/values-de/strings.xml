@@ -82,12 +82,15 @@
 
     <string name="error_too_many_presets">Es werden höchstens 6 Voreinstellungen unterstützt, zusätzliche Einträge werden ignoriert!</string>
 
+    <string name="now">Jetzt</string>
     <string name="days">Tage</string>
     <string name="day">Tag</string>
     <string name="hours">Stunden</string>
     <string name="hour">Stunde</string>
     <string name="minutes">Minuten</string>
     <string name="minute">Minute</string>
+    <string name="seconds">Sekunden</string>
+    <string name="second">Sekunde</string>
     <string name="no_events_to_display">Keine Benachrichtigung vorhanden.\nAktive und schlummernde Benachrichtigung erscheinen hier.</string>
     <string name="no_calendar_permissions_main">Die Anwendung hat keinen Zugriff auf Ihren Kalender</string>
     <string name="view_after_edit">Nach dem Bearbeiten anzeigen</string>
@@ -184,7 +187,7 @@
     <string name="moved_to_string">Termin geändert auf</string>
     <string name="vibration_pattern">Vibrationsmuster</string>
     <string name="_100ms">100ms</string>
-    <string name="_2500ms">2500ms</string>
+    <string name="_2500ms">2,5s</string>
     <string name="led_on_time">LED An:</string>
     <string name="led_off_time">LED Aus:</string>
     <string name="led_pattern">LED Muster</string>
@@ -252,6 +255,9 @@
     <string name="edit_event">Termin bearbeiten</string>
 
     <string name="dismissed_events">Geschlossene Termine</string>
+    <string name="deleted_events">Papierkorb</string>
+    <string name="enable_bin">Papierkorb verwenden</string>
+    <string name="keep_bin_events_days">Tage für die die Termine im Papierkorb gehalten werden</string>
     <string name="app_behavior">Verhalten</string>
 
     <string name="dismissed_general" formatted="false">Geschlossen am %s</string>
@@ -260,6 +266,7 @@
     <string name="event_moved_new_time" formatted="false">Geändert, neue Zeit: %s</string>
     <string name="restore">Benachrichtigung wiederherstellen</string>
     <string name="delete">Verlauf löschen</string>
+    <string name="swipe_to_delete">Wischen um aus dem Verlauf zu löschen</string>
     <string name="remove_all">Alle löschen</string>
 
     <string name="remove_all_confirmation">Alle Einträge löschen?</string>
@@ -288,4 +295,20 @@
     <string name="reminder_custom_vibration">Benutzerdefinierter Vibration</string>
     <string name="quiet_hours_mute_led">Benachrichtungs-LED</string>
     <string name="quiet_hours_mute_led_summary">Die LED wird in der Ruhezeit ausgeschaltet</string>
+
+    <string name="reminder_you_have_missed_event">Erinnerung: Sie haben einen verpassten Termin</string>
+    <string name="reminder_you_have_missed_events">Erinnerung: Sie haben verpasste Termine</string>
+    <string name="last_notification_s_ago" formatted="false">Letzte Benachrichtigung: vor %s</string>
+
+    <string name="build_time_string_format" formatted="false">Zeit der Erstellung: %s</string>
+    <string name="dismiss_all_events">Alles Termine schließen</string>
+    <string name="dismiss_all_events_confirmation">Alles Termine schließen? Dies kann nicht rückgängig gemacht werden! Schlummernde Termine werden nicht entfernt.</string>
+    <string name="handle_events_with_no_reminders">Bearbeite Termine ohne Erinnerungen</string>
+    <string name="handle_events_with_no_reminders_summary">Benachrigung über Termine ohne Erinnerung hinzugefügt</string>
+    <string name="default_reminder_time">Standard Erinnerungszeit</string>
+    <string name="default_reminder_time_summary">Zeit für Termine ohne Erinnerung in Minuten vor dem Termin</string>
+    <string name="default_all_day_reminder_time">Standard für gänztägige Erinngerung</string>
+    <string name="default_all_day_reminder_time_summary">Zeit für ganztägige Termine ohne Erinnerung in Stunden vo dem Termin (00:00:00 von dem Tag des Termins)\nBeispiel:\n\n * \'-8\' die Erinnerung erfolgt um 8:00 Uhr an dem Tag des Termins\n\n * \'7\' bedeutet 7 Stunden vor Mitternacht am Tag des Termins, also 17:00 am Vortag</string>
+    <string name="reminder_custom_ringtone_summary">Benutzerdefinierten Klingelton verwenden</string>
+    <string name="reminder_custom_vibration_summary">Benutzerdefiniertes Vibrationsmuster verwenden</string>
 </resources>

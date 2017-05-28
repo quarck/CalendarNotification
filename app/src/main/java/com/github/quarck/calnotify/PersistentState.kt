@@ -20,21 +20,19 @@
 
 package com.github.quarck.calnotify
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 
-class PersistentState(private val ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
+class PersistentState(private val ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
 
-	var notificationLastFireTime by LongProperty(0, "A") // give a short name to simplify XML parsing
-	var nextSnoozeAlarmExpectedAt by LongProperty(0, "B")
+    var notificationLastFireTime by LongProperty(0, "A") // give a short name to simplify XML parsing
+    var nextSnoozeAlarmExpectedAt by LongProperty(0, "B")
 
-	companion object {
-		const val PREFS_NAME: String = "persistent_state"
+    companion object {
+        const val PREFS_NAME: String = "persistent_state"
     }
 }
 
 val Context.persistentState: PersistentState
-	get() =  PersistentState(this)
+    get() = PersistentState(this)
 

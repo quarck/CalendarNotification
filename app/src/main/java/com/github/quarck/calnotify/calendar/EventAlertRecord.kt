@@ -30,13 +30,13 @@ enum class EventOrigin(val code: Int) {
     FullManual(3);
 
     override fun toString(): String
-        = when (this) {
-            ProviderBroadcast -> "PB"
-            ProviderManual -> "PM"
-            ProviderBroadcastFollowingManual -> "pbPM"
-            FullManual -> "FM"
-            else -> "UND"
-        }
+            = when (this) {
+        ProviderBroadcast -> "PB"
+        ProviderManual -> "PM"
+        ProviderBroadcastFollowingManual -> "pbPM"
+        FullManual -> "FM"
+        else -> "UND"
+    }
 
     companion object {
         @JvmStatic
@@ -56,26 +56,26 @@ enum class AttendanceStatus(val code: Int) {
 }
 
 data class EventAlertRecord(
-    val calendarId: Long,
-    val eventId: Long,
-    var isAllDay: Boolean,
-    var isRepeating: Boolean,
-    var alertTime: Long,
-    var notificationId: Int,
-    var title: String,
-    var startTime: Long,
-    var endTime: Long,
-    var instanceStartTime: Long,
-    var instanceEndTime: Long,
-    var location: String,
-    var lastEventVisibility: Long,
-    var snoozedUntil: Long = 0,
-    var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
-    var color: Int = 0,
-    var origin: EventOrigin = EventOrigin.ProviderBroadcast,
-    var timeFirstSeen: Long = 0L,
-    val attendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed,
-    val ownerAttendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed
+        val calendarId: Long,
+        val eventId: Long,
+        var isAllDay: Boolean,
+        var isRepeating: Boolean,
+        var alertTime: Long,
+        var notificationId: Int,
+        var title: String,
+        var startTime: Long,
+        var endTime: Long,
+        var instanceStartTime: Long,
+        var instanceEndTime: Long,
+        var location: String,
+        var lastEventVisibility: Long,
+        var snoozedUntil: Long = 0,
+        var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
+        var color: Int = 0,
+        var origin: EventOrigin = EventOrigin.ProviderBroadcast,
+        var timeFirstSeen: Long = 0L,
+        val attendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed,
+        val ownerAttendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed
 )
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
@@ -204,7 +204,7 @@ fun CreateEventAlertSpecialScanOverHundredEvents(ctx: Context, missedEvents: Int
             instanceStartTime = Long.MAX_VALUE,
             instanceEndTime = Long.MAX_VALUE,
             location = "",
-            lastEventVisibility = Long.MAX_VALUE-2,
+            lastEventVisibility = Long.MAX_VALUE - 2,
             snoozedUntil = 0L,
             color = 0xffff0000.toInt()
     )

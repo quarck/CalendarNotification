@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.calendarmonitor
 
-import android.app.Application
 import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
@@ -159,7 +158,7 @@ class CalendarMonitorProvider(
         }
 
         // Now - scan for the next alert since currentTime, so we can see any newly added events, if any
-        val nextAlertSinceCurrent = calendarProvider.findNextAlarmTime(context.contentResolver, processEventsTo )
+        val nextAlertSinceCurrent = calendarProvider.findNextAlarmTime(context.contentResolver, processEventsTo)
                 ?: Long.MAX_VALUE
 
         // finally - pick the first one

@@ -23,7 +23,6 @@ import android.view.View
 import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.TextView
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
@@ -60,16 +59,16 @@ class TimeIntervalPickerController(val view: View, titleId: Int?) {
             val number = numberPicker.value
 
             val multiplier =
-                when (timeUnitsSpinners.selectedItemPosition) {
-                    MINUTES_ID ->
-                        1
-                    HOURS_ID ->
-                        60
-                    DAYS_ID ->
-                        24 * 60
-                    else ->
-                        throw Exception("Unknown time unit")
-                }
+                    when (timeUnitsSpinners.selectedItemPosition) {
+                        MINUTES_ID ->
+                            1
+                        HOURS_ID ->
+                            60
+                        DAYS_ID ->
+                            24 * 60
+                        else ->
+                            throw Exception("Unknown time unit")
+                    }
 
             return (number * multiplier).toInt()
         }

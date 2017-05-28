@@ -175,9 +175,9 @@ class CalendarMonitorManual(
                 event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
 
                 if (event != null)
-                    numAlertsFound ++
+                    numAlertsFound++
                 else
-                    numAlertsNotFound ++
+                    numAlertsNotFound++
             }
 
             if (event == null) {
@@ -210,11 +210,12 @@ class CalendarMonitorManual(
                 event.timeFirstSeen = System.currentTimeMillis()
 
                 pairs.add(Pair(alert, event))
-            } else {
+            }
+            else {
                 logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
                 // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
                 markAlertsAsHandledInDB(context, listOf(alert))
-                numErrors ++
+                numErrors++
             }
         }
 
@@ -255,7 +256,7 @@ class CalendarMonitorManual(
         var scanFrom = Math.min(
                 currentTime - Consts.ALERTS_DB_REMOVE_AFTER, // look backwards a little to make sure nothing is missing
                 prevScanTo // we we didn't scan for long time - do a full re-scan since last 'scanned to'
-                )
+        )
 
         // cap scan from range to 1 month back only
         val monthAgo = currentTime - Consts.MAX_SCAN_BACKWARD_DAYS * Consts.DAY_IN_MILLISECONDS
@@ -290,7 +291,7 @@ class CalendarMonitorManual(
         if (firstScanEver) {
             state.firstScanEver = false
             logger.info("This is a first deep scan ever, not posting 'due' events as these are reminders for past events")
-            markAlertsAsHandledInDB(context, dueAlerts )
+            markAlertsAsHandledInDB(context, dueAlerts)
 
         }
         else if (dueAlerts.isNotEmpty()) {
@@ -345,7 +346,7 @@ class CalendarMonitorManual(
         MonitorStorage(context).use {
             it.deleteAlertsMatching {
                 alert ->
-                    alert.instanceStartTime < scanFrom && alert.wasHandled
+                alert.instanceStartTime < scanFrom && alert.wasHandled
             }
         }
 
@@ -385,7 +386,7 @@ class CalendarMonitorManual(
 
             val ts5 = System.currentTimeMillis()
 
-            logger.debug("filterAndMergeAlerts: performance: ${ts1-ts0}, ${ts2-ts1}, ${ts3-ts2}, ${ts4-ts3}, ${ts5-ts4}")
+            logger.debug("filterAndMergeAlerts: performance: ${ts1 - ts0}, ${ts2 - ts1}, ${ts3 - ts2}, ${ts4 - ts3}, ${ts5 - ts4}")
         }
 
         return ret

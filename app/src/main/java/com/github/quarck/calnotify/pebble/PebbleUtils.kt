@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.pebble
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import org.json.JSONArray
 import org.json.JSONObject
@@ -47,7 +46,8 @@ object PebbleUtils {
         if (oldFirmware) {
             data.put(JSON_OBJECT_KEY_TITLE, title)
             data.put(JSON_OBJECT_KEY_BODY, text)
-        } else {
+        }
+        else {
             data.put(JSON_OBJECT_KEY_TITLE, context.resources.getString(R.string.pebble_notification_title))
             data.put(JSON_OBJECT_KEY_BODY, "${title}\n${text}")
         }

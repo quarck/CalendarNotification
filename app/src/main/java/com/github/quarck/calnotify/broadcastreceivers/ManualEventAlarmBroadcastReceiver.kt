@@ -25,7 +25,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
 
 
-open class ManualEventAlarmGenericBroadcastReceiver: BroadcastReceiver() {
+open class ManualEventAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -36,10 +36,10 @@ open class ManualEventAlarmGenericBroadcastReceiver: BroadcastReceiver() {
     }
 }
 
-class ManualEventAlarmBroadcastReceiver: ManualEventAlarmGenericBroadcastReceiver() {
+class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
 }
 
-class ManualEventExactAlarmBroadcastReceiver: ManualEventAlarmGenericBroadcastReceiver() {
+class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
 }
 
 class ManualEventAlarmPerioidicRescanBroadcastReceiver : BroadcastReceiver() {

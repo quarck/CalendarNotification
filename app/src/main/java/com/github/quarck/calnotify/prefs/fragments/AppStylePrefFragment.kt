@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
-class AppStylePrefFragment: Fragment() {
+class AppStylePrefFragment : Fragment() {
 
     private lateinit var settings: Settings
 

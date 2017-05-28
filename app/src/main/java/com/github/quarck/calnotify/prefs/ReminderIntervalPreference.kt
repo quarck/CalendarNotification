@@ -25,14 +25,12 @@ import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.TimePicker
 import android.widget.Toast
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
-import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
@@ -100,7 +98,8 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
         if (restorePersistedValue) {
             // Restore existing state
             timeValue = this.getPersistedInt(0)
-        } else if (defaultValue != null && defaultValue is Int) {
+        }
+        else if (defaultValue != null && defaultValue is Int) {
             // Set default state from the XML attribute
             timeValue = defaultValue
             persistInt(timeValue)

@@ -19,8 +19,6 @@
 
 package com.github.quarck.calnotify.app
 
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-
 
 data class UndoState(val undo: Runnable? = null, val dismiss: Runnable? = null)
 

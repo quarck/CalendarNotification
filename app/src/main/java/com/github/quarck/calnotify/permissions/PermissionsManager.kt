@@ -26,10 +26,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 
-object PermissionsManager
-{
+object PermissionsManager {
     private fun Context.hasPermission(perm: String) =
             ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED;
 
@@ -59,6 +57,6 @@ object PermissionsManager
                     || activity.shouldShowRationale(Manifest.permission.READ_CALENDAR)
 
     fun requestPermissions(activity: Activity) =
-        ActivityCompat.requestPermissions(activity,
-            arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR), 0)
+            ActivityCompat.requestPermissions(activity,
+                    arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR), 0)
 }

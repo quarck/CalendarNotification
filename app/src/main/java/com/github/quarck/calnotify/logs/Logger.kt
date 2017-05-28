@@ -26,7 +26,7 @@ class Logger(tag: String) {
 
     private val fullTag: String;
 
-    init  {
+    init {
         fullTag = Consts.LOG_PREFIX + tag;
     }
 

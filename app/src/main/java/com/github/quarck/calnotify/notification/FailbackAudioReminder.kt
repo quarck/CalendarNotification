@@ -34,7 +34,7 @@ class FailbackAudioReminder : FailbackAudioReminderInterface {
 
     override fun fireReminder(settings: Settings, ctx: Context) {
 
-        if (settings.reminderVibraOn)  {
+        if (settings.reminderVibraOn) {
             ctx.vibratorService.vibrate(
                     settings.reminderVibrationPattern,
                     -1)
@@ -52,7 +52,8 @@ class FailbackAudioReminder : FailbackAudioReminderInterface {
                 mediaPlayer.setOnCompletionListener { mp -> mp.release() }
                 mediaPlayer.start()
 
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 logger.debug("Exception while playing notification")
                 e.printStackTrace()
             }

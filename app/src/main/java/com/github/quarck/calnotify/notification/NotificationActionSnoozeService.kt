@@ -24,8 +24,6 @@ import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.app.toast
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifierService
 
@@ -45,10 +43,12 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                     logger.info("event $eventId / $instanceStartTime snoozed by $snoozeDelay")
 
                 UINotifierService.notifyUI(this, true);
-            } else {
+            }
+            else {
                 logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
             }
-        } else {
+        }
+        else {
             logger.error("Intent is null!")
         }
 

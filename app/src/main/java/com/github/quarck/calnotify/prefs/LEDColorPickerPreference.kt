@@ -29,7 +29,6 @@ import android.view.View
 import android.view.ViewParent
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
@@ -42,17 +41,17 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
     internal var widgetView: View? = null
 
     private val colorButtonIds =
-        intArrayOf(
-            R.id.button_color_picker_clr1,
-            R.id.button_color_picker_clr2,
-            R.id.button_color_picker_clr3,
-            R.id.button_color_picker_clr4,
-            R.id.button_color_picker_clr5,
-            R.id.button_color_picker_clr6,
-            R.id.button_color_picker_clr7,
-            R.id.button_color_picker_clr8 )
+            intArrayOf(
+                    R.id.button_color_picker_clr1,
+                    R.id.button_color_picker_clr2,
+                    R.id.button_color_picker_clr3,
+                    R.id.button_color_picker_clr4,
+                    R.id.button_color_picker_clr5,
+                    R.id.button_color_picker_clr6,
+                    R.id.button_color_picker_clr7,
+                    R.id.button_color_picker_clr8)
 
-    private var originalColors = mutableListOf<Pair<LinearLayout,ColorDrawable>>()
+    private var originalColors = mutableListOf<Pair<LinearLayout, ColorDrawable>>()
     private var primaryColor: ColorDrawable? = null
 
     init {
@@ -113,7 +112,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
 
         var background = v.background
         if (background is ColorDrawable)
-            colorValue =  background.color
+            colorValue = background.color
 
         for (hl in originalColors)
             hl.first.background = hl.second
@@ -135,7 +134,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
 
         val wv = widgetView
         if (wv != null)
-           wv.background = ColorDrawable(colorValue)
+            wv.background = ColorDrawable(colorValue)
     }
 
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
@@ -144,7 +143,8 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
             // Restore existing state
             colorValue = this.getPersistedInt(0)
 
-        } else if (defaultValue != null && defaultValue is Int) {
+        }
+        else if (defaultValue != null && defaultValue is Int) {
             // Set default state from the XML attribute
             colorValue = defaultValue
         }

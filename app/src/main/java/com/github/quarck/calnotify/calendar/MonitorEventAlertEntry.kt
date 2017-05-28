@@ -33,8 +33,8 @@ data class MonitorEventAlertEntry(
         val instanceEndTime: Long,
         var alertCreatedByUs: Boolean,
         var wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
-                                // alerting when reacting to different notification sources
-                                // (e.g. calendar provider vs our internal manual handler)
+        // alerting when reacting to different notification sources
+        // (e.g. calendar provider vs our internal manual handler)
 ) {
     val key: MonitorEventAlertEntryKey
         get() = MonitorEventAlertEntryKey(eventId, alertTime, instanceStartTime)

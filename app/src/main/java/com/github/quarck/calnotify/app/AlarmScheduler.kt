@@ -19,10 +19,7 @@
 
 package com.github.quarck.calnotify.app
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
@@ -30,7 +27,6 @@ import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcas
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.isNotSpecial
-import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.persistentState
@@ -42,7 +38,7 @@ import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
-object AlarmScheduler: AlarmSchedulerInterface {
+object AlarmScheduler : AlarmSchedulerInterface {
 
     val logger = Logger("AlarmScheduler")
 
@@ -57,7 +53,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
             // Schedule event (snooze) alarm
             var nextEventAlarm =
-                    events.filter { it.snoozedUntil != 0L && it.isNotSpecial}.map { it.snoozedUntil }.min()
+                    events.filter { it.snoozedUntil != 0L && it.isNotSpecial }.map { it.snoozedUntil }.min()
 
             if (nextEventAlarm != null) {
 
@@ -81,7 +77,8 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                 context.persistentState.nextSnoozeAlarmExpectedAt = nextEventAlarm
 
-            } else { // if (nextEventAlarm != null) {
+            }
+            else { // if (nextEventAlarm != null) {
 
                 logger.info("No next events, cancelling alarms");
 
@@ -117,7 +114,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
                     val quietUntil = quietHoursManager.getSilentUntil(settings, reminderAlarmNextFire)
 
                     if (quietUntil != 0L) {
-                        logger.info("Reminder alarm moved from $reminderAlarmNextFire to ${quietUntil+Consts.ALARM_THRESHOLD} due to silent period");
+                        logger.info("Reminder alarm moved from $reminderAlarmNextFire to ${quietUntil + Consts.ALARM_THRESHOLD} due to silent period");
                         // give a little extra delay, so if events would fire precisely at the
                         // quietUntil, reminders would wait a bit longer
                         reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
@@ -125,10 +122,12 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                     logger.info("Reminder alarm: next fire at $reminderAlarmNextFire")
 
-                } else {  // if (hasActiveNotifications)
+                }
+                else {  // if (hasActiveNotifications)
                     logger.info("Reminder alarm: no active events to remind about")
                 }
-            } else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
+            }
+            else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
                 logger.info("Reminder alarm: reminders are not enabled")
             }
 
@@ -144,7 +143,8 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
                 reminderState.nextFireExpectedAt = reminderAlarmNextFire
 
-            } else {
+            }
+            else {
                 context.alarmManager.cancelExactAndAlarm(
                         context,
                         settings,

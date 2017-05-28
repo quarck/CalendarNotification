@@ -26,16 +26,13 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -44,22 +41,22 @@ import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 
 fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
-    when (this.dismissType) {
-        EventDismissType.ManuallyDismissedFromNotification ->
-            String.format(ctx.resources.getString(R.string.dismissed_from_notification), dateToStr(ctx, this.dismissTime))
+        when (this.dismissType) {
+            EventDismissType.ManuallyDismissedFromNotification ->
+                String.format(ctx.resources.getString(R.string.dismissed_from_notification), dateToStr(ctx, this.dismissTime))
 
-        EventDismissType.ManuallyDismissedFromActivity ->
-            String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.dismissTime))
+            EventDismissType.ManuallyDismissedFromActivity ->
+                String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.dismissTime))
 
-        EventDismissType.AutoDismissedDueToCalendarMove ->
-            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
+            EventDismissType.AutoDismissedDueToCalendarMove ->
+                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
 
-        EventDismissType.EventMovedUsingApp ->
-            String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
+            EventDismissType.EventMovedUsingApp ->
+                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
 
-        else ->
-            String.format(ctx.resources.getString(R.string.dismissed_general), dateToStr(ctx, this.dismissTime))
-    }
+            else ->
+                String.format(ctx.resources.getString(R.string.dismissed_general), dateToStr(ctx, this.dismissTime))
+        }
 
 interface DismissedEventListCallback {
     fun onItemClick(v: View, position: Int, entry: DismissedEventAlertRecord): Unit
@@ -72,10 +69,10 @@ class DismissedEventListAdapter(
         val cardVewResourceId: Int,
         val callback: DismissedEventListCallback)
 
-: RecyclerView.Adapter<DismissedEventListAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<DismissedEventListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View)
-    : RecyclerView.ViewHolder(itemView) {
+        : RecyclerView.ViewHolder(itemView) {
         //var eventId: Long = 0;
         var entry: DismissedEventAlertRecord? = null
 
@@ -149,7 +146,7 @@ class DismissedEventListAdapter(
     private fun setUpItemTouchHelper(_recyclerView: RecyclerView?, context: Context) {
 
         val itemTouchCallback =
-                object: ItemTouchHelper.Callback() {
+                object : ItemTouchHelper.Callback() {
 
                     internal val lightweightSwipe = Settings(context).lightweightSwipe
                     internal val escapeVelocityMultiplier = if (lightweightSwipe) 2.0f else 5.0f
@@ -168,7 +165,7 @@ class DismissedEventListAdapter(
                         if (adapter == null)
                             return 0
 
-                        return  makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
+                        return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
                                 makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
                     }
 
@@ -231,7 +228,8 @@ class DismissedEventListAdapter(
                             val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
                             val xMarkBottom = xMarkTop + intrinsicHeight
                             xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
-                        } else {
+                        }
+                        else {
                             val xMarkLeft = itemView.left + xMarkMargin
                             val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
                             val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
@@ -259,23 +257,23 @@ class DismissedEventListAdapter(
 
         val entry = entries[position]
 
-         if (true){
-             holder.entry = entry
+        if (true) {
+            holder.entry = entry
 
-             holder.eventTitleText.text = entry.event.title
+            holder.eventTitleText.text = entry.event.title
 
-             holder.undoLayout?.visibility = View.GONE
-             holder.compactViewContentLayout?.visibility = View.VISIBLE
+            holder.undoLayout?.visibility = View.GONE
+            holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-             val time = eventFormatter.formatDateTimeOneLine(entry.event)
-             holder.eventDateText.text = time
-             holder.eventTimeText.text = ""
+            val time = eventFormatter.formatDateTimeOneLine(entry.event)
+            holder.eventDateText.text = time
+            holder.eventTimeText.text = ""
 
-             holder.snoozedUntilText?.text = entry.formatReason(context)
-             holder.snoozedUntilText?.visibility = View.VISIBLE;
+            holder.snoozedUntilText?.text = entry.formatReason(context)
+            holder.snoozedUntilText?.visibility = View.VISIBLE;
 
-             holder.calendarColor.color = if (entry.event.color != 0) entry.event.color.adjustCalendarColor() else primaryColor
-             holder.compactViewCalendarColor?.background = holder.calendarColor
+            holder.calendarColor.color = if (entry.event.color != 0) entry.event.color.adjustCalendarColor() else primaryColor
+            holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }
 
@@ -287,34 +285,34 @@ class DismissedEventListAdapter(
     override fun getItemCount(): Int = entries.size
 
     fun setEventsToDisplay(newEntries: Array<DismissedEventAlertRecord>)
-        = synchronized(this) {
-            entries = newEntries;
-            notifyDataSetChanged();
-        }
+            = synchronized(this) {
+        entries = newEntries;
+        notifyDataSetChanged();
+    }
 
     fun getEntryAtPosition(position: Int, expectedEventId: Long): DismissedEventAlertRecord?
-        = synchronized(this) {
-            if (position >= 0 && position < entries.size && entries[position].event.eventId == expectedEventId)
-                entries[position];
-            else
-                null
-        }
+            = synchronized(this) {
+        if (position >= 0 && position < entries.size && entries[position].event.eventId == expectedEventId)
+            entries[position];
+        else
+            null
+    }
 
     private fun getEntryAtPosition(position: Int): DismissedEventAlertRecord?
-        = synchronized(this) {
-            if (position >= 0 && position < entries.size)
-                entries[position];
-            else
-                null
-        }
+            = synchronized(this) {
+        if (position >= 0 && position < entries.size)
+            entries[position];
+        else
+            null
+    }
 
 
     fun removeEntry(entry: DismissedEventAlertRecord)
-        = synchronized(this) {
-            val idx = entries.indexOf(entry)
-            entries = entries.filter { ev -> ev != entry }.toTypedArray()
-            notifyItemRemoved(idx)
-        }
+            = synchronized(this) {
+        val idx = entries.indexOf(entry)
+        entries = entries.filter { ev -> ev != entry }.toTypedArray()
+        notifyItemRemoved(idx)
+    }
 
     fun removeAll() {
         entries = arrayOf<DismissedEventAlertRecord>()

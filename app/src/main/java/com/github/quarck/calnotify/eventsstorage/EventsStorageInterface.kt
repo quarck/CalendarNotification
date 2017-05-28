@@ -35,30 +35,30 @@ interface EventsStorageInterface {
     fun addEvents(events: List<EventAlertRecord>): Boolean
 
     fun updateEvent(
-        event: EventAlertRecord,
-        alertTime: Long? = null,
-        title: String? = null,
-        snoozedUntil: Long? = null,
-        startTime: Long? = null,
-        endTime: Long? = null,
-        location: String? = null,
-        lastEventVisibility: Long? = null,
-        displayStatus: EventDisplayStatus? = null,
-        color: Int? = null,
-        isRepeating: Boolean? = null ): Pair<Boolean, EventAlertRecord>
+            event: EventAlertRecord,
+            alertTime: Long? = null,
+            title: String? = null,
+            snoozedUntil: Long? = null,
+            startTime: Long? = null,
+            endTime: Long? = null,
+            location: String? = null,
+            lastEventVisibility: Long? = null,
+            displayStatus: EventDisplayStatus? = null,
+            color: Int? = null,
+            isRepeating: Boolean? = null): Pair<Boolean, EventAlertRecord>
 
     fun updateEvents(
-        events: List<EventAlertRecord>,
-        alertTime: Long? = null,
-        title: String? = null,
-        snoozedUntil: Long? = null,
-        startTime: Long? = null,
-        endTime: Long? = null,
-        location: String? = null,
-        lastEventVisibility: Long? = null,
-        displayStatus: EventDisplayStatus? = null,
-        color: Int? = null,
-        isRepeating: Boolean? = null): Boolean
+            events: List<EventAlertRecord>,
+            alertTime: Long? = null,
+            title: String? = null,
+            snoozedUntil: Long? = null,
+            startTime: Long? = null,
+            endTime: Long? = null,
+            location: String? = null,
+            lastEventVisibility: Long? = null,
+            displayStatus: EventDisplayStatus? = null,
+            color: Int? = null,
+            isRepeating: Boolean? = null): Boolean
 
     fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean
 

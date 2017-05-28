@@ -32,7 +32,7 @@ interface MonitorStorageInterface {
     fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
 
-    fun deleteAlertsMatching(filter: (MonitorEventAlertEntry)->Boolean)
+    fun deleteAlertsMatching(filter: (MonitorEventAlertEntry) -> Boolean)
 
     fun updateAlert(entry: MonitorEventAlertEntry)
     fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)

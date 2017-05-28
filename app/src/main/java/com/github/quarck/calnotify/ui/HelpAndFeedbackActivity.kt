@@ -19,9 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.FileProvider
@@ -114,7 +112,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
         try {
             startActivity(email);
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("cannot open email client", ex)
         }
     }
@@ -131,7 +130,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         if (++easterEggCount > 13) {
             if (System.currentTimeMillis() - firstClick < 5000L) {
                 startActivity(Intent(this, TestButtonsAndToDoActivity::class.java))
-            } else {
+            }
+            else {
                 easterEggCount = 0;
                 firstClick = 0L;
             }

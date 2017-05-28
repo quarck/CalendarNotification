@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.widget.Toast
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.textutils.dateToStr
@@ -45,16 +44,18 @@ fun SnoozeResult.toast(context: Context) {
             val dateTime = dateToStr(context, this.quietUntil)
             val quietUntilFmt = context.resources.getString(R.string.snoozed_time_inside_quiet_hours)
             msg = String.Companion.format(quietUntilFmt, dateTime)
-        } else {
+        }
+        else {
 
             val dateTime = dateToStr(context, this.snoozedUntil)
             val snoozedUntil = context.resources.getString(R.string.snoozed_until_string)
             msg = "$snoozedUntil $dateTime"
         }
-    } else if (this.type == SnoozeType.Moved) {
+    }
+    else if (this.type == SnoozeType.Moved) {
         val dateTime = dateToStr(context, this.snoozedUntil)
         val snoozedUntil = context.resources.getString(R.string.moved_to_string)
-        msg ="$snoozedUntil $dateTime"
+        msg = "$snoozedUntil $dateTime"
     }
 
     if (msg != "")

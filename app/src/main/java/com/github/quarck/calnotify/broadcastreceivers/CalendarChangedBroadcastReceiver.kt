@@ -22,12 +22,8 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.powerManager
-import com.github.quarck.calnotify.utils.wakeLocked
 
 class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
 

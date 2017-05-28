@@ -18,30 +18,17 @@
 //
 package com.github.quarck.calnotify.prefs
 
-import android.app.Activity
-import android.app.ListActivity
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
-import com.github.quarck.calnotify.Consts
+import android.widget.RadioButton
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
-class AppStylePrefActivity: AppCompatActivity() {
+class AppStylePrefActivity : AppCompatActivity() {
 
     private lateinit var settings: Settings
 

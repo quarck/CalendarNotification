@@ -25,7 +25,8 @@ fun String.toLongOrNull(): Long? {
 
     try {
         ret = this.toLong()
-    } catch (ex: Exception) {
+    }
+    catch (ex: Exception) {
         ret = null
     }
 
@@ -39,7 +40,8 @@ fun String.toIntOrNull(): Int? {
 
     try {
         ret = this.toInt()
-    } catch (ex: Exception) {
+    }
+    catch (ex: Exception) {
         ret = null
     }
 

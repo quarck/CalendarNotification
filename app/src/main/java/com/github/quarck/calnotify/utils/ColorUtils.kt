@@ -51,10 +51,10 @@ internal const val Y_MIN = 16.0
 internal const val Y_MAX = 235.0
 
 data class RGB(val r: Int, val g: Int, val b: Int) {
-    constructor(v: Int) : this((v.ushr(16)) and 0xff, (v.ushr(8)) and 0xff, (v.ushr(0)) and 0xff) { }
+    constructor(v: Int) : this((v.ushr(16)) and 0xff, (v.ushr(8)) and 0xff, (v.ushr(0)) and 0xff) {}
+
     fun toInt() = (FULL_ALPHA or (r shl 16) or (g shl 8) or (b shl 0))
 }
-
 
 
 fun Int.adjustCalendarColor(): Int {
@@ -68,7 +68,8 @@ fun Int.adjustCalendarColor(): Int {
         r = (r / CALENDAR_COLOR_FADE_MED).toInt()
         g = (g / CALENDAR_COLOR_FADE_MED).toInt()
         b = (b / CALENDAR_COLOR_FADE_MED).toInt()
-    } else {
+    }
+    else {
 
         if (r > g && r > b) {
             //
@@ -76,35 +77,40 @@ fun Int.adjustCalendarColor(): Int {
             if (g > b) {
                 g = (g / CALENDAR_COLOR_FADE_MED).toInt()
                 b = (b / CALENDAR_COLOR_FADE_MAX).toInt()
-            } else {
+            }
+            else {
                 b = (b / CALENDAR_COLOR_FADE_MED).toInt()
                 g = (g / CALENDAR_COLOR_FADE_MAX).toInt()
             }
 
-        } else if ( g > r && g > b) {
+        }
+        else if (g > r && g > b) {
             //
             g = (g / CALENDAR_COLOR_FADE_MIN).toInt()
             if (r > b) {
                 r = (r / CALENDAR_COLOR_FADE_MED).toInt()
                 b = (b / CALENDAR_COLOR_FADE_MAX).toInt()
-            } else {
+            }
+            else {
                 b = (b / CALENDAR_COLOR_FADE_MED).toInt()
                 r = (r / CALENDAR_COLOR_FADE_MAX).toInt()
             }
-        } else {
+        }
+        else {
             // b > r && b > g
             b = (b / CALENDAR_COLOR_FADE_MIN).toInt()
             if (r > g) {
                 r = (r / CALENDAR_COLOR_FADE_MED).toInt()
                 g = (g / CALENDAR_COLOR_FADE_MAX).toInt()
-            } else {
+            }
+            else {
                 g = (g / CALENDAR_COLOR_FADE_MED).toInt()
                 r = (r / CALENDAR_COLOR_FADE_MAX).toInt()
             }
         }
     }
 
-    return RGB(r,g,b).toInt()
+    return RGB(r, g, b).toInt()
 }
 
 
@@ -116,5 +122,5 @@ fun Int.scaleColor(value: Float): Int {
     val newG = Math.max(0, Math.min((g * value).toInt(), 255))
     val newB = Math.max(0, Math.min((b * value).toInt(), 255))
 
-    return RGB(newR,newG,newB).toInt()
+    return RGB(newR, newG, newB).toInt()
 }

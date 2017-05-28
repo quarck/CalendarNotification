@@ -22,10 +22,9 @@ package com.github.quarck.calnotify.reminders
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 
-class ReminderState(ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
+class ReminderState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
 
     var reminderLastFireTime by LongProperty(0, REMINDER_LAST_FIRE_TIME_KEY)
 

@@ -71,7 +71,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
         //logger.debug("addAlert $entry")
 
-        val values =  recordToContentValues(entry)
+        val values = recordToContentValues(entry)
 
         try {
             db.insertOrThrow(TABLE_NAME, // table
@@ -133,7 +133,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
         }
     }
 
-    override fun deleteAlertsMatching(db: SQLiteDatabase, filter: (MonitorEventAlertEntry)-> Boolean) {
+    override fun deleteAlertsMatching(db: SQLiteDatabase, filter: (MonitorEventAlertEntry) -> Boolean) {
 
         try {
             val alerts = getAlerts(db)
@@ -417,7 +417,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
                 instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 alertCreatedByUs = cursor.getInt(PROJECTION_KEY_WE_CREATED_ALERT) != 0,
-                wasHandled =  cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
+                wasHandled = cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
         )
     }
 

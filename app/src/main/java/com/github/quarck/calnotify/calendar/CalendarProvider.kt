@@ -30,24 +30,24 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
-object CalendarProvider: CalendarProviderInterface {
+object CalendarProvider : CalendarProviderInterface {
     private val logger = Logger("CalendarProvider");
 
     private val alertFields =
-        arrayOf(
-            CalendarContract.CalendarAlerts.EVENT_ID,
-            CalendarContract.CalendarAlerts.STATE,
-            CalendarContract.Events.CALENDAR_ID,
-            CalendarContract.Events.TITLE,
-            CalendarContract.Events.DTSTART,
-            CalendarContract.Events.DTEND,
-            CalendarContract.Events.EVENT_LOCATION,
-            CalendarContract.Events.DISPLAY_COLOR,
-            CalendarContract.CalendarAlerts.ALARM_TIME,
-            CalendarContract.CalendarAlerts.BEGIN,
-            CalendarContract.CalendarAlerts.END,
-            CalendarContract.Events.ALL_DAY
-        )
+            arrayOf(
+                    CalendarContract.CalendarAlerts.EVENT_ID,
+                    CalendarContract.CalendarAlerts.STATE,
+                    CalendarContract.Events.CALENDAR_ID,
+                    CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DTSTART,
+                    CalendarContract.Events.DTEND,
+                    CalendarContract.Events.EVENT_LOCATION,
+                    CalendarContract.Events.DISPLAY_COLOR,
+                    CalendarContract.CalendarAlerts.ALARM_TIME,
+                    CalendarContract.CalendarAlerts.BEGIN,
+                    CalendarContract.CalendarAlerts.END,
+                    CalendarContract.Events.ALL_DAY
+            )
 
     private val PROJECTION_INDEX_EVENT_ID = 0
     private val PROJECTION_INDEX_STATE = 1
@@ -56,7 +56,7 @@ object CalendarProvider: CalendarProviderInterface {
     private val PROJECTION_INDEX_DTSTART = 4
     private val PROJECTION_INDEX_DTEND = 5
     private val PROJECTION_INDEX_LOCATION = 6
-    private val PROJECTION_INDEX_COLOR  = 7
+    private val PROJECTION_INDEX_COLOR = 7
     private val PROJECTION_INDEX_ALARM_TIME = 8
     private val PROJECTION_INDEX_INSTANCE_BEGIN = 9
     private val PROJECTION_INDEX_INSTANCE_END = 10
@@ -82,23 +82,23 @@ object CalendarProvider: CalendarProviderInterface {
             return Pair(null, null);
 
         val event =
-            EventAlertRecord(
-                calendarId = calendarId ?: -1L,
-                eventId = eventId,
-                isAllDay = (allDay ?: 0) != 0,
-                notificationId = 0,
-                alertTime = alarmTime ?: newAlarmTime ?: 0,
-                title = title,
-                startTime = startTime,
-                endTime = endTime ?: 0L,
-                instanceStartTime = instanceStart ?: 0L,
-                instanceEndTime = instanceEnd ?: 0L,
-                location = location ?: "",
-                lastEventVisibility = 0L,
-                displayStatus = EventDisplayStatus.Hidden,
-                color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                isRepeating = false // has to be updated separately
-            );
+                EventAlertRecord(
+                        calendarId = calendarId ?: -1L,
+                        eventId = eventId,
+                        isAllDay = (allDay ?: 0) != 0,
+                        notificationId = 0,
+                        alertTime = alarmTime ?: newAlarmTime ?: 0,
+                        title = title,
+                        startTime = startTime,
+                        endTime = endTime ?: 0L,
+                        instanceStartTime = instanceStart ?: 0L,
+                        instanceEndTime = instanceEnd ?: 0L,
+                        location = location ?: "",
+                        lastEventVisibility = 0L,
+                        displayStatus = EventDisplayStatus.Hidden,
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                        isRepeating = false // has to be updated separately
+                );
 
         return Pair(state, event)
     }
@@ -115,13 +115,13 @@ object CalendarProvider: CalendarProviderInterface {
         val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
 
         val cursor: Cursor? =
-            context.contentResolver.query(
-                CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                alertFields,
-                selection,
-                arrayOf(alertTime.toString()),
-                null
-            );
+                context.contentResolver.query(
+                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
+                        alertFields,
+                        selection,
+                        arrayOf(alertTime.toString()),
+                        null
+                );
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -132,15 +132,18 @@ object CalendarProvider: CalendarProviderInterface {
 
                     if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
                         ret.add(event)
-                    } else {
+                    }
+                    else {
                         logger.info("Ignored dismissed event ${event.eventId}")
                     }
-                } else {
+                }
+                else {
                     logger.error("Cannot read fired event details!!")
                 }
 
             } while (cursor.moveToNext())
-        } else {
+        }
+        else {
             logger.error("Failed to parse event - no events at $alertTime")
         }
 
@@ -185,7 +188,8 @@ object CalendarProvider: CalendarProviderInterface {
                 }
 
             } while (cursor.moveToNext())
-        } else {
+        }
+        else {
             logger.error("Event $eventId not found")
         }
 
@@ -207,16 +211,16 @@ object CalendarProvider: CalendarProviderInterface {
         val ret = arrayListOf<EventAlertRecord>()
 
         val selection =
-            "${CalendarContract.CalendarAlerts.ALARM_TIME} > ? AND ${CalendarContract.CalendarAlerts.EVENT_ID} = ?"
+                "${CalendarContract.CalendarAlerts.ALARM_TIME} > ? AND ${CalendarContract.CalendarAlerts.EVENT_ID} = ?"
 
         val cursor: Cursor? =
-            context.contentResolver.query(
-                CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                alertFields,
-                selection,
-                arrayOf(startingAlertTime.toString(), eventId.toString()),
-                null
-            );
+                context.contentResolver.query(
+                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
+                        alertFields,
+                        selection,
+                        arrayOf(startingAlertTime.toString(), eventId.toString()),
+                        null
+                );
 
         var totalEntries = 0
 
@@ -227,14 +231,15 @@ object CalendarProvider: CalendarProviderInterface {
 
                 if (event != null && event.eventId == eventId) {
                     ret.add(event)
-                    ++ totalEntries
+                    ++totalEntries
                     if (totalEntries >= maxEntries)
                         break;
                 }
 
             } while (cursor.moveToNext())
 
-        } else {
+        }
+        else {
             logger.error("Event $eventId not found")
         }
 
@@ -338,24 +343,24 @@ object CalendarProvider: CalendarProviderInterface {
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
         val fields =
-            arrayOf(
-                CalendarContract.Events.CALENDAR_ID,
-                CalendarContract.Events.TITLE,
-                CalendarContract.Events.DTSTART,
-                CalendarContract.Events.DTEND,
-                CalendarContract.Events.ALL_DAY,
-                CalendarContract.Events.EVENT_LOCATION,
-                CalendarContract.Events.DISPLAY_COLOR
-            )
+                arrayOf(
+                        CalendarContract.Events.CALENDAR_ID,
+                        CalendarContract.Events.TITLE,
+                        CalendarContract.Events.DTSTART,
+                        CalendarContract.Events.DTEND,
+                        CalendarContract.Events.ALL_DAY,
+                        CalendarContract.Events.EVENT_LOCATION,
+                        CalendarContract.Events.DISPLAY_COLOR
+                )
 
         val cursor: Cursor? =
-            context.contentResolver.query(
-                uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
-                fields,
-                null, //selection,
-                null, //arrayOf(eventId.toString()),
-                null
-            );
+                context.contentResolver.query(
+                        uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
+                        fields,
+                        null, //selection,
+                        null, //arrayOf(eventId.toString()),
+                        null
+                );
 
         if (cursor != null && cursor.moveToFirst()) {
 
@@ -369,19 +374,20 @@ object CalendarProvider: CalendarProviderInterface {
 
             if (title != null && start != null) {
                 ret =
-                    EventRecord(
-                        calendarId = calendarId ?: -1L,
-                        eventId = eventId,
-                        title = title,
-                        startTime = start,
-                        endTime = end ?: 0L,
-                        isAllDay = (allDay ?: 0) != 0,
-                        location = location ?: "",
-                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                        reminders = listOf<EventReminderRecord>() // stub for now
-                    );
+                        EventRecord(
+                                calendarId = calendarId ?: -1L,
+                                eventId = eventId,
+                                title = title,
+                                startTime = start,
+                                endTime = end ?: 0L,
+                                isAllDay = (allDay ?: 0) != 0,
+                                location = location ?: "",
+                                color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                                reminders = listOf<EventReminderRecord>() // stub for now
+                        );
             }
-        } else {
+        }
+        else {
             logger.error("Event $eventId not found")
         }
 
@@ -390,7 +396,8 @@ object CalendarProvider: CalendarProviderInterface {
         try {
             if (ret != null)
                 ret.reminders = getEventReminders(context, eventId)
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception while trying to read reminders for $eventId: ${ex.message}")
         }
 
@@ -408,23 +415,24 @@ object CalendarProvider: CalendarProviderInterface {
             val uri = CalendarContract.CalendarAlerts.CONTENT_URI;
 
             val selection =
-                "(" +
-                    "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_FIRED}" +
-                    " OR " +
-                    "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_SCHEDULED}" +
-                    ")" +
-                    " AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
+                    "(" +
+                            "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_FIRED}" +
+                            " OR " +
+                            "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_SCHEDULED}" +
+                            ")" +
+                            " AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
 
             val dismissValues = ContentValues();
             dismissValues.put(
-                CalendarContract.CalendarAlerts.STATE,
-                CalendarContract.CalendarAlerts.STATE_DISMISSED
+                    CalendarContract.CalendarAlerts.STATE,
+                    CalendarContract.CalendarAlerts.STATE_DISMISSED
             );
 
             context.contentResolver.update(uri, dismissValues, selection, null);
 
             logger.debug("dismissNativeEventReminder: eventId $eventId");
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.debug("dismissNativeReminder failed")
         }
     }
@@ -536,7 +544,7 @@ object CalendarProvider: CalendarProviderInterface {
                     if (availability != null)
                         values.put(CalendarContract.Events.AVAILABILITY, availability);
                     if (hasAlarm != null)
-                       values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
+                        values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
                     if (allDay != null)
                         values.put(CalendarContract.Events.ALL_DAY, allDay);
                     if (duration != null)
@@ -562,9 +570,11 @@ object CalendarProvider: CalendarProviderInterface {
             }
 
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
-        } finally {
+        }
+        finally {
             cursor?.close()
         }
 
@@ -574,10 +584,12 @@ object CalendarProvider: CalendarProviderInterface {
 
                 // get the event ID that is the last element in the Uri
                 ret = uri.lastPathSegment.toLong()
-            } catch (ex: Exception) {
+            }
+            catch (ex: Exception) {
                 logger.error("Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
             }
-        } else {
+        }
+        else {
             logger.error("Calendar event wasn't found");
         }
 
@@ -627,7 +639,8 @@ object CalendarProvider: CalendarProviderInterface {
 
                 ret = rRule.isNotEmpty() || rDate.isNotEmpty()
             }
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             ret = null
         }
 
@@ -657,7 +670,7 @@ object CalendarProvider: CalendarProviderInterface {
             var newEndTime = event.endTime + addTime
 
             while (newStartTime < currentTime + Consts.ALARM_THRESHOLD) {
-                logger.error("Requested time is already in the past, adding another ${addTime/1000} sec")
+                logger.error("Requested time is already in the past, adding another ${addTime / 1000} sec")
 
                 newStartTime += addTime
                 newEndTime += addTime
@@ -676,7 +689,8 @@ object CalendarProvider: CalendarProviderInterface {
                 event.endTime = newEndTime
             }
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
         }
 
@@ -688,14 +702,14 @@ object CalendarProvider: CalendarProviderInterface {
         val ret = mutableListOf<CalendarRecord>()
 
         val fields =
-            arrayOf(
-                CalendarContract.Calendars._ID,
-                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                CalendarContract.Calendars.OWNER_ACCOUNT,
-                CalendarContract.Calendars.ACCOUNT_NAME,
-                CalendarContract.Calendars.ACCOUNT_TYPE,
-                CalendarContract.Calendars.CALENDAR_COLOR
-            )
+                arrayOf(
+                        CalendarContract.Calendars._ID,
+                        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                        CalendarContract.Calendars.OWNER_ACCOUNT,
+                        CalendarContract.Calendars.ACCOUNT_NAME,
+                        CalendarContract.Calendars.ACCOUNT_TYPE,
+                        CalendarContract.Calendars.CALENDAR_COLOR
+                )
 
         val uri = CalendarContract.Calendars.CONTENT_URI
 
@@ -714,12 +728,12 @@ object CalendarProvider: CalendarProviderInterface {
             // Do something with the values...
 
             ret.add(CalendarRecord(
-                calendarId = calID ?: -1L,
-                owner = ownerName ?: "",
-                accountName = accountName ?: "",
-                accountType = accountType ?: "",
-                name = displayName ?: "",
-                color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+                    calendarId = calID ?: -1L,
+                    owner = ownerName ?: "",
+                    accountName = accountName ?: "",
+                    accountType = accountType ?: "",
+                    name = displayName ?: "",
+                    color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
             ))
         }
 
@@ -749,7 +763,8 @@ object CalendarProvider: CalendarProviderInterface {
             if (cursor != null && cursor.moveToFirst()) {
                 alarmTime = cursor.getLong(0)
             }
-        } finally {
+        }
+        finally {
             cursor?.close()
         }
 
@@ -856,11 +871,11 @@ object CalendarProvider: CalendarProviderInterface {
 
                     intermitEvents.add(
                             EventEntry(
-                                eventId = eventId,
-                                instanceStart = instanceStart,
-                                instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L,
-                                isAllDay = isAllDay ?: 0L
-                        ))
+                                    eventId = eventId,
+                                    instanceStart = instanceStart,
+                                    instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L,
+                                    isAllDay = isAllDay ?: 0L
+                            ))
 
                 } while (instanceCursor.moveToNext())
 
@@ -869,8 +884,9 @@ object CalendarProvider: CalendarProviderInterface {
                                 .map { it.eventId }
                                 .toSet()
                                 .map {
-                                    eventId -> eventId to
-                                        getEventLocalReminders(context, eventId)
+                                    eventId ->
+                                    eventId to
+                                            getEventLocalReminders(context, eventId)
 //                                        getEventReminders(context, eventId)
 //                                                .filter { reminder ->
 //                                                            reminder.method != CalendarContract.Reminders.METHOD_EMAIL &&
@@ -886,7 +902,7 @@ object CalendarProvider: CalendarProviderInterface {
                     var hasAnyReminders = false
 
                     if (reminders != null)
-                        for (reminder in reminders){
+                        for (reminder in reminders) {
 
                             val alertTime = evt.instanceStart - reminder//s[reminderIdx];
 
@@ -926,14 +942,15 @@ object CalendarProvider: CalendarProviderInterface {
                     }
                 }
 
-            } else {
+            }
+            else {
                 logger.error("getEventInstances: no pending event alerts found")
             }
 
             instanceCursor?.close()
 
             val scanEnd = System.currentTimeMillis()
-            logger.info("getEventAlertsForInstancesInRange(): scan finished, got ${ret.size} entries, scan time: ${scanEnd-scanStart}ms")
+            logger.info("getEventAlertsForInstancesInRange(): scan finished, got ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
         }
         catch (ex: Exception) {
             logger.error("getEventAlertsForInstancesInRange(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")

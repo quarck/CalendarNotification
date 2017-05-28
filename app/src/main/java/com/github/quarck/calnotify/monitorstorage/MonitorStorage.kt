@@ -33,7 +33,7 @@ class MonitorStorage(val context: Context)
 
     private var impl: MonitorStorageImplInterface
 
-    init  {
+    init {
         when (DATABASE_CURRENT_VERSION) {
             DATABASE_VERSION_V1 ->
                 impl = MonitorStorageImplV1();
@@ -55,37 +55,37 @@ class MonitorStorage(val context: Context)
     }
 
     override fun addAlert(entry: MonitorEventAlertEntry)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.addAlert(it, entry) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.addAlert(it, entry) } }
 
     override fun addAlerts(entries: Collection<MonitorEventAlertEntry>)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
 
     override fun deleteAlert(entry: MonitorEventAlertEntry)
-        = deleteAlert(entry.eventId, entry.alertTime, entry.instanceStartTime)
+            = deleteAlert(entry.eventId, entry.alertTime, entry.instanceStartTime)
 
     override fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlerts(it, entries) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlerts(it, entries) } }
 
     override fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
 
-    override fun deleteAlertsMatching(filter: (MonitorEventAlertEntry)->Boolean)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlertsMatching(it, filter) } }
+    override fun deleteAlertsMatching(filter: (MonitorEventAlertEntry) -> Boolean)
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlertsMatching(it, filter) } }
 
     override fun updateAlert(entry: MonitorEventAlertEntry)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }
 
     override fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)
-        = synchronized (MonitorStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
+            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
 
     override fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
-        = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
 
     override fun getNextAlert(since: Long): Long?
-        = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }
 
     override fun getAlertsAt(time: Long): List<MonitorEventAlertEntry>
-        = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsAt(it, time) } }
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsAt(it, time) } }
 
     override val alerts: List<MonitorEventAlertEntry>
         get() = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlerts(it) } }

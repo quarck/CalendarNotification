@@ -23,10 +23,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.toLongOrNull
 
 class EventReminderBroadcastReceiver : BroadcastReceiver() {
 

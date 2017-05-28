@@ -28,19 +28,22 @@ import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
-import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
-import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 import com.github.quarck.calnotify.utils.scaleColor
 import java.util.*
 
@@ -68,7 +71,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             R.id.snooze_view_snooze_present4,
             R.id.snooze_view_snooze_present5,
             R.id.snooze_view_snooze_present6
-        )
+    )
 
     val snoozePresentQuietTimeReminderControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1_quiet_time_notice,
@@ -77,15 +80,15 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             R.id.snooze_view_snooze_present4_quiet_time_notice,
             R.id.snooze_view_snooze_present5_quiet_time_notice,
             R.id.snooze_view_snooze_present6_quiet_time_notice
-        )
+    )
 
-    var baselineIds = intArrayOf (
-        R.id.snooze_view_snooze_present1_quiet_time_notice_baseline,
-        R.id.snooze_view_snooze_present2_quiet_time_notice_baseline,
-        R.id.snooze_view_snooze_present3_quiet_time_notice_baseline,
-        R.id.snooze_view_snooze_present4_quiet_time_notice_baseline,
-        R.id.snooze_view_snooze_present5_quiet_time_notice_baseline,
-        R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
+    var baselineIds = intArrayOf(
+            R.id.snooze_view_snooze_present1_quiet_time_notice_baseline,
+            R.id.snooze_view_snooze_present2_quiet_time_notice_baseline,
+            R.id.snooze_view_snooze_present3_quiet_time_notice_baseline,
+            R.id.snooze_view_snooze_present4_quiet_time_notice_baseline,
+            R.id.snooze_view_snooze_present5_quiet_time_notice_baseline,
+            R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
     )
 
     private val undoManager by lazy { UndoManager }
@@ -115,7 +118,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             setSupportActionBar(toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setDisplayShowHomeEnabled(true)
-        } else {
+        }
+        else {
             toolbar?.visibility = View.GONE
         }
 
@@ -138,12 +142,12 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         // remove "MM minutes before event" snooze presents for "Snooze All"
         // and when event time has passed already
         if (isSnoozeAll || ev != null && ev.displayedStartTime < currentTime)
-            snoozePresets = snoozePresets.filter{ it > 0L }.toLongArray()
+            snoozePresets = snoozePresets.filter { it > 0L }.toLongArray()
 
         val isQuiet =
-            QuietHoursManager.isInsideQuietPeriod(
-                settings,
-                snoozePresets.map{ it -> currentTime + it }.toLongArray() )
+                QuietHoursManager.isInsideQuietPeriod(
+                        settings,
+                        snoozePresets.map { it -> currentTime + it }.toLongArray())
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
@@ -160,7 +164,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     quietTimeNotice.visibility = View.VISIBLE
                 else
                     quietTimeNotice.visibility = View.GONE
-            } else {
+            }
+            else {
                 snoozeLable.visibility = View.GONE;
                 quietTimeNotice.visibility = View.GONE
                 quietTimeNoticeBaseline.visibility = View.GONE
@@ -168,7 +173,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
 
         // need to hide these guys
-        val showCustomSnoozeVisibility =  if (settings.showCustomSnoozeAndUntil) View.VISIBLE else View.GONE
+        val showCustomSnoozeVisibility = if (settings.showCustomSnoozeAndUntil) View.VISIBLE else View.GONE
         find<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
         val snoozeCustom = find<TextView?>(R.id.snooze_view_snooze_until)
         if (snoozeCustom != null)
@@ -221,7 +226,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             if (!ev.isRepeating) {
                 find<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
-            } else {
+            }
+            else {
                 find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
             }
 
@@ -229,13 +235,14 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
             }
 
-        } else if (isSnoozeAll) {
+        }
+        else if (isSnoozeAll) {
 
             find<TextView>(R.id.snooze_snooze_for).text =
-                if (!snoozeAllIsChange)
-                    this.resources.getString(R.string.snooze_all_events)
-                else
-                    this.resources.getString(R.string.change_all_events)
+                    if (!snoozeAllIsChange)
+                        this.resources.getString(R.string.snooze_all_events)
+                    else
+                        this.resources.getString(R.string.change_all_events)
 
             find<RelativeLayout>(R.id.layout_snooze_time).visibility = View.GONE
             find<View>(R.id.view_snooze_divider).visibility = View.GONE
@@ -247,10 +254,10 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
 
             this.title =
-                if (!snoozeAllIsChange)
-                    resources.getString(R.string.snooze_all_title)
-                else
-                    resources.getString(R.string.change_all_title)
+                    if (!snoozeAllIsChange)
+                        resources.getString(R.string.snooze_all_title)
+                    else
+                        resources.getString(R.string.change_all_title)
 
             find<ImageView>(R.id.snooze_view_cancel).visibility = View.GONE
             find<RelativeLayout>(R.id.snooze_view_event_details_layout).visibility = View.GONE
@@ -281,7 +288,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     if (ev != null) {
                         ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, ev)
                         undoManager.addUndoState(
-                            UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
+                                UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
                     }
                     finish()
                     true
@@ -294,7 +301,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 } */
                 else -> false
             }
-       }
+        }
 
         popup.show()
     }
@@ -310,24 +317,26 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.DAY_IN_SECONDS;
             unit =
-                if (num != 1L)
-                    resources.getString(R.string.days)
-                else
-                    resources.getString(R.string.day)
-        } else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
+                    if (num != 1L)
+                        resources.getString(R.string.days)
+                    else
+                        resources.getString(R.string.day)
+        }
+        else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
             num = presetSeconds / Consts.HOUR_IN_SECONDS;
             unit =
-                if (num != 1L)
-                    resources.getString(R.string.hours)
-                else
-                    resources.getString(R.string.hour)
-        } else {
+                    if (num != 1L)
+                        resources.getString(R.string.hours)
+                    else
+                        resources.getString(R.string.hour)
+        }
+        else {
             num = presetSeconds / Consts.MINUTE_IN_SECONDS;
             unit =
-                if (num != 1L)
-                    resources.getString(R.string.minutes)
-                else
-                    resources.getString(R.string.minute)
+                    if (num != 1L)
+                        resources.getString(R.string.minutes)
+                    else
+                        resources.getString(R.string.minute)
         }
 
         if (num <= 0) {
@@ -351,7 +360,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
     private fun checkForMarshmallowWarningAndContinueWith(
             res: SnoozeResult,
-            cont: () -> Unit ) {
+            cont: () -> Unit) {
 
         if (!isMarshmallowOrAbove || res.quietUntil != 0L || res.snoozedUntil == 0L) {
             cont()
@@ -379,21 +388,21 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val mmWarning =
                 String.format(
                         resources.getString(R.string.reminders_not_accurate),
-                        (untilNextFire/1000L + 59L) / 60L )
+                        (untilNextFire / 1000L + 59L) / 60L)
 
         AlertDialog.Builder(this)
-            .setMessage(mmWarning).setCancelable(false)
-            .setPositiveButton(android.R.string.ok) {
-                x, y ->
-                cont()
-            }
-            .setNegativeButton(R.string.never_show_again) {
-                x, y ->
-                settings.dontShowMarshmallowWarning = true
-                cont()
-            }
-            .create()
-            .show()
+                .setMessage(mmWarning).setCancelable(false)
+                .setPositiveButton(android.R.string.ok) {
+                    x, y ->
+                    cont()
+                }
+                .setNegativeButton(R.string.never_show_again) {
+                    x, y ->
+                    settings.dontShowMarshmallowWarning = true
+                    cont()
+                }
+                .create()
+                .show()
     }
 
     private fun snoozeEvent(snoozeDelay: Long) {
@@ -407,37 +416,40 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     result.toast(this)
                     finish()
                 }
-            } else {
+            }
+            else {
                 finish()
             }
 
-        } else {
+        }
+        else {
             AlertDialog.Builder(this)
-                .setMessage(
-                    if (snoozeAllIsChange)
-                        R.string.change_all_notification
-                    else
-                        R.string.snooze_all_confirmation)
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.yes) {
-                    x, y ->
+                    .setMessage(
+                            if (snoozeAllIsChange)
+                                R.string.change_all_notification
+                            else
+                                R.string.snooze_all_confirmation)
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.yes) {
+                        x, y ->
 
-                    logger.debug("Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
+                        logger.debug("Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                    val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
-                    if (result != null) {
-                        checkForMarshmallowWarningAndContinueWith(result) {
-                            result.toast(this)
-                            finish()
+                        val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
+                        if (result != null) {
+                            checkForMarshmallowWarningAndContinueWith(result) {
+                                result.toast(this)
+                                finish()
+                            }
                         }
-                    } else
-                        finish()
-                }
-                .setNegativeButton(R.string.cancel) {
-                    x, y ->
-                }
-                .create()
-                .show()
+                        else
+                            finish()
+                    }
+                    .setNegativeButton(R.string.cancel) {
+                        x, y ->
+                    }
+                    .create()
+                    .show()
         }
     }
 
@@ -466,101 +478,102 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         dialogController.intervalMinutes = (settings.lastCustomSnoozeIntervalMillis / Consts.MINUTE_IN_SECONDS / 1000L).toInt()
 
         AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton(R.string.snooze) {
-                x: DialogInterface?, y: Int ->
+                .setView(dialogView)
+                .setPositiveButton(R.string.snooze) {
+                    x: DialogInterface?, y: Int ->
 
-                val intervalMilliseconds = dialogController.intervalMilliseconds
-                settings.lastCustomSnoozeIntervalMillis = intervalMilliseconds
-                snoozeEvent(intervalMilliseconds)
-            }
-            .setNegativeButton(R.string.cancel) {
-                x: DialogInterface?, y: Int ->
-            }
-            .create()
-            .show()
+                    val intervalMilliseconds = dialogController.intervalMilliseconds
+                    settings.lastCustomSnoozeIntervalMillis = intervalMilliseconds
+                    snoozeEvent(intervalMilliseconds)
+                }
+                .setNegativeButton(R.string.cancel) {
+                    x: DialogInterface?, y: Int ->
+                }
+                .create()
+                .show()
     }
 
     @Suppress("unused", "UNUSED_PARAMETER", "DEPRECATION")
     fun OnButtonSnoozeUntilClick(v: View?) {
 
         val dialogDate = this.layoutInflater.inflate(
-            if (settings.haloLightDatePicker)
-                R.layout.dialog_date_picker_halo_light
-            else
-                R.layout.dialog_date_picker,
-            null);
+                if (settings.haloLightDatePicker)
+                    R.layout.dialog_date_picker_halo_light
+                else
+                    R.layout.dialog_date_picker,
+                null);
         val datePicker = dialogDate.find<DatePicker>(R.id.datePickerCustomSnooze)
 
         AlertDialog.Builder(this)
-            .setView(dialogDate)
-            .setPositiveButton(R.string.next) {
-                x: DialogInterface?, y: Int ->
+                .setView(dialogDate)
+                .setPositiveButton(R.string.next) {
+                    x: DialogInterface?, y: Int ->
 
-                datePicker.clearFocus()
+                    datePicker.clearFocus()
 
-                val dialogTime = this.layoutInflater.inflate(
-                    if (settings.haloLightTimePicker)
-                        R.layout.dialog_time_picker_halo_light
-                    else
-                        R.layout.dialog_time_picker, null);
+                    val dialogTime = this.layoutInflater.inflate(
+                            if (settings.haloLightTimePicker)
+                                R.layout.dialog_time_picker_halo_light
+                            else
+                                R.layout.dialog_time_picker, null);
 
-                val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
-                timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+                    val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
+                    timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
 
-                val date = Calendar.getInstance()
-                date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth, 0, 0, 0)
+                    val date = Calendar.getInstance()
+                    date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth, 0, 0, 0)
 
-                val title = dialogTime.find<TextView>(R.id.textViewSnoozeUntilDate)
-                title.text =
-                    String.format(
-                        resources.getString(R.string.choose_time),
-                        DateUtils.formatDateTime(this, date.timeInMillis, DateUtils.FORMAT_SHOW_DATE))
+                    val title = dialogTime.find<TextView>(R.id.textViewSnoozeUntilDate)
+                    title.text =
+                            String.format(
+                                    resources.getString(R.string.choose_time),
+                                    DateUtils.formatDateTime(this, date.timeInMillis, DateUtils.FORMAT_SHOW_DATE))
 
-                AlertDialog.Builder(this)
-                    .setView(dialogTime)
-                    .setPositiveButton(R.string.snooze) {
-                        x: DialogInterface?, y: Int ->
+                    AlertDialog.Builder(this)
+                            .setView(dialogTime)
+                            .setPositiveButton(R.string.snooze) {
+                                x: DialogInterface?, y: Int ->
 
-                            timePicker.clearFocus()
+                                timePicker.clearFocus()
 
-                            // grab time from timePicker + date picker
-                            val cal = Calendar.getInstance()
-                            cal.set(
-                                datePicker.year,
-                                datePicker.month,
-                                datePicker.dayOfMonth,
-                                timePicker.currentHour,
-                                timePicker.currentMinute,
-                                0)
+                                // grab time from timePicker + date picker
+                                val cal = Calendar.getInstance()
+                                cal.set(
+                                        datePicker.year,
+                                        datePicker.month,
+                                        datePicker.dayOfMonth,
+                                        timePicker.currentHour,
+                                        timePicker.currentMinute,
+                                        0)
 
-                            val snoozeFor = cal.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
+                                val snoozeFor = cal.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
 
-                            if (snoozeFor > 0L) {
-                                snoozeEvent(snoozeFor)
-                            } else {
-                                // Selected time is in the past
-                                AlertDialog.Builder(this)
-                                    .setTitle(R.string.selected_time_is_in_the_past)
-                                    .setNegativeButton(R.string.cancel) {
-                                        x: DialogInterface?, y: Int ->
-                                    }
-                                    .create()
-                                    .show()
+                                if (snoozeFor > 0L) {
+                                    snoozeEvent(snoozeFor)
+                                }
+                                else {
+                                    // Selected time is in the past
+                                    AlertDialog.Builder(this)
+                                            .setTitle(R.string.selected_time_is_in_the_past)
+                                            .setNegativeButton(R.string.cancel) {
+                                                x: DialogInterface?, y: Int ->
+                                            }
+                                            .create()
+                                            .show()
+                                }
+
                             }
-
-                        }
-                    .setNegativeButton(R.string.cancel) {
-                        x: DialogInterface?, y: Int ->
-                    }
-                    .create()
-                    .show()
-            }
-            .setNegativeButton(R.string.cancel) {
-                x: DialogInterface?, y: Int ->
-            }
-            .create()
-            .show()
+                            .setNegativeButton(R.string.cancel) {
+                                x: DialogInterface?, y: Int ->
+                            }
+                            .create()
+                            .show()
+                }
+                .setNegativeButton(R.string.cancel) {
+                    x: DialogInterface?, y: Int ->
+                }
+                .create()
+                .show()
     }
 
     fun reschedule(addTime: Long) {
@@ -568,7 +581,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val ev = event
 
         if (ev != null) {
-            logger.info("Moving event ${ev.eventId} by ${addTime/1000L} seconds");
+            logger.info("Moving event ${ev.eventId} by ${addTime / 1000L} seconds");
 
             val moved = ApplicationController.moveEvent(this, ev, addTime)
 
@@ -581,8 +594,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                 // terminate ourselves
                 finish();
-            } else {
-                logger.info("snooze: Failed to move event ${ev.eventId} by ${addTime/1000L} seconds")
+            }
+            else {
+                logger.info("snooze: Failed to move event ${ev.eventId} by ${addTime / 1000L} seconds")
             }
         }
     }
@@ -594,11 +608,11 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         when (v.id) {
             R.id.snooze_view_reschedule_present1 ->
-                reschedule( Consts.HOUR_IN_SECONDS * 1000L)
+                reschedule(Consts.HOUR_IN_SECONDS * 1000L)
             R.id.snooze_view_reschedule_present2 ->
-                reschedule( Consts.DAY_IN_SECONDS * 1000L)
+                reschedule(Consts.DAY_IN_SECONDS * 1000L)
             R.id.snooze_view_reschedule_present3 ->
-                reschedule( Consts.DAY_IN_SECONDS * 7L * 1000L)
+                reschedule(Consts.DAY_IN_SECONDS * 7L * 1000L)
         }
     }
 

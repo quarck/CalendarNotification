@@ -28,11 +28,11 @@ import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
 class EventsStorage(context: Context)
-: SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, EventsStorageInterface {
+    : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, EventsStorageInterface {
 
     private var impl: EventsStorageImplInterface
 
-    init  {
+    init {
         when (DATABASE_CURRENT_VERSION) {
             DATABASE_VERSION_V6 ->
                 impl = EventsStorageImplV6();
@@ -49,7 +49,7 @@ class EventsStorage(context: Context)
     }
 
     override fun onCreate(db: SQLiteDatabase)
-        = impl.createDb(db)
+            = impl.createDb(db)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
@@ -88,11 +88,13 @@ class EventsStorage(context: Context)
             if (implOld.getEventsImpl(db).isEmpty()) {
                 logger.debug("Finally - dropping old tables")
                 implOld.dropAll(db)
-            } else {
+            }
+            else {
                 throw Exception("DB Upgrade failed: some events are still in the old version of DB")
             }
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
             throw ex
         }
@@ -100,10 +102,10 @@ class EventsStorage(context: Context)
 
 
     override fun addEvent(event: EventAlertRecord): Boolean
-        = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
 
     override fun addEvents(events: List<EventAlertRecord>): Boolean
-        = synchronized (EventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, events) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, events) } }
 
     override fun updateEvent(event: EventAlertRecord,
                              alertTime: Long?,
@@ -118,18 +120,18 @@ class EventsStorage(context: Context)
                              isRepeating: Boolean?
     ): Pair<Boolean, EventAlertRecord> {
         val newEvent =
-            event.copy(
-                alertTime = alertTime ?: event.alertTime,
-                title = title ?: event.title,
-                snoozedUntil = snoozedUntil ?: event.snoozedUntil,
-                startTime = startTime ?: event.startTime,
-                endTime = endTime ?: event.endTime,
-                location = location ?: event.location,
-                lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
-                displayStatus = displayStatus ?: event.displayStatus,
-                color = color ?: event.color,
-                isRepeating = isRepeating ?: event.isRepeating
-            );
+                event.copy(
+                        alertTime = alertTime ?: event.alertTime,
+                        title = title ?: event.title,
+                        snoozedUntil = snoozedUntil ?: event.snoozedUntil,
+                        startTime = startTime ?: event.startTime,
+                        endTime = endTime ?: event.endTime,
+                        location = location ?: event.location,
+                        lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                        displayStatus = displayStatus ?: event.displayStatus,
+                        color = color ?: event.color,
+                        isRepeating = isRepeating ?: event.isRepeating
+                );
 
         val success = updateEvent(newEvent)
 
@@ -150,51 +152,51 @@ class EventsStorage(context: Context)
                               isRepeating: Boolean?): Boolean {
 
         val newEvents =
-            events.map {
-                event ->
-                event.copy(
-                    alertTime = alertTime ?: event.alertTime,
-                    title = title ?: event.title,
-                    snoozedUntil = snoozedUntil ?: event.snoozedUntil,
-                    startTime = startTime ?: event.startTime,
-                    endTime = endTime ?: event.endTime,
-                    location = location ?: event.location,
-                    lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
-                    displayStatus = displayStatus ?: event.displayStatus,
-                    color = color ?: event.color,
-                    isRepeating = isRepeating ?: event.isRepeating)
+                events.map {
+                    event ->
+                    event.copy(
+                            alertTime = alertTime ?: event.alertTime,
+                            title = title ?: event.title,
+                            snoozedUntil = snoozedUntil ?: event.snoozedUntil,
+                            startTime = startTime ?: event.startTime,
+                            endTime = endTime ?: event.endTime,
+                            location = location ?: event.location,
+                            lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                            displayStatus = displayStatus ?: event.displayStatus,
+                            color = color ?: event.color,
+                            isRepeating = isRepeating ?: event.isRepeating)
                 }
 
         return updateEvents(newEvents)
     }
 
     override fun updateEventAndInstanceTimes(event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean
-        = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventAndInstanceTimesImpl(it, event, instanceStart, instanceEnd) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventAndInstanceTimesImpl(it, event, instanceStart, instanceEnd) } }
 
     override fun updateEventsAndInstanceTimes(events: Collection<EventWithNewInstanceTime>): Boolean
-        = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventsAndInstanceTimesImpl(it, events) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventsAndInstanceTimesImpl(it, events) } }
 
     override fun updateEvent(event: EventAlertRecord): Boolean
-        = synchronized(EventsStorage::class.java) {  writableDatabase.use { impl.updateEventImpl(it, event) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, event) } }
 
     override fun updateEvents(events: List<EventAlertRecord>): Boolean
-        = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
 
     override fun getEvent(eventId: Long, instanceStartTime: Long): EventAlertRecord?
-        = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventImpl(it, eventId, instanceStartTime) } }
+            = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventImpl(it, eventId, instanceStartTime) } }
 
     override fun getEventInstances(eventId: Long): List<EventAlertRecord>
-        = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventInstancesImpl(it, eventId) } }
+            = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventInstancesImpl(it, eventId) } }
 
     override fun deleteEvent(eventId: Long, instanceStartTime: Long): Boolean
-        = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, eventId, instanceStartTime) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, eventId, instanceStartTime) } }
 
     @Suppress("unused")
     override fun deleteEvent(ev: EventAlertRecord): Boolean
-        = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, ev.eventId, ev.instanceStartTime) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, ev.eventId, ev.instanceStartTime) } }
 
     override fun deleteEvents(events: Collection<EventAlertRecord>): Int
-        = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
+            = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
 
     override val events: List<EventAlertRecord>
         get() = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }

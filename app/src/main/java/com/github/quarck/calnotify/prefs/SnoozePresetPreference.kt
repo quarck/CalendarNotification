@@ -69,7 +69,8 @@ class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreferen
                 if (presets != null) {
                     if (presets.size == 0) {
                         snoozePresetValue = Settings.DEFAULT_SNOOZE_PRESET
-                    } else {
+                    }
+                    else {
                         snoozePresetValue =
                                 value
                                         .split(',')
@@ -83,7 +84,8 @@ class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreferen
                     if (presets.size > Consts.MAX_SUPPORTED_PRESETS) {
                         showMessage(R.string.error_too_many_presets)
                     }
-                } else {
+                }
+                else {
                     showMessage(R.string.error_cannot_parse_preset)
                 }
             }
@@ -103,7 +105,8 @@ class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreferen
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             snoozePresetValue = this.getPersistedString(Settings.DEFAULT_SNOOZE_PRESET)
-        } else if (defaultValue != null && defaultValue is String) {
+        }
+        else if (defaultValue != null && defaultValue is String) {
             snoozePresetValue = defaultValue
             persistString(snoozePresetValue)
         }

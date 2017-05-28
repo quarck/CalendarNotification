@@ -34,7 +34,7 @@ import com.github.quarck.calnotify.logs.Logger
 
 
 @Suppress("UNCHECKED_CAST")
-fun<T> Context.service(svc: String) =  getSystemService(svc) as T
+fun <T> Context.service(svc: String) = getSystemService(svc) as T
 
 val Context.alarmManager: AlarmManager
     get() = service(Context.ALARM_SERVICE)
@@ -154,12 +154,14 @@ fun AlarmManager.setExactAndAlarm(
                     pendingIntentExact)
 
             logger.info("alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
-        } else {
+        }
+        else {
             setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
 
             logger.info("alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
         }
-    } else {
+    }
+    else {
         val intent = Intent(context, exactIntentClass);
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -167,7 +169,8 @@ fun AlarmManager.setExactAndAlarm(
             // KitKat way
             setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
             logger.info("alarm scheduled for $triggerAtMillis using setExact(T+0)")
-        } else {
+        }
+        else {
             // Ancient way
             set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
             logger.info("alarm scheduled for $triggerAtMillis using set(T+0)")

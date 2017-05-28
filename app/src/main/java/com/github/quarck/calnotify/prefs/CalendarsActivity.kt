@@ -18,10 +18,7 @@
 //
 package com.github.quarck.calnotify.prefs
 
-import android.app.Activity
-import android.app.ListActivity
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -31,15 +28,14 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.calendar.CalendarProvider
+import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
@@ -47,18 +43,18 @@ import com.github.quarck.calnotify.utils.find
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
 class CalendarListEntry(
-    val type: CalendarListEntryType,
-    val headerTitle: String? = null,
-    val calendar: CalendarRecord? = null,
-    var isHandled: Boolean = true
+        val type: CalendarListEntryType,
+        val headerTitle: String? = null,
+        val calendar: CalendarRecord? = null,
+        var isHandled: Boolean = true
 )
 
 
 class CalendarListAdapter(val context: Context, var entries: Array<CalendarListEntry>)
-: RecyclerView.Adapter<CalendarListAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<CalendarListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View)
-    : RecyclerView.ViewHolder(itemView) {
+        : RecyclerView.ViewHolder(itemView) {
 
         var entry: CalendarListEntry? = null
         lateinit var view: LinearLayout
@@ -138,7 +134,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 }
 
 
-class CalendarsActivity: AppCompatActivity() {
+class CalendarsActivity : AppCompatActivity() {
 
     private lateinit var adapter: CalendarListAdapter
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
@@ -193,15 +189,15 @@ class CalendarsActivity: AppCompatActivity() {
 
                 // Add all the calendars for this owner
                 entries.addAll(
-                    calendars
-                        .filter { it.owner == owner && it.accountType == type }
-                        .sortedBy { it.calendarId }
-                        .map {
-                            CalendarListEntry(
-                                type = CalendarListEntryType.Calendar,
-                                calendar = it,
-                                isHandled = settings.getCalendarIsHandled(it.calendarId))
-                        })
+                        calendars
+                                .filter { it.owner == owner && it.accountType == type }
+                                .sortedBy { it.calendarId }
+                                .map {
+                                    CalendarListEntry(
+                                            type = CalendarListEntryType.Calendar,
+                                            calendar = it,
+                                            isHandled = settings.getCalendarIsHandled(it.calendarId))
+                                })
 
                 // Add a divider
                 entries.add(CalendarListEntry(type = CalendarListEntryType.Divider))

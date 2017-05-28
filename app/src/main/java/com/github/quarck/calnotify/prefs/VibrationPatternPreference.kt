@@ -30,8 +30,6 @@ import android.widget.EditText
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.R.id
 import com.github.quarck.calnotify.R.layout
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.vibratorService
 
@@ -75,7 +73,8 @@ open class VibrationPatternPreference(ctx: Context, attrs: AttributeSet) : Dialo
                 persistString(patternValue)
 
                 onPatternSelected(pattern)
-            } else {
+            }
+            else {
                 onInvalidPattern()
             }
         }
@@ -94,7 +93,8 @@ open class VibrationPatternPreference(ctx: Context, attrs: AttributeSet) : Dialo
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             patternValue = this.getPersistedString("0,1200") // 0,1200 - failback value
-        } else if (defaultValue != null && defaultValue is String) {
+        }
+        else if (defaultValue != null && defaultValue is String) {
             patternValue = defaultValue
             persistString(patternValue)
         }

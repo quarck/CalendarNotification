@@ -34,28 +34,28 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
-            "CREATE " +
-                "TABLE $TABLE_NAME " +
-                "( " +
-                "$KEY_EVENTID INTEGER PRIMARY KEY, " +
-                "$KEY_NOTIFICATIONID INTEGER, " +
-                "$KEY_TITLE TEXT, " +
-                "$KEY_DESC TEXT, " +
-                "$KEY_START INTEGER, " +
-                "$KEY_END INTEGER, " +
-                "$KEY_LOCATION LOCATION, " +
-                "$KEY_SNOOZED_UNTIL INTEGER, " +
-                "$KEY_LAST_EVENT_FIRE INTEGER, " +
-                "$KEY_IS_DISPLAYED INTEGER, " +
-                "$KEY_COLOR INTEGER, " +
-                "$KEY_ALERT_TIME INTEGER, " +
-                "$KEY_RESERVED_STR1 TEXT, " +
-                "$KEY_RESERVED_STR2 TEXT, " +
-                "$KEY_RESERVED_STR3 TEXT, " +
-                "$KEY_CALENDAR_ID INTEGER, " +
-                "$KEY_INSTANCE_START INTEGER, " +
-                "$KEY_INSTANCE_END INTEGER" +
-                " )"
+                "CREATE " +
+                        "TABLE $TABLE_NAME " +
+                        "( " +
+                        "$KEY_EVENTID INTEGER PRIMARY KEY, " +
+                        "$KEY_NOTIFICATIONID INTEGER, " +
+                        "$KEY_TITLE TEXT, " +
+                        "$KEY_DESC TEXT, " +
+                        "$KEY_START INTEGER, " +
+                        "$KEY_END INTEGER, " +
+                        "$KEY_LOCATION LOCATION, " +
+                        "$KEY_SNOOZED_UNTIL INTEGER, " +
+                        "$KEY_LAST_EVENT_FIRE INTEGER, " +
+                        "$KEY_IS_DISPLAYED INTEGER, " +
+                        "$KEY_COLOR INTEGER, " +
+                        "$KEY_ALERT_TIME INTEGER, " +
+                        "$KEY_RESERVED_STR1 TEXT, " +
+                        "$KEY_RESERVED_STR2 TEXT, " +
+                        "$KEY_RESERVED_STR3 TEXT, " +
+                        "$KEY_CALENDAR_ID INTEGER, " +
+                        "$KEY_INSTANCE_START INTEGER, " +
+                        "$KEY_INSTANCE_END INTEGER" +
+                        " )"
 
         logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
@@ -84,10 +84,11 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
 
         try {
             db.insertOrThrow(TABLE_NAME, // table
-                null, // nullColumnHack
-                values) // key/value -> keys = column names/ values = column
+                    null, // nullColumnHack
+                    values) // key/value -> keys = column names/ values = column
             // values
-        } catch (ex: SQLiteConstraintException) {
+        }
+        catch (ex: SQLiteConstraintException) {
             // Close Db before attempting to open it again from another method
 
             logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
@@ -112,7 +113,8 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         if (cursor != null && cursor.moveToFirst()) {
             try {
                 ret = cursor.getString(0).toInt() + 1
-            } catch (ex: Exception) {
+            }
+            catch (ex: Exception) {
                 ret = 0;
             }
         }
@@ -134,9 +136,9 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         logger.debug("Updating event, eventId=${event.eventId}");
 
         db.update(TABLE_NAME, // table
-            values, // column/value
-            KEY_EVENTID + " = ?", // selections
-            arrayOf<String>(event.eventId.toString())) // selection args
+                values, // column/value
+                KEY_EVENTID + " = ?", // selections
+                arrayOf<String>(event.eventId.toString())) // selection args
 
         return true
     }
@@ -149,9 +151,9 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
             val values = eventRecordToContentValues(event)
 
             db.update(TABLE_NAME, // table
-                values, // column/value
-                KEY_EVENTID + " = ?", // selections
-                arrayOf<String>(event.eventId.toString())) // selection args
+                    values, // column/value
+                    KEY_EVENTID + " = ?", // selections
+                    arrayOf<String>(event.eventId.toString())) // selection args
         }
 
         return true
@@ -167,25 +169,25 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
     override fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
 
         val selection =
-            if (instanceStartTime != 0L)
-                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
-            else
-                " $KEY_EVENTID = ?"
+                if (instanceStartTime != 0L)
+                    " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
+                else
+                    " $KEY_EVENTID = ?"
 
         val selectionArgs =
-            if (instanceStartTime != 0L)
-                arrayOf(eventId.toString(), instanceStartTime.toString())
-            else
-                arrayOf(eventId.toString())
+                if (instanceStartTime != 0L)
+                    arrayOf(eventId.toString(), instanceStartTime.toString())
+                else
+                    arrayOf(eventId.toString())
 
         val cursor = db.query(TABLE_NAME, // a. table
-            SELECT_COLUMNS, // b. column names
-            selection, // c. selections
-            selectionArgs, // d. selections args
-            null, // e. group by
-            null, // f. having
-            null, // g. order by
-            null) // h. limit
+                SELECT_COLUMNS, // b. column names
+                selection, // c. selections
+                selectionArgs, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null) // h. limit
 
         var event: EventAlertRecord? = null
 
@@ -211,13 +213,13 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         val ret = LinkedList<EventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
-            SELECT_COLUMNS, // b. column names
-            null, // c. selections
-            null,
-            null, // e. group by
-            null, // f. h aving
-            null, // g. order by
-            null) // h. limit
+                SELECT_COLUMNS, // b. column names
+                null, // c. selections
+                null,
+                null, // e. group by
+                null, // f. h aving
+                null, // g. order by
+                null) // h. limit
 
 
         if (cursor.moveToFirst()) {
@@ -236,16 +238,16 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
     override fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
 
         val selection =
-            if (instanceStartTime != 0L)
-                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
-            else
-                " $KEY_EVENTID = ?"
+                if (instanceStartTime != 0L)
+                    " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
+                else
+                    " $KEY_EVENTID = ?"
 
         val selectionArgs =
-            if (instanceStartTime != 0L)
-                arrayOf(eventId.toString(), instanceStartTime.toString())
-            else
-                arrayOf(eventId.toString())
+                if (instanceStartTime != 0L)
+                    arrayOf(eventId.toString(), instanceStartTime.toString())
+                else
+                    arrayOf(eventId.toString())
 
         db.delete(TABLE_NAME, selection, selectionArgs)
 
@@ -293,22 +295,22 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
     private fun cursorToEventRecord(cursor: Cursor): EventAlertRecord {
 
         return EventAlertRecord(
-            calendarId = (cursor.getLong(0) as Long?) ?: -1L,
-            eventId = cursor.getLong(1),
-            notificationId = cursor.getInt(2),
-            title = cursor.getString(3),
-            startTime = cursor.getLong(4),
-            endTime = cursor.getLong(5),
-            instanceStartTime = cursor.getLong(6),
-            instanceEndTime = cursor.getLong(7),
-            location = cursor.getString(8),
-            snoozedUntil = cursor.getLong(9),
-            lastEventVisibility = cursor.getLong(10),
-            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(11)),
-            color = cursor.getInt(12),
-            alertTime = cursor.getLong(13),
-            isRepeating = false,
-            isAllDay = false
+                calendarId = (cursor.getLong(0) as Long?) ?: -1L,
+                eventId = cursor.getLong(1),
+                notificationId = cursor.getInt(2),
+                title = cursor.getString(3),
+                startTime = cursor.getLong(4),
+                endTime = cursor.getLong(5),
+                instanceStartTime = cursor.getLong(6),
+                instanceEndTime = cursor.getLong(7),
+                location = cursor.getString(8),
+                snoozedUntil = cursor.getLong(9),
+                lastEventVisibility = cursor.getLong(10),
+                displayStatus = EventDisplayStatus.fromInt(cursor.getInt(11)),
+                color = cursor.getInt(12),
+                alertTime = cursor.getLong(13),
+                isRepeating = false,
+                isAllDay = false
         )
     }
 
@@ -339,20 +341,20 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         private const val KEY_RESERVED_STR3 = "s3"
 
         private val SELECT_COLUMNS = arrayOf<String>(
-            KEY_CALENDAR_ID,
-            KEY_EVENTID,
-            KEY_NOTIFICATIONID,
-            KEY_TITLE,
-            KEY_START,
-            KEY_END,
-            KEY_INSTANCE_START,
-            KEY_INSTANCE_END,
-            KEY_LOCATION,
-            KEY_SNOOZED_UNTIL,
-            KEY_LAST_EVENT_FIRE,
-            KEY_IS_DISPLAYED,
-            KEY_COLOR,
-            KEY_ALERT_TIME
+                KEY_CALENDAR_ID,
+                KEY_EVENTID,
+                KEY_NOTIFICATIONID,
+                KEY_TITLE,
+                KEY_START,
+                KEY_END,
+                KEY_INSTANCE_START,
+                KEY_INSTANCE_END,
+                KEY_LOCATION,
+                KEY_SNOOZED_UNTIL,
+                KEY_LAST_EVENT_FIRE,
+                KEY_IS_DISPLAYED,
+                KEY_COLOR,
+                KEY_ALERT_TIME
         )
     }
 }

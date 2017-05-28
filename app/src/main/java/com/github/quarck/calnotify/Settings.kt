@@ -29,24 +29,24 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 
 data class NotificationSettingsSnapshot
 (
-    val showDismissButton: Boolean,
-    val allowSwipeToSnooze: Boolean,
-    val ringtoneUri: Uri?,
-    val vibrationOn: Boolean,
-    val vibrationPattern: LongArray,
-    val ledNotificationOn: Boolean,
-    val ledColor: Int,
-    val ledPattern: IntArray,
-    val headsUpNotification: Boolean,
-    val forwardToPebble: Boolean,
-    val pebbleOldFirmware: Boolean,
-    val pebbleForwardRemindersOnly: Boolean,
-    val showColorInNotification: Boolean,
-    val notificationOpensSnooze: Boolean,
-    val quietHoursMuteLED: Boolean
+        val showDismissButton: Boolean,
+        val allowSwipeToSnooze: Boolean,
+        val ringtoneUri: Uri?,
+        val vibrationOn: Boolean,
+        val vibrationPattern: LongArray,
+        val ledNotificationOn: Boolean,
+        val ledColor: Int,
+        val ledPattern: IntArray,
+        val headsUpNotification: Boolean,
+        val forwardToPebble: Boolean,
+        val pebbleOldFirmware: Boolean,
+        val pebbleForwardRemindersOnly: Boolean,
+        val showColorInNotification: Boolean,
+        val notificationOpensSnooze: Boolean,
+        val quietHoursMuteLED: Boolean
 )
 
-class Settings(context: Context): PersistentStorageBase(context) {
+class Settings(context: Context) : PersistentStorageBase(context) {
 
     var lastCustomSnoozeIntervalMillis: Long
         get() = getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
@@ -91,7 +91,7 @@ class Settings(context: Context): PersistentStorageBase(context) {
 
     val ledPattern: IntArray
         get() =
-            getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
+        getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
                 .split(",")
                 .map { it.toInt() }
                 .toIntArray()
@@ -146,14 +146,17 @@ class Settings(context: Context): PersistentStorageBase(context) {
         if (uriValue == null || uriValue.isEmpty()) {
             // Silent mode -- string is empty
             ringtone = null;
-        } else if (uriValue == ringtoneNotSetValue) {
+        }
+        else if (uriValue == ringtoneNotSetValue) {
             // use default -- not set
             ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        } else {
+        }
+        else {
             // parse URL - custom ringtone
             try {
                 ringtone = Uri.parse(uriValue)
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 e.printStackTrace()
                 ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             }
@@ -163,10 +166,10 @@ class Settings(context: Context): PersistentStorageBase(context) {
     }
 
     val ringtoneURI: Uri?
-        get() = loadRingtoneUri (RINGTONE_KEY)
+        get() = loadRingtoneUri(RINGTONE_KEY)
 
     val reminderRingtoneURI: Uri?
-        get() = loadRingtoneUri (if (reminderCustomVibra) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
+        get() = loadRingtoneUri(if (reminderCustomVibra) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
 
     val reminderCustomRingtone: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
@@ -205,10 +208,10 @@ class Settings(context: Context): PersistentStorageBase(context) {
         get() = getBoolean(ENABLE_QUIET_HOURS_KEY, false)
 
     val quietHoursFrom: Pair<Int, Int>
-        get() = PreferenceUtils.unpackTime( getInt(QUIET_HOURS_FROM_KEY, 0) )
+        get() = PreferenceUtils.unpackTime(getInt(QUIET_HOURS_FROM_KEY, 0))
 
     val quietHoursTo: Pair<Int, Int>
-        get() = PreferenceUtils.unpackTime( getInt(QUIET_HOURS_TO_KEY, 0) )
+        get() = PreferenceUtils.unpackTime(getInt(QUIET_HOURS_TO_KEY, 0))
 
     val quietHoursMutePrimary: Boolean
         get() = getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
@@ -221,10 +224,10 @@ class Settings(context: Context): PersistentStorageBase(context) {
 //        set(value) = setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
     fun getCalendarIsHandled(calendarId: Long) =
-        getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
+            getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
 
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
-        setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
+            setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
     var useCompactView: Boolean
         get() = getBoolean(USE_COMPACT_LAYOUT_KEY, true)
@@ -268,7 +271,7 @@ class Settings(context: Context): PersistentStorageBase(context) {
     val lightweightSwipe: Boolean
         get() = getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
 
-    val  useSetAlarmClock: Boolean
+    val useSetAlarmClock: Boolean
         get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
 
     val shouldRemindForEventsWithNoReminders: Boolean
@@ -352,8 +355,8 @@ class Settings(context: Context): PersistentStorageBase(context) {
 
         private const val PEBBLE_FORWARD_ONLY_REMINDER_KEY = "pebble_forward_reminder_only"
 
-        private const val REMINDERS_CUSTOM_RINGTONE_KEY="reminders_custom_ringtone"
-        private const val REMINDERS_CUSTOM_VIBRATION_KEY ="reminders_custom_vibration"
+        private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone"
+        private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration"
         private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone"
         private const val REMINDERS_VIBRATION_ENABLED_KEY = "reminder_vibra_on"
         private const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern"

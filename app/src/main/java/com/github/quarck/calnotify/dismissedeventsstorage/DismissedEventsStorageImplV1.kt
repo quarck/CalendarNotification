@@ -23,15 +23,13 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
 class DismissedEventsStorageImplV1()
-: DismissedEventsStorageImplInterface {
+    : DismissedEventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -63,13 +61,13 @@ class DismissedEventsStorageImplV1()
                         "$KEY_COLOR INTEGER, " +
                         "$KEY_IS_REPEATING TEXT, " +
 
-                        "$KEY_ALL_DAY TEXT, " +         // FIXME
-                        "$KEY_RESERVED_INT1 TEXT, " +   // FIXME
-                        "$KEY_RESERVED_INT2 TEXT, " +   // FIXME
-                        "$KEY_RESERVED_INT3 TEXT, " +   // FIXME
-                        "$KEY_RESERVED_INT4 TEXT, " +   // FIXME
-                        "$KEY_RESERVED_INT5 TEXT, " +   // FIXME
-                        "$KEY_RESERVED_INT6 TEXT, " +   // FIXME
+                        "$KEY_ALL_DAY TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT1 TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT2 TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT3 TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT4 TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT5 TEXT, " + // FIXME
+                        "$KEY_RESERVED_INT6 TEXT, " + // FIXME
 
                         "$KEY_RESERVED_STR1 TEXT, " +
                         "$KEY_RESERVED_STR2 TEXT, " +
@@ -105,7 +103,8 @@ class DismissedEventsStorageImplV1()
                     null, // nullColumnHack
                     values) // key/value -> keys = column names/ values = column
             // values
-        } catch (ex: SQLiteConstraintException) {
+        }
+        catch (ex: SQLiteConstraintException) {
 //            logger.debug("This entry (${event.eventId}) is already in the DB!")
         }
     }
@@ -153,13 +152,13 @@ class DismissedEventsStorageImplV1()
         val ret = LinkedList<DismissedEventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
-            SELECT_COLUMNS, // b. column names
-            null, // c. selections
-            null,
-            null, // e. group by
-            null, // f. h aving
-            null, // g. order by
-            null) // h. limit
+                SELECT_COLUMNS, // b. column names
+                null, // c. selections
+                null,
+                null, // e. group by
+                null, // f. h aving
+                null, // g. order by
+                null) // h. limit
 
         if (cursor.moveToFirst()) {
             do {
@@ -213,22 +212,22 @@ class DismissedEventsStorageImplV1()
     private fun cursorToEventRecord(cursor: Cursor): DismissedEventAlertRecord {
 
         val event = EventAlertRecord(
-            calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
-            eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
-            alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
-            notificationId = 0,
-            title = cursor.getString(PROJECTION_KEY_TITLE),
-            startTime = cursor.getLong(PROJECTION_KEY_START),
-            endTime = cursor.getLong(PROJECTION_KEY_END),
-            instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
-            instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
-            location = cursor.getString(PROJECTION_KEY_LOCATION),
-            snoozedUntil = cursor.getLong(PROJECTION_KEY_SNOOZED_UNTIL),
-            lastEventVisibility = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
-            displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
-            color = cursor.getInt(PROJECTION_KEY_COLOR),
-            isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,
-            isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
+                calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
+                eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
+                alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
+                notificationId = 0,
+                title = cursor.getString(PROJECTION_KEY_TITLE),
+                startTime = cursor.getLong(PROJECTION_KEY_START),
+                endTime = cursor.getLong(PROJECTION_KEY_END),
+                instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
+                instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
+                location = cursor.getString(PROJECTION_KEY_LOCATION),
+                snoozedUntil = cursor.getLong(PROJECTION_KEY_SNOOZED_UNTIL),
+                lastEventVisibility = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
+                displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
+                color = cursor.getInt(PROJECTION_KEY_COLOR),
+                isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,
+                isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
         )
 
         return DismissedEventAlertRecord(
@@ -277,23 +276,23 @@ class DismissedEventsStorageImplV1()
         private const val KEY_RESERVED_INT6 = "i6"
 
         private val SELECT_COLUMNS = arrayOf<String>(
-            KEY_CALENDAR_ID,
-            KEY_EVENTID,
-            KEY_DISMISS_TIME,
-            KEY_DISMISS_TYPE,
-            KEY_ALERT_TIME,
-            KEY_TITLE,
-            KEY_START,
-            KEY_END,
-            KEY_INSTANCE_START,
-            KEY_INSTANCE_END,
-            KEY_LOCATION,
-            KEY_SNOOZED_UNTIL,
-            KEY_LAST_EVENT_VISIBILITY,
-            KEY_DISPLAY_STATUS,
-            KEY_COLOR,
-            KEY_IS_REPEATING,
-            KEY_ALL_DAY
+                KEY_CALENDAR_ID,
+                KEY_EVENTID,
+                KEY_DISMISS_TIME,
+                KEY_DISMISS_TYPE,
+                KEY_ALERT_TIME,
+                KEY_TITLE,
+                KEY_START,
+                KEY_END,
+                KEY_INSTANCE_START,
+                KEY_INSTANCE_END,
+                KEY_LOCATION,
+                KEY_SNOOZED_UNTIL,
+                KEY_LAST_EVENT_VISIBILITY,
+                KEY_DISPLAY_STATUS,
+                KEY_COLOR,
+                KEY_IS_REPEATING,
+                KEY_ALL_DAY
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0;

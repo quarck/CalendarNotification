@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.preference.PreferenceFragment
 import com.github.quarck.calnotify.R
 
-class BehaviorSettingsFragment: PreferenceFragment() {
+class BehaviorSettingsFragment : PreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);

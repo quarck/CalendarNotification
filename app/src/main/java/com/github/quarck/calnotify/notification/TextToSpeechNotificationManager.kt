@@ -23,9 +23,9 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import java.util.*
 
-class TextToSpeechNotificationManager(val context: Context): TextToSpeechNotificationManagerInterface {
+class TextToSpeechNotificationManager(val context: Context) : TextToSpeechNotificationManagerInterface {
 
-    val ttsObject: TextToSpeech by lazy  {
+    val ttsObject: TextToSpeech by lazy {
         val ttsObj = TextToSpeech(context, TextToSpeech.OnInitListener {})
         ttsObj.setLanguage(Locale.getDefault())
         ttsObj

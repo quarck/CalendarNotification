@@ -48,7 +48,8 @@ class UINotifierServiceClient {
                 if (action != null) {
                     logger.debug("calling action");
                     action(isUserAction);
-                } else {
+                }
+                else {
                     logger.debug("action is null");
                 }
             }
@@ -69,7 +70,8 @@ class UINotifierServiceClient {
 
             val intent = Intent(context, UINotifierService::class.java)
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        } else {
+        }
+        else {
             logger.debug("Service is already bound")
         }
 
@@ -82,7 +84,8 @@ class UINotifierServiceClient {
 
             context.unbindService(serviceConnection)
             isBound = false
-        } else {
+        }
+        else {
             logger.debug("Service is already unbound");
         }
     }

@@ -28,8 +28,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
@@ -82,12 +82,14 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         logger.info("Regular reminders enabled, arming next fire at $nextFireAt")
                     }
 
-                } else {
+                }
+                else {
                     nextFireAt = silentUntil
                     logger.info("One-shot enabled, inside quiet hours, postpone until $silentUntil")
                 }
 
-            } else if (settings.remindersEnabled) {
+            }
+            else if (settings.remindersEnabled) {
 
                 val lastFireTime = Math.max(
                         context.persistentState.notificationLastFireTime,
@@ -106,13 +108,15 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         logger.info("Reminder postponed until $silentUntil due to quiet hours");
                         nextFireAt = silentUntil
 
-                    } else if (reminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD)  {
+                    }
+                    else if (reminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD) {
                         // Schedule actual time to fire based on how long ago we have fired
                         val leftMillis = reminderInterval - sinceLastFire;
                         nextFireAt = currentTime + leftMillis
 
                         logger.info("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
-                    } else {
+                    }
+                    else {
                         nextFireAt = currentTime + reminderInterval
                         shouldFire = true
 
@@ -120,15 +124,17 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
                         if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
                             logger.error("WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
-                                    "received $currentTime, ${(currentTime-reminderState.nextFireExpectedAt)/1000L}s late")
+                                    "received $currentTime, ${(currentTime - reminderState.nextFireExpectedAt) / 1000L}s late")
 
                             ApplicationController.onReminderAlarmLate(context, currentTime, reminderState.nextFireExpectedAt)
                         }
                     }
-                } else {
+                }
+                else {
                     logger.info("Exceeded max fires $maxFires, fired $numRemindersFired times")
                 }
-            } else {
+            }
+            else {
                 logger.info("Reminders are disabled")
             }
 
@@ -176,9 +182,9 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 }
 
 class ReminderAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) =  super.onReceive(context, intent)
+    override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
 }
 
-class ReminderExactAlarmBroadcastReceiver: ReminderAlarmGenericBroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) =  super.onReceive(context, intent)
+class ReminderExactAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
 }

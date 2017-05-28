@@ -129,7 +129,8 @@ class EventsStorageImplV8
 
             ret = id != -1L
             // values
-        } catch (ex: SQLiteConstraintException) {
+        }
+        catch (ex: SQLiteConstraintException) {
             logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
             // persist original notification id in this case
             event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
@@ -183,7 +184,8 @@ class EventsStorageImplV8
         if (cursor != null && cursor.moveToFirst()) {
             try {
                 ret = cursor.getString(0).toInt() + 1
-            } catch (ex: Exception) {
+            }
+            catch (ex: Exception) {
                 ret = 0;
             }
         }
@@ -217,7 +219,7 @@ class EventsStorageImplV8
         return numRowsAffected == 1
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean{
+    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
         //logger.debug("Updating ${events.size} events");
 
         var ret = true
@@ -259,7 +261,7 @@ class EventsStorageImplV8
 
         val values = eventRecordToContentValues(
                 event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
-                includeKeyValues = true )
+                includeKeyValues = true)
 
         //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
 
@@ -287,7 +289,7 @@ class EventsStorageImplV8
             for ((event, instanceStart, instanceEnd) in events) {
                 val values = eventRecordToContentValues(
                         event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
-                        includeKeyValues = true )
+                        includeKeyValues = true)
 
                 val numRowsAffected =
                         db.update(TABLE_NAME, // table

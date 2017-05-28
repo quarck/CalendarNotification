@@ -24,17 +24,17 @@ import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.DateTimeUtils
 import java.util.*
 
-object QuietHoursManager: QuietHoursManagerInterface {
+object QuietHoursManager : QuietHoursManagerInterface {
     var logger = Logger("QuietPeriodManager")
 
     private fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
     override fun isInsideQuietPeriod(settings: Settings, time: Long) =
-        getSilentUntil(settings, time) > 0L
+            getSilentUntil(settings, time) > 0L
 
     override fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
-        getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
+            getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
 
     // returns time in millis, when silent period ends,
     // or 0 if we are not on silent
@@ -97,12 +97,12 @@ object QuietHoursManager: QuietHoursManagerInterface {
             return ret
 
         val cals =
-            Array<Calendar>(ret.size, {
-                idx ->
-                val cal = Calendar.getInstance()
-                cal.timeInMillis = currentTimes[idx]
-                cal
-            })
+                Array<Calendar>(ret.size, {
+                    idx ->
+                    val cal = Calendar.getInstance()
+                    cal.timeInMillis = currentTimes[idx]
+                    cal
+                })
 
         val from = settings.quietHoursFrom
         val silentFrom: Calendar = DateTimeUtils.createCalendarTime(currentTimes[0], from.component1(), from.component2())
@@ -124,14 +124,14 @@ object QuietHoursManager: QuietHoursManagerInterface {
 
             var allPassed = true
 
-            for ( (idx, cal) in cals.withIndex()) {
+            for ((idx, cal) in cals.withIndex()) {
 
                 if (silentFrom.before(cal)) {
                     allPassed = false
                 }
 
                 if (cal.after(silentFrom) && cal.before(silentTo))
-                    // this hits silent period -- so it should be silent until 'silentTo'
+                // this hits silent period -- so it should be silent until 'silentTo'
                     ret[idx] = silentTo.timeInMillis
             }
 

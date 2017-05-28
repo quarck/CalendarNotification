@@ -25,10 +25,9 @@ package com.github.quarck.calnotify.utils
 // investigating why it is not working
 
 import android.os.AsyncTask
-import android.os.PowerManager
 
 class AsyncOperation(val fn: () -> Unit)
-: AsyncTask<Void?, Void?, Void?>() {
+    : AsyncTask<Void?, Void?, Void?>() {
     override fun doInBackground(vararg p0: Void?): Void? {
         fn()
         return null

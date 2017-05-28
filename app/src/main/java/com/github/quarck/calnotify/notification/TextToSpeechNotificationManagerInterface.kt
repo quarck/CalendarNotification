@@ -19,8 +19,6 @@
 
 package com.github.quarck.calnotify.notification
 
-import android.content.Context
-
 interface TextToSpeechNotificationManagerInterface {
 
     fun playText(text: String)

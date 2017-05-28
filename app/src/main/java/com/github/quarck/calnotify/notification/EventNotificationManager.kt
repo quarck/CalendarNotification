@@ -119,10 +119,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val events =
                 db.events.filter {
-                        ((it.snoozedUntil == 0L)
-                                || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
-                        && it.isNotSpecial
-                    }
+                    ((it.snoozedUntil == 0L)
+                            || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
+                            && it.isNotSpecial
+                }
 
         if (events.size >= Consts.MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING) {
             // short-cut to avoid heavy memory load on dealing with lots of events...
@@ -140,7 +140,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         if (collapsedEvents.size == 1) {
             recentEvents += collapsedEvents
             collapsedEvents = listOf<EventAlertRecord>()
-        } else if (collapseEverything && !collapsedEvents.isEmpty()) {
+        }
+        else if (collapseEverything && !collapsedEvents.isEmpty()) {
             collapsedEvents = recentEvents + collapsedEvents
             recentEvents = listOf<EventAlertRecord>()
         }
@@ -206,7 +207,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             .filter {
                                 ((it.snoozedUntil == 0L)
                                         || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
-                                && it.isNotSpecial
+                                        && it.isNotSpecial
                             }
 
             val numActiveEvents = activeEvents.count()
@@ -223,7 +224,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 wakeScreenIfRequired(context, settings)
 
-            } else {
+            }
+            else {
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
             }
         }
@@ -286,12 +288,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         //logger.debug("event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
 
-                    } else if (event.displayStatus == EventDisplayStatus.DisplayedNormal) {
+                    }
+                    else if (event.displayStatus == EventDisplayStatus.DisplayedNormal) {
 
                         //logger.debug("event ${event.eventId}: notification was displayed, not playing sound")
                         shouldBeQuiet = true
 
-                    } else if (isQuietPeriodActive) {
+                    }
+                    else if (isQuietPeriodActive) {
 
                         // we are in a silent period, normally we should always be quiet, but there
                         // are a few exclusions
@@ -300,7 +304,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             // primary event reminders
                             //logger.debug("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
-                        } else {
+                        }
+                        else {
                             // not a primary event -- always silent in silent period
                             //logger.debug("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
@@ -311,7 +316,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     shouldPlayAndVibrate = shouldPlayAndVibrate || !shouldBeQuiet
 
                 }
-            } else {
+            }
+            else {
                 // This event is currently snoozed and switching to "Shown" state
 
                 //logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
@@ -362,7 +368,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (notificationsSettings.vibrationOn) {
                 builder.setVibrate(notificationsSettings.vibrationPattern)
-            } else {
+            }
+            else {
                 builder.setVibrate(longArrayOf(0))
             }
 
@@ -417,7 +424,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 //logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId)
-            } else {
+            }
+            else {
                 //logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
             }
 
@@ -475,7 +483,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         // so not playing sound / vibration here
                         logger.info("event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
-                    } else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
+                    }
+                    else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
@@ -483,7 +492,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         shouldBeQuiet = true
                         wasCollapsed = true
 
-                    } else if (isQuietPeriodActive) {
+                    }
+                    else if (isQuietPeriodActive) {
                         // we are in a silent period, normally we should always be quiet, but there
                         // are a few exclusions
                         if (primaryEventId != null && event.eventId == primaryEventId) {
@@ -491,7 +501,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             // primary event reminders
                             logger.info("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
-                        } else {
+                        }
+                        else {
                             // not a primary event -- always silent in silent period
                             logger.info("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
@@ -517,10 +528,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     postedNotification = true
                     playedAnySound = playedAnySound || !shouldBeQuiet
 
-                } else {
+                }
+                else {
                     logger.info("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
                 }
-            } else {
+            }
+            else {
                 // This event is currently snoozed and switching to "Shown" state
 
                 logger.info("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
@@ -547,7 +560,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     if (settings.debugAlarmDelays)
                         postNotificationsAlarmDelayDebugMessage(context,
-                                "Snooze alarm was late!", "Late by ${(currentTime - event.snoozedUntil)/1000L}s")
+                                "Snooze alarm was late!", "Late by ${(currentTime - event.snoozedUntil) / 1000L}s")
 
                 }
                 // Update Db to indicate that event is currently displayed and no longer snoozed
@@ -575,7 +588,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             logger.info("Was quiet due to quiet hours - would remind after snooze period")
 
             if (!reminderState.quietHoursOneTimeReminderEnabled)
-               reminderState.quietHoursOneTimeReminderEnabled = true
+                reminderState.quietHoursOneTimeReminderEnabled = true
         }
 
         return postedNotification
@@ -653,7 +666,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (notificationSettings.vibrationOn) {
             builder.setVibrate(notificationSettings.vibrationPattern)
-        } else {
+        }
+        else {
             builder.setVibrate(longArrayOf(0))
         }
 
@@ -673,7 +687,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     Consts.NOTIFICATION_ID_REMINDER,
                     notification
             )
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception: $ex, reminder notification stack:")
             ex.printStackTrace()
         }
@@ -684,7 +699,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     @Suppress("unused")
-    private fun isNotificationVisible(ctx: Context, event: EventAlertRecord) : Boolean {
+    private fun isNotificationVisible(ctx: Context, event: EventAlertRecord): Boolean {
 
         val intent = snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId)
         val id = event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
@@ -817,7 +832,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.addAction(dismissAction)
             if (notificationSettings.allowSwipeToSnooze)
                 builder.setDeleteIntent(defaultSnooze0PendingIntent)
-        } else {
+        }
+        else {
             builder.setDeleteIntent(dismissPendingIntent)
         }
 
@@ -875,7 +891,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (notificationSettings.vibrationOn) {
             builder.setVibrate(notificationSettings.vibrationPattern)
-        } else {
+        }
+        else {
             builder.setVibrate(longArrayOf(0))
         }
 
@@ -899,7 +916,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     event.notificationId,
                     notification
             )
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception: $ex, notificationId=${event.notificationId}, stack:")
             ex.printStackTrace()
         }
@@ -1070,7 +1088,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         try {
             notificationManager.notify(notificationId, notification)
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception: $ex, stack:")
             ex.printStackTrace()
         }
@@ -1083,7 +1102,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 Consts.NOTIFICATION_ID_DEBUG0_AUTO_DISMISS,
                 "DEBUG: Events dismissed",
                 "DEBUG: Some events were auto-dismissed due to calendar move"
-            )
+        )
 
         PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events auto-dismissed", false)
     }

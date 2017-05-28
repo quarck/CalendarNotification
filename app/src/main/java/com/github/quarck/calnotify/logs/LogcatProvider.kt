@@ -22,12 +22,9 @@
 package com.github.quarck.calnotify.logs
 
 import android.content.Context
-import android.util.Log
-
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.util.ArrayList
 
 object LogcatProvider {
     fun getLog(context: Context): List<String> {
@@ -43,7 +40,7 @@ object LogcatProvider {
                     "logcat",
                     "-v", "threadtime",
                     "-d",
-                    "-b",  "main",
+                    "-b", "main",
                     "-b", "events",
                     "-b", "system",
                     "*:V")
@@ -55,10 +52,11 @@ object LogcatProvider {
             if (inputStream != null)
                 BufferedReader(InputStreamReader(inputStream), 1024).use {
                     reader ->
-                    ret = reader.readLines().filter{ it.length > 0}.toList()
+                    ret = reader.readLines().filter { it.length > 0 }.toList()
                 }
 
-        } catch (e: IOException) {
+        }
+        catch (e: IOException) {
 
             Logger("LogcatProvider").error("Error reading logs", e)
         }

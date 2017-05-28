@@ -20,8 +20,8 @@
 package com.github.quarck.calnotify.utils
 
 import android.app.Activity
-import android.view.View
 import android.support.v4.app.Fragment
+import android.view.View
 
 
 @Suppress("UNCHECKED_CAST")

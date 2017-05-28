@@ -26,9 +26,9 @@ import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.Menu
@@ -37,7 +37,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
@@ -47,6 +49,7 @@ import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -79,7 +82,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var shouldForceRepost = false
 
-    private val undoDisappearSensitivity: Float by lazy  {
+    private val undoDisappearSensitivity: Float by lazy {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
 
@@ -110,14 +113,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         useCompactView = settings.useCompactView
 
         adapter =
-            EventListAdapter(
-                this,
-                useCompactView,
-                if (useCompactView)
-                    R.layout.event_card_compact
-                else
-                    R.layout.event_card,
-                this)
+                EventListAdapter(
+                        this,
+                        useCompactView,
+                        if (useCompactView)
+                            R.layout.event_card_compact
+                        else
+                            R.layout.event_card,
+                        this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = find<RecyclerView>(R.id.list_events)
@@ -209,18 +212,19 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             if (PermissionsManager.shouldShowRationale(this)) {
 
                 AlertDialog.Builder(this)
-                    .setMessage(R.string.application_has_no_access)
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.ok) {
-                        x, y ->
-                        PermissionsManager.requestPermissions(this)
-                    }
-                    .setNegativeButton(R.string.cancel) {
-                        x, y ->
-                    }
-                    .create()
-                    .show()
-            } else {
+                        .setMessage(R.string.application_has_no_access)
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.ok) {
+                            x, y ->
+                            PermissionsManager.requestPermissions(this)
+                        }
+                        .setNegativeButton(R.string.cancel) {
+                            x, y ->
+                        }
+                        .create()
+                        .show()
+            }
+            else {
                 PermissionsManager.requestPermissions(this)
             }
         }
@@ -282,8 +286,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         if (menuItem != null) {
             menuItem.isEnabled = adapter.itemCount > 0
             menuItem.title =
-                resources.getString(
-                    if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
+                    resources.getString(
+                            if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
         val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
@@ -307,9 +311,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                    Intent(this, SnoozeActivity::class.java)
-                        .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
-                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                        Intent(this, SnoozeActivity::class.java)
+                                .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
+                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
             R.id.action_dismissed_events ->
                 startActivity(Intent(this, DismissedEventsActivity::class.java))
@@ -337,31 +341,33 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         background {
             if (!settings.keepHistory) {
                 DismissedEventsStorage(this).use { it.clearHistory() }
-            } else {
+            }
+            else {
                 DismissedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), settings.keepHistoryMilliseconds) }
             }
 
             val events =
-                EventsStorage(this).use {
+                    EventsStorage(this).use {
 
-                    db -> db.events.sortedWith(
-                        Comparator<EventAlertRecord> {
-                            lhs, rhs ->
+                        db ->
+                        db.events.sortedWith(
+                                Comparator<EventAlertRecord> {
+                                    lhs, rhs ->
 
-                            if (lhs.snoozedUntil < rhs.snoozedUntil)
-                                return@Comparator -1;
-                            else if (lhs.snoozedUntil > rhs.snoozedUntil)
-                                return@Comparator 1;
+                                    if (lhs.snoozedUntil < rhs.snoozedUntil)
+                                        return@Comparator -1;
+                                    else if (lhs.snoozedUntil > rhs.snoozedUntil)
+                                        return@Comparator 1;
 
-                            if (lhs.lastEventVisibility > rhs.lastEventVisibility)
-                                return@Comparator -1;
-                            else if (lhs.lastEventVisibility < rhs.lastEventVisibility)
-                                return@Comparator 1;
+                                    if (lhs.lastEventVisibility > rhs.lastEventVisibility)
+                                        return@Comparator -1;
+                                    else if (lhs.lastEventVisibility < rhs.lastEventVisibility)
+                                        return@Comparator 1;
 
-                            return@Comparator 0;
+                                    return@Comparator 0;
 
-                        }).toTypedArray()
-                }
+                                }).toTypedArray()
+                    }
 
             val quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
 
@@ -371,15 +377,16 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
                 if (quietPeriodUntil > 0L) {
                     quietHoursTextView.text =
-                        String.format(resources.getString(R.string.quiet_hours_main_activity_status),
-                                DateUtils.formatDateTime(this, quietPeriodUntil,
-                                    if (DateUtils.isToday(quietPeriodUntil))
-                                       DateUtils.FORMAT_SHOW_TIME
-                                    else
-                                        DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
+                            String.format(resources.getString(R.string.quiet_hours_main_activity_status),
+                                    DateUtils.formatDateTime(this, quietPeriodUntil,
+                                            if (DateUtils.isToday(quietPeriodUntil))
+                                                DateUtils.FORMAT_SHOW_TIME
+                                            else
+                                                DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
 
                     quietHoursLayout.visibility = View.VISIBLE;
-                } else {
+                }
+                else {
                     quietHoursLayout.visibility = View.GONE;
                 }
 
@@ -387,6 +394,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             }
         }
     }
+
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onUndoButtonClick(v: View?) {
         undoManager.undo()
@@ -434,7 +442,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
 
-
     override fun onItemClick(v: View, position: Int, eventId: Long) {
         logger.debug("onItemClick, pos=$position, eventId=$eventId")
 
@@ -444,13 +451,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             if (settings.useCompactView) {
                 startActivity(
-                    Intent(this, SnoozeActivity::class.java)
-                        .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
-                        .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
-                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
-                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                        Intent(this, SnoozeActivity::class.java)
+                                .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
+                                .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
+                                .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
+                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
 
-            } else {
+            }
+            else {
                 CalendarIntents.viewCalendarEvent(this, event)
             }
         }
@@ -467,8 +475,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event);
 
             undoManager.addUndoState(
-                UndoState(
-                    undo = Runnable { ApplicationController.restoreEvent(this, event) }))
+                    UndoState(
+                            undo = Runnable { ApplicationController.restoreEvent(this, event) }))
 
             adapter.removeEvent(event)
             lastEventDismissalScrollPosition = adapter.scrollPosition
@@ -508,11 +516,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             startActivity(
-                Intent(this, SnoozeActivity::class.java)
-                    .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
-                    .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
-                    .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
-                    .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                    Intent(this, SnoozeActivity::class.java)
+                            .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
+                            .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
+                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
+                            .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
         }
     }
 

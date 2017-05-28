@@ -48,7 +48,7 @@ object Consts {
     const val NOTIFICATION_ID_DEBUG2_SNOOZE_ALARM_DELAYS = Int.MAX_VALUE - 12
     const val NOTIFICATION_ID_DEBUG3 = Int.MAX_VALUE - 13
 
-            //
+    //
     const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
     const val INTENT_EVENT_ID_KEY = "eventId";
     const val INTENT_INSTANCE_START_TIME_KEY = "instanceStartTime"
@@ -69,11 +69,11 @@ object Consts {
     private const val VIBRATION_DURATION: Long = 1200;
     val VIBRATION_PATTERNS by lazy {
         arrayOf(
-            longArrayOf(0, VIBRATION_DURATION), // Single long
-            longArrayOf(0, 2*VIBRATION_DURATION),
-            longArrayOf(0, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5),
-            longArrayOf(0, VIBRATION_DURATION, VIBRATION_DURATION/3, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5),
-            longArrayOf(0, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/5, VIBRATION_DURATION/3, VIBRATION_DURATION)
+                longArrayOf(0, VIBRATION_DURATION), // Single long
+                longArrayOf(0, 2 * VIBRATION_DURATION),
+                longArrayOf(0, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5),
+                longArrayOf(0, VIBRATION_DURATION, VIBRATION_DURATION / 3, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5),
+                longArrayOf(0, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 3, VIBRATION_DURATION)
         )
     }
 
@@ -100,13 +100,13 @@ object Consts {
 
     // Only auto-dismisss event notification if we can confirm that event was moved into the future
     // by at least 1hr
-    const val EVENT_MOVED_THRESHOLD = 60*60*1000L
+    const val EVENT_MOVED_THRESHOLD = 60 * 60 * 1000L
 
-    const val MIN_FORCE_REPOST_INTERVAL = 60L*60L*1000L // minimum once an hour
+    const val MIN_FORCE_REPOST_INTERVAL = 60L * 60L * 1000L // minimum once an hour
     const val MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC = 10 * 60 * 1000L
 
 
-    const val  EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
+    const val EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 
     const val LOGS_FOLDER = "logs"
 

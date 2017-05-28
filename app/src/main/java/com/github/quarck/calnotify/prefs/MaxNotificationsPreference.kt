@@ -24,13 +24,11 @@ import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.*
+import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.toIntOrNull
 
 class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
@@ -72,7 +70,8 @@ class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : Dialog
         if (restorePersistedValue) {
             // Restore existing state
             value = this.getPersistedInt(Consts.DEFAULT_NOTIFICATIONS)
-        } else if (defaultValue != null && defaultValue is Int) {
+        }
+        else if (defaultValue != null && defaultValue is Int) {
             // Set default state from the XML attribute
             value = defaultValue
             persistInt(value)

@@ -26,7 +26,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.vibratorService
 
-class NotificationSettingsFragment: PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
+class NotificationSettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);

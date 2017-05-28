@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.calendarmonitor
 import android.content.Context
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 
-class CalendarMonitorState(ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
+class CalendarMonitorState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
 
     var nextEventFireFromProvider by LongProperty(Long.MAX_VALUE, "A")
     var prevEventFireFromProvider by LongProperty(Long.MAX_VALUE, "B")

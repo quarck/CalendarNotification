@@ -1,36 +1,23 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
-import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.RelativeLayout
-import android.widget.TextView
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
-import java.util.*
 
 class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback {
 
@@ -72,9 +59,10 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
     private fun reloadData() {
         background {
             val events =
-                DismissedEventsStorage(this).use {
-                    db -> db.events.sortedByDescending { it.dismissTime }.toTypedArray()
-                }
+                    DismissedEventsStorage(this).use {
+                        db ->
+                        db.events.sortedByDescending { it.dismissTime }.toTypedArray()
+                    }
             runOnUiThread {
                 adapter.setEventsToDisplay(events);
             }
@@ -127,18 +115,18 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
             R.id.action_remove_all -> {
 
                 AlertDialog.Builder(this)
-                    .setMessage(resources.getString(R.string.remove_all_confirmation))
-                    .setCancelable(false)
-                    .setPositiveButton(android.R.string.ok) {
-                        x, y ->
-                        DismissedEventsStorage(this).use { db -> db.clearHistory() }
-                        adapter.removeAll()
-                    }
-                    .setNegativeButton(R.string.cancel) {
-                        x, y ->
-                    }
-                    .create()
-                    .show()
+                        .setMessage(resources.getString(R.string.remove_all_confirmation))
+                        .setCancelable(false)
+                        .setPositiveButton(android.R.string.ok) {
+                            x, y ->
+                            DismissedEventsStorage(this).use { db -> db.clearHistory() }
+                            adapter.removeAll()
+                        }
+                        .setNegativeButton(R.string.cancel) {
+                            x, y ->
+                        }
+                        .create()
+                        .show()
             }
         }
 

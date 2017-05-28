@@ -25,7 +25,6 @@ import android.content.Intent
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.isLollipopOrAbove
-import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 
 object CalendarIntents {
@@ -42,8 +41,8 @@ object CalendarIntents {
 
         val canAddEventTime =
                 event.instanceStartTime != 0L &&
-                event.instanceEndTime != 0L &&
-                event.instanceStartTime < event.instanceEndTime
+                        event.instanceEndTime != 0L &&
+                        event.instanceStartTime < event.instanceEndTime
 
         if (shouldAddEventTime && canAddEventTime) {
             // only add if it is a valid instance start / end time, and we need both
@@ -56,14 +55,14 @@ object CalendarIntents {
     }
 
     fun getCalendarViewIntent(event: EventAlertRecord)
-        = intentForAction(Intent.ACTION_VIEW, event)
+            = intentForAction(Intent.ACTION_VIEW, event)
 
     fun getCalendarEditIntent(event: EventAlertRecord)
-        = intentForAction(Intent.ACTION_EDIT, event)
+            = intentForAction(Intent.ACTION_EDIT, event)
 
     fun viewCalendarEvent(context: Context, event: EventAlertRecord)
-        = context.startActivity(getCalendarViewIntent(event))
+            = context.startActivity(getCalendarViewIntent(event))
 
     fun editCalendarEvent(context: Context, event: EventAlertRecord)
-        = context.startActivity(getCalendarEditIntent(event))
+            = context.startActivity(getCalendarEditIntent(event))
 }

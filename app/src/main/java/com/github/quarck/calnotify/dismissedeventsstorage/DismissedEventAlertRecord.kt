@@ -40,7 +40,7 @@ enum class EventDismissType(val code: Int) {
 }
 
 data class DismissedEventAlertRecord(
-    val event: EventAlertRecord,        // actual event that was dismissed
-    val dismissTime: Long,              // when dismissal happened
-    val dismissType: EventDismissType  // type of dismiss
+        val event: EventAlertRecord, // actual event that was dismissed
+        val dismissTime: Long, // when dismissal happened
+        val dismissType: EventDismissType  // type of dismiss
 )

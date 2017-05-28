@@ -19,4 +19,4 @@
 
 package com.github.quarck.calnotify.ui
 
-class SnoozeActivity: SnoozeActivityNoRecents() {}
+class SnoozeActivity : SnoozeActivityNoRecents() {}

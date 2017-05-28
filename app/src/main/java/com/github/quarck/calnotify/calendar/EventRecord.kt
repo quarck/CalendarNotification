@@ -22,15 +22,15 @@ package com.github.quarck.calnotify.calendar
 data class EventReminderRecord(val millisecondsBefore: Long, val method: Int)
 
 data class EventRecord(
-    val calendarId: Long,
-    val eventId: Long,
-    var isAllDay: Boolean,
-    var title: String,
-    var startTime: Long,
-    var endTime: Long,
-    var reminders: List<EventReminderRecord>,
-    var location: String,
-    var color: Int = 0
+        val calendarId: Long,
+        val eventId: Long,
+        var isAllDay: Boolean,
+        var title: String,
+        var startTime: Long,
+        var endTime: Long,
+        var reminders: List<EventReminderRecord>,
+        var location: String,
+        var color: Int = 0
 )
 
 fun EventRecord.nextAlarmTime(currentTime: Long): Long {
@@ -42,16 +42,20 @@ fun EventRecord.nextAlarmTime(currentTime: Long): Long {
         if (ret == 0L) {
             // First entry - simply store
             ret = reminderTime
-        } else if ((ret > currentTime) && (reminderTime > currentTime)) {
+        }
+        else if ((ret > currentTime) && (reminderTime > currentTime)) {
             // Both in the future - look for the closest time
             if (reminderTime < ret)
                 ret = reminderTime
-        } else if ((ret <= currentTime) && (reminderTime > currentTime)) {
+        }
+        else if ((ret <= currentTime) && (reminderTime > currentTime)) {
             // current in the future, 'ret' in the past - update ret
             ret = reminderTime
-        } else if ((ret > currentTime) && (reminderTime <= currentTime)) {
+        }
+        else if ((ret > currentTime) && (reminderTime <= currentTime)) {
             //  'ret' is in the future, current in the past - ignore
-        } else if ((ret <= currentTime) && (reminderTime <= currentTime)) {
+        }
+        else if ((ret <= currentTime) && (reminderTime <= currentTime)) {
             // both 'ret' and current are in the past - pick most recent
             if (reminderTime > ret)
                 ret = reminderTime

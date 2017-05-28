@@ -32,7 +32,8 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.notification.*
+import com.github.quarck.calnotify.notification.EventNotificationManager
+import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
@@ -68,7 +69,7 @@ object ApplicationController : EventMovedHandler {
         get() = calendarMonitor
 
     fun hasActiveEvents(context: Context) =
-        EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
+            EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
 
     fun onEventAlarm(context: Context) {
 
@@ -138,7 +139,8 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             UINotifierService.notifyUI(context, false);
-        } else {
+        }
+        else {
             logger.info("No caclendar changes detected")
         }
     }
@@ -196,7 +198,8 @@ object ApplicationController : EventMovedHandler {
                 // repeating event - always simply add
                 db.addEvent(event) // ignoring result as we are using other way of validating
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
-            } else {
+            }
+            else {
                 // non-repeating event - make sure we don't create two records with the same eventId
                 val oldEvents = db.getEventInstances(event.eventId)
 
@@ -208,7 +211,8 @@ object ApplicationController : EventMovedHandler {
                         db.deleteEvent(oldEvent)
                         notificationManager.onEventDismissed(context, EventFormatter(context), oldEvent.eventId, oldEvent.notificationId)
                     }
-                } catch (ex: Exception) {
+                }
+                catch (ex: Exception) {
                     logger.error("exception while removing old events: ${ex.message}");
                 }
 
@@ -236,7 +240,8 @@ object ApplicationController : EventMovedHandler {
                 val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
                 ret = dbEvent != null && dbEvent.snoozedUntil == 0L
 
-            } else {
+            }
+            else {
                 // return true only if we can confirm, by reading event again from DB
                 // that it is there
                 // Caller is using our return value as "safeToRemoveOriginalReminder" flag
@@ -265,7 +270,8 @@ object ApplicationController : EventMovedHandler {
         val handledCalendars = calendarProvider.getHandledCalendarsIds(context, settings)
 
         val handledPairs = pairs.filter {
-            (_, event) -> handledCalendars.contains(event.calendarId) || event.calendarId == -1L
+            (_, event) ->
+            handledCalendars.contains(event.calendarId) || event.calendarId == -1L
         }
 
         val pairsToAdd = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
@@ -282,7 +288,8 @@ object ApplicationController : EventMovedHandler {
                 if (event.isRepeating) {
                     // repeating event - always simply add
                     pairsToAdd.add(Pair(alert, event))
-                } else {
+                }
+                else {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents = db.getEventInstances(event.eventId)
 
@@ -291,7 +298,8 @@ object ApplicationController : EventMovedHandler {
                     try {
                         // delete old instances for the same event id (should be only one, but who knows)
                         eventsToDismiss.addAll(oldEvents)
-                    } catch (ex: Exception) {
+                    }
+                    catch (ex: Exception) {
                         logger.error("exception while removing old events: ${ex.message}");
                     }
 
@@ -368,7 +376,6 @@ object ApplicationController : EventMovedHandler {
         return validPairs
 
     }
-
 
 
 //    override fun onEventMoved(
@@ -456,7 +463,7 @@ object ApplicationController : EventMovedHandler {
         if (getSettings(context).debugAlarmDelays) {
 
             val warningMessage = "Expected: $alarmWasExpectedAt, " +
-                    "received: $currentTime, ${(currentTime-alarmWasExpectedAt)/1000L}s late"
+                    "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
 
             notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
         }
@@ -467,7 +474,7 @@ object ApplicationController : EventMovedHandler {
         if (getSettings(context).debugAlarmDelays) {
 
             val warningMessage = "Expected: $alarmWasExpectedAt, " +
-                    "received: $currentTime, ${(currentTime-alarmWasExpectedAt)/1000L}s late"
+                    "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
 
             notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
         }
@@ -480,27 +487,27 @@ object ApplicationController : EventMovedHandler {
         val currentTime = System.currentTimeMillis()
 
         val snoozedEvent: EventAlertRecord? =
-            EventsStorage(context).use {
-                db ->
-                var event = db.getEvent(eventId, instanceStartTime)
+                EventsStorage(context).use {
+                    db ->
+                    var event = db.getEvent(eventId, instanceStartTime)
 
-                if (event != null) {
-                    val snoozedUntil =
-                        if (snoozeDelay > 0L)
-                            currentTime + snoozeDelay
-                        else
-                            event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
+                    if (event != null) {
+                        val snoozedUntil =
+                                if (snoozeDelay > 0L)
+                                    currentTime + snoozeDelay
+                                else
+                                    event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
-                    val (success, newEvent) = db.updateEvent(event,
-                            snoozedUntil = snoozedUntil,
-                            lastEventVisibility = currentTime,
-                            displayStatus = EventDisplayStatus.Hidden)
+                        val (success, newEvent) = db.updateEvent(event,
+                                snoozedUntil = snoozedUntil,
+                                lastEventVisibility = currentTime,
+                                displayStatus = EventDisplayStatus.Hidden)
 
-                    event = if (success) newEvent else null
+                        event = if (success) newEvent else null
+                    }
+
+                    event;
                 }
-
-                event;
-            }
 
         if (snoozedEvent != null) {
             notificationManager.onEventSnoozed(context, EventFormatter(context), snoozedEvent.eventId, snoozedEvent.notificationId);
@@ -541,8 +548,8 @@ object ApplicationController : EventMovedHandler {
 
                 if (isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil) {
                     val (success, _) = db.updateEvent(event,
-                        snoozedUntil = newSnoozeUntil,
-                        lastEventVisibility = currentTime)
+                            snoozedUntil = newSnoozeUntil,
+                            lastEventVisibility = currentTime)
 
                     allSuccess = allSuccess && success;
 
@@ -703,7 +710,8 @@ object ApplicationController : EventMovedHandler {
 
     fun dismissEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord) {
         EventsStorage(context).use {
-            db -> dismissEvent(context,  db,  event,  dismissType, false)
+            db ->
+            dismissEvent(context, db, event, dismissType, false)
         }
     }
 
@@ -722,7 +730,8 @@ object ApplicationController : EventMovedHandler {
             if (event != null) {
                 logger.debug("Dismissing event ${event.eventId} / ${event.instanceStartTime}")
                 dismissEvent(context, db, event, dismissType, notifyActivity)
-            } else {
+            }
+            else {
                 logger.error("dismissEvent: can't find event $eventId, $instanceStartTime")
             }
         }
@@ -733,7 +742,7 @@ object ApplicationController : EventMovedHandler {
         val toRestore =
                 event.copy(
                         notificationId = 0, // re-assign new notification ID since old one might already in use
-                        displayStatus = EventDisplayStatus.Hidden ) // ensure correct visibility is set
+                        displayStatus = EventDisplayStatus.Hidden) // ensure correct visibility is set
 
         val successOnAdd =
                 EventsStorage(context).use {
@@ -763,7 +772,7 @@ object ApplicationController : EventMovedHandler {
             EventsStorage(context).use {
                 db ->
                 dismissEvent(
-                    context,
+                        context,
                         db,
                         event,
                         EventDismissType.EventMovedUsingApp,

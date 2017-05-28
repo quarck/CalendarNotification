@@ -56,7 +56,7 @@ class TestButtonsAndToDoActivity : Activity() {
     fun randomTitle(currentTime: Long): String {
 
         val wikipediaQuote =
-            """ Some predictions of general relativity differ significantly from those of classical
+                """ Some predictions of general relativity differ significantly from those of classical
             physics, especially concerning the passage of time, the geometry of space, the motion of
             bodies in free fall, and the propagation of light. Examples of such differences include
             gravitational time dilation, gravitational lensing, the gravitational redshift of light,
@@ -68,7 +68,7 @@ class TestButtonsAndToDoActivity : Activity() {
             complete and self-consistent theory of quantum gravity."""
 
         val dict =
-            wikipediaQuote.split(' ', '\r', '\n', '\t').filter { !it.isEmpty() }
+                wikipediaQuote.split(' ', '\r', '\n', '\t').filter { !it.isEmpty() }
 
         val sb = StringBuilder();
         val r = Random(currentTime);
@@ -78,7 +78,9 @@ class TestButtonsAndToDoActivity : Activity() {
         var prev = -1;
         for (i in 0..len) {
             var new: Int
-            do { new = r.nextInt(dict.size) } while (new == prev)
+            do {
+                new = r.nextInt(dict.size)
+            } while (new == prev)
             sb.append(dict[new])
             sb.append(" ")
             prev = new
@@ -97,19 +99,19 @@ class TestButtonsAndToDoActivity : Activity() {
         val id = filterText.toLongOrNull()
         if (id != null) {
             startActivity(
-                Intent(Intent.ACTION_VIEW).setData(
-                    ContentUris.withAppendedId(
-                        CalendarContract.Events.CONTENT_URI,
-                        id)))
+                    Intent(Intent.ACTION_VIEW).setData(
+                            ContentUris.withAppendedId(
+                                    CalendarContract.Events.CONTENT_URI,
+                                    id)))
         }
     }
 
     fun clr(r: Int, g: Int, b: Int) = 0xff.shl(24) or r.shl(16) or g.shl(8) or b
 
     fun addDemoEvent(
-        currentTime: Long, eventId: Long, title: String,
-        minutesFromMidnight: Long, duration: Long, location: String,
-        color: Int, allDay: Boolean) {
+            currentTime: Long, eventId: Long, title: String,
+            minutesFromMidnight: Long, duration: Long, location: String,
+            color: Int, allDay: Boolean) {
 
         val nextDay = ((currentTime / (Consts.DAY_IN_SECONDS * 1000L)) + 1) * (Consts.DAY_IN_SECONDS * 1000L)
 
@@ -146,31 +148,31 @@ class TestButtonsAndToDoActivity : Activity() {
         var currentTime = System.currentTimeMillis()
         var eventId = currentTime
         addDemoEvent(currentTime, eventId, "Publish new version to play store", 18 * 60L, 30L, "", -11958553, false)
-        eventId ++
+        eventId++
         currentTime += 10
-        addDemoEvent(currentTime, eventId, "Take laptop to work", 6 *60L, 15L, "", -11958553, false)
-        eventId ++
+        addDemoEvent(currentTime, eventId, "Take laptop to work", 6 * 60L, 15L, "", -11958553, false)
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Holidays in Spain", (4 * 24 + 8) * 60L, 7 * 24 * 60L, "Costa Dorada Salou", -18312, true)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Meeting with John", (15 * 24 + 8) * 60L, 15L, "", -11958553, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Check for new documentation releases", 8 * 60L, 15L, "", -11958553, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Call parents", 12 * 60L, 15L, "", -11958553, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Submit VHI claim", 19 * 60L, 15L, "", -2380289, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Charge phone!", 23 * 60L, 15L, "", -11958553, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Take vitamin", 13 * 60L, 15L, "", -2380289, false)
-        eventId ++
+        eventId++
         currentTime += 10
         addDemoEvent(currentTime, eventId, "Collect parcel", 15 * 60L, 15L, "GPO Post Office", -18312, false)
     }
@@ -183,22 +185,22 @@ class TestButtonsAndToDoActivity : Activity() {
         val eventId = 10000000L + (currentTime % 1000L)
 
         val event = EventAlertRecord(
-            -1L,
-            eventId,
-            false,
-            false,
-            System.currentTimeMillis(),
-            0,
-            randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
-            currentTime + 3600L * 1000L,
-            currentTime + 2 * 3600L * 1000L,
-            currentTime + 3600L * 1000L,
-            currentTime + 2 * 3600L * 1000L,
-            if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
-            System.currentTimeMillis(),
-            0L,
-            EventDisplayStatus.Hidden,
-            0xff660066.toInt()
+                -1L,
+                eventId,
+                false,
+                false,
+                System.currentTimeMillis(),
+                0,
+                randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
+                currentTime + 3600L * 1000L,
+                currentTime + 2 * 3600L * 1000L,
+                currentTime + 3600L * 1000L,
+                currentTime + 2 * 3600L * 1000L,
+                if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
+                System.currentTimeMillis(),
+                0L,
+                EventDisplayStatus.Hidden,
+                0xff660066.toInt()
         )
 
         cnt++;

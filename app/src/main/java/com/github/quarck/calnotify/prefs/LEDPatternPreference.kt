@@ -22,19 +22,18 @@ package com.github.quarck.calnotify.prefs
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.drawable.ColorDrawable
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewParent
-import android.widget.*
+import android.widget.SeekBar
+import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class LEDPatternPreference(context: Context, attrs: AttributeSet)
-: DialogPreference(context, attrs), SeekBar.OnSeekBarChangeListener {
+    : DialogPreference(context, attrs), SeekBar.OnSeekBarChangeListener {
 
     internal var ledOnTime = 0
     internal var ledOffTime = 0
@@ -72,12 +71,12 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
         updateTexts()
 
         onTimeSeeker.progress =
-            onTimeSeeker.max *
-                (ledOnTime - Consts.LED_MIN_DURATION) / (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION)
+                onTimeSeeker.max *
+                        (ledOnTime - Consts.LED_MIN_DURATION) / (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION)
 
         offTimeSeeker.progress =
-            offTimeSeeker.max *
-                (ledOffTime - Consts.LED_MIN_DURATION) / (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION)
+                offTimeSeeker.max *
+                        (ledOffTime - Consts.LED_MIN_DURATION) / (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION)
 
         onTimeSeeker.setOnSeekBarChangeListener(this)
         offTimeSeeker.setOnSeekBarChangeListener(this)
@@ -99,11 +98,11 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
         when (seekBar) {
             onTimeSeeker ->
                 ledOnTime = (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION) *
-                    progress / onTimeSeeker.max + Consts.LED_MIN_DURATION
+                        progress / onTimeSeeker.max + Consts.LED_MIN_DURATION
 
             offTimeSeeker ->
                 ledOffTime = (Consts.LED_MAX_DURATION - Consts.LED_MIN_DURATION) *
-                    progress / offTimeSeeker.max + Consts.LED_MIN_DURATION
+                        progress / offTimeSeeker.max + Consts.LED_MIN_DURATION
         }
 
         ledOnTime = Math.round(ledOnTime.toFloat() / Consts.LED_DURATION_GRANULARITY).toInt() * Consts.LED_DURATION_GRANULARITY
@@ -113,16 +112,16 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
     }
 
     private fun capDuration(duration: Int) =
-        when {
-            duration < Consts.LED_MIN_DURATION ->
-                Consts.LED_MIN_DURATION
+            when {
+                duration < Consts.LED_MIN_DURATION ->
+                    Consts.LED_MIN_DURATION
 
-            duration > Consts.LED_MAX_DURATION ->
-                Consts.LED_MAX_DURATION
+                duration > Consts.LED_MAX_DURATION ->
+                    Consts.LED_MAX_DURATION
 
-            else ->
-                duration
-        }
+                else ->
+                    duration
+            }
 
     override fun onDialogClosed(positiveResult: Boolean) {
         if (positiveResult) {
@@ -143,11 +142,12 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
         if (restorePersistedValue) {
             // Restore existing state
             parseSetting(this.getPersistedString(Consts.DEFAULT_LED_PATTERN))
-        } else if (defaultValue != null && defaultValue is String) {
+        }
+        else if (defaultValue != null && defaultValue is String) {
             // Set default state from the XML attribute
             parseSetting(defaultValue)
         }
-   }
+    }
 
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
         return a.getString(index)

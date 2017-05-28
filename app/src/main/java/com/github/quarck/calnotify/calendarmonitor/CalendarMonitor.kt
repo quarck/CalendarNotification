@@ -28,7 +28,9 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.AlarmScheduler
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.broadcastreceivers.*
+import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmPerioidicRescanBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.ui.MainActivity
@@ -37,7 +39,7 @@ import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
-class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
+class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         CalendarMonitorInterface {
 
     private val providerScanner: CalendarMonitorProvider by lazy {
@@ -80,7 +82,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         logger.debug("onPeriodicRescanBroadcast: scanning and setting alarms");
 
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastScan < Consts.ALARM_THRESHOLD/4 )
+        if (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4)
             return
         lastScan = currentTime
 
@@ -95,7 +97,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         logger.debug("onAppStarted: scanning and setting alarms");
 
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastScan < Consts.ALARM_THRESHOLD/4 )
+        if (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4)
             return false
         lastScan = currentTime
 
@@ -213,7 +215,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                 }
             }
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
         }
 
@@ -258,12 +261,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
         val scanPh3 = System.currentTimeMillis()
 
         logger.info("Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
-                "scan statistics: total time: ${scanPh3 - scanStart}ms, phases: ${scanPh1-scanStart}ms, ${scanPh2-scanPh1}ms, ${scanPh3-scanPh2}ms")
+                "scan statistics: total time: ${scanPh3 - scanStart}ms, phases: ${scanPh1 - scanStart}ms, ${scanPh2 - scanPh1}ms, ${scanPh3 - scanPh2}ms")
 
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
         val scanPh4 = System.currentTimeMillis()
-        logger.info("afterCalendarEventFired took ${scanPh4-scanPh3}ms")
+        logger.info("afterCalendarEventFired took ${scanPh4 - scanPh3}ms")
 
         return firedEventsProvider || firedEventsManual
     }
@@ -278,7 +281,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
 
             val now = System.currentTimeMillis()
 
-            logger.info("Setting alarm at $time (${(time-now)/1000L/60L} mins from now)")
+            logger.info("Setting alarm at $time (${(time - now) / 1000L / 60L} mins from now)")
 
             val exactTime = time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
 
@@ -290,7 +293,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                     ManualEventExactAlarmBroadcastReceiver::class.java,
                     MainActivity::class.java, // alarm info intent
                     AlarmScheduler.logger)
-        } else {
+        }
+        else {
             logger.info("No next alerts, cancelling")
             context.alarmManager.cancelExactAndAlarm(
                     context,
@@ -317,7 +321,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
     override fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
 
         val ret = MonitorStorage(context).use {
-            db -> db.getAlertsAt(time)
+            db ->
+            db.getAlertsAt(time)
         }
 
         return ret
@@ -326,7 +331,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
     override fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
 
         val ret = MonitorStorage(context).use {
-            db -> db.getAlertsForAlertRange(scanFrom, scanTo)
+            db ->
+            db.getAlertsForAlertRange(scanFrom, scanTo)
         }
 
         return ret
@@ -344,7 +350,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface):
                 alert.wasHandled = true
                 db.updateAlert(alert)
 
-            } else {
+            }
+            else {
 
                 logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
                 alert = MonitorEventAlertEntry(

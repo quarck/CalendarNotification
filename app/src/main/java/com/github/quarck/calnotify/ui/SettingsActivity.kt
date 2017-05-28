@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
@@ -32,8 +31,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 
 class SettingsActivity : PreferenceActivity() {
 
@@ -54,22 +51,22 @@ class SettingsActivity : PreferenceActivity() {
         get() = delegate.supportActionBar
 
     fun setSupportActionBar(toolbar: Toolbar?) =
-        delegate.setSupportActionBar(toolbar)
+            delegate.setSupportActionBar(toolbar)
 
     override fun getMenuInflater(): MenuInflater =
-        delegate.menuInflater
+            delegate.menuInflater
 
     override fun setContentView(@LayoutRes layoutResID: Int) =
-        delegate.setContentView(layoutResID)
+            delegate.setContentView(layoutResID)
 
     override fun setContentView(view: View) =
-        delegate.setContentView(view)
+            delegate.setContentView(view)
 
     override fun setContentView(view: View, params: ViewGroup.LayoutParams) =
-        delegate.setContentView(view, params)
+            delegate.setContentView(view, params)
 
     override fun addContentView(view: View, params: ViewGroup.LayoutParams) =
-        delegate.addContentView(view, params)
+            delegate.addContentView(view, params)
 
     override fun onPostResume() {
         super.onPostResume()
@@ -97,16 +94,16 @@ class SettingsActivity : PreferenceActivity() {
     }
 
     override fun invalidateOptionsMenu() =
-        delegate.invalidateOptionsMenu()
+            delegate.invalidateOptionsMenu()
 
     override fun onBuildHeaders(target: List<PreferenceActivity.Header>) =
-        loadHeadersFromResource(R.xml.preference_headers, target);
+            loadHeadersFromResource(R.xml.preference_headers, target);
 
     override fun isValidFragment(fragmentName: String) = true
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        if(android.R.id.home ==  item?.getItemId() ){
+        if (android.R.id.home == item?.getItemId()) {
             finish();
             return true;
         }

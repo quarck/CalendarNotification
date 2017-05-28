@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.dismissedeventsstorage
 
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventDisplayStatus
 
 interface DismissedEventsStorageInterface {
 

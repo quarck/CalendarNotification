@@ -28,16 +28,16 @@ object PreferenceUtils {
 
 
     fun packTime(time: Pair<Int, Int>)
-        = time.component1() * MINUTES_IN_HOUR + time.component2()
+            = time.component1() * MINUTES_IN_HOUR + time.component2()
 
     fun unpackTime(tm: Int)
-        = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
+            = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
 
     internal fun formatSnoozePreset(value: Long): String {
         val minutes = value / 60L / 1000L
 
-        if (minutes % (60L*24) == 0L) {
-            val days = minutes / (60L*24)
+        if (minutes % (60L * 24) == 0L) {
+            val days = minutes / (60L * 24)
             return "${days}d"
         }
 
@@ -54,25 +54,26 @@ object PreferenceUtils {
 
         try {
             ret = value
-                .split(",")
-                .map { it.trim() }
-                .filter { !it.isEmpty() }
-                .map {
-                    str ->
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { !it.isEmpty() }
+                    .map {
+                        str ->
 
-                    val unit = str.takeLast(1)
-                    val num = str.dropLast(1).toLong()
-                    val seconds =
-                            when (unit) {
-                                "m" -> num * Consts.MINUTE_IN_SECONDS;
-                                "h" -> num * Consts.HOUR_IN_SECONDS;
-                                "d" -> num * Consts.DAY_IN_SECONDS;
-                                else -> throw Exception("Unknown unit ${unit}")
-                            }
-                    seconds * 1000L
-                }
-                .toLongArray()
-        } catch (ex: Exception) {
+                        val unit = str.takeLast(1)
+                        val num = str.dropLast(1).toLong()
+                        val seconds =
+                                when (unit) {
+                                    "m" -> num * Consts.MINUTE_IN_SECONDS;
+                                    "h" -> num * Consts.HOUR_IN_SECONDS;
+                                    "d" -> num * Consts.DAY_IN_SECONDS;
+                                    else -> throw Exception("Unknown unit ${unit}")
+                                }
+                        seconds * 1000L
+                    }
+                    .toLongArray()
+        }
+        catch (ex: Exception) {
             ret = null;
         }
 
@@ -87,11 +88,12 @@ object PreferenceUtils {
             ret = pattern
                     .split(",")
                     .map { it.trim() }
-                    .filter { !it.isEmpty()}
+                    .filter { !it.isEmpty() }
                     .map { it.toLong() }
                     .toLongArray()
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception) {
             ret = null
         }
 

@@ -25,10 +25,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.TextView
-
+import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.*
 

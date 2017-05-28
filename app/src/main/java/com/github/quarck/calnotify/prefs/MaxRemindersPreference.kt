@@ -24,10 +24,9 @@ import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.*
+import android.widget.NumberPicker
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toIntOrNull
 
@@ -94,7 +93,8 @@ class MaxRemindersPreference(context: Context, attrs: AttributeSet) : DialogPref
         if (restorePersistedValue) {
             // Restore existing state
             value = this.getPersistedString("").toIntOrNull() ?: 0
-        } else if (defaultValue != null && defaultValue is String) {
+        }
+        else if (defaultValue != null && defaultValue is String) {
             // Set default state from the XML attribute
             value = defaultValue.toIntOrNull() ?: 0
             persistString("$value")

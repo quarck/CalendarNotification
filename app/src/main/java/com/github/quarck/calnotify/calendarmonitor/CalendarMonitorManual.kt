@@ -292,7 +292,8 @@ class CalendarMonitorManual(
             logger.info("This is a first deep scan ever, not posting 'due' events as these are reminders for past events")
             markAlertsAsHandledInDB(context, dueAlerts )
 
-        } else {
+        }
+        else if (dueAlerts.isNotEmpty()) {
             logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
 
             var special: EventAlertRecord? = null

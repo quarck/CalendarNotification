@@ -596,110 +596,42 @@ object CalendarProvider: CalendarProviderInterface {
         return ret;
     }
 
-    private fun isRepeatingEvent(context: Context, event: EventAlertRecord): Boolean? {
-        var ret: Boolean? = null
-
-        if (event.alertTime == 0L) {
-            logger.error("Alert time is zero");
-            return null;
-        }
-
-        val fields = arrayOf(
-            CalendarContract.CalendarAlerts.EVENT_ID,
-            CalendarContract.Events.RRULE,
-            CalendarContract.Events.RDATE
-        )
-
-        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
-
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                        fields,
-                        selection,
-                        arrayOf(event.alertTime.toString()),
-                        null
-                );
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    val eventId = cursor.getLong(0)
-                    if (eventId != event.eventId)
-                        continue;
-
-                    val rRule: String? = cursor.getString(1);
-                    val rDate: String? = cursor.getString(2);
-
-                    if (rRule != null && rRule.length > 0)
-                        ret = true;
-                    else if (rDate != null && rDate.length > 0)
-                        ret = true;
-                    else
-                        ret = false;
-                    break;
-
-                } while (cursor.moveToNext())
-            }
-        } catch (ex: Exception) {
-            ret = null
-        }
-
-        cursor?.close()
-
-        return ret;
-    }
+    private fun isRepeatingEvent(context: Context, event: EventAlertRecord)
+            = isRepeatingEvent(context, event.eventId)
 
     override fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
 
         var ret: Boolean? = null
 
         val fields = arrayOf(
-                CalendarContract.CalendarAlerts.EVENT_ID,
+                CalendarContract.Events.ORIGINAL_ID,
                 CalendarContract.Events.RRULE,
                 CalendarContract.Events.RDATE
         )
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
-        var cursor: Cursor? = null
-
+        val cursor: Cursor? =
+                context.contentResolver.query(
+                        uri,
+                        fields,
+                        null,
+                        null,
+                        null
+                );
         try {
-            cursor =
-                    context.contentResolver.query(
-                    uri,
-                    fields,
-                    null,
-                    null,
-                    null
-            );
-
             if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    val eventIdEvent = cursor.getLong(0)
-                    if (eventIdEvent != eventId)
-                        continue;
 
-                    val rRule: String? = cursor.getString(1);
-                    val rDate: String? = cursor.getString(2);
+                val rRule = (cursor.getString(1) as String?) ?: "";
+                val rDate = (cursor.getString(2) as String?) ?: "";
 
-                    if (rRule != null && rRule.isNotEmpty())
-                        ret = true;
-                    else if (rDate != null && rDate.isNotEmpty())
-                        ret = true;
-                    else
-                        ret = false;
-                    break;
-
-                } while (cursor.moveToNext())
+                ret = rRule.isNotEmpty() || rDate.isNotEmpty()
             }
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             ret = null
         }
-        finally {
-            cursor?.close()
-        }
 
+        cursor?.close()
 
         return ret;
     }
@@ -841,7 +773,11 @@ object CalendarProvider: CalendarProviderInterface {
             val isAllDay: Long
     )
 
-    override fun getEventAlertsForInstancesInRange(context: Context, instanceFrom: Long, instanceTo: Long): List<MonitorEventAlertEntry> {
+    override fun getEventAlertsForInstancesInRange(
+            context: Context,
+            instanceFrom: Long,
+            instanceTo: Long
+    ): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {

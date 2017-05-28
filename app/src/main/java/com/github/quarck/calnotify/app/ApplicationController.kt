@@ -68,7 +68,7 @@ object ApplicationController : EventMovedHandler {
         get() = calendarMonitor
 
     fun hasActiveEvents(context: Context) =
-        EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L }.any() }
+        EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
 
     fun onEventAlarm(context: Context) {
 
@@ -213,7 +213,10 @@ object ApplicationController : EventMovedHandler {
                 }
 
                 // add newly fired event
-                event.lastEventVisibility = System.currentTimeMillis()
+                if (event.isNotSpecial)
+                    event.lastEventVisibility = System.currentTimeMillis()
+                else
+                    event.lastEventVisibility = Long.MAX_VALUE
                 db.addEvent(event)
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
             }
@@ -336,16 +339,26 @@ object ApplicationController : EventMovedHandler {
                     // that it is there
                     // Caller is using our return value as "safeToRemoveOriginalReminder" flag
                     val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
-                    if (dbEvent != null && dbEvent.snoozedUntil == 0L)
-                        validPairs.add(Pair(alert, event))
 
-                } else {
+                    if (dbEvent != null && dbEvent.snoozedUntil == 0L) {
+                        validPairs.add(Pair(alert, event))
+                    }
+                    else {
+                        logger.error("Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
+                    }
+                }
+                else {
                     // return true only if we can confirm, by reading event again from DB
                     // that it is there
                     // Caller is using our return value as "safeToRemoveOriginalReminder" flag
                     val dbEvents = db.getEventInstances(event.eventId)
-                    if (dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L)
+
+                    if (dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L) {
                         validPairs.add(Pair(alert, event))
+                    }
+                    else {
+                        logger.error("Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
+                    }
                 }
             }
         }
@@ -514,7 +527,7 @@ object ApplicationController : EventMovedHandler {
 
         EventsStorage(context).use {
             db ->
-            val events = db.events
+            val events = db.events.filter { it.isNotSpecial }
 
             // Don't allow events to have exactly the same "snoozedUntil", so to have
             // predicted sorting order, so add a tiny (0.001s per event) adjust to each
@@ -654,7 +667,8 @@ object ApplicationController : EventMovedHandler {
             val eventsToDismiss = db.events.filter {
                 event ->
                 (event.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
-                        (event.snoozedUntil == 0L)
+                        (event.snoozedUntil == 0L) &&
+                        event.isNotSpecial
             }
             dismissEvents(context, db, eventsToDismiss, dismissType, false)
         }
@@ -669,7 +683,7 @@ object ApplicationController : EventMovedHandler {
 
         logger.debug("Removing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
-        if (dismissType.shouldKeep && Settings(context).keepHistory) {
+        if (dismissType.shouldKeep && Settings(context).keepHistory && event.isNotSpecial) {
             DismissedEventsStorage(context).use {
                 db ->
                 db.addEvent(dismissType, event)

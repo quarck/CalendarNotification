@@ -171,7 +171,7 @@ object CalendarReloadManager: CalendarReloadManagerInterface {
     ): Boolean {
 
         // don't rescan manually created events - we won't find most of them
-        val events = db.events.filter { event -> event.origin != EventOrigin.FullManual }
+        val events = db.events.filter { event -> event.origin != EventOrigin.FullManual && event.isNotSpecial }
         return reloadCalendarInternal(context, db, events, calendar, movedHandler, maxProviderPollingTimeMillis)
     }
     // returns true if event has changed. Event is updated in place

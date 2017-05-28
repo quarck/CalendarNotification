@@ -119,7 +119,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val events =
                 db.events.filter {
-                        (it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
+                        ((it.snoozedUntil == 0L)
+                                || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
+                        && it.isNotSpecial
                     }
 
         if (events.size >= Consts.MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING) {
@@ -202,8 +204,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val activeEvents =
                     db.events
                             .filter {
-                                (it.snoozedUntil == 0L)
-                                        || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
+                                ((it.snoozedUntil == 0L)
+                                        || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
+                                && it.isNotSpecial
                             }
 
             val numActiveEvents = activeEvents.count()

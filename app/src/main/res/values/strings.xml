@@ -308,7 +308,7 @@
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
     <string name="dismiss_all_events">Dismiss all events</string>
-    <string name="dismiss_all_events_confirmation">Dismiss all events? Cannot be undone! Snoozed events would not be removed</string>
+    <string name="dismiss_all_events_confirmation">Dismiss all events?\n\nCANNOT BE UNDONE!\n\nSnoozed events would not be removed</string>
     <string name="handle_events_with_no_reminders">Handle events with no reminders</string>
     <string name="handle_events_with_no_reminders_summary">Notify about events with no reminder added</string>
     <string name="default_reminder_time">Default reminder time</string>
@@ -317,4 +317,9 @@
     <string name="default_all_day_reminder_time_summary">Default reminder time for all day events with no reminders, in hours before the event time (00:00:00 of the day of event)\nExample:\n\n * \'-8\' means notify at 8am on the day of event\n\n * \'7\' means seven hours before 00:00 of the day of event, e.g. 5pm on the day before</string>
     <string name="reminder_custom_ringtone_summary">Use custom ringtone for notifications</string>
     <string name="reminder_custom_vibration_summary">Use custom vibration for notifications</string>
+
+    <string name="special_event_title">Warning: due events skipped</string>
+    <string name="special_event_detail_format" formatted="false">Only %d of %d due events displayed</string>
+    <string name="special_event_detail2" formatted="false">Your device was switched off for long</string>
 </resources>
+

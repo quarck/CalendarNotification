@@ -36,6 +36,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.getSpecialDetail
+import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
@@ -208,7 +210,10 @@ class EventListAdapter(
                         val event = getEventAtPosition(swipedPosition)
 
                         if (event != null) {
-                            removeWithUndo(event)
+                            if (!event.isSpecial)
+                                removeWithUndo(event)
+                            else
+                                removeEvent(event)
                             callback.onItemRemoved(event)
                         }
                     }
@@ -321,16 +326,30 @@ class EventListAdapter(
                 holder.undoLayout?.visibility = View.GONE
                 holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-                val time = eventFormatter.formatDateTimeOneLine(event)
-                holder.eventDateText.text = time
-                holder.eventTimeText.text = ""
+                if (!event.isSpecial) {
+                    val time = eventFormatter.formatDateTimeOneLine(event)
+                    holder.eventDateText.text = time
+                    holder.eventTimeText.text = ""
+                }
+                else {
+                    val (detail1, detail2) = event.getSpecialDetail(context)
+                    holder.eventDateText.text = detail1
+                    holder.eventTimeText.text = detail2
+                }
 
             } else {
 
-                val (date, time) = eventFormatter.formatDateTimeTwoLines(event)
+                if (!event.isSpecial) {
+                    val (date, time) = eventFormatter.formatDateTimeTwoLines(event)
 
-                holder.eventDateText.text = date
-                holder.eventTimeText.text = time
+                    holder.eventDateText.text = date
+                    holder.eventTimeText.text = time
+                }
+                else {
+                    val (detail1, detail2) = event.getSpecialDetail(context)
+                    holder.eventDateText.text = detail1
+                    holder.eventTimeText.text = detail2
+                }
 
                 holder.eventLocatoinText?.text = event.location
 

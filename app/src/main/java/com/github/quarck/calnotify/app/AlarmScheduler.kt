@@ -29,6 +29,8 @@ import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastRece
 import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
+import com.github.quarck.calnotify.calendar.isNotSpecial
+import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.persistentState
@@ -55,7 +57,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
             // Schedule event (snooze) alarm
             var nextEventAlarm =
-                    events.filter { it.snoozedUntil != 0L }.map { it.snoozedUntil }.min()
+                    events.filter { it.snoozedUntil != 0L && it.isNotSpecial}.map { it.snoozedUntil }.min()
 
             if (nextEventAlarm != null) {
 
@@ -101,7 +103,7 @@ object AlarmScheduler: AlarmSchedulerInterface {
 
             if (settings.remindersEnabled || quietHoursOneTimeReminderEnabled) {
 
-                val hasActiveNotifications = events.filter { it.snoozedUntil == 0L }.any()
+                val hasActiveNotifications = events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any()
 
                 if (hasActiveNotifications) {
 

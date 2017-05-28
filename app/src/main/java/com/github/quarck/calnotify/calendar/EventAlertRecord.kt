@@ -19,6 +19,10 @@
 
 package com.github.quarck.calnotify.calendar
 
+import android.content.Context
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
+
 enum class EventOrigin(val code: Int) {
     ProviderBroadcast(0),
     ProviderManual(1),
@@ -73,7 +77,6 @@ data class EventAlertRecord(
     val attendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed,
     val ownerAttendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed
 )
-
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
     var ret = false
@@ -157,3 +160,75 @@ val EventAlertRecord.displayedStartTime: Long
 
 val EventAlertRecord.displayedEndTime: Long
     get() = if (instanceEndTime != 0L) instanceEndTime else endTime
+
+
+val EventAlertRecord.isSpecial: Boolean
+    get() = instanceStartTime == Long.MAX_VALUE
+
+val EventAlertRecord.isNotSpecial: Boolean
+    get() = instanceStartTime != Long.MAX_VALUE
+
+val EventAlertRecord.specialId: Long
+    get() {
+        if (instanceStartTime == Long.MAX_VALUE)
+            return eventId
+        else
+            return -1L
+    }
+
+enum class EventAlertRecordSpecialType(val code: Int) {
+    ScanMaxOneMonth(1),
+    ScanMaxHundredOverdueEvents(2);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
+
+fun CreateEventAlertSpecialScanOverHundredEvents(ctx: Context, missedEvents: Int): EventAlertRecord {
+
+    val title =
+            ctx.resources.getString(R.string.special_event_title)
+
+    return EventAlertRecord(
+            calendarId = -1L,
+            eventId = EventAlertRecordSpecialType.ScanMaxHundredOverdueEvents.code.toLong(),
+            isAllDay = false,
+            isRepeating = false,
+            alertTime = missedEvents.toLong(),
+            notificationId = 0,
+            title = title,
+            startTime = 0L,
+            endTime = 0L,
+            instanceStartTime = Long.MAX_VALUE,
+            instanceEndTime = Long.MAX_VALUE,
+            location = "",
+            lastEventVisibility = Long.MAX_VALUE-2,
+            snoozedUntil = 0L,
+            color = 0xffff0000.toInt()
+    )
+}
+
+val EventAlertRecord.scanMissedTotalEvents: Long
+    get() {
+        if (instanceStartTime == Long.MAX_VALUE)
+            return alertTime
+        else
+            return 0L
+    }
+
+
+fun EventAlertRecord.getSpecialDetail(ctx: Context): Pair<String, String> {
+
+    val detail1 =
+            String.format(
+                    ctx.resources.getString(R.string.special_event_detail_format),
+                    Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN,
+                    scanMissedTotalEvents + Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN
+            )
+
+    val detail2 = ctx.resources.getString(R.string.special_event_detail2)
+
+    return Pair(detail1, detail2)
+}

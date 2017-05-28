@@ -23,10 +23,7 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CalendarProviderInterface
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventOrigin
-import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
 
@@ -241,20 +238,10 @@ class CalendarMonitorManual(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-        // TODO: handle thousands of reminders from the past!!
-
-        // TODO: Warning: last calendar scan was performed XXX UU ago. Missed events from the last month only are displayed
-        // ^^ never display it in the notification, only in the list (first)
-
-        // TODO: You have over 100 missed events, only first 100 are displayed
-        // ^^ never display it in the notification, only in the list (first)
-
-        // TODO: Collapse everything if over 30 events
-
         // TODO: Dismiss all while scan is in progress????
 
 //        MonitorStorage(context).use { it.deleteAlertsMatching { _ -> true } } ; state.firstScanEver = false
-//        state.prevEventScanTo = System.currentTimeMillis() - 2L*365L*24L*3600L*1000L // YAHOOOOO!!!!
+//        state.prevEventScanTo = System.currentTimeMillis() - 145L*24L*3600L*1000L // YAHOOOOO!!!!
 
         var hasFiredAnything = false
 
@@ -265,11 +252,19 @@ class CalendarMonitorManual(
         val prevScanTo = state.prevEventScanTo
         val currentTime = System.currentTimeMillis()
 
-        val scanFrom = Math.min(
+        var scanFrom = Math.min(
                 currentTime - Consts.ALERTS_DB_REMOVE_AFTER, // look backwards a little to make sure nothing is missing
                 prevScanTo // we we didn't scan for long time - do a full re-scan since last 'scanned to'
                 )
-        val scanTo = Math.max(scanFrom, currentTime) + scanWindow
+
+        // cap scan from range to 1 month back only
+        val monthAgo = currentTime - Consts.MAX_SCAN_BACKWARD_DAYS * Consts.DAY_IN_MILLISECONDS
+        if (scanFrom < monthAgo) {
+            logger.info("scan from capped from $scanFrom to $monthAgo")
+            scanFrom = monthAgo
+        }
+
+        val scanTo = currentTime + scanWindow
 
         val firstScanEver = state.firstScanEver
 
@@ -290,7 +285,7 @@ class CalendarMonitorManual(
 
         val fireAlertsUpTo = currentTime + Consts.ALARM_THRESHOLD
 
-        val dueAlerts = alertsMerged.filter { !it.wasHandled && it.alertTime <= fireAlertsUpTo }
+        var dueAlerts = alertsMerged.filter { !it.wasHandled && it.alertTime <= fireAlertsUpTo }
 
         if (firstScanEver) {
             state.firstScanEver = false
@@ -300,8 +295,25 @@ class CalendarMonitorManual(
         } else {
             logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
 
+            var special: EventAlertRecord? = null
+
+            if (dueAlerts.size > Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN) {
+
+                special = CreateEventAlertSpecialScanOverHundredEvents(
+                        context,
+                        dueAlerts.size - Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN
+                )
+
+                dueAlerts = dueAlerts
+                        .sortedBy { it.instanceStartTime }
+                        .takeLast(Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN)
+            }
+
             if (manualFireAlertList_NoHousekeeping(context, dueAlerts))
                 hasFiredAnything = true
+
+            if (special != null)
+                ApplicationController.registerNewEvent(context, special) // not posting it in the notifications
         }
 
         // Finally - find the next nearest alert

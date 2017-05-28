@@ -43,6 +43,7 @@ import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -438,7 +439,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         logger.debug("onItemClick, pos=$position, eventId=$eventId")
 
         val event = adapter.getEventAtPosition(position, eventId)
-        if (event != null) {
+
+        if (event != null && !event.isSpecial) {
 
             if (settings.useCompactView) {
                 startActivity(

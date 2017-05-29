@@ -216,6 +216,11 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use {
             db ->
 
+            if (event.isNotSpecial)
+                event.lastEventVisibility = System.currentTimeMillis()
+            else
+                event.lastEventVisibility = Long.MAX_VALUE
+
             if (event.isRepeating) {
                 // repeating event - always simply add
                 db.addEvent(event) // ignoring result as we are using other way of validating
@@ -239,10 +244,6 @@ object ApplicationController : EventMovedHandler {
                 }
 
                 // add newly fired event
-                if (event.isNotSpecial)
-                    event.lastEventVisibility = System.currentTimeMillis()
-                else
-                    event.lastEventVisibility = Long.MAX_VALUE
                 db.addEvent(event)
                 //notificationManager.onEventAdded(context, EventFormatter(context), event)
             }

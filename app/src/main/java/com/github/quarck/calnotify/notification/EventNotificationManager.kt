@@ -595,6 +595,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return postedNotification
     }
 
+    private fun lastVisibilityToSortingKey(lastEventVisibility: Long): String {
+
+        val sb = StringBuffer(20);
+
+        var temp = lastEventVisibility
+
+        while (temp > 0) {
+
+            val chr = 24 - temp % 24;
+            temp /= 24
+
+            sb.append(('A'.toInt() + chr).toChar())
+        }
+
+        return sb.reverse().toString()
+    }
+
     @Suppress("DEPRECATION")
     private fun postReminderNotification(
             ctx: Context,
@@ -668,8 +685,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setShowWhen(false)
                 .setSortKey(
-                        // TODO: check sorting key for Notifications
-                        "${Long.MAX_VALUE - lastVisibility}" // hack to inverse it
+                        lastVisibilityToSortingKey(lastVisibility)
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
@@ -805,7 +821,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setShowWhen(false)
                 .setSortKey(
-                        "${Long.MAX_VALUE - event.lastEventVisibility}" // hack to inverse it
+                        lastVisibilityToSortingKey(event.lastEventVisibility)
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT

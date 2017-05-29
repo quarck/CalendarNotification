@@ -66,6 +66,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
             var nextFireAt = 0L
             var shouldFire = false
+            var itIsAfterQuietHoursReminder = false
 
             val reminderState = ReminderState(context)
 
@@ -75,6 +76,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                     logger.info("One-shot enabled, not in quiet hours, firing")
 
                     shouldFire = true
+                    itIsAfterQuietHoursReminder = true
 
                     // Check if regular reminders are enabled and schedule reminder if necessary
                     if (settings.remindersEnabled) {
@@ -152,15 +154,15 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (shouldFire)
-                fireReminder(context, currentTime, settings)
+                fireReminder(context, currentTime, itIsAfterQuietHoursReminder)
         }
     }
 
-    private fun fireReminder(context: Context, currentTime: Long, settings: Settings) {
+    private fun fireReminder(context: Context, currentTime: Long, itIsAfterQuietHoursReminder: Boolean) {
 
         logger.info("Firing reminder, current time ${System.currentTimeMillis()}")
 
-        ApplicationController.fireEventReminder(context);
+        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder);
 
         ReminderState(context).onReminderFired(currentTime)
 

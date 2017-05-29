@@ -30,7 +30,9 @@ data class EventRecord(
         var endTime: Long,
         var reminders: List<EventReminderRecord>,
         var location: String,
-        var color: Int = 0
+        var color: Int = 0,
+        var eventStatus: EventStatus = EventStatus.Confirmed,
+        var attendanceStatus: AttendanceStatus = AttendanceStatus.None
 )
 
 fun EventRecord.nextAlarmTime(currentTime: Long): Long {

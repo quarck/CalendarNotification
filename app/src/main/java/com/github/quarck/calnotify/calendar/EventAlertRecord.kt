@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.calendar
 
 import android.content.Context
+import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 
@@ -44,14 +45,54 @@ enum class EventOrigin(val code: Int) {
     }
 }
 
-enum class AttendanceStatus(val code: Int) {
-    Tentative(0),
-    Confirmed(1),
-    Cancelled(2);
+enum class EventStatus(val code: Int) {
+    Tentative(CalendarContract.Events.STATUS_TENTATIVE),
+    Confirmed(CalendarContract.Events.STATUS_CONFIRMED),
+    Cancelled(CalendarContract.Events.STATUS_CANCELED),
+    Unknown(-1);
 
     companion object {
         @JvmStatic
-        fun fromInt(v: Int) = values()[v]
+        fun fromInt(v: Int?): EventStatus {
+
+            if (v == null)
+                return Confirmed
+
+            return when (v) {
+                CalendarContract.Events.STATUS_TENTATIVE -> Tentative
+                CalendarContract.Events.STATUS_CONFIRMED -> Confirmed
+                CalendarContract.Events.STATUS_CANCELED -> Cancelled
+                else -> Unknown
+            }
+        }
+    }
+}
+
+enum class AttendanceStatus(val code: Int) {
+
+    None(CalendarContract.Attendees.ATTENDEE_STATUS_NONE),
+    Accepted(CalendarContract.Attendees.ATTENDEE_STATUS_ACCEPTED),
+    Declined(CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED),
+    Invited(CalendarContract.Attendees.ATTENDEE_STATUS_INVITED),
+    Tentative(CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE),
+    Unknown(-1);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int?): AttendanceStatus {
+
+            if (v == null)
+                return Accepted
+
+            return when (v) {
+                CalendarContract.Attendees.ATTENDEE_STATUS_NONE -> None
+                CalendarContract.Attendees.ATTENDEE_STATUS_ACCEPTED -> Accepted
+                CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED -> Declined
+                CalendarContract.Attendees.ATTENDEE_STATUS_INVITED -> Invited
+                CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE -> Tentative
+                else -> Unknown
+            }
+        }
     }
 }
 
@@ -74,8 +115,8 @@ data class EventAlertRecord(
         var color: Int = 0,
         var origin: EventOrigin = EventOrigin.ProviderBroadcast,
         var timeFirstSeen: Long = 0L,
-        val attendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed,
-        val ownerAttendanceStatus: AttendanceStatus = AttendanceStatus.Confirmed
+        var eventStatus: EventStatus = EventStatus.Confirmed,
+        var attendanceStatus: AttendanceStatus = AttendanceStatus.None
 )
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
@@ -121,6 +162,16 @@ fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
         ret = true
     }
 
+    if (eventStatus != newEvent.eventStatus) {
+        eventStatus = newEvent.eventStatus
+        ret = true
+    }
+
+    if (attendanceStatus != newEvent.attendanceStatus) {
+        attendanceStatus = newEvent.attendanceStatus
+        ret = true
+    }
+
     return ret
 }
 
@@ -149,6 +200,16 @@ fun EventAlertRecord.updateFrom(newEvent: EventRecord): Boolean {
 
     if (isAllDay != newEvent.isAllDay) {
         isAllDay = newEvent.isAllDay
+        ret = true
+    }
+
+    if (eventStatus != newEvent.eventStatus) {
+        eventStatus = newEvent.eventStatus
+        ret = true
+    }
+
+    if (attendanceStatus != newEvent.attendanceStatus) {
+        attendanceStatus = newEvent.attendanceStatus
         ret = true
     }
 

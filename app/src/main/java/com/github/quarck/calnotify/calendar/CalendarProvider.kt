@@ -46,7 +46,9 @@ object CalendarProvider : CalendarProviderInterface {
                     CalendarContract.CalendarAlerts.ALARM_TIME,
                     CalendarContract.CalendarAlerts.BEGIN,
                     CalendarContract.CalendarAlerts.END,
-                    CalendarContract.Events.ALL_DAY
+                    CalendarContract.Events.ALL_DAY,
+                    CalendarContract.CalendarAlerts.STATUS,
+                    CalendarContract.CalendarAlerts.SELF_ATTENDEE_STATUS
             )
 
     private val PROJECTION_INDEX_EVENT_ID = 0
@@ -61,6 +63,8 @@ object CalendarProvider : CalendarProviderInterface {
     private val PROJECTION_INDEX_INSTANCE_BEGIN = 9
     private val PROJECTION_INDEX_INSTANCE_END = 10
     private val PROJECTION_INDEX_ALL_DAY = 11
+    private val PROJECTION_INDEX_STATUS = 12
+    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 13
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
@@ -77,6 +81,9 @@ object CalendarProvider : CalendarProviderInterface {
         val instanceStart: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_BEGIN)
         val instanceEnd: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_END)
         val allDay: Int? = cursor.getInt(PROJECTION_INDEX_ALL_DAY)
+
+        val status: Int? = cursor.getInt(PROJECTION_INDEX_STATUS)
+        val attendance: Int? = cursor.getInt(PROJECTION_INDEX_ATTENDANCE_STATUS)
 
         if (eventId == null || state == null || title == null || startTime == null)
             return Pair(null, null);
@@ -97,7 +104,10 @@ object CalendarProvider : CalendarProviderInterface {
                         lastEventVisibility = 0L,
                         displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                        isRepeating = false // has to be updated separately
+                        isRepeating = false, // has to be updated separately
+                        eventStatus = EventStatus.fromInt(status),
+                        attendanceStatus = AttendanceStatus.fromInt(attendance)
+
                 );
 
         return Pair(state, event)
@@ -179,8 +189,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                val eventPair = cursorToAlertRecord(cursor, alertTime)
-                val event = eventPair.component2()
+                val (_, event) = cursorToAlertRecord(cursor, alertTime)
 
                 if (event != null && event.eventId == eventId) {
                     ret = event;
@@ -350,7 +359,9 @@ object CalendarProvider : CalendarProviderInterface {
                         CalendarContract.Events.DTEND,
                         CalendarContract.Events.ALL_DAY,
                         CalendarContract.Events.EVENT_LOCATION,
-                        CalendarContract.Events.DISPLAY_COLOR
+                        CalendarContract.Events.DISPLAY_COLOR,
+                        CalendarContract.Events.STATUS,
+                        CalendarContract.Events.SELF_ATTENDEE_STATUS
                 )
 
         val cursor: Cursor? =
@@ -371,6 +382,8 @@ object CalendarProvider : CalendarProviderInterface {
             val allDay: Int? = cursor.getInt(4)
             val location: String? = cursor.getString(5)
             val color: Int? = cursor.getInt(6)
+            val status: Int? = cursor.getInt(7)
+            val attendance: Int? = cursor.getInt(8)
 
             if (title != null && start != null) {
                 ret =
@@ -383,7 +396,9 @@ object CalendarProvider : CalendarProviderInterface {
                                 isAllDay = (allDay ?: 0) != 0,
                                 location = location ?: "",
                                 color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                                reminders = listOf<EventReminderRecord>() // stub for now
+                                reminders = listOf<EventReminderRecord>(), // stub for now
+                                eventStatus = EventStatus.fromInt(status),
+                                attendanceStatus = AttendanceStatus.fromInt(attendance)
                         );
             }
         }

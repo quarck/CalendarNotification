@@ -574,8 +574,8 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
-    fun fireEventReminder(context: Context) {
-        notificationManager.fireEventReminder(context);
+    fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean) {
+        notificationManager.fireEventReminder(context, itIsAfterQuietHoursReminder);
     }
 
     fun cleanupEventReminder(context: Context) {
@@ -593,6 +593,7 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onMainActivityStarted(context: Context?) {
     }
 
@@ -784,11 +785,13 @@ object ApplicationController : EventMovedHandler {
     }
 
     // used for debug purpose
+    @Suppress("unused")
     fun forceRepostNotifications(context: Context) {
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
     }
 
-    // debug purpose
+    // used for debug purpose
+    @Suppress("unused")
     fun postNotificationsAutoDismissedDebugMessage(context: Context) {
         notificationManager.postNotificationsAutoDismissedDebugMessage(context)
     }

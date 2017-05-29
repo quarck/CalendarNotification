@@ -185,7 +185,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             wakeScreenIfRequired(context, settings)
     }
 
-    override fun fireEventReminder(context: Context) {
+    override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean) {
 
         val settings = Settings(context)
         val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
@@ -219,7 +219,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         numActiveEvents,
                         lastVisibility,
                         notificationSettings,
-                        isQuietPeriodActive
+                        isQuietPeriodActive,
+                        itIsAfterQuietHoursReminder
                 )
 
                 wakeScreenIfRequired(context, settings)
@@ -600,12 +601,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             numActiveEvents: Int,
             lastVisibility: Long,
             notificationSettings: NotificationSettingsSnapshot,
-            isQuietPeriodActive: Boolean
+            isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
     ) {
-
-        // TODO: reminder X of Y
-
-
         val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val intent = Intent(ctx, MainActivity::class.java)
@@ -619,15 +616,34 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val resources = ctx.resources
 
         val title =
-                if (numActiveEvents == 1)
+            when {
+                itIsAfterQuietHoursReminder ->
+                        resources.getString(R.string.reminder_after_quiet_time)
+                numActiveEvents == 1 ->
                     resources.getString(R.string.reminder_you_have_missed_event)
-                else
+                else ->
                     resources.getString(R.string.reminder_you_have_missed_events)
+            }
 
-        val textTemplate = resources.getString(R.string.last_notification_s_ago)
+        var text = ""
 
-        val text = String.format(textTemplate,
-                EventFormatter(ctx).formatTimeDuration(msAgo))
+        if (!itIsAfterQuietHoursReminder) {
+
+            val currentReminder = ReminderState(ctx).numRemindersFired + 1
+            val totalReminders = Settings(ctx).maxNumberOfReminders
+
+            val textTemplate = resources.getString(R.string.last_notification_s_ago)
+
+            text = String.format(textTemplate,
+                    EventFormatter(ctx).formatTimeDuration(msAgo),
+                    currentReminder, totalReminders)
+        }
+        else {
+            val textTemplate = resources.getString(R.string.last_event_s_ago)
+
+            text = String.format(textTemplate,
+                    EventFormatter(ctx).formatTimeDuration(msAgo))
+        }
 
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)

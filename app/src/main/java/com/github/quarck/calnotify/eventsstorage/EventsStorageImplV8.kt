@@ -25,10 +25,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.calendar.AttendanceStatus
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.calendar.EventOrigin
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
@@ -67,8 +64,8 @@ class EventsStorageImplV8
                         "$KEY_EVENT_ORIGIN INTEGER, " +
                         "$KEY_TIME_FIRST_SEEN INTEGER, " +
 
+                        "$KEY_EVENT_STATUS INTEGER, " +
                         "$KEY_EVENT_ATTENDANCE_STATUS INTEGER, " +
-                        "$KEY_EVENT_OWNER_ATTENDANCE_STATUS INTEGER, " +
 
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
@@ -451,8 +448,8 @@ class EventsStorageImplV8
         values.put(KEY_EVENT_ORIGIN, event.origin.code)
         values.put(KEY_TIME_FIRST_SEEN, event.timeFirstSeen)
 
+        values.put(KEY_EVENT_STATUS, event.eventStatus.code)
         values.put(KEY_EVENT_ATTENDANCE_STATUS, event.attendanceStatus.code)
-        values.put(KEY_EVENT_OWNER_ATTENDANCE_STATUS, event.ownerAttendanceStatus.code)
 
         // reserved - must be filled also
         values.put(KEY_RESERVED_INT1, 0)
@@ -487,8 +484,8 @@ class EventsStorageImplV8
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 origin = EventOrigin.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ORIGIN)),
                 timeFirstSeen = cursor.getLong(PROJECTION_KEY_TIME_FIRST_SEEN),
-                attendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ATTENDANCE_STATUS)),
-                ownerAttendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_OWNER_ATTENDANCE_STATUS))
+                eventStatus = EventStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_STATUS)),
+                attendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ATTENDANCE_STATUS))
         )
     }
 
@@ -523,8 +520,8 @@ class EventsStorageImplV8
         private const val KEY_EVENT_ORIGIN = "ogn"
         private const val KEY_TIME_FIRST_SEEN = "fsn"
 
-        private const val KEY_EVENT_ATTENDANCE_STATUS = "attsts"
-        private const val KEY_EVENT_OWNER_ATTENDANCE_STATUS = "oattsts"
+        private const val KEY_EVENT_STATUS = "attsts"
+        private const val KEY_EVENT_ATTENDANCE_STATUS = "oattsts"
 
 
         private const val KEY_RESERVED_INT1 = "i1"
@@ -554,8 +551,8 @@ class EventsStorageImplV8
                 KEY_ALL_DAY,
                 KEY_EVENT_ORIGIN,
                 KEY_TIME_FIRST_SEEN,
-                KEY_EVENT_ATTENDANCE_STATUS,
-                KEY_EVENT_OWNER_ATTENDANCE_STATUS
+                KEY_EVENT_STATUS,
+                KEY_EVENT_ATTENDANCE_STATUS
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0;
@@ -576,7 +573,7 @@ class EventsStorageImplV8
         const val PROJECTION_KEY_ALL_DAY = 15;
         const val PROJECTION_KEY_EVENT_ORIGIN = 16;
         const val PROJECTION_KEY_TIME_FIRST_SEEN = 17;
-        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 18
-        const val PROJECTION_KEY_EVENT_OWNER_ATTENDANCE_STATUS = 19
+        const val PROJECTION_KEY_EVENT_STATUS = 18
+        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 19
     }
 }

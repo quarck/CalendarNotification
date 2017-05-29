@@ -37,6 +37,18 @@
         android:defaultValue="-8"
         />
 
+    <CheckBoxPreference
+        android:key="dont_show_declined_events"
+        android:title="@string/ignore_declined_events"
+        android:summary="@string/ignore_declined_events_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="dont_show_cancelled_events"
+        android:title="@string/ignore_cancelled_events"
+        android:summary="@string/ignore_cancelled_events_summary"
+        android:defaultValue="false" />
+
     <!-- use_set_alarm_clock -->
     <CheckBoxPreference
         android:key="use_set_alarm_clock"

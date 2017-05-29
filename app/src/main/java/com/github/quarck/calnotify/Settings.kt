@@ -286,6 +286,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val manualCalWatchScanWindow: Long
         get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
 
+    val dontShowDeclinedEvents: Boolean
+        get() = getBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, false)
+
+    val dontShowCancelledEvents: Boolean
+        get() = getBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, false)
+
     var enableMonitorDebug: Boolean
         get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
         set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
@@ -347,8 +353,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
 
-        private const val ABORT_BROADCAST_KEY = "abort_broadcast"
-
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
@@ -397,6 +401,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_reminder_time"
 
         private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
+
+        private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events"
+        private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"
 
         private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
 

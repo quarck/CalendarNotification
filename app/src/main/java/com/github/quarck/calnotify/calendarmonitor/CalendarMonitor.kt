@@ -194,6 +194,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
 
         val eventsToPost = mutableListOf<EventAlertRecord>()
+        val eventsToSilentlyDrop = mutableListOf<EventAlertRecord>()
 
         try {
             val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
@@ -210,7 +211,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
 
-                if (ApplicationController.registerNewEvent(context, event)) {
+                if (ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)) {
+                    eventsToSilentlyDrop.add(event)
+                }
+                else if (ApplicationController.registerNewEvent(context, event)) {
                     eventsToPost.add(event)
                 }
             }
@@ -222,6 +226,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         try {
             ApplicationController.postEventNotifications(context, eventsToPost)
+
+            for (event in eventsToSilentlyDrop) {
+                setAlertWasHandled(context, event, createdByUs = false)
+                CalendarProvider.dismissNativeEventAlert(context, event.eventId);
+                logger.info("IGNORED Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
+            }
 
             for (event in eventsToPost) {
                 setAlertWasHandled(context, event, createdByUs = false)

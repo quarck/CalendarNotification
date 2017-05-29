@@ -179,11 +179,33 @@ object ApplicationController : EventMovedHandler {
 
     }
 
+    fun shouldMarkEventAsHandledAndSkip(context: Context, event: EventAlertRecord): Boolean {
+
+        val settings = getSettings(context)
+
+        if (event.eventStatus == EventStatus.Cancelled && settings.dontShowCancelledEvents) {
+            // indicate that we should mark as handled in the provider and skip
+            logger.info("Event ${event.eventId} has status Cancelled and user requested to not show canelled events")
+            return true
+        }
+
+        if (event.attendanceStatus == AttendanceStatus.Declined && settings.dontShowDeclinedEvents) {
+            // indicate that we should mark as handled in the provider and skip
+            logger.info("Event ${event.eventId} has status Declined and user requested to not show declined events")
+            return true
+        }
+
+        return false
+    }
+
+
     fun registerNewEvent(context: Context, event: EventAlertRecord): Boolean {
 
         var ret = false
 
-        if (event.calendarId != -1L && !getSettings(context).getCalendarIsHandled(event.calendarId)) {
+        val settings = getSettings(context)
+
+        if (event.calendarId != -1L && !settings.getCalendarIsHandled(event.calendarId)) {
             logger.info("Event ${event.eventId} belongs to calendar ${event.calendarId} which is not handled, skipping");
             return ret;
         }
@@ -262,7 +284,7 @@ object ApplicationController : EventMovedHandler {
 
     fun registerNewEvents(
             context: Context,
-            pairs: ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>>
+            pairs: List<Pair<MonitorEventAlertEntry, EventAlertRecord>>
     ): ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
 
         val settings = getSettings(context)

@@ -323,5 +323,9 @@
     <string name="special_event_detail_format" formatted="false">Only %d of %d due events displayed</string>
     <string name="special_event_detail2" formatted="false">Your device was switched off for long</string>
     <string name="reminder_after_quiet_time">Reminder: events fired during quiet hours</string>
+    <string name="ignore_declined_events">Ignore Declined events</string>
+    <string name="ignore_declined_events_summary">Events that you have declined</string>
+    <string name="ignore_cancelled_events">Ignore Cancelled events</string>
+    <string name="ignore_cancelled_events_summary">Events that were cancelled by the organizer</string>
 </resources>
 

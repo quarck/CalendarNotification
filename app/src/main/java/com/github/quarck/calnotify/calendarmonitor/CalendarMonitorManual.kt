@@ -221,7 +221,12 @@ class CalendarMonitorManual(
 
         logger.info("Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
 
-        return ApplicationController.registerNewEvents(context, pairs)
+        val pairsToAdd = pairs.filter {
+            (_, event) ->
+            !ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)
+        }
+
+        return ApplicationController.registerNewEvents(context, pairsToAdd)
     }
 
 

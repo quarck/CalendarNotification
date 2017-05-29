@@ -35,7 +35,11 @@ class CalendarMonitorProvider(
 
     private val MAX_ITERATIONS = 1000L
 
-    fun registerFiredEventsInDB(context: Context, state: CalendarMonitorState, alertTime: Long): Collection<EventAlertRecord> {
+    fun registerFiredEventsInDB(
+            context: Context,
+            state: CalendarMonitorState,
+            alertTime: Long
+    ): Collection<EventAlertRecord> {
 
         logger.debug("doManualFireProviderEventsAt, alertTime=$alertTime");
 
@@ -56,7 +60,10 @@ class CalendarMonitorProvider(
                 event.origin = EventOrigin.ProviderManual
                 event.timeFirstSeen = System.currentTimeMillis()
 
-                if (ApplicationController.registerNewEvent(context, event)) {
+                if (ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)) {
+                    // silently drop, provider already has no idea about this event
+                }
+                else if (ApplicationController.registerNewEvent(context, event)) {
                     ret.add(event)
                 }
             }

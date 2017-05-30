@@ -94,67 +94,6 @@ class CalendarMonitorManual(
         return manualFireAlertList_NoHousekeeping(context, alerts)
     }
 
-//    private fun registerFiredEventInDB(context: Context, alert: MonitorEventAlertEntry): EventAlertRecord? {
-//
-//        var ret: EventAlertRecord? = null
-//
-//        if (alert.wasHandled)
-//            return null
-//
-//        logger.info("manualFireAlert: firing at alert $alert")
-//
-//        var event: EventAlertRecord? = null
-//
-//        if (!alert.alertCreatedByUs) {
-//            // not manually created -- can read directly from the provider!
-//            logger.debug("Alert was not created by the app, so trying to read alert off the provider")
-//            event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
-//        }
-//
-//        if (event == null) {
-//            logger.debug("Still has no alert info from provider - reading event off the provider")
-//
-//            val calEvent = calendarProvider.getEvent(context, alert.eventId)
-//            if (calEvent != null) {
-//                event = EventAlertRecord(
-//                        calendarId = calEvent.calendarId,
-//                        eventId = calEvent.eventId,
-//                        isAllDay = calEvent.isAllDay,
-//                        isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId) ?: false,
-//                        alertTime = alert.alertTime,
-//                        notificationId = 0,
-//                        title = calEvent.title,
-//                        startTime = calEvent.startTime,
-//                        endTime = calEvent.endTime,
-//                        instanceStartTime = alert.instanceStartTime,
-//                        instanceEndTime = alert.instanceEndTime,
-//                        location = calEvent.location,
-//                        lastEventVisibility = 0,
-//                        snoozedUntil = 0
-//                )
-//            }
-//        }
-//
-//        if (event != null) {
-//
-//            logger.info("Full manual scan: seen event ${event.eventId} / ${event.instanceStartTime} / ${event.alertTime}")
-//
-//            // found an event
-//            event.origin = EventOrigin.FullManual
-//            event.timeFirstSeen = System.currentTimeMillis()
-//
-//            if (ApplicationController.registerNewEvent(context, event))
-//                ret = event
-//
-//        } else {
-//            logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
-//            // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
-//            markAlertsAsHandledInDB(context, listOf(alert))
-//        }
-//
-//        return ret
-//    }
-
     private fun registerFiredEventsInDB(
             context: Context,
             alerts: Collection<MonitorEventAlertEntry>

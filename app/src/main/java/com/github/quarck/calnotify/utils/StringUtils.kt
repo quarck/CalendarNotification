@@ -33,7 +33,6 @@ fun String.toLongOrNull(): Long? {
     return ret;
 }
 
-@Suppress("unused")
 fun String.toIntOrNull(): Int? {
 
     var ret: Int?

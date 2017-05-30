@@ -296,6 +296,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
         set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
 
+    val firstDayOfWeek: Int
+        get() = getString(FIRST_DAY_OF_WEEK_KEY, "-1").toIntOrNull() ?: -1
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
@@ -406,6 +408,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"
 
         private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
+
+        private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

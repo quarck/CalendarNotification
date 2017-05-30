@@ -41,10 +41,7 @@ import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
-import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
-import com.github.quarck.calnotify.utils.scaleColor
+import com.github.quarck.calnotify.utils.*
 import java.util.*
 
 open class SnoozeActivityNoRecents : AppCompatActivity() {
@@ -503,6 +500,10 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     R.layout.dialog_date_picker,
                 null);
         val datePicker = dialogDate.find<DatePicker>(R.id.datePickerCustomSnooze)
+
+        val firstDayOfWeek = Settings(this).firstDayOfWeek
+        if (firstDayOfWeek != -1 && isLollipopOrAbove)
+           datePicker.firstDayOfWeek = firstDayOfWeek
 
         AlertDialog.Builder(this)
                 .setView(dialogDate)

@@ -1,6 +1,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ListPreference
+        android:key="first_day_of_week"
+        android:title="@string/first_day_of_week"
+        android:summary="@string/first_day_of_week_summary"
+        android:dialogTitle="@string/first_day_of_week"
+        android:entries="@array/days_of_week_entries"
+        android:entryValues="@array/days_of_week_values"
+        android:defaultValue="1" />
+
     <CheckBoxPreference
         android:key="halo_light_date"
         android:title="@string/halo_light_theme_date_picker"

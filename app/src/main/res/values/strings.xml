@@ -327,5 +327,7 @@
     <string name="ignore_declined_events_summary">Events that you have declined</string>
     <string name="ignore_cancelled_events">Ignore Cancelled events</string>
     <string name="ignore_cancelled_events_summary">Events that were cancelled by the organizer</string>
+    <string name="first_day_of_week">First day of the week</string>
+    <string name="first_day_of_week_summary">(Android 5 and above only)</string>
 </resources>
 

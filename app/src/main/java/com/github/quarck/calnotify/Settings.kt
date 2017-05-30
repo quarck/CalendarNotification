@@ -268,9 +268,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
         set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
 
-    val lightweightSwipe: Boolean
-        get() = getBoolean(LIGHTWEIGHT_SWIPE_KEY, false)
-
     val useSetAlarmClock: Boolean
         get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
 
@@ -392,8 +389,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY = "hide_sttng_m_doze_warning"
 
         private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock"
-
-        private const val LIGHTWEIGHT_SWIPE_KEY = "lw_swipe"
 
         const val KEEP_HISTORY_KEY = "keep_history"
         private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"

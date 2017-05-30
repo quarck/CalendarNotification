@@ -148,8 +148,7 @@ class DismissedEventListAdapter(
         val itemTouchCallback =
                 object : ItemTouchHelper.Callback() {
 
-                    internal val lightweightSwipe = Settings(context).lightweightSwipe
-                    internal val escapeVelocityMultiplier = if (lightweightSwipe) 2.0f else 5.0f
+                    internal val escapeVelocityMultiplier = 5.0f
 
                     internal val background = ColorDrawable(context.resources.getColor(R.color.material_red))
                     internal var xMark = context.resources.getDrawable(R.drawable.ic_clear_white_24dp)

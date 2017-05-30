@@ -22,10 +22,4 @@
         android:summary="@string/halo_light_theme_time_picker_summary"
         android:defaultValue="false" />
 
-    <CheckBoxPreference
-        android:key="lw_swipe"
-        android:title="@string/lightweight_swipe"
-        android:summary="@string/lightweight_swipe_summary"
-        android:defaultValue="false" />
-
 </PreferenceScreen>

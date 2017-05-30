@@ -43,7 +43,8 @@ data class NotificationSettingsSnapshot
         val pebbleForwardRemindersOnly: Boolean,
         val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
-        val quietHoursMuteLED: Boolean
+        val quietHoursMuteLED: Boolean,
+        val useAlarmStream: Boolean
 )
 
 class Settings(context: Context) : PersistentStorageBase(context) {
@@ -141,7 +142,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
 
-        val uriValue = getString(settingsKey, ringtoneNotSetValue)
+        val uriValue = (getString(settingsKey, ringtoneNotSetValue) as String?)
 
         if (uriValue == null || uriValue.isEmpty()) {
             // Silent mode -- string is empty
@@ -169,7 +170,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = loadRingtoneUri(RINGTONE_KEY)
 
     val reminderRingtoneURI: Uri?
-        get() = loadRingtoneUri(if (reminderCustomVibra) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
+        get() = loadRingtoneUri(if (reminderCustomRingtone) REMINDERS_RINGTONE_KEY else RINGTONE_KEY)
+
+    val notificationUseAlarmStream: Boolean
+        get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
 
     val reminderCustomRingtone: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
@@ -218,10 +222,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val quietHoursMuteLED: Boolean
         get() = getBoolean(QUIET_HOURS_MUTE_LED, false)
-
-//    var quietHoursOneTimeReminderEnabled: Boolean
-//        get() = getBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, false)
-//        set(value) = setBoolean(QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY, value)
 
     fun getCalendarIsHandled(calendarId: Long) =
             getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
@@ -312,7 +312,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 pebbleForwardRemindersOnly = pebbleForwardRemindersOnly,
                 showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
-                quietHoursMuteLED = quietHoursMuteLED
+                quietHoursMuteLED = quietHoursMuteLED,
+                useAlarmStream = notificationUseAlarmStream
         )
 
     companion object {
@@ -405,6 +406,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
 
         private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week"
+
+        private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification"
+
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

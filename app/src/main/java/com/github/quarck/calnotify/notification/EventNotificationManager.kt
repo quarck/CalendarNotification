@@ -25,6 +25,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.text.format.DateUtils
@@ -349,26 +350,29 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
 
         val builder =
-                Notification.Builder(context)
+                NotificationCompat.Builder(context)
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
                         .setPriority(
                                 if (notificationsSettings.headsUpNotification && shouldPlayAndVibrate)
-                                    Notification.PRIORITY_HIGH
+                                    NotificationCompat.PRIORITY_HIGH
                                 else
-                                    Notification.PRIORITY_DEFAULT
+                                    NotificationCompat.PRIORITY_DEFAULT
                         )
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setStyle(Notification.BigTextStyle().bigText(text))
+                        .setStyle(NotificationCompat.BigTextStyle().bigText(text))
                         .setNumber(numEvents)
-                        .setShowWhenCompat(false)
+                        .setShowWhen(false)
 
         if (shouldPlayAndVibrate) {
             if (notificationsSettings.ringtoneUri != null) {
-                builder.setSound(notificationsSettings.ringtoneUri)
+                if (notificationsSettings.useAlarmStream)
+                    builder.setSound(notificationsSettings.ringtoneUri, AudioManager.STREAM_ALARM)
+                else
+                    builder.setSound(notificationsSettings.ringtoneUri)
             }
 
             if (notificationsSettings.vibrationOn) {
@@ -672,9 +676,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(
                         if (notificationSettings.headsUpNotification)
-                            Notification.PRIORITY_HIGH
+                            NotificationCompat.PRIORITY_HIGH
                         else
-                            Notification.PRIORITY_DEFAULT
+                            NotificationCompat.PRIORITY_DEFAULT
                 )
                 .setContentIntent(
                         pendingIntent
@@ -692,12 +696,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         lastVisibilityToSortingKey(lastVisibility)
                 )
                 .setCategory(
-                        NotificationCompat.CATEGORY_EVENT
+                        NotificationCompat.CATEGORY_REMINDER
                 )
                 .setOnlyAlertOnce(false)
 
         if (notificationSettings.ringtoneUri != null) {
-            builder.setSound(notificationSettings.ringtoneUri)
+            if (notificationSettings.useAlarmStream)
+                builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
+            else
+                builder.setSound(notificationSettings.ringtoneUri)
         }
 
         if (notificationSettings.vibrationOn) {
@@ -801,9 +808,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(
                         if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
-                            Notification.PRIORITY_HIGH
+                            NotificationCompat.PRIORITY_HIGH
                         else
-                            Notification.PRIORITY_DEFAULT
+                            NotificationCompat.PRIORITY_DEFAULT
                 )
                 .setContentIntent(
                         if (notificationSettings.notificationOpensSnooze)
@@ -922,7 +929,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
         builder.extend(extender)
 
         if (notificationSettings.ringtoneUri != null) {
-            builder.setSound(notificationSettings.ringtoneUri)
+            if (notificationSettings.useAlarmStream)
+                builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
+            else
+                builder.setSound(notificationSettings.ringtoneUri)
         }
 
         if (notificationSettings.vibrationOn) {
@@ -1113,7 +1123,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
-                .setPriority(Notification.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(appPendingIntent)
                 .setAutoCancel(false)
                 .setShowWhen(false)

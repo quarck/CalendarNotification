@@ -23,6 +23,13 @@
         android:showDefault="true"
         />
 
+    <CheckBoxPreference
+        android:key="use_alarm_stream_for_notification"
+        android:title="@string/use_alarm_stream"
+        android:summary="@string/use_alarm_stream_summary"
+        android:defaultValue="false"
+        />
+
     <CheckBoxPreference android:key="vibra_on"
         android:title="@string/vibra_on"
         android:defaultValue="true"/>

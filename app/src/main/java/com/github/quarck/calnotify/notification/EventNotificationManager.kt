@@ -214,6 +214,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val lastVisibility = activeEvents.map { it.lastEventVisibility }.max() ?: 0L
 
             if (numActiveEvents > 0) {
+
+                if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
+                    postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+
                 postReminderNotification(
                         context,
                         numActiveEvents,

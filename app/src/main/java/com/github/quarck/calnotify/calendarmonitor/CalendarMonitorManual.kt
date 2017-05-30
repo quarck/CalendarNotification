@@ -30,6 +30,11 @@ import java.util.*
 
 //TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
 
+//TODO: test dismiss all while scan is in progress
+
+//TODO: reduce APK size (bad place for this todo, but still)
+
+
 class CalendarMonitorManual(
         val calendarProvider: CalendarProviderInterface,
         val calendarMonitor: CalendarMonitorInterface

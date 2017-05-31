@@ -28,8 +28,6 @@ import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
 
 
-//TODO: need manual rescan timer, to re-scan events fully every few hours (preferably when on battery)
-
 //TODO: test dismiss all while scan is in progress
 
 //TODO: reduce APK size (bad place for this todo, but still)
@@ -188,8 +186,6 @@ class CalendarMonitorManual(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-        // TODO: Dismiss all while scan is in progress????
-
 //        MonitorStorage(context).use { it.deleteAlertsMatching { _ -> true } } ; state.firstScanEver = false
 //        state.prevEventScanTo = System.currentTimeMillis() - 145L*24L*3600L*1000L // YAHOOOOO!!!!
 
@@ -270,19 +266,6 @@ class CalendarMonitorManual(
         // Finally - find the next nearest alert
         val nextAlert = alertsMerged.filter { !it.wasHandled && it.alertTime > fireAlertsUpTo }
                 .minBy { it.alertTime }
-
-        // TODO TODO TODO First - need settings for this
-        // TODO TODO TODO
-        // TODO TODO TODO
-        // TODO TODO TODO
-        // TODO TODO TODO
-        // TODO TODO TODO
-        // TODO TODO TODO
-        // TODO: below: -- calendar provider handles most of it, we need to
-        // make sure we re-scan on setting change, to update alert times.
-        // most likely we are re-scanning on onResume, then just make sure!!
-        val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
-
 
         val nextAlertTime = nextAlert?.alertTime ?: Long.MAX_VALUE
         state.nextEventFireFromScan = nextAlertTime

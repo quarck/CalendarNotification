@@ -620,7 +620,11 @@ object ApplicationController : EventMovedHandler {
     fun onMainActivityStarted(context: Context?) {
     }
 
-    fun onMainActivityResumed(context: Context?, shouldRepost: Boolean) {
+    fun onMainActivityResumed(
+            context: Context?,
+            shouldRepost: Boolean,
+            monitorSettingsChanged: Boolean
+    ) {
         if (context != null) {
 
             cleanupEventReminder(context)
@@ -630,7 +634,7 @@ object ApplicationController : EventMovedHandler {
             };
 
             // this might fire new notifications
-            val monitorChanges = calendarMonitor.onAppStarted(context)
+            val monitorChanges = calendarMonitor.onAppResumed(context, monitorSettingsChanged)
 
             if (shouldRepost || changes || monitorChanges) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
@@ -818,5 +822,4 @@ object ApplicationController : EventMovedHandler {
     fun postNotificationsAutoDismissedDebugMessage(context: Context) {
         notificationManager.postNotificationsAutoDismissedDebugMessage(context)
     }
-
 }

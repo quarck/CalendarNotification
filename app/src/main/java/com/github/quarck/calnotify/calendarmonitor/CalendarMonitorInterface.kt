@@ -36,7 +36,7 @@ interface CalendarMonitorInterface {
 
     fun onBoot(context: Context): Boolean
 
-    fun onAppStarted(context: Context): Boolean
+    fun onAppResumed(context: Context, monitorSettingsChanged: Boolean): Boolean
 
     fun onUpgrade(context: Context): Boolean
 

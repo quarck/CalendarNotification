@@ -54,16 +54,16 @@ class EventsStorageImplV7
                         "$KEY_INSTANCE_START INTEGER, " +
                         "$KEY_INSTANCE_END INTEGER, " +
 
-                        "$KEY_LOCATION STRING, " + // FIXME!!! Must be 'TEXT'
+                        "$KEY_LOCATION STRING, " +
                         "$KEY_SNOOZED_UNTIL INTEGER, " +
                         "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
                         "$KEY_DISPLAY_STATUS INTEGER, " +
                         "$KEY_COLOR INTEGER, " +
                         "$KEY_IS_REPEATING TEXT, " +
 
-                        "$KEY_ALL_DAY TEXT, " + // FIXME
-                        "$KEY_EVENT_ORIGIN TEXT, " + // FIXME
-                        "$KEY_TIME_FIRST_SEEN TEXT, " + // FIXME
+                        "$KEY_ALL_DAY TEXT, " +
+                        "$KEY_EVENT_ORIGIN TEXT, " +
+                        "$KEY_TIME_FIRST_SEEN TEXT, " +
 
                         "$KEY_RESERVED_STR2 TEXT, " +
                         "$KEY_RESERVED_STR3 TEXT, " +

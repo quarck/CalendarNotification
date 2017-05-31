@@ -80,6 +80,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var useCompactView = true
 
+    private var shouldRemindForEventsWithNoReminders = true
+
     private var shouldForceRepost = false
 
     private val undoDisappearSensitivity: Float by lazy {
@@ -111,6 +113,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         useCompactView = settings.useCompactView
+        shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
         adapter =
                 EventListAdapter(
@@ -186,8 +189,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         checkPermissions()
 
+        var monitorSettingsChanged = false
+        if (settings.shouldRemindForEventsWithNoReminders != shouldRemindForEventsWithNoReminders) {
+            shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders;
+            monitorSettingsChanged = true
+        }
+
         background {
-            ApplicationController.onMainActivityResumed(this, shouldForceRepost)
+            ApplicationController.onMainActivityResumed(this, shouldForceRepost, monitorSettingsChanged)
             shouldForceRepost = false
         }
 

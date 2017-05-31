@@ -93,11 +93,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    override fun onAppStarted(context: Context): Boolean {
+    override fun onAppResumed(context: Context, monitorSettingsChanged: Boolean): Boolean {
         logger.debug("onAppStarted: scanning and setting alarms");
 
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4)
+        if (!monitorSettingsChanged && (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4))
             return false
         lastScan = currentTime
 

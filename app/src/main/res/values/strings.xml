@@ -331,5 +331,9 @@
     <string name="first_day_of_week_summary">(Android 5 and above only)</string>
     <string name="use_alarm_stream">Use Alarm volume</string>
     <string name="use_alarm_stream_summary">Play notification on Alarm stream (instead of Notification)</string>
+
+    <string name="restrict_swipe_to_dismiss">Restrict notification swipe</string>
+    <string name="snooze_on_swipe">Snooze on swipe</string>
+    <string name="snooze_on_swipe_summary">Swiping would snooze event instead of dismissing it (1st present is used)</string>
 </resources>
 

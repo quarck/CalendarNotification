@@ -43,6 +43,9 @@ class EventsStorage(context: Context)
             DATABASE_VERSION_V8 ->
                 impl = EventsStorageImplV8();
 
+            DATABASE_VERSION_V9 ->
+                impl = EventsStorageImplV9();
+
             else ->
                 throw NotImplementedError("DB Version $DATABASE_CURRENT_VERSION is not supported")
         }
@@ -58,7 +61,7 @@ class EventsStorage(context: Context)
         if (oldVersion == newVersion)
             return
 
-        if (newVersion != DATABASE_VERSION_V8)
+        if (newVersion != DATABASE_VERSION_V9)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
         logger.debug("V$oldVersion to V$newVersion upgrade")
@@ -67,6 +70,7 @@ class EventsStorage(context: Context)
                 when (oldVersion) {
                     DATABASE_VERSION_V6 -> EventsStorageImplV6()
                     DATABASE_VERSION_V7 -> EventsStorageImplV7()
+                    DATABASE_VERSION_V8 -> EventsStorageImplV8()
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -211,8 +215,9 @@ class EventsStorage(context: Context)
         private const val DATABASE_VERSION_V6 = 6
         private const val DATABASE_VERSION_V7 = 7
         private const val DATABASE_VERSION_V8 = 8
+        private const val DATABASE_VERSION_V9 = 9
 
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V8
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V9
 
         private const val DATABASE_NAME = "Events"
     }

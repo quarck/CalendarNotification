@@ -1092,7 +1092,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setAutoCancel(false)
                         .setOngoing(true)
                         .setStyle(Notification.BigTextStyle().bigText(bigText))
-                        .setNumber(numEvents)
                         .setShowWhenCompat(false)
 
         if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {

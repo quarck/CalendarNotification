@@ -61,13 +61,13 @@ class DismissedEventsStorageImplV1()
                         "$KEY_COLOR INTEGER, " +
                         "$KEY_IS_REPEATING TEXT, " +
 
-                        "$KEY_ALL_DAY TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT1 TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT2 TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT3 TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT4 TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT5 TEXT, " + // FIXME
-                        "$KEY_RESERVED_INT6 TEXT, " + // FIXME
+                        "$KEY_ALL_DAY TEXT, " +
+                        "$KEY_RESERVED_INT1 TEXT, " +
+                        "$KEY_RESERVED_INT2 TEXT, " +
+                        "$KEY_RESERVED_INT3 TEXT, " +
+                        "$KEY_RESERVED_INT4 TEXT, " +
+                        "$KEY_RESERVED_INT5 TEXT, " +
+                        "$KEY_RESERVED_INT6 TEXT, " + 
 
                         "$KEY_RESERVED_STR1 TEXT, " +
                         "$KEY_RESERVED_STR2 TEXT, " +

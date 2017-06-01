@@ -493,6 +493,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     @Suppress("unused", "UNUSED_PARAMETER", "DEPRECATION")
     fun OnButtonSnoozeUntilClick(v: View?) {
 
+        val currentlySnoozedUntil = event?.snoozedUntil ?: 0L
+
         val dialogDate = this.layoutInflater.inflate(
                 if (settings.haloLightDatePicker)
                     R.layout.dialog_date_picker_halo_light
@@ -504,6 +506,17 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val firstDayOfWeek = Settings(this).firstDayOfWeek
         if (firstDayOfWeek != -1 && isLollipopOrAbove)
            datePicker.firstDayOfWeek = firstDayOfWeek
+
+        if (currentlySnoozedUntil != 0L) {
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = currentlySnoozedUntil
+
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+
+            datePicker.updateDate(year, month, day)
+        }
 
         AlertDialog.Builder(this)
                 .setView(dialogDate)
@@ -520,6 +533,15 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                     val timePicker = dialogTime.find<TimePicker>(R.id.timePickerCustomSnooze)
                     timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+
+                    if (currentlySnoozedUntil != 0L) {
+                        val cal = Calendar.getInstance()
+                        cal.timeInMillis = currentlySnoozedUntil
+
+                        timePicker.currentHour = cal.get(Calendar.HOUR_OF_DAY)
+                        timePicker.currentMinute = cal.get(Calendar.MINUTE)
+                    }
+
 
                     val date = Calendar.getInstance()
                     date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth, 0, 0, 0)

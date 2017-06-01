@@ -25,6 +25,12 @@
         android:title="@string/settings"/>
 
     <item
+        android:id="@+id/action_dismiss_all"
+        android:orderInCategory="121"
+        app:showAsAction="never"
+        android:title="@string/dismiss_all_events" />
+
+    <item
         android:id="@+id/action_feedback"
         android:orderInCategory="130"
         app:showAsAction="never"
@@ -38,10 +44,5 @@
         app:showAsAction="never"
         android:title="@string/menu_about" />
 
-    <item
-        android:id="@+id/action_dismiss_all"
-        android:orderInCategory="150"
-        app:showAsAction="never"
-        android:title="@string/dismiss_all_events" />
 
 </menu>

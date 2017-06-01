@@ -252,8 +252,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
 
-        logger.debug("scanAndScheduleAlarms, dropping DB to debug performance");
-
         val scanStart = System.currentTimeMillis()
 
         schedulePeriodicRescanAlarm(context)

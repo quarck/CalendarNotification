@@ -63,6 +63,14 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         logger.debug("onCreate")
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        find<TextView>(R.id.textViewLogFileNote).visibility =
+                if (shouldAttachLogs) View.VISIBLE else View.GONE
+    }
+
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnIncludeLogsClick(v: View) {
 

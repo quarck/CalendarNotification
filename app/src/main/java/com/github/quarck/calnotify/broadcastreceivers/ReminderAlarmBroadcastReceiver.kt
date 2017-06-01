@@ -104,7 +104,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
                 logger.info("Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
 
-                if (maxFires == 0 || numRemindersFired <= maxFires) {
+                if (maxFires == 0 || numRemindersFired < maxFires) {
 
                     if (silentUntil != 0L) {
                         logger.info("Reminder postponed until $silentUntil due to quiet hours");

@@ -28,11 +28,6 @@ import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
 
 
-//TODO: test dismiss all while scan is in progress
-
-//TODO: reduce APK size (bad place for this todo, but still)
-
-
 class CalendarMonitorManual(
         val calendarProvider: CalendarProviderInterface,
         val calendarMonitor: CalendarMonitorInterface

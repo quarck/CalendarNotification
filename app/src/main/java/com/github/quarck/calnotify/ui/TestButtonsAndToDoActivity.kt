@@ -38,6 +38,28 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+// TODO: add event button (off by default)
+
+// FIXME: sometimes dismiss takes quite a while!
+
+// TODO: https://github.com/quarck/CalendarNotification/issues/227
+// TODO: https://github.com/quarck/CalendarNotification/issues/220
+// FIXME: https://github.com/quarck/CalendarNotification/issues/203
+// FIXME: https://github.com/quarck/CalendarNotification/issues/202
+// FIXME: https://github.com/quarck/CalendarNotification/issues/201
+// FIXME: https://github.com/quarck/CalendarNotification/issues/200
+// FIXME: https://github.com/quarck/CalendarNotification/issues/199
+// FIXME: https://github.com/quarck/CalendarNotification/issues/198
+
+// TODO: snooze - reload event
+
+// TODO: when app is opened - stop reminding until next event fire
+
+//TODO: test dismiss all while scan is in progress
+
+//TODO: reduce APK size (bad place for this todo, but still)
+
+
 class TestButtonsAndToDoActivity : Activity() {
 
     private val settings by lazy { Settings(this) }

@@ -28,6 +28,8 @@ class PersistentState(private val ctx: Context) : PersistentStorageBase(ctx, PRE
     var notificationLastFireTime by LongProperty(0, "A") // give a short name to simplify XML parsing
     var nextSnoozeAlarmExpectedAt by LongProperty(0, "B")
 
+    var lastCustomSnoozeIntervalMillis by LongProperty(Consts.HOUR_IN_SECONDS * 1000L, "C")
+
     companion object {
         const val PREFS_NAME: String = "persistent_state"
     }

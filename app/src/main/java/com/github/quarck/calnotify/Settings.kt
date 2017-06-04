@@ -49,10 +49,6 @@ data class NotificationSettingsSnapshot
 
 class Settings(context: Context) : PersistentStorageBase(context) {
 
-    var lastCustomSnoozeIntervalMillis: Long
-        get() = getLong(LAST_CUSTOM_INTERVAL_KEY, Consts.HOUR_IN_SECONDS * 1000L)
-        set(value) = setLong(LAST_CUSTOM_INTERVAL_KEY, value)
-
     val showDismissButton: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
@@ -248,10 +244,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val keepHistoryMilliseconds: Long
         get() = keepHistoryDays.toLong() * Consts.DAY_IN_MILLISECONDS
 
-    var powerOptimisationWarningShown: Boolean
-        get() = getBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, false)
-        set(value) = setBoolean(POWER_OPTIMISATION_WARNING_SHOWN_KEY, value)
-
     var versionCodeFirstInstalled: Long
         get() = getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
         set(value) = setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
@@ -376,11 +368,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val HALO_LIGHT_DATE_PICKER_KEY = "halo_light_date"
         private const val HALO_LIGHT_TIMER_PICKER_KEY = "halo_light_time"
 
-        private const val LAST_CUSTOM_INTERVAL_KEY = "last_custom_snooze_interval"
-
         private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
-
-        private const val POWER_OPTIMISATION_WARNING_SHOWN_KEY = "power_warning1_shown"
 
         private const val VERSION_CODE_FIRST_INSTALLED_KEY = "first_installed_ver"
 

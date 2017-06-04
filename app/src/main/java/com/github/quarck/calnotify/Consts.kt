@@ -112,18 +112,19 @@ object Consts {
 
     const val ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
 
-    const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
-    const val CALENDAR_DEEP_RESCAN_INTERVAL = 2 * 3600L * 1000L  // 2hrs
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
 
-    const val MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS = 300L
-    const val MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS = 300L
-    const val MAX_CAL_RELOAD_TIME_ON_CALENDAR_CHANGED_MILLIS = 700L
+    const val MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS = 1000L
+    const val MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS = 1000L
+    const val MAX_CAL_RELOAD_TIME_ON_CALENDAR_CHANGED_MILLIS = 1500L
     const val MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS = 100L
-    const val MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS = 300L
-    const val MAX_CAL_RELOAD_TIME_ON_MANUAL_SCANNER_RELOAD_MILLI = 300L
+    const val MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS = 1000L
 
     const val MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING = 30
 
     const val MAX_DUE_ALERTS_FOR_MANUAL_SCAN = 100
     const val MAX_SCAN_BACKWARD_DAYS = 31L
+
+    const val MIN_INTERVAL_BETWEEN_SOUNDS = 1000L
+    const val MIN_INTERVAL_BETWEEN_VIBRATIONS = 1000L
 }

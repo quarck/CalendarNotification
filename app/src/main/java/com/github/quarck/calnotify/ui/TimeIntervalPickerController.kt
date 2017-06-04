@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.TextView
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
@@ -91,8 +92,11 @@ class TimeIntervalPickerController(val view: View, titleId: Int?) {
 
         }
 
-    val intervalMilliseconds: Long
+    var intervalMilliseconds: Long
         get() = intervalMinutes * 60L * 1000L
+        set(value) {
+            intervalMinutes = (value / Consts.MINUTE_IN_SECONDS / 1000L).toInt()
+        }
 
     companion object {
         const val MINUTES_ID = 0

@@ -175,7 +175,7 @@ object ApplicationController : EventMovedHandler {
         if (events.size == 1)
             notificationManager.onEventAdded(context, EventFormatter(context), events.first())
         else
-            notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
+            notificationManager.postEventNotifications(context, EventFormatter(context), false, null)
 
     }
 

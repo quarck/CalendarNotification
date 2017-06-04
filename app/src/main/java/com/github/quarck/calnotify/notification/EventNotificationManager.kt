@@ -45,6 +45,9 @@ import com.github.quarck.calnotify.utils.*
 
 class EventNotificationManager : EventNotificationManagerInterface {
 
+    var lastSoundTimestamp = 0L;
+    var lastVibrationTimestamp = 0L;
+
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
 
         postEventNotifications(ctx, formatter, false, event.eventId)
@@ -259,6 +262,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         var shouldPlayAndVibrate = false
 
+        val currentTime = System.currentTimeMillis()
+
 
         // make sure we remove full notifications
         if (force)
@@ -368,14 +373,22 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setShowWhen(false)
 
         if (shouldPlayAndVibrate) {
-            if (notificationsSettings.ringtoneUri != null) {
+            if (notificationsSettings.ringtoneUri != null
+                    && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
+
+                lastSoundTimestamp = currentTime
+
                 if (notificationsSettings.useAlarmStream)
                     builder.setSound(notificationsSettings.ringtoneUri, AudioManager.STREAM_ALARM)
                 else
                     builder.setSound(notificationsSettings.ringtoneUri)
             }
 
-            if (notificationsSettings.vibrationOn) {
+            if (notificationsSettings.vibrationOn
+                    && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
+
+                lastVibrationTimestamp = currentTime
+
                 builder.setVibrate(notificationsSettings.vibrationPattern)
             }
             else {
@@ -700,14 +713,22 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setOnlyAlertOnce(false)
 
-        if (notificationSettings.ringtoneUri != null) {
+        if (notificationSettings.ringtoneUri != null
+                && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
+
+            lastSoundTimestamp = currentTime
+
             if (notificationSettings.useAlarmStream)
                 builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
             else
                 builder.setSound(notificationSettings.ringtoneUri)
         }
 
-        if (notificationSettings.vibrationOn) {
+        if (notificationSettings.vibrationOn
+                && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
+
+            lastVibrationTimestamp = currentTime
+
             builder.setVibrate(notificationSettings.vibrationPattern)
         }
         else {
@@ -791,6 +812,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
                         event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DISMISS_OFFSET
                 )
+
+
+        val currentTime = System.currentTimeMillis()
+
 
         val notificationText = formatter.formatNotificationSecondaryText(event)
 
@@ -928,14 +953,22 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         builder.extend(extender)
 
-        if (notificationSettings.ringtoneUri != null) {
+        if (notificationSettings.ringtoneUri != null
+                && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
+
+            lastSoundTimestamp = currentTime
+
             if (notificationSettings.useAlarmStream)
                 builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
             else
                 builder.setSound(notificationSettings.ringtoneUri)
         }
 
-        if (notificationSettings.vibrationOn) {
+        if (notificationSettings.vibrationOn
+                && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS) ) {
+
+            lastVibrationTimestamp = currentTime
+
             builder.setVibrate(notificationSettings.vibrationPattern)
         }
         else {

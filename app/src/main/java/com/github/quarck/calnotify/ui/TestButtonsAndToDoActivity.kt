@@ -34,30 +34,34 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.logs.DevLogger
+import com.github.quarck.calnotify.logs.DevLoggerDB
+import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+// TODO: when any event is dismissed - reset reminder timer to T+interval (instead of what it was scheduled for)
+
+// TODO: sometimes reminders are very late, we need a "Developer Mode logs" to debug that
+
 // TODO: add event button (off by default)
+
+// TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1
+// TODO: need a prper UI for setting manual scanner event reminders (handle before/after etc)
 
 // FIXME: sometimes dismiss takes quite a while!
 
 // TODO: https://github.com/quarck/CalendarNotification/issues/227
 // TODO: https://github.com/quarck/CalendarNotification/issues/220
-// FIXME: https://github.com/quarck/CalendarNotification/issues/203
-// FIXME: https://github.com/quarck/CalendarNotification/issues/202
-// FIXME: https://github.com/quarck/CalendarNotification/issues/201
-// FIXME: https://github.com/quarck/CalendarNotification/issues/200
-// FIXME: https://github.com/quarck/CalendarNotification/issues/199
-// FIXME: https://github.com/quarck/CalendarNotification/issues/198
 
 // TODO: snooze - reload event
 
 // TODO: when app is opened - stop reminding until next event fire
 
-//TODO: test dismiss all while scan is in progress
+// TODO: test dismiss all while scan is in progress
 
-//TODO: reduce APK size (bad place for this todo, but still)
+// TODO: reduce APK size
 
 
 class TestButtonsAndToDoActivity : Activity() {
@@ -72,6 +76,8 @@ class TestButtonsAndToDoActivity : Activity() {
         find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
         find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
         find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
+
+        find<ToggleButton>(R.id.buttonTestToggleDevLog).isChecked = DevLoggerSettings(this).enabled
     }
 
 
@@ -253,5 +259,15 @@ class TestButtonsAndToDoActivity : Activity() {
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleDebugMonitorClick(v: View) {
         settings.enableMonitorDebug = find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonToggleDevLogClick(v: View) {
+        DevLoggerSettings(this).enabled = find<ToggleButton>(R.id.buttonTestToggleDevLog).isChecked
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonClearDevLog(v: View) {
+        DevLogger(this).clear()
     }
 }

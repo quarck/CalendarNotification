@@ -30,6 +30,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.logs.DevLogger
+import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.logs.LogcatProvider
 import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
@@ -84,30 +86,49 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     fun OnButtonEmailDeveloper(v: View) {
         logger.debug("Emailing developer");
 
-        var content = emailText
-
         val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
 
         val email =
                 Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_EMAIL, arrayOf(developerEmail))
-                        .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+                        .putExtra(Intent.EXTRA_EMAIL, arrayOf(DEVELOPER_EMAIL))
+                        .putExtra(Intent.EXTRA_SUBJECT, EMAIL_SUBJECT)
                         .putExtra(Intent.EXTRA_TEXT, emailText)
-                        .setType(mimeType)
+                        .setType(MIME_TYPE)
 
         if (shouldAttachLogs) {
 
             val logLines = LogcatProvider.getLog(this)
 
+            val devLogLines: List<String>? =
+                    if (DevLoggerSettings(this).enabled)
+                        DevLogger(this).messages
+                    else
+                        null
+
             val logsPath = File(cacheDir, Consts.LOGS_FOLDER)
             logsPath.mkdir()
 
-            val newFile = File(logsPath, logFileAttachmentName)
+            val newFile = File(logsPath, LOG_FILE_ATTACHMENT)
 
             PrintWriter(newFile).use {
                 writer ->
-                for (line in logLines)
-                    writer.printf("%s\r\n", line)
+
+                if (devLogLines != null)
+                    writer.print(LOGCAT_HEADER)
+
+                for (line in logLines) {
+                    writer.print(line)
+                    writer.print("\n")
+                }
+
+                if (devLogLines != null) {
+                    writer.print(DEVLOG_HEADER)
+
+                    for (line in devLogLines) {
+                        writer.print(line)
+                        writer.print("\n")
+                    }
+                }
             }
 
             val contentUri = FileProvider.getUriForFile(this, Consts.FILE_PROVIDER_ID, newFile)
@@ -127,7 +148,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun OnButtonWiki(v: View) = startActivity(Intent.parseUri(wikiUri, 0))
+    fun OnButtonWiki(v: View) = startActivity(Intent.parseUri(WIKI_URL, 0))
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEasterEgg(v: View) {
@@ -150,9 +171,9 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
         val pInfo = packageManager.getPackageInfo(packageName, 0);
 
-        """Please describe your problem or suggestion below this text (English/Russian languages only)
+        """Please describe your problem or suggestion below this text (in English)
 
-If you are not reporting a problem, you could remove android and hardware details that were automatically added to this message.
+If you are not reporting a problem, you could remove device details that were automatically added to this message.
 
 Android version: ${Build.VERSION.RELEASE}
 Device: ${Build.MANUFACTURER} ${Build.MODEL}
@@ -167,12 +188,28 @@ App version: ${pInfo.versionName} (${pInfo.versionCode})
     companion object {
         var logger = Logger("ActivityHelpAndFeedback")
 
-        val developerEmail = "s.parshin.sc@gmail.com"
-        val mimeType = "message/rfc822"
-        val emailSubject = "Calendar Notification Plus Feedback"
+        const val DEVELOPER_EMAIL = "quarck@gmail.com"
+        const val MIME_TYPE = "message/rfc822"
+        const val EMAIL_SUBJECT = "Calendar Notification Plus Feedback"
 
-        val wikiUri = "https://github.com/quarck/CalendarNotification/wiki"
+        const val WIKI_URL = "https://github.com/quarck/CalendarNotification/wiki"
 
-        val logFileAttachmentName = "calnotify.log"
+        const val LOG_FILE_ATTACHMENT = "calnotify.log"
+
+        const val LOGCAT_HEADER = """
+
+==========================================================================
+LOGCAT LOGS:
+==========================================================================
+
+"""
+
+        const val DEVLOG_HEADER = """
+
+==========================================================================
+DEV LOGS:
+==========================================================================
+
+"""
     }
 }

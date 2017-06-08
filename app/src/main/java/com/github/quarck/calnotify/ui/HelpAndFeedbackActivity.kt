@@ -101,7 +101,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
             val devLogLines: List<String>? =
                     if (DevLoggerSettings(this).enabled)
-                        DevLogger(this).messages
+                        DevLogger.getMessages(this)
                     else
                         null
 

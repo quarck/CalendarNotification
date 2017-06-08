@@ -26,6 +26,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.text.format.DateUtils
+import android.util.Log
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import java.io.Closeable
 
@@ -187,64 +188,72 @@ class DevLoggerDB(val context: Context):
     }
 }
 
-class DevLogger(val ctx: Context) {
+object DevLogger {
 
-    val enabled: Boolean
+    const val LOG_TAG = "CalNotify"
 
-    init {
-        enabled = DevLoggerSettings(ctx).enabled
+    var enabled: Boolean? = null
+
+    private fun getIsEnabled(context: Context): Boolean {
+
+        if (enabled == null) {
+            enabled = DevLoggerSettings(context).enabled
+        }
+
+        return enabled ?: false
     }
 
-    private fun log(severity: Int, eventId: Long, message: String) {
-        if (enabled) {
-            DevLoggerDB(ctx).use {
-                it.addMessage(severity, eventId, message)
-            }
+    private fun log(context: Context, severity: Int, eventId: Long, message: String) {
+        DevLoggerDB(context).use {
+            it.addMessage(severity, eventId, message)
         }
     }
 
-    fun error(eventId: Long, message: String) {
-        if (enabled)
-            log(DevLoggerDB.SEVERITY_ERROR, eventId, message)
+    fun error(context: Context, eventId: Long, message: String) {
+        if (getIsEnabled(context)) {
+            log(context, DevLoggerDB.SEVERITY_ERROR, eventId, message)
+        }
+        else {
+            Log.e(LOG_TAG, message)
+        }
     }
 
-    fun warn(eventId: Long, message: String) {
-        if (enabled)
-            log(DevLoggerDB.SEVERITY_WARNING, eventId, message)
+    fun warn(context: Context, eventId: Long, message: String) {
+        if (getIsEnabled(context)) {
+            log(context, DevLoggerDB.SEVERITY_WARNING, eventId, message)
+        }
+        else {
+            Log.w(LOG_TAG, message)
+        }
     }
 
-    fun info(eventId: Long, message: String) {
-        if (enabled)
-            log(DevLoggerDB.SEVERITY_INFO, eventId, message)
+    fun info(context: Context, eventId: Long, message: String) {
+        if (getIsEnabled(context)) {
+            log(context, DevLoggerDB.SEVERITY_INFO, eventId, message)
+        }
+        else {
+            Log.i(LOG_TAG, message)
+        }
     }
 
-    fun debug(eventId: Long, message: String) {
-        if (enabled)
-            log(DevLoggerDB.SEVERITY_DEBUG, eventId, message)
-    }
+    fun error(context: Context, message: String) = error(context, 0, message)
 
-    fun error(message: String) = error(0, message)
+    fun warn(context: Context, message: String) = warn(context, 0, message)
 
-    fun warn(message: String) = warn(0, message)
+    fun info(context: Context, message: String) = info(context, 0, message)
 
-    fun info(message: String) = info(0, message)
-
-    fun debug(message: String) = debug(0, message)
-
-
-    fun clear() {
-        DevLoggerDB(ctx).use {
+    fun clear(context: Context) {
+        DevLoggerDB(context).use {
             it.clear()
         }
     }
 
-    val messages: List<String>
-        get() {
+    fun getMessages(context: Context): List<String> {
 
-            val lines = DevLoggerDB(ctx).use {
-                it.getMessages()
-            }
-
-            return lines
+        val lines = DevLoggerDB(context).use {
+            it.getMessages()
         }
+
+        return lines
+    }
 }

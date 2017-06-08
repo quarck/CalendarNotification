@@ -268,6 +268,6 @@ class TestButtonsAndToDoActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonClearDevLog(v: View) {
-        DevLogger(this).clear()
+        DevLogger.clear(this)
     }
 }

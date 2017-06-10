@@ -34,8 +34,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.logs.DevLogger
-import com.github.quarck.calnotify.logs.DevLoggerDB
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
@@ -268,6 +267,6 @@ class TestButtonsAndToDoActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonClearDevLog(v: View) {
-        DevLogger.clear(this)
+        DevLog.clear(this)
     }
 }

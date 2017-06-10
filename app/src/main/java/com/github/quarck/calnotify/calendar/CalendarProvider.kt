@@ -27,11 +27,12 @@ import android.database.Cursor
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
 object CalendarProvider : CalendarProviderInterface {
-    private val logger = Logger("CalendarProvider");
+    private const val LOG_TAG = "CalendarProvider"
 
     private val alertFields =
             arrayOf(
@@ -116,7 +117,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getFiredEventsDetails failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "getAlertByTime: has no permissions");
             return listOf();
         }
 
@@ -138,23 +139,22 @@ object CalendarProvider : CalendarProviderInterface {
                 val (state, event) = cursorToAlertRecord(cursor, alertTime.toLong());
 
                 if (state != null && event != null) {
-                    logger.info("Received event details: ${event.eventId}, st $state, from ${event.startTime} to ${event.endTime}")
-
                     if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
+                        DevLog.info(context, LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
                         ret.add(event)
                     }
                     else {
-                        logger.info("Ignored dismissed event ${event.eventId}")
+                        DevLog.info(context, LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - already dismissed in provider, ignoring")
                     }
                 }
                 else {
-                    logger.error("Cannot read fired event details!!")
+                    DevLog.error(context, LOG_TAG, "Failed to interpret query output, alertTime=$alertTime")
                 }
 
             } while (cursor.moveToNext())
         }
         else {
-            logger.error("Failed to parse event - no events at $alertTime")
+            DevLog.error(context, LOG_TAG, "No events at $alertTime")
         }
 
         cursor?.close()
@@ -170,7 +170,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEvent failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "getAlertByEventIdAndTime: has no permissions");
             return null;
         }
 
@@ -199,7 +199,7 @@ object CalendarProvider : CalendarProviderInterface {
             } while (cursor.moveToNext())
         }
         else {
-            logger.error("Event $eventId not found")
+            DevLog.error(context, LOG_TAG, "Event $eventId not found")
         }
 
         cursor?.close()
@@ -213,7 +213,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEventInstances failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "getEventAlerts: has no permissions");
             return listOf();
         }
 
@@ -249,7 +249,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         else {
-            logger.error("Event $eventId not found")
+            DevLog.error(context, LOG_TAG, "Event $eventId not found")
         }
 
         cursor?.close()
@@ -298,7 +298,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("Exception while reading event $eventId reminders: $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while reading event $eventId reminders: $ex, ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
@@ -343,7 +343,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEvent failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "getEvent: has no permissions");
             return null;
         }
 
@@ -403,7 +403,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         else {
-            logger.error("Event $eventId not found")
+            DevLog.error(context, LOG_TAG, "Event $eventId not found")
         }
 
         cursor?.close()
@@ -413,7 +413,7 @@ object CalendarProvider : CalendarProviderInterface {
                 ret.reminders = getEventReminders(context, eventId)
         }
         catch (ex: Exception) {
-            logger.error("Exception while trying to read reminders for $eventId: ${ex.message}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to read reminders for $eventId: ${ex.message}")
         }
 
         return ret
@@ -422,7 +422,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
         if (!PermissionsManager.hasWriteCalendar(context)) {
-            logger.error("getFiredEventsDetails failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "dismissNativeEventAlert: has no permissions");
             return;
         }
 
@@ -445,10 +445,10 @@ object CalendarProvider : CalendarProviderInterface {
 
             context.contentResolver.update(uri, dismissValues, selection, null);
 
-            logger.debug("dismissNativeEventReminder: eventId $eventId");
+            DevLog.debug(LOG_TAG, "dismissNativeEventReminder: eventId $eventId");
         }
         catch (ex: Exception) {
-            logger.debug("dismissNativeReminder failed")
+            DevLog.error(context, LOG_TAG, "dismissNativeReminder failed")
         }
     }
 
@@ -462,16 +462,16 @@ object CalendarProvider : CalendarProviderInterface {
 
         var ret = -1L;
 
-        logger.debug("Request to reschedule event ${event.eventId}, addTime=$addTime");
+        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
 
         if (!PermissionsManager.hasReadCalendar(context)
                 || !PermissionsManager.hasWriteCalendar(context)) {
-            logger.error("rescheduleEvent failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: no permissions");
             return -1;
         }
 
         if (event.alertTime == 0L) {
-            logger.error("Alert time is zero");
+            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: alert time is zero");
             return -1;
         }
 
@@ -578,7 +578,7 @@ object CalendarProvider : CalendarProviderInterface {
                     values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
                     values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
-                    logger.debug("Event details for calendarId: $calendarId / eventId: $eventId captured")
+                    DevLog.info(context, LOG_TAG, "Event details for calendarId: $calendarId / eventId: $eventId captured")
                     break;
 
                 } while (cursor.moveToNext())
@@ -587,7 +587,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            logger.error("Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
         }
         finally {
             cursor?.close()
@@ -601,11 +601,11 @@ object CalendarProvider : CalendarProviderInterface {
                 ret = uri.lastPathSegment.toLong()
             }
             catch (ex: Exception) {
-                logger.error("Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
             }
         }
         else {
-            logger.error("Calendar event wasn't found");
+            DevLog.error(context, LOG_TAG, "Calendar event wasn't found");
         }
 
         if (ret != -1L) {
@@ -668,11 +668,11 @@ object CalendarProvider : CalendarProviderInterface {
 
         var ret = false;
 
-        logger.debug("Request to reschedule event ${event.eventId}, addTime=$addTime");
+        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
 
         if (!PermissionsManager.hasReadCalendar(context)
                 || !PermissionsManager.hasWriteCalendar(context)) {
-            logger.error("rescheduleEvent failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
             return false;
         }
 
@@ -684,8 +684,12 @@ object CalendarProvider : CalendarProviderInterface {
             var newStartTime = event.startTime + addTime
             var newEndTime = event.endTime + addTime
 
+            // FIXME: get rid of this potentially very long loop and use some easy math, like:
+            // units = ((currentTime - event.startTime + (addTime - 1 )) / addTime)
+            // newStartTime = event.startTime + units * addTime
+            // (but test it somewhere in repl first)
             while (newStartTime < currentTime + Consts.ALARM_THRESHOLD) {
-                logger.error("Requested time is already in the past, adding another ${addTime / 1000} sec")
+                DevLog.error(context, LOG_TAG, "Requested time is already in the past, adding another ${addTime / 1000} sec")
 
                 newStartTime += addTime
                 newEndTime += addTime
@@ -706,7 +710,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            logger.error("Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
         }
 
         return ret;
@@ -811,7 +815,7 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            logger.error("getEventAlertsForInstancesInRange failed due to not sufficient permissions");
+            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: no permissions");
             return ret;
         }
 
@@ -842,7 +846,7 @@ object CalendarProvider : CalendarProviderInterface {
             val PROJECTION_INDEX_INST_END = 3
             val PROJECTION_INDEX_INST_ALL_DAY = 4
 
-            logger.info("getEventAlertsForInstancesInRange: Manual event scan started, range: from $instanceFrom to $instanceTo")
+            DevLog.info(context, LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
 
 
             val intermitEvents = arrayListOf<EventEntry>()
@@ -870,17 +874,17 @@ object CalendarProvider : CalendarProviderInterface {
                     val isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
                     if (instanceStart == null || eventId == null || calendarId == null) {
-                        logger.info("Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
+                        DevLog.info(context, LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
                         continue;
                     }
 
                     if (!handledCalendars.contains(calendarId) || calendarId == -1L) {
-                        logger.info("Event id $eventId - belongs to calendar $calendarId, which is not handled - skipping")
+                        DevLog.info(context, LOG_TAG, "Event id $eventId / calId $calendarId - not handling")
                         continue
                     }
 
                     if (instanceStart < instanceFrom) {
-                        logger.info("Event id $eventId: instanceStart $instanceStart is actully before instanceFrom $instanceFrom, skipping")
+                        DevLog.debug(LOG_TAG, "Event id $eventId: instanceStart $instanceStart is actully before instanceFrom $instanceFrom, skipping")
                         continue
                     }
 
@@ -958,17 +962,15 @@ object CalendarProvider : CalendarProviderInterface {
                 }
 
             }
-            else {
-                logger.error("getEventInstances: no pending event alerts found")
-            }
 
             instanceCursor?.close()
 
             val scanEnd = System.currentTimeMillis()
-            logger.info("getEventAlertsForInstancesInRange(): scan finished, got ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
+
+            DevLog.info(context, LOG_TAG, "getEventAlertsForInstancesInRange: found ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
         }
         catch (ex: Exception) {
-            logger.error("getEventAlertsForInstancesInRange(): got exception ${ex.message}, ${ex}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.message}, ${ex}, ${ex.stackTrace}")
         }
 
         return ret

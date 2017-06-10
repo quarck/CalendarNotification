@@ -20,16 +20,18 @@
 package com.github.quarck.calnotify.eventsstorage
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-class EventsStorageImplV8
+class EventsStorageImplV8(val context: Context)
     : EventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
@@ -78,13 +80,13 @@ class EventsStorageImplV8
                         "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
                         " )"
 
-        logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
         val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
 
-        logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
+        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
 
         db.execSQL(CREATE_INDEX)
     }
@@ -99,18 +101,18 @@ class EventsStorageImplV8
             ret = true
         }
         catch (ex: SQLException) {
-            logger.error("dropAll: $ex")
+            DevLog.error(context, LOG_TAG, "dropAll: $ex")
         }
 
 //        if (!ret) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
         return ret;
     }
 
     override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
-        // logger.debug("addEventImpl " + event.eventId)
+        // DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
         var ret = false
 
@@ -128,14 +130,14 @@ class EventsStorageImplV8
             // values
         }
         catch (ex: SQLiteConstraintException) {
-            logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
+            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
             // persist original notification id in this case
             event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
             ret = updateEventImpl(db, event)
         }
 
 //        if (!ret) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
 
@@ -164,7 +166,7 @@ class EventsStorageImplV8
         }
 
 //        if (!ret) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
         return ret
@@ -192,7 +194,7 @@ class EventsStorageImplV8
         if (ret == 0)
             ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
 
-        // logger.debug("nextNotificationId, returning $ret")
+        // DevLog.debug(LOG_TAG, "nextNotificationId, returning $ret")
 
         return ret
     }
@@ -201,7 +203,7 @@ class EventsStorageImplV8
 
         val values = eventRecordToContentValues(event)
 
-        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
+        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
 
         val numRowsAffected =
                 db.update(TABLE_NAME, // table
@@ -210,14 +212,14 @@ class EventsStorageImplV8
                         arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
 
 //        if (numRowsAffected != 1) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
         return numRowsAffected == 1
     }
 
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
-        //logger.debug("Updating ${events.size} events");
+        //DevLog.debug(LOG_TAG, "Updating ${events.size} events");
 
         var ret = true
 
@@ -247,7 +249,7 @@ class EventsStorageImplV8
         }
 
 //        if (!ret) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
 
@@ -260,7 +262,7 @@ class EventsStorageImplV8
                 event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
                 includeKeyValues = true)
 
-        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
+        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
 
         val numRowsAffected =
                 db.update(TABLE_NAME, // table
@@ -270,7 +272,7 @@ class EventsStorageImplV8
 
 
 //        if (numRowsAffected != 1) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
         return numRowsAffected == 1
@@ -308,7 +310,7 @@ class EventsStorageImplV8
         }
 
 //        if (!ret) {
-//            logger.debug("debug_me_here");
+//            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
         return ret
@@ -356,7 +358,7 @@ class EventsStorageImplV8
         }
         cursor.close()
 
-        //logger.debug("eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -380,7 +382,7 @@ class EventsStorageImplV8
         }
         cursor.close()
 
-        //logger.debug("eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -490,7 +492,7 @@ class EventsStorageImplV8
     }
 
     companion object {
-        private val logger = Logger("EventsStorageImplV8")
+        private const val LOG_TAG = "EventsStorageImplV8"
 
         private const val TABLE_NAME = "eventsV8"
         private const val INDEX_NAME = "eventsIdxV8"

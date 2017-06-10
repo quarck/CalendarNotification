@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventOrigin
+import com.github.quarck.calnotify.logs.DevLog
 
 class CalendarMonitorProvider(
         val calendarProvider: CalendarProviderInterface,
@@ -41,7 +42,7 @@ class CalendarMonitorProvider(
             alertTime: Long
     ): Collection<EventAlertRecord> {
 
-        logger.debug("doManualFireProviderEventsAt, alertTime=$alertTime");
+        DevLog.debug(LOG_TAG, "registerFiredEventsInDB, alertTime=$alertTime");
 
         val ret = mutableListOf<EventAlertRecord>()
 
@@ -51,11 +52,11 @@ class CalendarMonitorProvider(
             for (event in events) {
 
                 if (calendarMonitor.getAlertWasHandled(context, event)) {
-                    logger.info("Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already")
+                    DevLog.info(context, LOG_TAG, "Event ${event.eventId} / ${event.instanceStartTime} was handled already")
                     continue
                 }
 
-                logger.info("WARNING: Calendar Provider didn't handle this: Seen event ${event.eventId} / ${event.instanceStartTime}")
+                DevLog.warn(context, LOG_TAG, "Calendar Provider didn't handle this: event ${event.eventId} / ${event.instanceStartTime}")
 
                 event.origin = EventOrigin.ProviderManual
                 event.timeFirstSeen = System.currentTimeMillis()
@@ -69,7 +70,7 @@ class CalendarMonitorProvider(
             }
         }
         catch (ex: Exception) {
-            logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
         }
         finally {
             state.prevEventFireFromProvider = alertTime
@@ -84,7 +85,7 @@ class CalendarMonitorProvider(
 
         var ret = false
 
-        logger.debug("manualFireEventsAt: ($nextEventFire, $prevEventFire)");
+        DevLog.debug(LOG_TAG, "manualFireEventsAt: ($nextEventFire, $prevEventFire)");
 
         var currentPrevFire = prevEventFire ?: Long.MAX_VALUE
 
@@ -99,7 +100,7 @@ class CalendarMonitorProvider(
                 if (nextSincePrev == null || nextSincePrev >= nextEventFire)
                     break
 
-                logger.info("manualFireEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
+                DevLog.info(context, LOG_TAG, "manualFireEventsAt: called to fire at $nextEventFire, but found earlier unhandled alarm time $nextSincePrev")
 
                 val newFires = registerFiredEventsInDB(context, state, nextSincePrev)
                 eventsToPost.addAll(newFires)
@@ -124,11 +125,11 @@ class CalendarMonitorProvider(
                     calendarMonitor.setAlertWasHandled(context, event, createdByUs = false)
                     CalendarProvider.dismissNativeEventAlert(context, event.eventId);
 
-                    logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
+                    DevLog.info(context, LOG_TAG, "Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
                 }
             }
             catch (ex: Exception) {
-                logger.error("Exception occured while posting notifications / firing events: $ex, ${ex.stackTrace}")
+                DevLog.error(context, LOG_TAG, "Exception occured while posting notifications / firing events: $ex, ${ex.stackTrace}")
             }
         }
 
@@ -137,7 +138,7 @@ class CalendarMonitorProvider(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-        logger.debug("scanNextEvent");
+        DevLog.debug(LOG_TAG, "scanNextEvent");
 
         val currentTime = System.currentTimeMillis()
         val processEventsTo = currentTime + Consts.ALARM_THRESHOLD
@@ -152,11 +153,11 @@ class CalendarMonitorProvider(
         for (iteration in 0..MAX_ITERATIONS) {
 
             if (nextAlert >= processEventsTo) {
-                logger.info("scanNextEvent: nextAlert=$nextAlert >= processEventsTo=$processEventsTo, good to proceed next")
+                DevLog.info(context, LOG_TAG, "scanNextEvent: nextAlert=$nextAlert >= processEventsTo=$processEventsTo, good to proceed next")
                 break
             }
 
-            logger.info("scanNextEvent: nextAlert $nextAlert is already in the past, firing at it")
+            DevLog.info(context, LOG_TAG, "scanNextEvent: nextAlert $nextAlert is already in the past, firing at it")
 
             if (manualFireEventsAt_NoHousekeeping(context, state, nextAlert))
                 firedEvents = true
@@ -171,7 +172,7 @@ class CalendarMonitorProvider(
         // finally - pick the first one
         nextAlert = Math.min(nextAlert, nextAlertSinceCurrent)
 
-        logger.info("scanNextEvent: nextAlertSinceCurrent=$nextAlertSinceCurrent, resulting nextAlert=$nextAlert")
+        DevLog.info(context, LOG_TAG, "scanNextEvent: nextAlertSinceCurrent=$nextAlertSinceCurrent, resulting nextAlert=$nextAlert")
 
         state.nextEventFireFromProvider = nextAlert
 
@@ -180,6 +181,6 @@ class CalendarMonitorProvider(
 
 
     companion object {
-        val logger = com.github.quarck.calnotify.logs.Logger("CalendarMonitorProvider")
+        private const val LOG_TAG = "CalendarMonitorProvider"
     }
 }

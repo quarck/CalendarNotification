@@ -25,7 +25,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 
 class UINotifierService : IntentService("ServiceUINotifier") {
     inner class ServiceBinder : Binder() {
@@ -60,7 +60,7 @@ class UINotifierService : IntentService("ServiceUINotifier") {
     }
 
     companion object {
-        private val logger = Logger("ServiceUINotifier")
+        private const val LOG_TAG = "ServiceUINotifier"
 
         fun notifyUI(context: Context?, isUserAction: Boolean) {
 

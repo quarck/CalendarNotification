@@ -15,7 +15,8 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
@@ -51,7 +52,7 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
     }
 
     public override fun onResume() {
-        logger.debug("onResume")
+        DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
         reloadData()
     }
@@ -135,6 +136,6 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
 
 
     companion object {
-        val logger = Logger("DismissedEventsActivity")
+        private const val LOG_TAG = "DismissedEventsActivity"
     }
 }

@@ -22,7 +22,8 @@ package com.github.quarck.calnotify.pebble
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -61,8 +62,8 @@ object PebbleUtils {
 
         context.sendBroadcast(i)
 
-        logger.info("Notification was forwarded to pebble")
+        DevLog.info(context, LOG_TAG, "Notification was forwarded to pebble")
     }
 
-    private val logger = Logger("PebbleUtils")
+    private const val LOG_TAG = "PebbleUtils"
 }

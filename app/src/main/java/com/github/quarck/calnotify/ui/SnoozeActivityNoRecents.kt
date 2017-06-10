@@ -32,7 +32,7 @@ import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -40,6 +40,7 @@ import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
+import com.github.quarck.calnotify.logs.DevLog
 
 
 enum class SnoozeActivityStateCode(val code: Int) {
@@ -460,7 +461,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     private fun snoozeEvent(snoozeDelay: Long) {
         val ev = event
         if (ev != null) {
-            logger.debug("Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
+            DevLog.debug(LOG_TAG, "Snoozing event id ${ev.eventId}, snoozeDelay=${snoozeDelay / 1000L}")
 
             val result = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
             if (result != null) {
@@ -485,7 +486,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     .setPositiveButton(android.R.string.yes) {
                         x, y ->
 
-                        logger.debug("Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
+                        DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
                         val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
                         if (result != null) {
@@ -767,7 +768,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val ev = event
 
         if (ev != null) {
-            logger.info("Moving event ${ev.eventId} by ${addTime / 1000L} seconds");
+            DevLog.info(this, LOG_TAG, "Moving event ${ev.eventId} by ${addTime / 1000L} seconds");
 
             val moved = ApplicationController.moveEvent(this, ev, addTime)
 
@@ -782,7 +783,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 finish();
             }
             else {
-                logger.info("snooze: Failed to move event ${ev.eventId} by ${addTime / 1000L} seconds")
+                DevLog.info(this, LOG_TAG, "snooze: Failed to move event ${ev.eventId} by ${addTime / 1000L} seconds")
             }
         }
     }
@@ -807,7 +808,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     }
 
     companion object {
-        private val logger = Logger("ActivitySnooze");
+        private const val LOG_TAG = "ActivitySnooze"
 
         const val CUSTOM_SNOOZE_SNOOZE_FOR_IDX = 0
         const val CUSTOM_SNOOZE_SNOOZE_UNTIL_IDX = 1

@@ -29,7 +29,7 @@ import android.widget.Toast
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
@@ -111,6 +111,6 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     }
 
     companion object {
-        val logger = Logger("TimePickerPreference")
+        private const val LOG_TAG = "TimePickerPreference"
     }
 }

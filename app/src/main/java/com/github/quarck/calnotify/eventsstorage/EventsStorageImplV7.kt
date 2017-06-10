@@ -27,7 +27,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.calendar.EventOrigin
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
 class EventsStorageImplV7
@@ -71,13 +72,13 @@ class EventsStorageImplV7
                         "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
                         " )"
 
-        logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
         val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
 
-        logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
+        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
 
         db.execSQL(CREATE_INDEX)
     }
@@ -89,7 +90,7 @@ class EventsStorageImplV7
     }
 
     override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
-        // logger.debug("addEventImpl " + event.eventId)
+        // DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
         if (event.notificationId == 0)
             event.notificationId = nextNotificationId(db);
@@ -103,7 +104,7 @@ class EventsStorageImplV7
             // values
         }
         catch (ex: SQLiteConstraintException) {
-            logger.debug("This entry (${event.eventId}) is already in the DB, updating!")
+            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
             // persist original notification id in this case
             event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
             updateEventImpl(db, event)
@@ -150,7 +151,7 @@ class EventsStorageImplV7
         if (ret == 0)
             ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
 
-        // logger.debug("nextNotificationId, returning $ret")
+        // DevLog.debug(LOG_TAG, "nextNotificationId, returning $ret")
 
         return ret
     }
@@ -159,7 +160,7 @@ class EventsStorageImplV7
 
         val values = eventRecordToContentValues(event)
 
-        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
+        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
 
         db.update(TABLE_NAME, // table
                 values, // column/value
@@ -170,7 +171,7 @@ class EventsStorageImplV7
     }
 
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
-        //logger.debug("Updating ${events.size} events");
+        //DevLog.debug(LOG_TAG, "Updating ${events.size} events");
 
         try {
             db.beginTransaction()
@@ -199,7 +200,7 @@ class EventsStorageImplV7
                 event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
                 includeKeyValues = true)
 
-        //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
+        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
 
         db.update(TABLE_NAME, // table
                 values, // column/value
@@ -219,7 +220,7 @@ class EventsStorageImplV7
                         event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
                         includeKeyValues = true)
 
-                //logger.debug("Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
+                //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
 
                 db.update(TABLE_NAME, // table
                         values, // column/value
@@ -278,7 +279,7 @@ class EventsStorageImplV7
         }
         cursor.close()
 
-        //logger.debug("eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -302,7 +303,7 @@ class EventsStorageImplV7
         }
         cursor.close()
 
-        //logger.debug("eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
 
         return ret
     }
@@ -314,7 +315,7 @@ class EventsStorageImplV7
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
                 arrayOf(eventId.toString(), instanceStartTime.toString()))
 
-        //logger.debug("deleteEventImpl $eventId, instance=$instanceStartTime ")
+        //DevLog.debug(LOG_TAG, "deleteEventImpl $eventId, instance=$instanceStartTime ")
 
         return true
     }
@@ -394,7 +395,7 @@ class EventsStorageImplV7
     }
 
     companion object {
-        private val logger = Logger("EventsStorageImplV7")
+        private const val LOG_TAG = "EventsStorageImplV7"
 
         private const val TABLE_NAME = "eventsV7"
         private const val INDEX_NAME = "eventsIdxV7"

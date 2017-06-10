@@ -23,17 +23,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
 class TimeSetBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.info("onReceive")
+        DevLog.info(context, LOG_TAG, "onReceive")
         if (context != null)
             ApplicationController.onTimeChanged(context)
     }
 
     companion object {
-        val logger = Logger("TimeChangedReceiver")
+        const val LOG_TAG = "TimeChangedReceiver"
     }
 }

@@ -24,13 +24,14 @@ import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifierService
 
 class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeService") {
 
     override fun onHandleIntent(intent: Intent?) {
-        logger.debug("onHandleIntent")
+        DevLog.debug(LOG_TAG, "onHandleIntent")
 
         if (intent != null) {
             val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
@@ -40,22 +41,22 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
 
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                 if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null)
-                    logger.info("event $eventId / $instanceStartTime snoozed by $snoozeDelay")
+                    DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime snoozed by $snoozeDelay")
 
                 UINotifierService.notifyUI(this, true);
             }
             else {
-                logger.error("notificationId=$notificationId, eventId=$eventId, or type is null")
+                DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
             }
         }
         else {
-            logger.error("Intent is null!")
+            DevLog.error(this, LOG_TAG, "Intent is null!")
         }
 
         ApplicationController.cleanupEventReminder(this)
     }
 
     companion object {
-        private val logger = Logger("NotificationActionSnoozeService")
+        private const val LOG_TAG = "NotificationActionSnoozeService"
     }
 }

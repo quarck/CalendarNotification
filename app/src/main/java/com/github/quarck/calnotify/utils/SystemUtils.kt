@@ -30,7 +30,8 @@ import android.os.PowerManager
 import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
 
 @Suppress("UNCHECKED_CAST")
@@ -124,9 +125,10 @@ fun AlarmManager.setExactAndAlarm(
         triggerAtMillis: Long,
         roughIntentClass: Class<*>, // ignored on KitKat and below
         exactIntentClass: Class<*>,
-        alarmInfoIntent: Class<*>,
-        logger: Logger
+        alarmInfoIntent: Class<*>
 ) {
+    val LOG_TAG = "AlarmManager.setExactAndAlarm"
+
     if (isMarshmallowOrAbove) {
         // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
         // so set it as a "first thing", followed by more precise alarm
@@ -153,12 +155,12 @@ fun AlarmManager.setExactAndAlarm(
                     alarmClockInfo,
                     pendingIntentExact)
 
-            logger.info("alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
         }
         else {
             setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
 
-            logger.info("alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
         }
     }
     else {
@@ -168,12 +170,12 @@ fun AlarmManager.setExactAndAlarm(
         if (isKitkatOrAbove) {
             // KitKat way
             setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-            logger.info("alarm scheduled for $triggerAtMillis using setExact(T+0)")
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExact(T+0)")
         }
         else {
             // Ancient way
             set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-            logger.info("alarm scheduled for $triggerAtMillis using set(T+0)")
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using set(T+0)")
         }
     }
 }
@@ -182,9 +184,9 @@ fun AlarmManager.cancelExactAndAlarm(
         context: Context,
         settings: Settings,
         roughIntentClass: Class<*>, // ignored on KitKat and below
-        exactIntentClass: Class<*>,
-        logger: Logger
+        exactIntentClass: Class<*>
 ) {
+    val LOG_TAG = "AlarmManager.cancelExactAndAlarm"
     // reverse of the prev guy
 
     val intent = Intent(context, roughIntentClass);
@@ -197,5 +199,5 @@ fun AlarmManager.cancelExactAndAlarm(
         cancel(pendingIntentExact)
     }
 
-    logger.info("Cancelled alarm")
+    DevLog.info(context, LOG_TAG, "Cancelled alarm")
 }

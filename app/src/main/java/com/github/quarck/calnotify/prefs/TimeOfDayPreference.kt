@@ -28,7 +28,7 @@ import android.widget.TextView
 import android.widget.TimePicker
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import java.text.DateFormat
 import java.util.*
@@ -138,6 +138,6 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
     }
 
     companion object {
-        var logger = Logger("TimeOfDayPreference");
+        private const val LOG_TAG = "TimeOfDayPreference"
     }
 }

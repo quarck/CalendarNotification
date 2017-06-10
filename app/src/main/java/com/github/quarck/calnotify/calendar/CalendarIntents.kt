@@ -23,13 +23,14 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.isLollipopOrAbove
 
 
 object CalendarIntents {
 
-    val logger = Logger("CalendarIntents")
+    private const val LOG_TAG = "CalendarIntents"
 
     private fun intentForAction(action: String, event: EventAlertRecord): Intent {
 
@@ -46,7 +47,7 @@ object CalendarIntents {
 
         if (shouldAddEventTime && canAddEventTime) {
             // only add if it is a valid instance start / end time, and we need both
-            logger.debug("Adding instance start / end for event ${event.eventId}, start: ${event.instanceStartTime}, end: ${event.instanceEndTime}");
+            DevLog.debug(LOG_TAG, "Adding instance start / end for event ${event.eventId}, start: ${event.instanceStartTime}, end: ${event.instanceEndTime}");
             intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.instanceStartTime)
             intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.instanceEndTime)
         }

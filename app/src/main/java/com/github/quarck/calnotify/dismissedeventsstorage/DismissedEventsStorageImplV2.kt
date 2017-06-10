@@ -25,7 +25,8 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
 class DismissedEventsStorageImplV2()
@@ -79,13 +80,13 @@ class DismissedEventsStorageImplV2()
                         "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
                         " )"
 
-        logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
         val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
 
-        logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
+        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
 
         db.execSQL(CREATE_INDEX)
     }
@@ -97,7 +98,7 @@ class DismissedEventsStorageImplV2()
 
     override fun addEventImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, event: EventAlertRecord) {
 
-//        logger.debug("addEventImpl " + event.eventId)
+//        DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
         val values = eventRecordToContentValues(event, changeTime, type)
 
@@ -108,7 +109,7 @@ class DismissedEventsStorageImplV2()
             // values
         }
         catch (ex: SQLiteConstraintException) {
-//            logger.debug("This entry (${event.eventId}) is already in the DB!")
+//            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB!")
         }
     }
 
@@ -134,7 +135,7 @@ class DismissedEventsStorageImplV2()
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
                 arrayOf(entry.event.eventId.toString(), entry.event.instanceStartTime.toString()))
 
-//        logger.debug("deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
+//        DevLog.debug(LOG_TAG, "deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
     }
 
     override fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
@@ -143,7 +144,7 @@ class DismissedEventsStorageImplV2()
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
                 arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
 
-//        logger.debug("deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
+//        DevLog.debug(LOG_TAG, "deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
     }
 
     override fun clearHistoryImpl(db: SQLiteDatabase) {
@@ -171,7 +172,7 @@ class DismissedEventsStorageImplV2()
         }
         cursor.close()
 
-        logger.debug("eventsImpl, returning ${ret.size} events")
+        DevLog.debug(LOG_TAG, "eventsImpl, returning ${ret.size} events")
 
         return ret
     }
@@ -244,7 +245,7 @@ class DismissedEventsStorageImplV2()
     }
 
     companion object {
-        private val logger = Logger("DismissedEventsStorageImplV2")
+        private const val LOG_TAG = "DismissedEventsStorageImplV2"
 
         private const val TABLE_NAME = "dismissedEventsV2"
         private const val INDEX_NAME = "dismissedEventsIdxV2"

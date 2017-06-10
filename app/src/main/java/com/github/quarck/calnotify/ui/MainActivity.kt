@@ -50,7 +50,8 @@ import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logger.debug("onCreateView")
+        DevLog.debug(LOG_TAG, "onCreateView")
 
         ApplicationController.onMainActivityCreate(this);
 
@@ -148,7 +149,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onStart() {
-        logger.debug("onStart()")
+        DevLog.debug(LOG_TAG, "onStart()")
         super.onStart()
 
         ApplicationController.onMainActivityStarted(this);
@@ -160,12 +161,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onStop() {
-        logger.debug("onStop()")
+        DevLog.debug(LOG_TAG, "onStop()")
         super.onStop()
     }
 
     public override fun onResume() {
-        logger.debug("onResume")
+        DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
 
         if (settings.useCompactView != useCompactView) {
@@ -252,7 +253,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onPause() {
-        logger.debug("onPause")
+        DevLog.debug(LOG_TAG, "onPause")
 
         refreshReminderLastFired()
 
@@ -452,7 +453,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
 
     override fun onItemClick(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemClick, pos=$position, eventId=$eventId")
+        DevLog.debug(LOG_TAG, "onItemClick, pos=$position, eventId=$eventId")
 
         val event = adapter.getEventAtPosition(position, eventId)
 
@@ -475,12 +476,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     // user clicks on 'dismiss' button, item still in the list
     override fun onItemDismiss(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemDismiss, pos=$position, eventId=$eventId");
+        DevLog.debug(LOG_TAG, "onItemDismiss, pos=$position, eventId=$eventId");
 
         val event = adapter.getEventAtPosition(position, eventId)
 
         if (event != null) {
-            logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+            DevLog.debug(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
             ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event);
 
             undoManager.addUndoState(
@@ -503,23 +504,23 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     // Item was already removed from UI, we just have to dismiss it now
     override fun onItemRemoved(event: EventAlertRecord) {
 
-        logger.debug("onItemRemoved, eventId=${event.eventId}")
+        DevLog.debug(LOG_TAG, "onItemRemoved, eventId=${event.eventId}")
 
-        logger.debug("Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+        DevLog.debug(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
         ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
     }
 
     override fun onItemRestored(event: EventAlertRecord) {
-        logger.debug("onItemRestored, eventId=${event.eventId}")
+        DevLog.debug(LOG_TAG, "onItemRestored, eventId=${event.eventId}")
         ApplicationController.restoreEvent(this, event)
 
         onNumEventsUpdated()
     }
 
     override fun onItemSnooze(v: View, position: Int, eventId: Long) {
-        logger.debug("onItemSnooze, pos=$position, eventId=$eventId");
+        DevLog.debug(LOG_TAG, "onItemSnooze, pos=$position, eventId=$eventId");
 
         val event = adapter.getEventAtPosition(position, eventId)
 
@@ -534,6 +535,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     companion object {
-        private val logger = Logger("ActivityMain")
+        private const val LOG_TAG = "MainActivity"
     }
 }

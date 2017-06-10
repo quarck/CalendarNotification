@@ -29,7 +29,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class LEDPatternPreference(context: Context, attrs: AttributeSet)
@@ -154,6 +154,6 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
     }
 
     companion object {
-        var logger = Logger("LEDPatternPreference");
+        private const val LOG_TAG = "LEDPatternPreference"
     }
 }

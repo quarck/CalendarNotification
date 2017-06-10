@@ -24,31 +24,17 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
-class EventsStorage(context: Context)
+class EventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable, EventsStorageInterface {
 
     private var impl: EventsStorageImplInterface
 
     init {
-        when (DATABASE_CURRENT_VERSION) {
-            DATABASE_VERSION_V6 ->
-                impl = EventsStorageImplV6();
-
-            DATABASE_VERSION_V7 ->
-                impl = EventsStorageImplV7();
-
-            DATABASE_VERSION_V8 ->
-                impl = EventsStorageImplV8();
-
-            DATABASE_VERSION_V9 ->
-                impl = EventsStorageImplV9();
-
-            else ->
-                throw NotImplementedError("DB Version $DATABASE_CURRENT_VERSION is not supported")
-        }
+        impl = EventsStorageImplV9(context);
     }
 
     override fun onCreate(db: SQLiteDatabase)
@@ -56,7 +42,7 @@ class EventsStorage(context: Context)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
-        logger.debug("onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion == newVersion)
             return
@@ -64,13 +50,11 @@ class EventsStorage(context: Context)
         if (newVersion != DATABASE_VERSION_V9)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
-        logger.debug("V$oldVersion to V$newVersion upgrade")
-
         val implOld =
                 when (oldVersion) {
                     DATABASE_VERSION_V6 -> EventsStorageImplV6()
                     DATABASE_VERSION_V7 -> EventsStorageImplV7()
-                    DATABASE_VERSION_V8 -> EventsStorageImplV8()
+                    DATABASE_VERSION_V8 -> EventsStorageImplV8(context)
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -79,18 +63,18 @@ class EventsStorage(context: Context)
 
             val events = implOld.getEventsImpl(db)
 
-            logger.debug("${events.size} events to convert")
+            DevLog.info(context, LOG_TAG, "${events.size} events to convert")
 
             for (event in events) {
                 if (impl.addEventImpl(db, event)) {
                     implOld.deleteEventImpl(db, event.eventId, event.instanceStartTime)
                 }
 
-                logger.debug("Done event ${event.eventId}, inst ${event.instanceStartTime}")
+                DevLog.debug(LOG_TAG, "Done event ${event.eventId}, inst ${event.instanceStartTime}")
             }
 
             if (implOld.getEventsImpl(db).isEmpty()) {
-                logger.debug("Finally - dropping old tables")
+                DevLog.info(context, LOG_TAG, "Finally - dropping old tables")
                 implOld.dropAll(db)
             }
             else {
@@ -99,7 +83,7 @@ class EventsStorage(context: Context)
 
         }
         catch (ex: Exception) {
-            logger.error("Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
             throw ex
         }
     }
@@ -210,7 +194,7 @@ class EventsStorage(context: Context)
     }
 
     companion object {
-        private val logger = Logger("EventsStorage")
+        private const val LOG_TAG = "EventsStorage"
 
         private const val DATABASE_VERSION_V6 = 6
         private const val DATABASE_VERSION_V7 = 7

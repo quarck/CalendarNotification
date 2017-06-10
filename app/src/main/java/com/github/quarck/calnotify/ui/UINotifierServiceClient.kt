@@ -24,7 +24,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
 /**
  * Created by quarck on 14/02/16.
@@ -33,7 +34,7 @@ class UINotifierServiceClient {
     private var isBound: Boolean = false
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            logger.debug("onServiceConnected");
+            DevLog.debug(LOG_TAG, "onServiceConnected");
 
             val binder = service as UINotifierService.ServiceBinder
 
@@ -41,16 +42,16 @@ class UINotifierServiceClient {
 
                 isUserAction ->
 
-                logger.debug("updateActivity called, forwarning");
+                DevLog.debug(LOG_TAG, "updateActivity called, forwarning");
 
                 var action = updateActivity;
 
                 if (action != null) {
-                    logger.debug("calling action");
+                    DevLog.debug(LOG_TAG, "calling action");
                     action(isUserAction);
                 }
                 else {
-                    logger.debug("action is null");
+                    DevLog.debug(LOG_TAG, "action is null");
                 }
             }
 
@@ -58,7 +59,7 @@ class UINotifierServiceClient {
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            logger.debug("onServiceDisconnected");
+            DevLog.debug(LOG_TAG, "onServiceDisconnected");
         }
     }
 
@@ -66,13 +67,13 @@ class UINotifierServiceClient {
 
     fun bindService(context: Context, updateAct: ((Boolean) -> Unit)) {
         if (!isBound) {
-            logger.debug("binding service");
+            DevLog.debug(LOG_TAG, "binding service");
 
             val intent = Intent(context, UINotifierService::class.java)
             context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
         else {
-            logger.debug("Service is already bound")
+            DevLog.debug(LOG_TAG, "Service is already bound")
         }
 
         updateActivity = updateAct
@@ -80,18 +81,18 @@ class UINotifierServiceClient {
 
     fun unbindService(context: Context) {
         if (isBound) {
-            logger.debug("Unbinding service")
+            DevLog.debug(LOG_TAG, "Unbinding service")
 
             context.unbindService(serviceConnection)
             isBound = false
         }
         else {
-            logger.debug("Service is already unbound");
+            DevLog.debug(LOG_TAG, "Service is already unbound");
         }
     }
 
     companion object {
-        private val logger = Logger("ServiceUINotifierClient")
+        private const val LOG_TAG = "ServiceUINotifierClient"
     }
 }
 

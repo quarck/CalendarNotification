@@ -24,7 +24,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
 
@@ -34,20 +35,14 @@ class MonitorStorage(val context: Context)
     private var impl: MonitorStorageImplInterface
 
     init {
-        when (DATABASE_CURRENT_VERSION) {
-            DATABASE_VERSION_V1 ->
-                impl = MonitorStorageImplV1();
-
-            else ->
-                throw NotImplementedError("DB Version $DATABASE_CURRENT_VERSION is not supported")
-        }
+        impl = MonitorStorageImplV1(context);
     }
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        logger.debug("onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion != newVersion) {
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
@@ -97,7 +92,7 @@ class MonitorStorage(val context: Context)
             = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForAlertRange(it, scanFrom, scanTo) } }
 
     companion object {
-        private val logger = Logger("MonitorStorage")
+        private const val LOG_TAG = "MonitorStorage"
 
         private const val DATABASE_VERSION_V1 = 1
         private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V1

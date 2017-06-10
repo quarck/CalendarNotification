@@ -21,13 +21,15 @@
 package com.github.quarck.calnotify.monitorstorage
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
-class MonitorStorageImplV1 : MonitorStorageImplInterface {
+class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
 
     override fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
@@ -55,13 +57,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
                         "PRIMARY KEY ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)" +
                         " )"
 
-        logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
         val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)"
 
-        logger.debug("Creating DB INDEX using query: " + CREATE_INDEX)
+        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
 
         db.execSQL(CREATE_INDEX)
 
@@ -69,7 +71,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
 
-        //logger.debug("addAlert $entry")
+        //DevLog.debug(LOG_TAG, "addAlert $entry")
 
         val values = recordToContentValues(entry)
 
@@ -80,11 +82,11 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             // values
         }
         catch (ex: SQLiteConstraintException) {
-            logger.debug("This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!, updating instead")
+            DevLog.debug(LOG_TAG, "This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!, updating instead")
             updateAlert(db, entry)
         }
         catch (ex: Exception) {
-            logger.error("addAlert($entry): exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "addAlert($entry): exception $ex, ${ex.stackTrace}")
         }
     }
 
@@ -105,7 +107,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
 
-        //logger.debug("deleteAlert $eventId / $alertTime")
+        //DevLog.debug(LOG_TAG, "deleteAlert $eventId / $alertTime")
 
         try {
             db.delete(
@@ -114,7 +116,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
                     arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()))
         }
         catch (ex: Exception) {
-            logger.error("deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
         }
     }
 
@@ -148,7 +150,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             db.setTransactionSuccessful()
         }
         catch (ex: Exception) {
-            logger.error("deleteAlertsMatching: exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "deleteAlertsMatching: exception $ex, ${ex.stackTrace}")
         }
         finally {
             db.endTransaction()
@@ -158,7 +160,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
     override fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
         val values = recordToContentValues(entry)
 
-        //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+        //DevLog.debug(LOG_TAG, "Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
         db.update(TABLE_NAME, // table
                 values, // column/value
@@ -168,13 +170,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
     override fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
-        //logger.debug("Updating ${entries.size} alerts");
+        //DevLog.debug(LOG_TAG, "Updating ${entries.size} alerts");
 
         try {
             db.beginTransaction()
 
             for (entry in entries) {
-                //logger.debug("Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+                //DevLog.debug(LOG_TAG, "Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
                 val values = recordToContentValues(entry)
 
@@ -212,13 +214,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("getAlert: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlert: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getAlert($eventId, $alertTime), returning ${ret}")
+        //DevLog.debug(LOG_TAG, "getAlert($eventId, $alertTime), returning ${ret}")
 
         return ret
     }
@@ -240,13 +242,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
         }
         catch (ex: Exception) {
-            logger.error("getNextAlert: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getNextAlert: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getNextAlert, returning $ret")
+        //DevLog.debug(LOG_TAG, "getNextAlert, returning $ret")
 
         return ret
     }
@@ -273,13 +275,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getAlertsAt($time), returning ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlertsAt($time), returning ${ret.size} events")
 
         return ret
     }
@@ -306,13 +308,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
 
         return ret
     }
@@ -342,13 +344,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
 
         return ret
     }
@@ -378,13 +380,13 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            logger.error("getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
         }
         finally {
             cursor?.close()
         }
 
-        //logger.debug("getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
 
         return ret
     }
@@ -423,7 +425,7 @@ class MonitorStorageImplV1 : MonitorStorageImplInterface {
 
 
     companion object {
-        private val logger = Logger("MonitorStorageImplV1")
+        private const val LOG_TAG = "MonitorStorageImplV1"
 
         private const val TABLE_NAME = "manualAlertsV1"
         private const val INDEX_NAME = "manualAlertsV1IdxV1"

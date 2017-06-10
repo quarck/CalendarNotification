@@ -27,7 +27,7 @@ import android.view.View
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
@@ -83,6 +83,6 @@ class MaxNotificationsPreference(context: Context, attrs: AttributeSet) : Dialog
     }
 
     companion object {
-        val logger = Logger("MaxRemindersPreference")
+        private const val LOG_TAG = "MaxRemindersPreference"
     }
 }

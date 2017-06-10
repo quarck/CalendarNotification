@@ -23,16 +23,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
 class BootCompleteBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive");
+        DevLog.debug(LOG_TAG, "onReceive");
         if (context != null)
             ApplicationController.onBootComplete(context)
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverBootComplete");
+        private const val LOG_TAG = "BroadcastReceiverBootComplete";
     }
 }

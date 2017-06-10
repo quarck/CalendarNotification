@@ -28,7 +28,7 @@ import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiv
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.reminders.ReminderState
@@ -40,11 +40,11 @@ import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 object AlarmScheduler : AlarmSchedulerInterface {
 
-    val logger = Logger("AlarmScheduler")
+    const val LOG_TAG = "AlarmScheduler"
 
     override fun rescheduleAlarms(context: Context, settings: Settings, quietHoursManager: QuietHoursManagerInterface) {
 
-        logger.debug("rescheduleAlarms called");
+        DevLog.debug(LOG_TAG, "rescheduleAlarms called");
 
         EventsStorage(context).use {
             db ->
@@ -60,11 +60,11 @@ object AlarmScheduler : AlarmSchedulerInterface {
                 val currentTime = System.currentTimeMillis()
 
                 if (nextEventAlarm < currentTime) {
-                    logger.error("CRITICAL: nextAlarm=$nextEventAlarm is less than currentTime $currentTime");
+                    DevLog.error(context, LOG_TAG, "CRITICAL: rescheduleAlarms: nextAlarm=$nextEventAlarm is less than currentTime $currentTime");
                     nextEventAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
                 }
 
-                logger.info("Scheduling next alarm at ${nextEventAlarm}, in ${(nextEventAlarm - currentTime) / 1000L} seconds");
+                DevLog.info(context, LOG_TAG, "next alarm at ${nextEventAlarm} (T+${(nextEventAlarm - currentTime) / 1000L}s)");
 
                 context.alarmManager.setExactAndAlarm(
                         context,
@@ -72,22 +72,20 @@ object AlarmScheduler : AlarmSchedulerInterface {
                         nextEventAlarm,
                         SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         SnoozeExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java,
-                        logger)
+                        MainActivity::class.java)
 
                 context.persistentState.nextSnoozeAlarmExpectedAt = nextEventAlarm
 
             }
             else { // if (nextEventAlarm != null) {
 
-                logger.info("No next events, cancelling alarms");
+                DevLog.info(context, LOG_TAG, "Cancelling alarms");
 
                 context.alarmManager.cancelExactAndAlarm(
                         context,
                         settings,
                         SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                        SnoozeExactAlarmBroadcastReceiver::class.java,
-                        logger)
+                        SnoozeExactAlarmBroadcastReceiver::class.java)
             }
 
             val reminderState = ReminderState(context)
@@ -114,21 +112,22 @@ object AlarmScheduler : AlarmSchedulerInterface {
                     val quietUntil = quietHoursManager.getSilentUntil(settings, reminderAlarmNextFire)
 
                     if (quietUntil != 0L) {
-                        logger.info("Reminder alarm moved from $reminderAlarmNextFire to ${quietUntil + Consts.ALARM_THRESHOLD} due to silent period");
+                        DevLog.info(context, LOG_TAG, "Reminder alarm moved: $reminderAlarmNextFire -> ${quietUntil + Consts.ALARM_THRESHOLD}, reason: quiet hours");
                         // give a little extra delay, so if events would fire precisely at the
                         // quietUntil, reminders would wait a bit longer
                         reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
                     }
-
-                    logger.info("Reminder alarm: next fire at $reminderAlarmNextFire")
+                    else {
+                        DevLog.info(context, LOG_TAG, "next fire: $reminderAlarmNextFire")
+                    }
 
                 }
                 else {  // if (hasActiveNotifications)
-                    logger.info("Reminder alarm: no active events to remind about")
+                    DevLog.info(context, LOG_TAG, "no active events")
                 }
             }
             else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
-                logger.info("Reminder alarm: reminders are not enabled")
+                DevLog.info(context, LOG_TAG, "reminders are not enabled")
             }
 
             if (reminderAlarmNextFire != null) {
@@ -138,8 +137,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
                         reminderAlarmNextFire,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java,
-                        logger)
+                        MainActivity::class.java)
 
                 reminderState.nextFireExpectedAt = reminderAlarmNextFire
 
@@ -149,8 +147,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
                         context,
                         settings,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                        ReminderExactAlarmBroadcastReceiver::class.java,
-                        logger)
+                        ReminderExactAlarmBroadcastReceiver::class.java)
             }
         }
     }

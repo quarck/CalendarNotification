@@ -31,7 +31,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
@@ -155,6 +155,6 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
     }
 
     companion object {
-        var logger = Logger("LEDColorPickerPreference");
+        private const val LOG_TAG = "LEDColorPickerPreference"
     }
 }

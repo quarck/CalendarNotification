@@ -58,7 +58,7 @@ object LogcatProvider {
         }
         catch (e: IOException) {
 
-            Logger("LogcatProvider").error("Error reading logs", e)
+            DevLog.error(context, "LogcatProvider", "Error reading logs, $e, ${e.message}")
         }
 
         return ret

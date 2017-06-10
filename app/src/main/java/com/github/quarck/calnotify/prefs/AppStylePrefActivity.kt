@@ -25,7 +25,8 @@ import android.view.View
 import android.widget.RadioButton
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class AppStylePrefActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ class AppStylePrefActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logger.debug("onCreate")
+        DevLog.debug(LOG_TAG, "onCreate")
 
         setContentView(R.layout.activity_style_pref)
 
@@ -65,6 +66,6 @@ class AppStylePrefActivity : AppCompatActivity() {
 
 
     companion object {
-        val logger = Logger("AppStylePrefActivity")
+        private const val LOG_TAG = "AppStylePrefActivity"
     }
 }

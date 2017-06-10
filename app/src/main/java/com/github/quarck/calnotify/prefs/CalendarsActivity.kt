@@ -36,7 +36,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
@@ -146,7 +147,7 @@ class CalendarsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logger.debug("onCreate")
+        DevLog.debug(LOG_TAG, "onCreate")
 
         setContentView(R.layout.activity_calendars)
         setSupportActionBar(find<Toolbar?>(R.id.toolbar))
@@ -159,7 +160,7 @@ class CalendarsActivity : AppCompatActivity() {
 
         adapter.onItemChanged = {
             view, calendarId, isEnabled ->
-            logger.debug("Item has changed: $calendarId $isEnabled");
+            DevLog.debug(LOG_TAG, "Item has changed: $calendarId $isEnabled");
 
             settings.setCalendarIsHandled(calendarId, isEnabled)
         }
@@ -221,6 +222,6 @@ class CalendarsActivity : AppCompatActivity() {
     }
 
     companion object {
-        val logger = Logger("CalendarsActivity")
+        private const val LOG_TAG = "CalendarsActivity"
     }
 }

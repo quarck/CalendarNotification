@@ -32,7 +32,8 @@ import android.text.format.DateUtils
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -254,7 +255,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             hideCollapsedEventsNotification(context)
             return false
         }
-        logger.info("Posting ${events.size} notifications in collapsed view")
+        DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications in collapsed view")
 
         val notificationsSettings = notificationsSettingsIn ?: settings.notificationSettingsSnapshot
 
@@ -289,20 +290,20 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if ((event.displayStatus != EventDisplayStatus.DisplayedCollapsed) || force) {
                     // currently not displayed or forced -- post notifications
-//                    logger.debug("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
+//                    DevLog.debug(LOG_TAG, "Posting notification id ${event.notificationId}, eventId ${event.eventId}")
 
                     var shouldBeQuiet = false
 
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
-                        //logger.debug("event ${event.eventId}: 'forced' notification - staying quiet")
+                        //DevLog.debug(LOG_TAG, "event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
 
                     }
                     else if (event.displayStatus == EventDisplayStatus.DisplayedNormal) {
 
-                        //logger.debug("event ${event.eventId}: notification was displayed, not playing sound")
+                        //DevLog.debug(LOG_TAG, "event ${event.eventId}: notification was displayed, not playing sound")
                         shouldBeQuiet = true
 
                     }
@@ -313,12 +314,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
-                            //logger.debug("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
+                            //DevLog.debug(LOG_TAG, "event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
                         }
                         else {
                             // not a primary event -- always silent in silent period
-                            //logger.debug("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
+                            //DevLog.debug(LOG_TAG, "event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
                         }
                     }
@@ -331,7 +332,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                //logger.debug("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
+                //DevLog.debug(LOG_TAG, "Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postedNotification = true
                 shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive
@@ -416,7 +417,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (isQuietPeriodActive && events.isNotEmpty() && !shouldPlayAndVibrate) {
 
-            logger.debug("Would remind after snooze period")
+            DevLog.debug(LOG_TAG, "Would remind after snooze period")
 
             if (!reminderState.quietHoursOneTimeReminderEnabled)
                 reminderState.quietHoursOneTimeReminderEnabled = true
@@ -435,7 +436,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             force: Boolean,
             isQuietPeriodActive: Boolean) {
 
-        logger.debug("Hiding notifications for ${events.size} notification")
+        DevLog.debug(LOG_TAG, "Hiding notifications for ${events.size} notification")
 
         if (events.isEmpty()) {
             hideCollapsedEventsNotification(context)
@@ -444,11 +445,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         for (event in events) {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
-                //logger.debug("Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
+                //DevLog.debug(LOG_TAG, "Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
                 removeNotification(context, event.eventId, event.notificationId)
             }
             else {
-                //logger.debug("Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
+                //DevLog.debug(LOG_TAG, "Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
             }
 
             if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {
@@ -474,7 +475,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             primaryEventId: Long?
     ): Boolean {
 
-        logger.info("Posting ${events.size} notifications")
+        DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications")
 
         val notificationsSettings = settings.notificationSettingsSnapshot
 
@@ -496,21 +497,21 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if ((event.displayStatus != EventDisplayStatus.DisplayedNormal) || force) {
                     // currently not displayed or forced -- post notifications
-                    logger.info("Posting notification id ${event.notificationId}, eventId ${event.eventId}")
+                    DevLog.info(context, LOG_TAG, "Posting notification id ${event.notificationId}, eventId ${event.eventId}")
 
                     var shouldBeQuiet = false
 
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
-                        logger.info("event ${event.eventId}: 'forced' notification - staying quiet")
+                        DevLog.info(context, LOG_TAG, "event ${event.eventId}: 'forced' notification - staying quiet")
                         shouldBeQuiet = true
                     }
                     else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
                         // and so we automatically expanding some of the events, this one was lucky.
                         // No sound / vibration should be played here
-                        logger.info("event ${event.eventId}: notification was collapsed, not playing sound")
+                        DevLog.info(context, LOG_TAG, "event ${event.eventId}: notification was collapsed, not playing sound")
                         shouldBeQuiet = true
                         wasCollapsed = true
 
@@ -521,17 +522,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
-                            logger.info("event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
+                            DevLog.info(context, LOG_TAG, "event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
                             shouldBeQuiet = settings.quietHoursMutePrimary
                         }
                         else {
                             // not a primary event -- always silent in silent period
-                            logger.info("event ${event.eventId}: quiet period and this is NOT primary notification quiet")
+                            DevLog.info(context, LOG_TAG, "event ${event.eventId}: quiet period and this is NOT primary notification quiet")
                             shouldBeQuiet = true
                         }
                     }
 
-                    logger.debug("event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
+                    DevLog.debug(LOG_TAG, "event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
 
                     postNotification(
                             context,
@@ -552,13 +553,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 }
                 else {
-                    logger.info("Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
+                    DevLog.info(context, LOG_TAG, "Not re-posting notification id ${event.notificationId}, eventId ${event.eventId} - already on the screen")
                 }
             }
             else {
                 // This event is currently snoozed and switching to "Shown" state
 
-                logger.info("Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
+                DevLog.info(context, LOG_TAG, "Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postNotification(
                         context,
@@ -578,7 +579,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     val warningMessage = "snooze alarm is very late: expected at ${event.snoozedUntil}, " +
                             "received at $currentTime, late by ${currentTime - event.snoozedUntil} us"
 
-                    logger.error("WARNING: $warningMessage")
+                    DevLog.warn(context, LOG_TAG, warningMessage)
 
                     if (settings.debugAlarmDelays)
                         postNotificationsAlarmDelayDebugMessage(context,
@@ -607,7 +608,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (isQuietPeriodActive && events.isNotEmpty() && !playedAnySound) {
 
-            logger.info("Was quiet due to quiet hours - would remind after snooze period")
+            DevLog.info(context, LOG_TAG, "Was quiet due to quiet hours - would remind after snooze period")
 
             if (!reminderState.quietHoursOneTimeReminderEnabled)
                 reminderState.quietHoursOneTimeReminderEnabled = true
@@ -745,7 +746,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notification = builder.build()
 
         try {
-            logger.info("adding reminder notification")
+            DevLog.info(ctx, LOG_TAG, "adding reminder notification")
 
             notificationManager.notify(
                     Consts.NOTIFICATION_ID_REMINDER,
@@ -753,7 +754,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            logger.error("Exception: $ex, reminder notification stack:")
+            DevLog.error(ctx, LOG_TAG, "Exception: $ex, reminder notification stack:")
             ex.printStackTrace()
         }
 
@@ -892,7 +893,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 ).build()
 
         if (!notificationSettings.notificationOpensSnooze) {
-            logger.debug("adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
+            DevLog.debug(LOG_TAG, "adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
             builder.addAction(snoozeAction)
         }
 
@@ -989,7 +990,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notification = builder.build()
 
         try {
-            logger.info("adding: notificationId=${event.notificationId}")
+            DevLog.info(ctx, LOG_TAG, "adding: notificationId=${event.notificationId}")
 
             notificationManager.notify(
                     event.notificationId,
@@ -997,7 +998,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            logger.error("Exception: $ex, notificationId=${event.notificationId}, stack:")
+            DevLog.error(ctx, LOG_TAG, "Exception: $ex, notificationId=${event.notificationId}, stack:")
             ex.printStackTrace()
         }
 
@@ -1088,7 +1089,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             events: List<EventAlertRecord>,
             isQuietPeriodActive: Boolean
     ) {
-        logger.debug("Posting collapsed view notification for ${events.size} events")
+        DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} events")
 
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
@@ -1140,7 +1141,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     private fun hideCollapsedEventsNotification(context: Context) {
-        logger.debug("Hiding collapsed view notification")
+        DevLog.debug(LOG_TAG, "Hiding collapsed view notification")
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
     }
 
@@ -1168,7 +1169,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationManager.notify(notificationId, notification)
         }
         catch (ex: Exception) {
-            logger.error("Exception: $ex, stack:")
+            DevLog.error(context, LOG_TAG, "Exception: $ex, stack:")
             ex.printStackTrace()
         }
     }
@@ -1211,7 +1212,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
 
     companion object {
-        private val logger = Logger("EventNotificationManager")
+        private const val LOG_TAG = "EventNotificationManager"
 
         const val EVENT_CODE_SNOOOZE_OFFSET = 0
         const val EVENT_CODE_DISMISS_OFFSET = 1

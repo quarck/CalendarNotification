@@ -28,7 +28,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
@@ -42,7 +43,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        logger.debug("Alarm received")
+        DevLog.debug(LOG_TAG, "Alarm received")
 
         if (context == null || intent == null) {
             return;
@@ -53,7 +54,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
 
             if (!ApplicationController.hasActiveEvents(context)) {
-                logger.info("Reminder broadcast alarm received - no active events to remind, returning")
+                DevLog.info(context, LOG_TAG, "Reminder broadcast alarm received: no active events")
                 return@wakeLocked
             }
 
@@ -73,7 +74,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             if (reminderState.quietHoursOneTimeReminderEnabled) {
 
                 if (silentUntil == 0L) {
-                    logger.info("One-shot enabled, not in quiet hours, firing")
+                    DevLog.info(context, LOG_TAG, "One-shot enabled, not in quiet hours, firing")
 
                     shouldFire = true
                     itIsAfterQuietHoursReminder = true
@@ -81,13 +82,13 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                     // Check if regular reminders are enabled and schedule reminder if necessary
                     if (settings.remindersEnabled) {
                         nextFireAt = currentTime + reminderInterval
-                        logger.info("Regular reminders enabled, arming next fire at $nextFireAt")
+                        DevLog.info(context, LOG_TAG, "Regular reminders enabled, arming next fire at $nextFireAt")
                     }
 
                 }
                 else {
                     nextFireAt = silentUntil
-                    logger.info("One-shot enabled, inside quiet hours, postpone until $silentUntil")
+                    DevLog.info(context, LOG_TAG, "One-shot enabled, inside quiet hours, postpone until $silentUntil")
                 }
 
             }
@@ -102,12 +103,12 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                 val numRemindersFired = reminderState.numRemindersFired
                 val maxFires = settings.maxNumberOfReminders
 
-                logger.info("Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
+                DevLog.info(context, LOG_TAG, "Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
 
                 if (maxFires == 0 || numRemindersFired < maxFires) {
 
                     if (silentUntil != 0L) {
-                        logger.info("Reminder postponed until $silentUntil due to quiet hours");
+                        DevLog.info(context, LOG_TAG, "Reminder postponed until $silentUntil due to quiet hours");
                         nextFireAt = silentUntil
 
                     }
@@ -116,16 +117,16 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         val leftMillis = reminderInterval - sinceLastFire;
                         nextFireAt = currentTime + leftMillis
 
-                        logger.info("Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
+                        DevLog.info(context, LOG_TAG, "Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
                     }
                     else {
                         nextFireAt = currentTime + reminderInterval
                         shouldFire = true
 
-                        logger.info("Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
+                        DevLog.info(context, LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
 
                         if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
-                            logger.error("WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
+                            DevLog.error(context, LOG_TAG, "WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
                                     "received $currentTime, ${(currentTime - reminderState.nextFireExpectedAt) / 1000L}s late")
 
                             ApplicationController.onReminderAlarmLate(context, currentTime, reminderState.nextFireExpectedAt)
@@ -133,11 +134,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                     }
                 }
                 else {
-                    logger.info("Exceeded max fires $maxFires, fired $numRemindersFired times")
+                    DevLog.info(context, LOG_TAG, "Exceeded max fires $maxFires, fired $numRemindersFired times")
                 }
             }
             else {
-                logger.info("Reminders are disabled")
+                DevLog.info(context, LOG_TAG, "Reminders are disabled")
             }
 
             if (nextFireAt != 0L) {
@@ -147,8 +148,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         nextFireAt,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java,
-                        logger)
+                        MainActivity::class.java)
 
                 reminderState.nextFireExpectedAt = nextFireAt
             }
@@ -160,7 +160,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     private fun fireReminder(context: Context, currentTime: Long, itIsAfterQuietHoursReminder: Boolean) {
 
-        logger.info("Firing reminder, current time ${System.currentTimeMillis()}")
+        DevLog.info(context, LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
 
         ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder);
 
@@ -179,7 +179,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverReminderAlarm");
+        private const val LOG_TAG = "BroadcastReceiverReminderAlarm"
     }
 }
 

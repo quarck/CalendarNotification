@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastR
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmPerioidicRescanBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -54,6 +55,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onSystemTimeChange(context: Context) {
 
+        DevLog.info(context, LOG_TAG, "onSystemTimeChange");
+
         lastScan = System.currentTimeMillis()
 
         val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
@@ -65,7 +68,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     // should return true if we have fired at new events, so UI should reload if it is open
     override fun onBoot(context: Context): Boolean {
-        logger.debug("onBoot: scanning and setting alarms");
+        DevLog.info(context, LOG_TAG, "onBoot");
 
         lastScan = System.currentTimeMillis()
 
@@ -79,7 +82,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     override fun onPeriodicRescanBroadcast(context: Context, intent: Intent) {
-        logger.debug("onPeriodicRescanBroadcast: scanning and setting alarms");
+
+        DevLog.info(context, LOG_TAG, "onPeriodicRescanBroadcast");
 
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4)
@@ -94,7 +98,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     // should return true if we have fired at new events, so UI should reload if it is open
     override fun onAppResumed(context: Context, monitorSettingsChanged: Boolean): Boolean {
-        logger.debug("onAppStarted: scanning and setting alarms");
+
+        DevLog.info(context, LOG_TAG, "onAppResumed")
 
         val currentTime = System.currentTimeMillis()
         if (!monitorSettingsChanged && (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4))
@@ -112,7 +117,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     // should return true if we have fired at new events, so UI should reload if it is open
     override fun onUpgrade(context: Context): Boolean {
-        logger.debug("onUpgrade: scanning and setting alarms");
+        DevLog.info(context, LOG_TAG, "onAppResumed")
 
         lastScan = System.currentTimeMillis()
 
@@ -127,7 +132,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onAlarmBroadcast(context: Context, intent: Intent) {
 
-        logger.debug("onAlarmBroadcast");
+        DevLog.info(context, LOG_TAG, "onAlarmBroadcast")
 
         val state = CalendarMonitorState(context)
 
@@ -138,13 +143,13 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         val nextEventFireFromProvider = state.nextEventFireFromProvider
         if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
-            logger.info("onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider is less than current time, checking what to fire")
+            DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider < current time $currentTime + THRS, checking what to fire")
             firedProvider = providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
         }
 
         val nextEventFireFromScan = state.nextEventFireFromScan
         if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
-            logger.info("onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time, checking what to fire")
+            DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time $currentTime + THRS, checking what to fire")
             firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
         }
 
@@ -159,7 +164,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onCalendarChange(context: Context) {
 
-        logger.debug("onCalendarChange");
+        DevLog.info(context, LOG_TAG, "onCalendarChange");
 
         val delayInMilliseconds = 1500L
         Handler().postDelayed(
@@ -177,7 +182,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
-        logger.debug("onProviderReminderBroadcast");
+        DevLog.info(context, LOG_TAG, "onProviderReminderBroadcast");
 
         if (Settings(context).enableMonitorDebug)
             return
@@ -186,7 +191,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime == null) {
-            logger.error("ERROR alertTime is null!")
+            DevLog.error(context, LOG_TAG, "ERROR alertTime is null!")
             val fired = scanAndScheduleAlarms_noAfterFire(context)
             if (fired)
                 ApplicationController.afterCalendarEventFired(context, reloadCalendar = true)
@@ -202,11 +207,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             for (event in events) {
 
                 if (getAlertWasHandled(context, event)) {
-                    logger.info("Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime} - it was handled already, skipping")
+                    DevLog.info(context, LOG_TAG, "Broadcast: Event ${event.eventId} / ${event.instanceStartTime} was handled already")
                     continue
                 }
 
-                logger.info("Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime}")
+                DevLog.info(context, LOG_TAG, "Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
@@ -221,7 +226,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         }
         catch (ex: Exception) {
-            logger.error("Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
         }
 
         try {
@@ -230,17 +235,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             for (event in eventsToSilentlyDrop) {
                 setAlertWasHandled(context, event, createdByUs = false)
                 CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                logger.info("IGNORED Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
+                DevLog.info(context, LOG_TAG, "IGNORED Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
             }
 
             for (event in eventsToPost) {
                 setAlertWasHandled(context, event, createdByUs = false)
                 CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                logger.info("Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
+                DevLog.info(context, LOG_TAG, "Event ${event.eventId} / ${event.instanceStartTime}: marked as handled in the DB and in the provider")
             }
         }
         catch (ex: Exception) {
-            logger.error("Exception while posting notifications: $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while posting notifications: $ex, ${ex.stackTrace}")
         }
 
         scanAndScheduleAlarms_noAfterFire(context)
@@ -268,20 +273,19 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         val scanPh3 = System.currentTimeMillis()
 
-        logger.info("Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
-                "scan statistics: total time: ${scanPh3 - scanStart}ms, phases: ${scanPh1 - scanStart}ms, ${scanPh2 - scanPh1}ms, ${scanPh3 - scanPh2}ms")
-
         setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
         val scanPh4 = System.currentTimeMillis()
-        logger.info("afterCalendarEventFired took ${scanPh4 - scanPh3}ms")
+
+        DevLog.info(context, LOG_TAG, "Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
+                "perf: ${scanPh4 - scanStart}, ${scanPh1 - scanStart}, ${scanPh2 - scanPh1}, ${scanPh3 - scanPh2}, ${scanPh4 - scanPh3}")
 
         return firedEventsProvider || firedEventsManual
     }
 
     private fun setOrCancelAlarm(context: Context, time: Long) {
 
-        logger.debug("setOrCancelAlarm");
+        DevLog.debug(LOG_TAG, "setOrCancelAlarm");
 
         val settings = Settings(context)
 
@@ -289,7 +293,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val now = System.currentTimeMillis()
 
-            logger.info("Setting alarm at $time (${(time - now) / 1000L / 60L} mins from now)")
+            DevLog.info(context, LOG_TAG, "Setting alarm at $time (T+${(time - now) / 1000L / 60L}min)")
 
             val exactTime = time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
 
@@ -299,17 +303,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                     exactTime,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                     ManualEventExactAlarmBroadcastReceiver::class.java,
-                    MainActivity::class.java, // alarm info intent
-                    AlarmScheduler.logger)
+                    MainActivity::class.java // alarm info intent
+                    )
         }
         else {
-            logger.info("No next alerts, cancelling")
+            DevLog.info(context, LOG_TAG, "No next alerts, cancelling")
             context.alarmManager.cancelExactAndAlarm(
                     context,
                     settings,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                    ManualEventExactAlarmBroadcastReceiver::class.java,
-                    AlarmScheduler.logger)
+                    ManualEventExactAlarmBroadcastReceiver::class.java
+                    )
         }
     }
 
@@ -318,7 +322,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         val interval = Consts.CALENDAR_RESCAN_INTERVAL
         val next = System.currentTimeMillis() + interval
 
-        logger.debug("schedulePeriodicRescanAlarm, interval: $interval");
+        DevLog.debug(LOG_TAG, "schedulePeriodicRescanAlarm, interval: $interval");
 
         val intent = Intent(context, ManualEventAlarmPerioidicRescanBroadcastReceiver::class.java);
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -354,14 +358,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             if (alert != null) {
 
-                logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: seen this alert already, updating status to wasHandled");
+                DevLog.debug(LOG_TAG, "setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: seen this alert already, updating status to wasHandled");
                 alert.wasHandled = true
                 db.updateAlert(alert)
 
             }
             else {
 
-                logger.info("setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
+                DevLog.debug(LOG_TAG, "setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
                 alert = MonitorEventAlertEntry(
                         eventId = ev.eventId,
                         alertTime = ev.alertTime,
@@ -377,7 +381,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     override fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean {
-        logger.info("getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
+        DevLog.debug(LOG_TAG, "getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
         return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
     }
 
@@ -389,6 +393,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     companion object {
-        val logger = com.github.quarck.calnotify.logs.Logger("CalendarMonitor")
+        private const val LOG_TAG = "CalendarMonitor"
+        //val logger = com.github.quarck.calnotify.logs.Logger(LOG_TAG)
     }
 }

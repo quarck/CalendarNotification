@@ -37,7 +37,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 
@@ -146,14 +146,14 @@ class CalendarsFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logger.debug("onCreate")
+        DevLog.debug(LOG_TAG, "onCreate")
 
         settings = Settings(activity)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        logger.debug("onCreateView")
+        DevLog.debug(LOG_TAG, "onCreateView")
 
         val view = inflater.inflate(R.layout.activity_calendars, container, false);
 
@@ -161,7 +161,7 @@ class CalendarsFragment: Fragment() {
 
         adapter.onItemChanged = {
             view, calendarId, isEnabled ->
-            logger.debug("Item has changed: $calendarId $isEnabled");
+            DevLog.debug(LOG_TAG, "Item has changed: $calendarId $isEnabled");
 
             settings.setCalendarIsHandled(calendarId, isEnabled)
         }
@@ -222,6 +222,6 @@ class CalendarsFragment: Fragment() {
     }
 
     companion object {
-        val logger = Logger("CalendarsActivity")
+        private const val LOG_TAG = "CalendarsActivity")
     }
 }*/

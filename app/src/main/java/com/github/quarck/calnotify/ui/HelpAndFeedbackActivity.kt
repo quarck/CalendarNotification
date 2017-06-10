@@ -30,10 +30,10 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.DevLogger
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.logs.LogcatProvider
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isKitkatOrAbove
 import java.io.File
@@ -62,7 +62,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         }
 
-        logger.debug("onCreate")
+        DevLog.debug(LOG_TAG, "onCreate")
     }
 
     override fun onResume() {
@@ -84,7 +84,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonEmailDeveloper(v: View) {
-        logger.debug("Emailing developer");
+        DevLog.debug(LOG_TAG, "Emailing developer");
 
         val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
 
@@ -99,9 +99,9 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
             val logLines = LogcatProvider.getLog(this)
 
-            val devLogLines: List<String>? =
+            val devLogLines: String? =
                     if (DevLoggerSettings(this).enabled)
-                        DevLogger.getMessages(this)
+                        DevLog.getMessages(this)
                     else
                         null
 
@@ -123,11 +123,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
                 if (devLogLines != null) {
                     writer.print(DEVLOG_HEADER)
-
-                    for (line in devLogLines) {
-                        writer.print(line)
-                        writer.print("\n")
-                    }
+                    writer.print(devLogLines)
                 }
             }
 
@@ -143,7 +139,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             startActivity(email);
         }
         catch (ex: Exception) {
-            logger.error("cannot open email client", ex)
+            DevLog.error(this, LOG_TAG, "cannot open email client: $ex, ${ex.message}, ${ex.stackTrace}")
         }
     }
 
@@ -186,7 +182,7 @@ App version: ${pInfo.versionName} (${pInfo.versionCode})
     }
 
     companion object {
-        var logger = Logger("ActivityHelpAndFeedback")
+        private const val LOG_TAG = "ActivityHelpAndFeedback"
 
         const val DEVELOPER_EMAIL = "quarck@gmail.com"
         const val MIME_TYPE = "message/rfc822"

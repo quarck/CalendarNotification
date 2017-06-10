@@ -24,6 +24,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import java.util.*
 
@@ -47,7 +48,7 @@ class CalendarMonitorManual(
                 ApplicationController.postEventNotifications(context, firedAlerts.map { it.second })
             }
             catch (ex: Exception) {
-                logger.error("Got exception while posting notifications: $ex, ${ex.stackTrace}")
+                DevLog.error(context, LOG_TAG, "Got exception while posting notifications: $ex, ${ex.stackTrace}")
             }
 
             markAlertsAsHandledInDB(context, firedAlerts.map { it.first })
@@ -58,9 +59,7 @@ class CalendarMonitorManual(
             if (state.prevEventFireFromScan < lastFiredAlert)
                 state.prevEventFireFromScan = lastFiredAlert
 
-            logger.info("${firedAlerts.size} events were marked in DB as handled, not dismissing original " +
-                    "reminder for manual fired alerts - provider didn't know about these alerts (otherwise we would not be here)" +
-                    ", prevEventFireFromScan was set to $lastFiredAlert")
+            DevLog.info(context, LOG_TAG, "${firedAlerts.size} events were marked in DB as handled, prevEventFireFromScan was set to $lastFiredAlert")
         }
 
         return fired
@@ -82,7 +81,7 @@ class CalendarMonitorManual(
                 .filter { !it.wasHandled }
                 .sortedBy { it.alertTime }
 
-        logger.info("manualFireEventsAt: got ${alerts.size} alerts to fire at");
+        DevLog.info(context, LOG_TAG, "manualFireEventsAt: got ${alerts.size} alerts to fire at");
 
         return manualFireAlertList_NoHousekeeping(context, alerts)
     }
@@ -102,13 +101,13 @@ class CalendarMonitorManual(
             if (alert.wasHandled)
                 continue
 
-            logger.info("registerFiredEventsInDB: processing at alert $alert")
+            DevLog.info(context, LOG_TAG, "registerFiredEventsInDB: $alert")
 
             var event: EventAlertRecord? = null
 
             if (!alert.alertCreatedByUs) {
                 // not manually created -- can read directly from the provider!
-                logger.debug("Alert was not created by the app, so trying to read alert off the provider")
+                DevLog.info(context, LOG_TAG, "Alert was not created by the app, so trying to read alert off the provider")
                 event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
 
                 if (event != null)
@@ -118,7 +117,7 @@ class CalendarMonitorManual(
             }
 
             if (event == null) {
-                logger.debug("Still has no alert info from provider - reading event off the provider")
+                DevLog.warn(context, LOG_TAG, "Alert not found - reading event by ID for details")
 
                 val calEvent = calendarProvider.getEvent(context, alert.eventId)
                 if (calEvent != null) {
@@ -149,14 +148,15 @@ class CalendarMonitorManual(
                 pairs.add(Pair(alert, event))
             }
             else {
-                logger.error("Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
+                DevLog.error(context, LOG_TAG, "Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
                 // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
                 markAlertsAsHandledInDB(context, listOf(alert))
                 numErrors++
             }
         }
 
-        logger.info("Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
+        if (numAlertsNotFound != 0 || numErrors != 0)
+            DevLog.info(context, LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
 
         val pairsToAdd = pairs.filter {
             (_, event) ->
@@ -170,7 +170,7 @@ class CalendarMonitorManual(
     private fun markAlertsAsHandledInDB(context: Context, alerts: Collection<MonitorEventAlertEntry>) {
         MonitorStorage(context).use {
             db ->
-            logger.info("marking ${alerts.size} alerts as handled in the manual alerts DB");
+            DevLog.info(context, LOG_TAG, "marking ${alerts.size} alerts as handled in the manual alerts DB");
 
             for (alert in alerts)
                 alert.wasHandled = true
@@ -201,7 +201,7 @@ class CalendarMonitorManual(
         // cap scan from range to 1 month back only
         val monthAgo = currentTime - Consts.MAX_SCAN_BACKWARD_DAYS * Consts.DAY_IN_MILLISECONDS
         if (scanFrom < monthAgo) {
-            logger.info("scan from capped from $scanFrom to $monthAgo")
+            DevLog.info(context, LOG_TAG, "scan from capped from $scanFrom to $monthAgo")
             scanFrom = monthAgo
         }
 
@@ -217,7 +217,7 @@ class CalendarMonitorManual(
         val alertsMerged = filterAndMergeAlerts(context, alerts, scanFrom, scanTo)
                 .sortedBy { it.alertTime }
 
-        logger.info("scanNextEvent: scan range: $scanFrom, $scanTo (${Date(scanFrom)} - ${Date(scanTo)})," +
+        DevLog.info(context, LOG_TAG, "scanNextEvent: scan range: $scanFrom, $scanTo (${Date(scanFrom)} - ${Date(scanTo)})," +
                 " got ${alerts.size} events off the provider, merged count: ${alertsMerged.size}")
 
         // now we only need to simply fire at all missed events,
@@ -230,12 +230,12 @@ class CalendarMonitorManual(
 
         if (firstScanEver) {
             state.firstScanEver = false
-            logger.info("This is a first deep scan ever, not posting 'due' events as these are reminders for past events")
+            DevLog.info(context, LOG_TAG, "This is a first deep scan ever, not posting 'due' events")
             markAlertsAsHandledInDB(context, dueAlerts)
 
         }
         else if (dueAlerts.isNotEmpty()) {
-            logger.info("scanNextEvent: ${dueAlerts.size} due alerts (we should have fired already!!!)")
+            DevLog.warn(context, LOG_TAG, "scanNextEvent: ${dueAlerts.size} due alerts - nearly missed these")
 
             var special: EventAlertRecord? = null
 
@@ -265,7 +265,7 @@ class CalendarMonitorManual(
         val nextAlertTime = nextAlert?.alertTime ?: Long.MAX_VALUE
         state.nextEventFireFromScan = nextAlertTime
 
-        logger.info("scanNextEvent: next alert $nextAlertTime");
+        DevLog.info(context, LOG_TAG, "scanNextEvent: next alert $nextAlertTime");
 
         // Very finally - delete events that we are no longer interested in:
         // * events that were handled already
@@ -301,7 +301,7 @@ class CalendarMonitorManual(
 
             val ts3 = System.currentTimeMillis()
 
-            logger.info("filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
+            DevLog.info(context, LOG_TAG, "filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
 
             db.deleteAlerts(disappearedAlerts.values)
             db.addAlerts(newAlerts.values)
@@ -313,7 +313,7 @@ class CalendarMonitorManual(
 
             val ts5 = System.currentTimeMillis()
 
-            logger.debug("filterAndMergeAlerts: performance: ${ts1 - ts0}, ${ts2 - ts1}, ${ts3 - ts2}, ${ts4 - ts3}, ${ts5 - ts4}")
+            DevLog.debug(LOG_TAG, "filterAndMergeAlerts: performance: ${ts1 - ts0}, ${ts2 - ts1}, ${ts3 - ts2}, ${ts4 - ts3}, ${ts5 - ts4}")
         }
 
         return ret
@@ -321,6 +321,6 @@ class CalendarMonitorManual(
 
 
     companion object {
-        val logger = com.github.quarck.calnotify.logs.Logger("CalendarMonitorManual")
+        private const val LOG_TAG = "CalendarMonitorManual"
     }
 }

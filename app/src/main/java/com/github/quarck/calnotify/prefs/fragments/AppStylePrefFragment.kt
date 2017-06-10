@@ -26,7 +26,8 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 
 class AppStylePrefFragment : Fragment() {
@@ -36,7 +37,7 @@ class AppStylePrefFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        logger.debug("onCreate")
+        DevLog.debug(LOG_TAG, "onCreate")
 
         settings = Settings(activity)
 
@@ -68,6 +69,6 @@ class AppStylePrefFragment : Fragment() {
 
 
     companion object {
-        val logger = Logger("AppStylePrefFragment")
+        private const val LOG_TAG = "AppStylePrefFragment"
     }
 }

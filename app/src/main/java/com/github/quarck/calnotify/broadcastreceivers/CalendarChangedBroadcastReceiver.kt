@@ -23,12 +23,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
 class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        logger.debug("onReceive")
+        DevLog.debug(LOG_TAG, "onReceive")
 
         if (context == null)
             return
@@ -37,6 +38,6 @@ class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private val logger = Logger("BroadcastReceiverCalendarChanged");
+        private const val LOG_TAG = "BroadcastReceiverCalendarChanged"
     }
 }

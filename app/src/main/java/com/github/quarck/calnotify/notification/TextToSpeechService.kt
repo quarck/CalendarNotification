@@ -24,7 +24,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.wakeLocked
 
@@ -34,7 +35,7 @@ class TextToSpeechService : IntentService("TextToSpeechService") {
     val textToSpeechManager: TextToSpeechNotificationManagerInterface by lazy { TextToSpeechNotificationManager(this) }
 
     override fun onHandleIntent(intent: Intent?) {
-        logger.debug("onHandleIntent")
+        DevLog.debug(LOG_TAG, "onHandleIntent")
 
         wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.TTS_WAKE_LOCK_NAME) {
             if (intent != null) {
@@ -46,7 +47,7 @@ class TextToSpeechService : IntentService("TextToSpeechService") {
     }
 
     companion object {
-        val logger = Logger("TextToSpeechService")
+        private const val LOG_TAG = "TextToSpeechService"
 
         fun playText(ctx: Context, text: String) {
             val intent = Intent(ctx, TextToSpeechService::class.java)

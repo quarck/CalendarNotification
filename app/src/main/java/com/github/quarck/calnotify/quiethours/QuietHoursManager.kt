@@ -20,12 +20,13 @@
 package com.github.quarck.calnotify.quiethours
 
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.DateTimeUtils
 import java.util.*
 
 object QuietHoursManager : QuietHoursManagerInterface {
-    var logger = Logger("QuietPeriodManager")
+    private const val LOG_TAG = "QuietPeriodManager"
 
     private fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
@@ -55,7 +56,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
         val to = settings.quietHoursTo
         val silentTo = DateTimeUtils.createCalendarTime(currentTime, to.component1(), to.component2())
 
-        logger.debug("getSilentUntil: ct=$currentTime, $from to $to");
+        DevLog.debug(LOG_TAG, "getSilentUntil: ct=$currentTime, $from to $to");
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
         silentFrom.add(Calendar.DATE, -1);
@@ -72,7 +73,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
             if (cal.after(silentFrom) && cal.before(silentTo)) {
                 // this hits silent period -- so it should be silent until 'silentTo'
                 ret = silentTo.timeInMillis
-                logger.debug("Time hits silent period range, would be silent for ${(ret - currentTime) / 1000L} seconds since expected wake up time")
+                DevLog.debug(LOG_TAG, "Time hits silent period range, would be silent for ${(ret - currentTime) / 1000L} seconds since expected wake up time")
                 break;
             }
 
@@ -93,7 +94,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
         if (!isEnabled(settings))
             return ret
 
-        if (ret.size == 0)
+        if (ret.isEmpty())
             return ret
 
         val cals =

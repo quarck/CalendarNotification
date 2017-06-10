@@ -26,7 +26,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.NumberPicker
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toIntOrNull
 
@@ -106,6 +106,6 @@ class MaxRemindersPreference(context: Context, attrs: AttributeSet) : DialogPref
     }
 
     companion object {
-        val logger = Logger("MaxRemindersPreference")
+        private const val LOG_TAG = "MaxRemindersPreference"
     }
 }

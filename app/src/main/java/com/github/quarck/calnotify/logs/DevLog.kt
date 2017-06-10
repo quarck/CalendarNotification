@@ -29,6 +29,8 @@ import android.text.format.DateUtils
 import android.util.Log
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import java.io.Closeable
+import java.io.File
+import java.io.FileOutputStream
 
 
 class DevLoggerSettings(ctx: Context): PersistentStorageBase(ctx, NAME) {
@@ -40,12 +42,20 @@ class DevLoggerSettings(ctx: Context): PersistentStorageBase(ctx, NAME) {
     }
 }
 
+interface LoggerStorageInterface {
+    fun addMessage(severity: Int, tag: String, message: String)
+    fun getMessages(): String
+    fun clear()
+}
+
 class DevLoggerDB(val context: Context):
-        SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
+        SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION),
+        Closeable,
+        LoggerStorageInterface {
 
     override fun onCreate(db: SQLiteDatabase) {
 
-        val logger = Logger("DevLoggerDB")
+        val LOG_TAG = "DevLoggerDB"
 
         val CREATE_PKG_TABLE =
                 "CREATE " +
@@ -53,11 +63,11 @@ class DevLoggerDB(val context: Context):
                         "( " +
                         "$KEY_TIME INTEGER, " +
                         "$KEY_SEVERITY INTEGER, " +
-                        "$KEY_EVENT_ID INTEGER, " +
+                        "$KEY_TAG TEXT, " +
                         "$KEY_MESSAGE TEXT, " +
                         " )"
 
-        logger.debug("Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+        Log.d(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
     }
@@ -70,7 +80,7 @@ class DevLoggerDB(val context: Context):
         }
     }
 
-    fun addMessage(severity: Int, eventId: Long, message: String) {
+    override fun addMessage(severity: Int, tag: String, message: String) {
 
         writableDatabase.use {
             db ->
@@ -79,7 +89,7 @@ class DevLoggerDB(val context: Context):
 
             values.put(KEY_TIME, System.currentTimeMillis())
             values.put(KEY_SEVERITY, severity)
-            values.put(KEY_EVENT_ID, eventId)
+            values.put(KEY_TAG, tag)
             values.put(KEY_MESSAGE, message);
 
             db.insert(TABLE_NAME, // table
@@ -88,7 +98,7 @@ class DevLoggerDB(val context: Context):
         }
     }
 
-    fun getMessages(): List<String> {
+    override fun getMessages(): String {
 
         val ret = mutableListOf<String>()
 
@@ -114,10 +124,10 @@ class DevLoggerDB(val context: Context):
             cursor.close()
         }
 
-        return ret
+        return ret.joinToString("\n")
     }
 
-    fun clear() {
+    override fun clear() {
         writableDatabase.use { db ->
             db.delete(TABLE_NAME, null, null)
         }
@@ -127,7 +137,7 @@ class DevLoggerDB(val context: Context):
 
         val time = cursor.getLong(PROJECTION_KEY_TIME)
         val sev = cursor.getInt(PROJECTION_KEY_SEVERITY)
-        val eventId = cursor.getLong(PROJECTION_KEY_EVENT_ID)
+        val eventId = cursor.getLong(PROJECTION_KEY_TAG)
         val msg = cursor.getString(PROJECTION_KEY_MESSAGE)
 
         val builder = StringBuffer(msg.length + 64)
@@ -160,25 +170,25 @@ class DevLoggerDB(val context: Context):
 
 
     companion object {
-        const val DATABASE_NAME = "devlogV1"
+        const val DATABASE_NAME = "devlogV3"
         const val TABLE_NAME = "messages"
-        const val DATABASE_CURRENT_VERSION = 1
+        const val DATABASE_CURRENT_VERSION = 3
 
         const val KEY_TIME = "time"
         const val KEY_SEVERITY = "sev"
-        const val KEY_EVENT_ID = "evId"
+        const val KEY_TAG = "tag"
         const val KEY_MESSAGE = "msg"
 
         val SELECTION_COLUMNS = arrayOf<String>(
                 KEY_TIME,
                 KEY_SEVERITY,
-                KEY_EVENT_ID,
+                KEY_TAG,
                 KEY_MESSAGE
         )
 
         const val PROJECTION_KEY_TIME = 0
         const val PROJECTION_KEY_SEVERITY = 1
-        const val PROJECTION_KEY_EVENT_ID = 2
+        const val PROJECTION_KEY_TAG = 2
         const val PROJECTION_KEY_MESSAGE = 3
 
         const val SEVERITY_ERROR = 0
@@ -188,72 +198,59 @@ class DevLoggerDB(val context: Context):
     }
 }
 
-object DevLogger {
-
-    const val LOG_TAG = "CalNotify"
+object DevLog {
 
     var enabled: Boolean? = null
 
-    private fun getIsEnabled(context: Context): Boolean {
+    private fun getIsEnabled(context: Context?): Boolean {
 
         if (enabled == null) {
-            enabled = DevLoggerSettings(context).enabled
+            enabled = context != null && DevLoggerSettings(context).enabled
         }
 
         return enabled ?: false
     }
 
-    private fun log(context: Context, severity: Int, eventId: Long, message: String) {
-        DevLoggerDB(context).use {
-            it.addMessage(severity, eventId, message)
-        }
+    private fun logToSqlite(context: Context?, severity: Int, tag: String, message: String) {
+
+        if (context != null)
+            DevLoggerDB(context).use {
+                it.addMessage(severity, tag, message)
+            }
     }
 
-    fun error(context: Context, eventId: Long, message: String) {
+    fun error(context: Context?, tag: String, message: String) {
+
         if (getIsEnabled(context)) {
-            log(context, DevLoggerDB.SEVERITY_ERROR, eventId, message)
+            logToSqlite(context, DevLoggerDB.SEVERITY_ERROR, tag, message)
         }
-        else {
-            Log.e(LOG_TAG, message)
-        }
+
+        Log.e(tag, message)
     }
 
-    fun warn(context: Context, eventId: Long, message: String) {
+    fun warn(context: Context?, tag: String, message: String) {
+
         if (getIsEnabled(context)) {
-            log(context, DevLoggerDB.SEVERITY_WARNING, eventId, message)
+            logToSqlite(context, DevLoggerDB.SEVERITY_WARNING, tag, message)
         }
-        else {
-            Log.w(LOG_TAG, message)
-        }
+
+        Log.w(tag, message)
     }
 
-    fun info(context: Context, eventId: Long, message: String) {
+    fun info(context: Context?, tag: String, message: String) {
+
         if (getIsEnabled(context)) {
-            log(context, DevLoggerDB.SEVERITY_INFO, eventId, message)
+            logToSqlite(context, DevLoggerDB.SEVERITY_INFO, tag, message)
         }
-        else {
-            Log.i(LOG_TAG, message)
-        }
+
+        Log.i(tag, message)
     }
 
-    fun error(context: Context, message: String) = error(context, 0, message)
+    fun debug(tag: String, message: String) = Log.d(tag, message)
 
-    fun warn(context: Context, message: String) = warn(context, 0, message)
+    fun debug(context: Context?, tag: String, message: String) = debug(tag, message)
 
-    fun info(context: Context, message: String) = info(context, 0, message)
+    fun clear(context: Context) = DevLoggerDB(context).use { it.clear() }
 
-    fun clear(context: Context) {
-        DevLoggerDB(context).use {
-            it.clear()
-        }
-    }
-
-    fun getMessages(context: Context): List<String> {
-
-        val lines = DevLoggerDB(context).use {
-            it.getMessages()
-        }
-
-        return lines
-    }
+    fun getMessages(context: Context) = DevLoggerDB(context).use { it.getMessages() }
 }

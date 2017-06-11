@@ -8,5 +8,11 @@ No such information ever leaves application:
 
  * not provided to any 3rd party 
 
-All event details are removed once event is dismissed. If user has enabled option to keep recently dismissed 
-events - such information is removed as soon as timeout passes  or history is cleared explicitly
+After event is dismissed, its infromation is stored in the Bin for a number of days (default 3), and 
+after expiration - information is completely removed. 
+
+Bin can be disabled, in such case information about event is removed from the app as soon as event 
+is dismissed. 
+
+Application contains functionality of keeping logs in a persistent storage for debug purpose, this 
+functionality is off by default and can only be enabled through hidden developers menu. 

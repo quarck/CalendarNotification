@@ -236,7 +236,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(HALO_LIGHT_TIMER_PICKER_KEY, false)
 
     val keepHistory: Boolean
-        get() = getBoolean(KEEP_HISTORY_KEY, false)
+        get() = getBoolean(KEEP_HISTORY_KEY, true)
 
     val keepHistoryDays: Int
         get() = getString(KEEP_HISTORY_DAYS_KEY, "").toIntOrNull() ?: 3

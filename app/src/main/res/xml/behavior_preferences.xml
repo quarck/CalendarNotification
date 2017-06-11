@@ -4,7 +4,7 @@
     <CheckBoxPreference
         android:key="keep_history"
         android:title="@string/enable_bin"
-        android:defaultValue="false" />
+        android:defaultValue="true" />
 
     <EditTextPreference
         android:key="keep_history_days"

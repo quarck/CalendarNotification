@@ -681,22 +681,30 @@ object CalendarProvider : CalendarProviderInterface {
 
             val currentTime = System.currentTimeMillis()
 
-            var newStartTime = event.startTime + addTime
-            var newEndTime = event.endTime + addTime
+            val newStartTime: Long
+            val newEndTime: Long
 
-            // FIXME: get rid of this potentially very long loop and use some easy math, like:
-            // units = ((currentTime - event.startTime + (addTime - 1 )) / addTime)
-            // newStartTime = event.startTime + units * addTime
-            // (but test it somewhere in repl first)
-            while (newStartTime < currentTime + Consts.ALARM_THRESHOLD) {
-                DevLog.error(context, LOG_TAG, "Requested time is already in the past, adding another ${addTime / 1000} sec")
+            val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
 
-                newStartTime += addTime
-                newEndTime += addTime
+            if (numSecondsInThePast > 0) {
+                val addUnits = numSecondsInThePast / addTime + 1
+
+                newStartTime = event.startTime + addTime * addUnits
+                newEndTime = event.endTime + addTime * addUnits
+
+                if (addUnits != 1L)
+                    DevLog.error(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTime * addUnits}")
+
+                values.put(CalendarContract.Events.DTSTART, newStartTime);
+                values.put(CalendarContract.Events.DTEND, newEndTime);
             }
+            else {
+                newStartTime = event.startTime + addTime
+                newEndTime = event.endTime + addTime
 
-            values.put(CalendarContract.Events.DTSTART, newStartTime);
-            values.put(CalendarContract.Events.DTEND, newEndTime);
+                values.put(CalendarContract.Events.DTSTART, newStartTime);
+                values.put(CalendarContract.Events.DTEND, newEndTime);
+            }
 
             val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
             val updated = context.contentResolver.update(updateUri, values, null, null);

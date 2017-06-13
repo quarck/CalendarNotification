@@ -42,8 +42,6 @@ import java.util.*
 
 // TODO: when any event is dismissed - reset reminder timer to T+interval (instead of what it was scheduled for)
 
-// TODO: sometimes reminders are very late, we need a "Developer Mode logs" to debug that
-
 // TODO: add event button (off by default)
 
 // TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1
@@ -56,7 +54,7 @@ import java.util.*
 
 // TODO: snooze - reload event
 
-// TODO: when app is opened - stop reminding until next event fire
+// TODO: when app is opened - stop reminding until next event fires
 
 // TODO: test dismiss all while scan is in progress
 

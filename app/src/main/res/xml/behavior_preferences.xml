@@ -19,22 +19,22 @@
         android:summary="@string/handle_events_with_no_reminders_summary"
         android:defaultValue="true"/>
 
-    <EditTextPreference
-        android:key="default_reminder_time"
+    <com.github.quarck.calnotify.prefs.DefaultManualNotificationPreference
+        android:key="default_rminder_time"
         android:title="@string/default_reminder_time"
-        android:summary="@string/default_reminder_time_summary"
+        android:summary="@string/default_reminder_time_summary_short"
         android:dependency="remind_events_no_rmdnrs"
         android:numeric="integer"
         android:defaultValue="15"
         />
 
-    <EditTextPreference
-        android:key="default_all_day_reminder_time"
+    <com.github.quarck.calnotify.prefs.DefaultManualAllDayNotificationPreference
+        android:key="default_all_day_rminder_time"
         android:title="@string/default_all_day_reminder_time"
-        android:summary="@string/default_all_day_reminder_time_summary"
+        android:summary="@string/default_all_day_reminder_time_summary_short"
         android:dependency="remind_events_no_rmdnrs"
         android:numeric="integer"
-        android:defaultValue="-8"
+        android:defaultValue="-480"
         />
 
     <CheckBoxPreference

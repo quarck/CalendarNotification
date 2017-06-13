@@ -64,7 +64,7 @@ class DevLoggerDB(val context: Context):
                         "$KEY_TIME INTEGER, " +
                         "$KEY_SEVERITY INTEGER, " +
                         "$KEY_TAG TEXT, " +
-                        "$KEY_MESSAGE TEXT, " +
+                        "$KEY_MESSAGE TEXT " +
                         " )"
 
         Log.d(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)

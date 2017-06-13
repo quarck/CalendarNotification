@@ -270,7 +270,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getString(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, "15").toLong() * 60L * 1000L
 
     val defaultReminderTimeForAllDayEventWithNoreminder: Long
-        get() = getString(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, "-8").toLong() * 3600L * 1000L
+        get() = getString(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, "-480").toLong() * 60L * 1000L
 
     val manualCalWatchScanWindow: Long
         get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
@@ -383,8 +383,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"
 
         private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
-        private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_reminder_time"
-        private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_reminder_time"
+        private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time"
+        private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_rminder_time"
 
         private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
 

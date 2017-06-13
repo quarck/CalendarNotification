@@ -314,8 +314,10 @@
     <string name="handle_events_with_no_reminders_summary">Notify about events with no reminder added</string>
     <string name="default_reminder_time">Default reminder time</string>
     <string name="default_reminder_time_summary">Reminder time for events with no reminders, in minutes before the event</string>
+    <string name="default_reminder_time_summary_short">Reminder time for events with no reminders</string>
     <string name="default_all_day_reminder_time">Default all day reminder</string>
     <string name="default_all_day_reminder_time_summary">Default reminder time for all day events with no reminders, in hours before the event time (00:00:00 of the day of event)\nExample:\n\n * \'-8\' means notify at 8am on the day of event\n\n * \'7\' means seven hours before 00:00 of the day of event, e.g. 5pm on the day before</string>
+    <string name="default_all_day_reminder_time_summary_short">Default reminder time for all day events with no reminders</string>
     <string name="reminder_custom_ringtone_summary">Use custom ringtone for notifications</string>
     <string name="reminder_custom_vibration_summary">Use custom vibration for notifications</string>
 
@@ -335,5 +337,10 @@
     <string name="restrict_swipe_to_dismiss">Restrict notification swipe</string>
     <string name="snooze_on_swipe">Snooze on swipe</string>
     <string name="snooze_on_swipe_summary">Swiping would snooze event instead of dismissing it (1st present is used)</string>
+
+    <string name="time_before_event">Time before the event</string>
+    <string name="notify_about_full_day_events_at">Notify about full day events at:</string>
+    <string name="on_the_day_before">On the day before</string>
+    <string name="on_the_day_of_event">On the day of event</string>
 </resources>
 

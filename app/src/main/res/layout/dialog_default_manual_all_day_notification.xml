@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/notify_about_full_day_events_at"
+        android:id="@+id/textViewTimeIntervalTitle"
+        android:layout_gravity="start"
+        android:paddingLeft="30dp"
+        android:paddingStart="30dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textStyle="bold"
+        android:textColor="@color/secondary_text"
+
+        />
+
+    <TimePicker
+        android:id="@+id/time_picker_pref_notification_time_of_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        >
+
+        <RadioButton
+            android:id="@+id/radio_button_day_before"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/on_the_day_before"
+            android:checked="true"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            />
+
+        <RadioButton
+            android:id="@+id/radio_button_day_of_event"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/on_the_day_of_event"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            />
+    </RadioGroup>
+
+
+</LinearLayout>

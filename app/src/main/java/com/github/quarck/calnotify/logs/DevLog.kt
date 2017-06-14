@@ -137,14 +137,23 @@ class DevLoggerDB(val context: Context):
 
         val time = cursor.getLong(PROJECTION_KEY_TIME)
         val sev = cursor.getInt(PROJECTION_KEY_SEVERITY)
-        val eventId = cursor.getLong(PROJECTION_KEY_TAG)
+        val tag = cursor.getString(PROJECTION_KEY_TAG)
         val msg = cursor.getString(PROJECTION_KEY_MESSAGE)
 
-        val builder = StringBuffer(msg.length + 64)
+        val builder = StringBuffer(msg.length + tag.length + 128)
 
-        builder.append(
-                DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
-        )
+        builder.append(time)
+                .append(" / ")
+
+        val usec = time % 1000L
+        val sec = (time / 1000L) % 60L
+        val min = (time /  60000L) % 60L
+        val hr = (time / 3600000L) % 24L
+
+        builder.append(hr).append(':')
+                .append(min).append(':')
+                .append(sec).append('.')
+                .append(usec)
 
         when (sev) {
             SEVERITY_ERROR ->
@@ -159,11 +168,9 @@ class DevLoggerDB(val context: Context):
                 builder.append(": ")
         }
 
-        if (eventId != 0L) {
-            builder.append("Event ID: ")
-            builder.append(eventId)
-            builder.append(", ")
-        }
+        builder.append(tag)
+                .append(": ")
+                .append(msg)
 
         return builder.toString()
     }

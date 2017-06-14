@@ -281,6 +281,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val dontShowCancelledEvents: Boolean
         get() = getBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, false)
 
+    val dontShowAllDayEvents: Boolean
+        get() = getBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, false)
+
     var enableMonitorDebug: Boolean
         get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
         set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
@@ -390,6 +393,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events"
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"
+        private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events"
 
         private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
 

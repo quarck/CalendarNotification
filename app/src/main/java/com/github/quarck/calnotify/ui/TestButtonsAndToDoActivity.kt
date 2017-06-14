@@ -40,21 +40,22 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+// TODO: Reminder behavior setting:
+// 1. Current behavior - each notification resets the counter
+// 2. Remind N times since first unseen event, only reset when it is "all clear"
+
 // TODO: when any event is dismissed - reset reminder timer to T+interval (instead of what it was scheduled for)
 
 // TODO: add event button (off by default)
 
 // TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1
-// TODO: need a prper UI for setting manual scanner event reminders (handle before/after etc)
 
 // FIXME: sometimes dismiss takes quite a while!
 
-// TODO: https://github.com/quarck/CalendarNotification/issues/227
-// TODO: https://github.com/quarck/CalendarNotification/issues/220
+// TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
+// TODO: Android O support ?? https://github.com/quarck/CalendarNotification/issues/220
 
 // TODO: snooze - reload event
-
-// TODO: when app is opened - stop reminding until next event fires
 
 // TODO: test dismiss all while scan is in progress
 

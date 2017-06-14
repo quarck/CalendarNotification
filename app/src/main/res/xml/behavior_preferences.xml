@@ -49,11 +49,10 @@
         android:summary="@string/ignore_cancelled_events_summary"
         android:defaultValue="false" />
 
-    <!-- use_set_alarm_clock -->
     <CheckBoxPreference
-        android:key="use_set_alarm_clock"
-        android:title="@string/use_set_alarm_clock_title"
-        android:summary="@string/use_set_alarm_clock_summary"
-        android:defaultValue="true" />
+        android:key="dont_show_all_day_events"
+        android:title="@string/ignore_all_day_events"
+        android:summary="@string/ignore_all_day_events_summary"
+        android:defaultValue="false" />
 
 </PreferenceScreen>

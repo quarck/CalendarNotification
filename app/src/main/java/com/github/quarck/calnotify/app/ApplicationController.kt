@@ -195,6 +195,11 @@ object ApplicationController : EventMovedHandler {
             return true
         }
 
+        if (event.isAllDay && settings.dontShowAllDayEvents) {
+            DevLog.info(context, LOG_TAG, "Event ${event.eventId} is an all day event - ignored per user setting")
+            return true
+        }
+
         return false
     }
 

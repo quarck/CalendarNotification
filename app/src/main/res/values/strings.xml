@@ -341,5 +341,7 @@
     <string name="on_the_day_before">On the day before</string>
     <string name="on_the_day_of_event">On the day of event</string>
     <string name="before_the_event">before the event</string>
+    <string name="ignore_all_day_events">Ignore all-day events</string>
+    <string name="ignore_all_day_events_summary">Do not remind on all day events</string>
 </resources>
 

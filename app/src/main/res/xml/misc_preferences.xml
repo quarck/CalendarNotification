@@ -22,4 +22,11 @@
         android:summary="@string/halo_light_theme_time_picker_summary"
         android:defaultValue="false" />
 
+    <!-- use_set_alarm_clock -->
+    <CheckBoxPreference
+        android:key="use_set_alarm_clock"
+        android:title="@string/use_set_alarm_clock_title"
+        android:summary="@string/use_set_alarm_clock_summary"
+        android:defaultValue="true" />
+
 </PreferenceScreen>

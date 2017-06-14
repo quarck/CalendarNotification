@@ -719,6 +719,9 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(context, LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
+        // Remove notification earlier, before doing any background work!
+        notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
+
         if (dismissType.shouldKeep && Settings(context).keepHistory && event.isNotSpecial) {
             DismissedEventsStorage(context).use {
                 db ->
@@ -727,8 +730,6 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (db.deleteEvent(event.eventId, event.instanceStartTime)) {
-
-            notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
 
             ReminderState(context).onUserInteraction(System.currentTimeMillis())
 

@@ -46,9 +46,7 @@ import java.util.*
 
 // TODO: add event button (off by default)
 
-// TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1
-
-// FIXME: sometimes dismiss takes quite a while!
+// TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1 -- this must be a setting!!
 
 // TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
 // TODO: Android O support ?? https://github.com/quarck/CalendarNotification/issues/220

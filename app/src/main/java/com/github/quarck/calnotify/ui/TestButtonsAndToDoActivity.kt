@@ -44,8 +44,6 @@ import java.util.*
 // 1. Current behavior - each notification resets the counter
 // 2. Remind N times since first unseen event, only reset when it is "all clear"
 
-// TODO: when any event is dismissed - reset reminder timer to T+interval (instead of what it was scheduled for)
-
 // TODO: add event button (off by default)
 
 // TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1

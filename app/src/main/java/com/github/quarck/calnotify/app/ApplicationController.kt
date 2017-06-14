@@ -37,6 +37,7 @@ import com.github.quarck.calnotify.notification.EventNotificationManagerInterfac
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
+import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifierService
 
@@ -531,6 +532,8 @@ object ApplicationController : EventMovedHandler {
         if (snoozedEvent != null) {
             notificationManager.onEventSnoozed(context, EventFormatter(context), snoozedEvent.eventId, snoozedEvent.notificationId);
 
+            ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
@@ -669,6 +672,8 @@ object ApplicationController : EventMovedHandler {
 
             notificationManager.onEventsDismissed(context, EventFormatter(context), events);
 
+            ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             if (notifyActivity)
@@ -724,6 +729,8 @@ object ApplicationController : EventMovedHandler {
         if (db.deleteEvent(event.eventId, event.instanceStartTime)) {
 
             notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
+
+            ReminderState(context).onUserInteraction(System.currentTimeMillis())
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 

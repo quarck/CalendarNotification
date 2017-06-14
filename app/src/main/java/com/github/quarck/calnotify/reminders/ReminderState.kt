@@ -53,6 +53,11 @@ class ReminderState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
         editor.commit()
     }
 
+    fun onUserInteraction(currentTime: Long) {
+        // update last fire time to prevent from firing too yearly
+        reminderLastFireTime = currentTime
+    }
+
 
     companion object {
         const val PREFS_NAME: String = "reminder_state"

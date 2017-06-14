@@ -953,7 +953,7 @@ object CalendarProvider : CalendarProviderInterface {
                                 if (evt.isAllDay == 0L)
                                     evt.instanceStart - defaultReminderTimeForEventWithNoReminder
                                 else
-                                    evt.instanceStart - defaultReminderTimeForAllDayEventWithNoreminder
+                                    evt.instanceStart + defaultReminderTimeForAllDayEventWithNoreminder
 
                         val entry = MonitorEventAlertEntry(
                                 evt.eventId,

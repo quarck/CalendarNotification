@@ -34,7 +34,7 @@ class DefaultManualNotificationPreference(context: Context, attrs: AttributeSet)
     internal lateinit var picker: TimeIntervalPickerController
 
     init {
-        dialogLayoutResource = R.layout.dialog_interval_picker
+        dialogLayoutResource = R.layout.dialog_default_manual_notification
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
         dialogIcon = null
@@ -43,7 +43,7 @@ class DefaultManualNotificationPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        picker = TimeIntervalPickerController(view, R.string.time_before_event)
+        picker = TimeIntervalPickerController(view, null)
         picker.intervalMinutes = timeValue
     }
 

@@ -36,11 +36,11 @@ class TimeIntervalPickerController(val view: View, titleId: Int?) {
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
 
-        val label = view.find<TextView>(R.id.textViewTimeIntervalTitle)
+        val label: TextView? = view.find<TextView>(R.id.textViewTimeIntervalTitle)
         if (titleId != null)
-            label.setText(titleId)
+            label?.setText(titleId)
         else
-            label.visibility = View.GONE
+            label?.visibility = View.GONE
 
         timeUnitsSpinners.setSelection(MINUTES_ID)
 

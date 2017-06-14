@@ -338,9 +338,8 @@
     <string name="snooze_on_swipe">Snooze on swipe</string>
     <string name="snooze_on_swipe_summary">Swiping would snooze event instead of dismissing it (1st present is used)</string>
 
-    <string name="time_before_event">Time before the event</string>
-    <string name="notify_about_full_day_events_at">Notify about full day events at:</string>
     <string name="on_the_day_before">On the day before</string>
     <string name="on_the_day_of_event">On the day of event</string>
+    <string name="before_the_event">before the event</string>
 </resources>
 

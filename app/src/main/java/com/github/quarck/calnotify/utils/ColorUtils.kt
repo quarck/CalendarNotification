@@ -25,6 +25,10 @@ internal const val CALENDAR_COLOR_FADE_MIN = 1.17;
 internal const val CALENDAR_COLOR_FADE_MED = 1.3;
 internal const val CALENDAR_COLOR_FADE_MAX = 1.35;
 
+internal const val DARK_FACTOR_1 = 1.2;
+internal const val DARK_FACTOR_2 = 1.3;
+internal const val DARK_FACTOR_3 = 1.4;
+
 internal const val CHANNELS_ARE_EQUAL_THRESHOLD = 0x10
 
 internal const val RGB_TO_YUV_1_1 = 0.299
@@ -57,55 +61,57 @@ data class RGB(val r: Int, val g: Int, val b: Int) {
 }
 
 
-fun Int.adjustCalendarColor(): Int {
+fun Int.adjustCalendarColor(darker: Boolean): Int {
 
     var (r, g, b) = RGB(this)
 
     val min = Math.min(r, Math.min(g, b))
     val max = Math.max(r, Math.max(g, b))
 
+    val darkFactor1st = if (darker) DARK_FACTOR_1 else 1.0
+    val darkFactor2nd = if (darker) DARK_FACTOR_2 else 1.0
+    val darkFactor3rd = if (darker) DARK_FACTOR_3 else 1.0
+
     if (max - min < CHANNELS_ARE_EQUAL_THRESHOLD) {
-        r = (r / CALENDAR_COLOR_FADE_MED).toInt()
-        g = (g / CALENDAR_COLOR_FADE_MED).toInt()
-        b = (b / CALENDAR_COLOR_FADE_MED).toInt()
+        r = (r / CALENDAR_COLOR_FADE_MED / darkFactor1st).toInt()
+        g = (g / CALENDAR_COLOR_FADE_MED / darkFactor1st).toInt()
+        b = (b / CALENDAR_COLOR_FADE_MED / darkFactor1st).toInt()
     }
     else {
-
         if (r > g && r > b) {
             //
-            r = (r / CALENDAR_COLOR_FADE_MIN).toInt()
+            r = (r / CALENDAR_COLOR_FADE_MIN / darkFactor1st).toInt()
             if (g > b) {
-                g = (g / CALENDAR_COLOR_FADE_MED).toInt()
-                b = (b / CALENDAR_COLOR_FADE_MAX).toInt()
+                g = (g / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                b = (b / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
             else {
-                b = (b / CALENDAR_COLOR_FADE_MED).toInt()
-                g = (g / CALENDAR_COLOR_FADE_MAX).toInt()
+                b = (b / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                g = (g / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
-
         }
         else if (g > r && g > b) {
             //
-            g = (g / CALENDAR_COLOR_FADE_MIN).toInt()
+            g = (g / CALENDAR_COLOR_FADE_MIN  / darkFactor1st).toInt()
             if (r > b) {
-                r = (r / CALENDAR_COLOR_FADE_MED).toInt()
-                b = (b / CALENDAR_COLOR_FADE_MAX).toInt()
+                r = (r / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                b = (b / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
             else {
-                b = (b / CALENDAR_COLOR_FADE_MED).toInt()
-                r = (r / CALENDAR_COLOR_FADE_MAX).toInt()
+                b = (b / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                r = (r / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
         }
         else {
             // b > r && b > g
-            b = (b / CALENDAR_COLOR_FADE_MIN).toInt()
+            b = (b / CALENDAR_COLOR_FADE_MIN / darkFactor1st).toInt()
             if (r > g) {
-                r = (r / CALENDAR_COLOR_FADE_MED).toInt()
-                g = (g / CALENDAR_COLOR_FADE_MAX).toInt()
+                r = (r / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                g = (g / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
             else {
-                g = (g / CALENDAR_COLOR_FADE_MED).toInt()
-                r = (r / CALENDAR_COLOR_FADE_MAX).toInt()
+                g = (g / CALENDAR_COLOR_FADE_MED / darkFactor3rd).toInt()
+                r = (r / CALENDAR_COLOR_FADE_MAX / darkFactor2nd).toInt()
             }
         }
     }

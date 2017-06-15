@@ -264,7 +264,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             dateTimeFirstLine.setOnClickListener(onClick)
             dateTimeSecondLine.setOnClickListener(onClick)
 
-            var color: Int = ev.color.adjustCalendarColor()
+            var color: Int = ev.color.adjustCalendarColor(settings.darkerCalendarColors)
             if (color == 0)
                 color = resources.getColor(R.color.primary)
 

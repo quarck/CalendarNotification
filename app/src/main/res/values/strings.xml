@@ -345,5 +345,6 @@
     <string name="ignore_all_day_events_summary">Do not remind on all day events</string>
 
     <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
+    <string name="darker_calendar_color">Darker calendar colors</string>
 </resources>
 

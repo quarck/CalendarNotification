@@ -984,7 +984,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (notificationSettings.showColorInNotification) {
-            builder.setColor(event.color.adjustCalendarColor())
+            builder.setColor(event.color.adjustCalendarColor(false))
         }
 
         val notification = builder.build()

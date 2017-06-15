@@ -71,6 +71,10 @@ class DismissedEventListAdapter(
 
     : RecyclerView.Adapter<DismissedEventListAdapter.ViewHolder>() {
 
+    val darkerCalendarColors: Boolean by lazy {
+        Settings(context).darkerCalendarColors
+    }
+
     inner class ViewHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView) {
         //var eventId: Long = 0;
@@ -271,7 +275,11 @@ class DismissedEventListAdapter(
             holder.snoozedUntilText?.text = entry.formatReason(context)
             holder.snoozedUntilText?.visibility = View.VISIBLE;
 
-            holder.calendarColor.color = if (entry.event.color != 0) entry.event.color.adjustCalendarColor() else primaryColor
+            holder.calendarColor.color =
+                    if (entry.event.color != 0)
+                        entry.event.color.adjustCalendarColor(darkerCalendarColors)
+                    else
+                        primaryColor
             holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }

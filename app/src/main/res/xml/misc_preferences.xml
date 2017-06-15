@@ -29,4 +29,9 @@
         android:summary="@string/use_set_alarm_clock_summary"
         android:defaultValue="true" />
 
+    <CheckBoxPreference
+        android:key="darker_calendar_colors"
+        android:title="@string/darker_calendar_color"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

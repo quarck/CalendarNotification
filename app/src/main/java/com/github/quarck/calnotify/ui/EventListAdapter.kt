@@ -60,6 +60,10 @@ class EventListAdapter(
 
     : RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
 
+    val darkerCalendarColors: Boolean by lazy {
+        Settings(context).darkerCalendarColors
+    }
+
     inner class ViewHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView) {
         var eventId: Long = 0;
@@ -375,7 +379,11 @@ class EventListAdapter(
                 holder.snoozeButton?.text = snoozeString
             }
 
-            holder.calendarColor.color = if (event.color != 0) event.color.adjustCalendarColor() else primaryColor
+            holder.calendarColor.color =
+                    if (event.color != 0)
+                        event.color.adjustCalendarColor(darkerCalendarColors)
+                    else
+                        primaryColor
             if (useCompactView)
                 holder.compactViewCalendarColor?.background = holder.calendarColor
             else

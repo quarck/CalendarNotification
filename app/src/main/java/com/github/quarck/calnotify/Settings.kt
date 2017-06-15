@@ -291,6 +291,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val firstDayOfWeek: Int
         get() = getString(FIRST_DAY_OF_WEEK_KEY, "-1").toIntOrNull() ?: -1
 
+    val darkerCalendarColors: Boolean
+        get() = getBoolean(DARKER_CALENDAR_COLORS_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -401,6 +404,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification"
 
+        private const val DARKER_CALENDAR_COLORS_KEY = "darker_calendar_colors"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

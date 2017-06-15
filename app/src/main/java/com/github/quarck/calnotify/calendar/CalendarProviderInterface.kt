@@ -33,6 +33,8 @@ interface CalendarProviderInterface {
 
     fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord>
 
+    fun getNextEventReminderTime(context: Context, event: EventAlertRecord): Long
+
     fun getEvent(context: Context, eventId: Long): EventRecord?
 
     fun dismissNativeEventAlert(context: Context, eventId: Long)

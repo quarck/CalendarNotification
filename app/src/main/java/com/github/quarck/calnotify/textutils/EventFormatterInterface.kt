@@ -30,4 +30,6 @@ interface EventFormatterInterface {
     fun formatDateTimeOneLine(event: EventAlertRecord, showWeekDay: Boolean = false): String
 
     fun formatSnoozedUntil(event: EventAlertRecord): String
+
+    fun formatTimePoint(time: Long): String
 }

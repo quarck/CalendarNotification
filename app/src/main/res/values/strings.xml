@@ -343,5 +343,7 @@
     <string name="before_the_event">before the event</string>
     <string name="ignore_all_day_events">Ignore all-day events</string>
     <string name="ignore_all_day_events_summary">Do not remind on all day events</string>
+
+    <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
 </resources>
 

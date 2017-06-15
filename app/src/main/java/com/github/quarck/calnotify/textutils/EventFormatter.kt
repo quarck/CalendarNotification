@@ -307,26 +307,30 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return ret
     }
 
-    override fun formatSnoozedUntil(event: EventAlertRecord): String {
+    override fun formatTimePoint(time: Long): String {
 
         val ret: String
 
-        if (event.snoozedUntil != 0L) {
+        if (time != 0L) {
             var flags = DateUtils.FORMAT_SHOW_TIME
 
-            if (!DateUtils.isToday(event.snoozedUntil))
+            if (!DateUtils.isToday(time))
                 flags = flags or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY
 
-            if ((event.snoozedUntil - System.currentTimeMillis()) / (Consts.DAY_IN_MILLISECONDS * 30) >= 3L) // over 3mon - show year
+            if ((time - System.currentTimeMillis()) / (Consts.DAY_IN_MILLISECONDS * 30) >= 3L) // over 3mon - show year
                 flags = flags or DateUtils.FORMAT_SHOW_YEAR
 
-            ret = DateUtils.formatDateTime(ctx, event.snoozedUntil, flags)
+            ret = DateUtils.formatDateTime(ctx, time, flags)
         }
         else {
             ret = ""
         }
 
         return ret
+    }
+
+    override fun formatSnoozedUntil(event: EventAlertRecord): String {
+        return formatTimePoint(event.snoozedUntil)
     }
 
     fun formatTimeDuration(time: Long, granularity: Long = 1L): String {

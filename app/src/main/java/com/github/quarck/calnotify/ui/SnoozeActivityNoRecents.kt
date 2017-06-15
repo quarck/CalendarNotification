@@ -178,6 +178,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             EventsStorage(this).use {
                 db ->
                 originalEvent = db.getEvent(eventId, instanceStartTime)
+
                 if (originalEvent != null) {
                     event = originalEvent?.copy()
                     calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider, null) // would leave it for later for now
@@ -283,6 +284,23 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             if (ev.snoozedUntil != 0L) {
                 find<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
+            }
+
+            val nextReminderLayout: RelativeLayout? = find<RelativeLayout>(R.id.layout_next_reminder)
+            val nextReminderText: TextView? = find<TextView>(R.id.snooze_view_next_reminder)
+
+            if (nextReminderLayout != null && nextReminderText != null) {
+
+                val nextReminder = calendarProvider.getNextEventReminderTime(this, ev)
+
+                if (nextReminder != 0L) {
+                    nextReminderLayout.visibility = View.VISIBLE
+                    nextReminderText.visibility = View.VISIBLE
+
+                    val format = this.resources.getString(R.string.next_reminder_fmt)
+
+                    nextReminderText.text = format.format(formatter.formatTimePoint(nextReminder))
+                }
             }
 
         }

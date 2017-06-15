@@ -346,5 +346,7 @@
 
     <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
     <string name="darker_calendar_color">Darker calendar colors</string>
+    <string name="use_set_alarm_clock_for_events">Use setAlarmClock for events</string>
+    <string name="use_set_alarm_clock_for_events_summary">Only affects fail back event paths, don\'t need to set it if you are not missing any reminders</string>
 </resources>
 

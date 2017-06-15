@@ -19,6 +19,8 @@
 
 package com.github.quarck.calnotify.utils
 
+import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationManager
@@ -26,6 +28,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.PowerManager
 import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
@@ -86,6 +89,7 @@ inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: Strin
     }
 }
 
+@SuppressLint("NewApi")
 fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder {
     val build = android.os.Build.VERSION.SDK_INT
     if (build >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -94,6 +98,7 @@ fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder
     return this
 }
 
+@SuppressLint("NewApi")
 fun Notification.Builder.setSortKeyCompat(value: String): Notification.Builder {
     val build = android.os.Build.VERSION.SDK_INT
     if (build >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
@@ -102,6 +107,7 @@ fun Notification.Builder.setSortKeyCompat(value: String): Notification.Builder {
     return this
 }
 
+@SuppressLint("NewApi")
 fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
     val build = android.os.Build.VERSION.SDK_INT
     if (build >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -119,9 +125,10 @@ val isLollipopOrAbove: Boolean
 val isKitkatOrAbove: Boolean
     get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT
 
+@SuppressLint("NewApi")
 fun AlarmManager.setExactAndAlarm(
         context: Context,
-        settings: Settings,
+        useSetAlarmClock: Boolean, // settings: Settings,
         triggerAtMillis: Long,
         roughIntentClass: Class<*>, // ignored on KitKat and below
         exactIntentClass: Class<*>,
@@ -145,7 +152,9 @@ fun AlarmManager.setExactAndAlarm(
         val intentExact = Intent(context, exactIntentClass);
         val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        if (settings.useSetAlarmClock) {
+        //if (settings.useSetAlarmClock) {
+        if (useSetAlarmClock) {
+
             val intentInfo = Intent(context, alarmInfoIntent);
             val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
 

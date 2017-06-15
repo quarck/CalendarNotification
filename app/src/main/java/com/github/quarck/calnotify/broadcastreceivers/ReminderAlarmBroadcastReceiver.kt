@@ -144,7 +144,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             if (nextFireAt != 0L) {
                 context.alarmManager.setExactAndAlarm(
                         context,
-                        Settings(context),
+                        Settings(context).useSetAlarmClock,
                         nextFireAt,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,

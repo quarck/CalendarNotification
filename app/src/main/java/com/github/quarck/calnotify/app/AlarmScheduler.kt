@@ -68,7 +68,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                 context.alarmManager.setExactAndAlarm(
                         context,
-                        settings,
+                        settings.useSetAlarmClock,
                         nextEventAlarm,
                         SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         SnoozeExactAlarmBroadcastReceiver::class.java,
@@ -133,7 +133,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
             if (reminderAlarmNextFire != null) {
                 context.alarmManager.setExactAndAlarm(
                         context,
-                        settings,
+                        settings.useSetAlarmClock,
                         reminderAlarmNextFire,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,

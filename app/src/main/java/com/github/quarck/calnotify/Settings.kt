@@ -263,6 +263,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val useSetAlarmClock: Boolean
         get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
 
+    val useSetAlarmClockForFailbackEventPaths: Boolean
+        get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY, false)
+
     val shouldRemindForEventsWithNoReminders: Boolean
         get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
 
@@ -384,6 +387,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY = "hide_sttng_m_doze_warning"
 
         private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock"
+        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY = "use_set_alarm_clock_for_failback"
 
         const val KEEP_HISTORY_KEY = "keep_history"
         private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"

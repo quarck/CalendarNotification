@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
+import com.github.quarck.calnotify.permissions.PermissionsManager
 import java.util.*
 
 
@@ -67,6 +68,11 @@ class CalendarMonitorManual(
 
     // should return true if we have fired at new events, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "manualFireEventsAt_NoHousekeeping: no permissions");
+            return false
+        }
 
         var alerts =
                 MonitorStorage(context).use {
@@ -181,8 +187,10 @@ class CalendarMonitorManual(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-//        MonitorStorage(context).use { it.deleteAlertsMatching { _ -> true } } ; state.firstScanEver = false
-//        state.prevEventScanTo = System.currentTimeMillis() - 145L*24L*3600L*1000L // YAHOOOOO!!!!
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "scanNextEvent_NoHousekeping: no permissions");
+            return Pair(0L, false)
+        }
 
         var hasFiredAnything = false
 
@@ -280,7 +288,7 @@ class CalendarMonitorManual(
         return Pair(nextAlertTime, hasFiredAnything)
     }
 
-    fun filterAndMergeAlerts(context: Context, alerts: List<MonitorEventAlertEntry>, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+    private fun filterAndMergeAlerts(context: Context, alerts: List<MonitorEventAlertEntry>, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
 
         val ret = arrayListOf<MonitorEventAlertEntry>()
 

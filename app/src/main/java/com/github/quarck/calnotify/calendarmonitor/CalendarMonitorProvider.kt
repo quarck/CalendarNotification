@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class CalendarMonitorProvider(
         val calendarProvider: CalendarProviderInterface,
@@ -36,7 +37,7 @@ class CalendarMonitorProvider(
 
     private val MAX_ITERATIONS = 1000L
 
-    fun registerFiredEventsInDB(
+    private fun registerFiredEventsInDB(
             context: Context,
             state: CalendarMonitorState,
             alertTime: Long
@@ -82,6 +83,11 @@ class CalendarMonitorProvider(
 
     // should return true if we have fired at new events, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "manualFireEventsAt_NoHousekeeping: no permissions");
+            return false;
+        }
 
         var ret = false
 
@@ -137,6 +143,11 @@ class CalendarMonitorProvider(
     }
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "scanNextEvent_NoHousekeping: no permissions");
+            return Pair(0L, false);
+        }
 
         DevLog.debug(LOG_TAG, "scanNextEvent");
 

@@ -184,9 +184,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         DevLog.info(context, LOG_TAG, "onProviderReminderBroadcast");
 
-        if (Settings(context).enableMonitorDebug)
-            return
-
         val uri = intent.data;
 
         val alertTime = uri?.lastPathSegment?.toLongOrNull()

@@ -27,19 +27,20 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.text.format.DateUtils
 import android.util.Log
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
 
-class DevLoggerSettings(ctx: Context): PersistentStorageBase(ctx, NAME) {
+class DevLoggerSettings(val ctx: Context) {
 
-    var enabled by BooleanProperty(false)
-
-    companion object {
-        const val NAME="devlog"
-    }
+    var enabled
+        get() = Settings(ctx).shouldKeepLogs
+        set(value) {
+            // ignored
+        }
 }
 
 interface LoggerStorageInterface {

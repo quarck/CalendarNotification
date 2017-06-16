@@ -175,6 +175,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             startActivity(intent)
         }
 
+        if (!settings.shouldKeepLogs) {
+            DevLog.clear(context = this)
+        }
+
         svcClient.bindService(this) {
             // Service callback on data update
             causedByUser ->

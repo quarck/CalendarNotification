@@ -40,4 +40,11 @@
         android:title="@string/darker_calendar_color"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:key="keep_logs"
+        android:title="@string/keep_logs_title"
+        android:summary="@string/keep_logs_summary"
+        android:defaultValue="false"
+        />
+
 </PreferenceScreen>

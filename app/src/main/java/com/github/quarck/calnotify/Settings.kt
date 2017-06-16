@@ -297,6 +297,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val darkerCalendarColors: Boolean
         get() = getBoolean(DARKER_CALENDAR_COLORS_KEY, false)
 
+    val shouldKeepLogs: Boolean
+        get() = getBoolean(KEEP_APP_LOGS_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -409,6 +412,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification"
 
         private const val DARKER_CALENDAR_COLORS_KEY = "darker_calendar_colors"
+
+        private const val KEEP_APP_LOGS_KEY = "keep_logs"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

@@ -52,8 +52,6 @@ import java.util.*
 // TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
 // TODO: Android O support ?? https://github.com/quarck/CalendarNotification/issues/220
 
-// TODO: test dismiss all while scan is in progress
-
 class TestButtonsAndToDoActivity : Activity() {
 
     private val settings by lazy { Settings(this) }

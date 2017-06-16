@@ -403,7 +403,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/secondary_text"
-            android:text="(s.parshin.sc@gmail.com)"
+            android:text="(quarck@gmail.com)"
             android:layout_gravity="center_horizontal"
             />
 

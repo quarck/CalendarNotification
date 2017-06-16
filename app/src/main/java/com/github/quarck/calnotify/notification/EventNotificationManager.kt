@@ -689,10 +689,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(
-                        if (notificationSettings.headsUpNotification)
-                            NotificationCompat.PRIORITY_HIGH
-                        else
-                            NotificationCompat.PRIORITY_DEFAULT
+                        NotificationCompat.PRIORITY_LOW
                 )
                 .setContentIntent(
                         pendingIntent

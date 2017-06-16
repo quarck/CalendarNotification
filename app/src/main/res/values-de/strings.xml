@@ -151,7 +151,7 @@
     <string name="snooze_for">\'Schlummern\' für:</string>
     <string name="selected_time_is_in_the_past"><b>\'Schlummern\' nicht möglich:</b><br>ausgewählte Zeit liegt in der Vergangenheit</br></string>
     <string name="snooze_until_string">\'Schlummern\' bis Datum / Uhrzeit:</string>
-    <string name="custom_snooze_options_title">Benutzerdefinierte Optionen</string>
+    <string name="custom_snooze_options_title">Benutzerdefiniertes Schlummern</string>
     <string name="custom_snooze_options_summary">Zeige benutzerdefinierte Schlummer Optionen bei der Benachrichtigung an.</string>
 
     <string-array name="time_units_plurals">
@@ -299,16 +299,47 @@
     <string name="reminder_you_have_missed_event">Erinnerung: Sie haben einen verpassten Termin</string>
     <string name="reminder_you_have_missed_events">Erinnerung: Sie haben verpasste Termine</string>
     <string name="last_notification_s_ago" formatted="false">Letzte Benachrichtigung: vor %s</string>
+    <string name="last_event_s_ago" formatted="false">Letzter Termin: vor %s</string>
 
     <string name="build_time_string_format" formatted="false">Zeit der Erstellung: %s</string>
     <string name="dismiss_all_events">Alles Termine schließen</string>
     <string name="dismiss_all_events_confirmation">Alles Termine schließen? Dies kann nicht rückgängig gemacht werden! Schlummernde Termine werden nicht entfernt.</string>
-    <string name="handle_events_with_no_reminders">Bearbeite Termine ohne Erinnerungen</string>
-    <string name="handle_events_with_no_reminders_summary">Benachrigung über Termine ohne Erinnerung hinzugefügt</string>
+    <string name="handle_events_with_no_reminders">Termine ohne Erinnerungen</string>
+    <string name="handle_events_with_no_reminders_summary">Benachrichtigung für Termine ohne Erinnerung hinzufügen</string>
     <string name="default_reminder_time">Standard Erinnerungszeit</string>
     <string name="default_reminder_time_summary">Zeit für Termine ohne Erinnerung in Minuten vor dem Termin</string>
-    <string name="default_all_day_reminder_time">Standard für gänztägige Erinngerung</string>
-    <string name="default_all_day_reminder_time_summary">Zeit für ganztägige Termine ohne Erinnerung in Stunden vo dem Termin (00:00:00 von dem Tag des Termins)\nBeispiel:\n\n * \'-8\' die Erinnerung erfolgt um 8:00 Uhr an dem Tag des Termins\n\n * \'7\' bedeutet 7 Stunden vor Mitternacht am Tag des Termins, also 17:00 am Vortag</string>
+    <string name="default_reminder_time_summary_short">Erinnerungszeit für Termins ohne Erinngerung</string>
+    <string name="default_all_day_reminder_time">Standard für gänztägige Erinnerung</string>
+    <string name="default_all_day_reminder_time_summary">Zeit für ganztägige Termine ohne Erinnerung in Stunden vor dem Termin (00:00:00 von dem Tag des Termins)\nBeispiel:\n\n * \'-8\' die Erinnerung erfolgt um 8:00 Uhr an dem Tag des Termins\n\n * \'7\' bedeutet 7 Stunden vor Mitternacht am Tag des Termins, also 17:00 am Vortag</string>
+    <string name="default_all_day_reminder_time_summary_short">Erinnerungszeit für ganztägige Termine ohne Erinnerung</string>
     <string name="reminder_custom_ringtone_summary">Benutzerdefinierten Klingelton verwenden</string>
     <string name="reminder_custom_vibration_summary">Benutzerdefiniertes Vibrationsmuster verwenden</string>
+
+    <string name="special_event_title">Warning: fälliger Termin übersprungen</string>
+    <string name="special_event_detail_format" formatted="false">Nur %d von %d fälligen Termine angezeigt</string>
+    <string name="special_event_detail2" formatted="false">Ihr Gerät war für längere Zeit ausgeschaltet</string>
+    <string name="reminder_after_quiet_time">Erinnerung: Es gab Termine während der Ruhezeit</string>
+    <string name="ignore_declined_events">Ignoriere abgelehnte Termine</string>
+    <string name="ignore_declined_events_summary">Von Ihnen abgelehnte Termine</string>
+    <string name="ignore_cancelled_events">Ignoriere widerrufene Termine</string>
+    <string name="ignore_cancelled_events_summary">Vom Organisator widerrufene Termine</string>
+    <string name="first_day_of_week">Erster Wochentag</string>
+    <string name="first_day_of_week_summary">(Android 5 und neuer)</string>
+    <string name="use_alarm_stream">Alarmlautstärke verwenden</string>
+    <string name="use_alarm_stream_summary">Erinnerungen über die Alarmfunktion abspielen (anstatt normal über die Erinnerungsfunktion)</string>
+
+    <string name="restrict_swipe_to_dismiss">Ablehnen Wischgeste</string>
+    <string name="snooze_on_swipe">Schlummern Wischengeste</string>
+    <string name="snooze_on_swipe_summary">Wischgeste setzt Schlummern anstatt Ablehnen (erstes Auftreten wird verwendet)</string>
+
+    <string name="on_the_day_before">Am Tage vorher</string>
+    <string name="on_the_day_of_event">Am Tage des Termins</string>
+    <string name="before_the_event">Vor dem Termin</string>
+    <string name="ignore_all_day_events">Ignoriere ganztägige Termine </string>
+    <string name="ignore_all_day_events_summary">Nicht an ganztägige Termine erinnern</string>
+
+    <string name="next_reminder_fmt" formatted="false">Nächste Erinnerung: %s</string>
+    <string name="darker_calendar_color">Dunklere Kalenderfarbe</string>
+    <string name="use_set_alarm_clock_for_events">Verwende \'setAlarmClock\' für Termine</string>
+    <string name="use_set_alarm_clock_for_events_summary">Nur für fehlgeschlagene Termine; wird nicht benötigt, wenn keine Erinnerungen vermisst werden</string>
 </resources>

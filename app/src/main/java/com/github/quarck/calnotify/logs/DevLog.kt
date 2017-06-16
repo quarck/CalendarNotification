@@ -25,13 +25,9 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.text.format.DateUtils
 import android.util.Log
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.utils.PersistentStorageBase
 import java.io.Closeable
-import java.io.File
-import java.io.FileOutputStream
 
 
 class DevLoggerSettings(val ctx: Context) {
@@ -141,39 +137,28 @@ class DevLoggerDB(val context: Context):
         val tag = cursor.getString(PROJECTION_KEY_TAG)
         val msg = cursor.getString(PROJECTION_KEY_MESSAGE)
 
-        val builder = StringBuffer(msg.length + tag.length + 128)
-
-        builder.append(time)
-                .append(" / ")
-
         val usec = time % 1000L
         val sec = (time / 1000L) % 60L
         val min = (time /  60000L) % 60L
         val hr = (time / 3600000L) % 24L
 
-        builder.append(hr).append(':')
-                .append(min).append(':')
-                .append(sec).append('.')
-                .append(usec)
+        val timeStr = "%02d:%02d:%02d.%03d UTC".format(hr, min, sec, usec)
 
-        when (sev) {
-            SEVERITY_ERROR ->
-                builder.append(": ERROR: ")
-            SEVERITY_WARNING ->
-                builder.append(": WARNING: ")
-            SEVERITY_INFO ->
-                builder.append(": INFO: ")
-            SEVERITY_DEBUG ->
-                builder.append(": DEBUG: ")
-            else ->
-                builder.append(": ")
-        }
+        val sevString =
+                when (sev) {
+                    SEVERITY_ERROR ->
+                        "ERROR"
+                    SEVERITY_WARNING ->
+                        "WARNING"
+                    SEVERITY_INFO ->
+                        "INFO"
+                    SEVERITY_DEBUG ->
+                        "DEBUG"
+                    else ->
+                        ""
+                }
 
-        builder.append(tag)
-                .append(": ")
-                .append(msg)
-
-        return builder.toString()
+        return "$timeStr [$time]: $sevString: $tag: $msg"
     }
 
 

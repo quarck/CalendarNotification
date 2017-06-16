@@ -219,6 +219,10 @@ object DevLog {
         return enabled ?: false
     }
 
+    fun refreshIsEnabled(context: Context) {
+        enabled = DevLoggerSettings(context).enabled
+    }
+
     private fun logToSqlite(context: Context?, severity: Int, tag: String, message: String) {
 
         if (context != null)

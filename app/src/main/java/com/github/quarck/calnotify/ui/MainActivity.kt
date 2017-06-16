@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             startActivity(intent)
         }
 
+        DevLog.refreshIsEnabled(context = this);
         if (!settings.shouldKeepLogs) {
             DevLog.clear(context = this)
         }

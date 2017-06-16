@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.drawable.ColorDrawable
@@ -87,7 +88,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
     var state = SnoozeActivityState()
 
-    var originalEvent: EventAlertRecord? = null
+    // var originalEvent: EventAlertRecord? = null
     var event: EventAlertRecord? = null
 
     lateinit var snoozePresets: LongArray
@@ -177,11 +178,13 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         if (!isSnoozeAll) {
             EventsStorage(this).use {
                 db ->
-                originalEvent = db.getEvent(eventId, instanceStartTime)
 
-                if (originalEvent != null) {
-                    event = originalEvent?.copy()
-                    calendarReloadManager.reloadSingleEvent(this, db, event!!, calendarProvider, null) // would leave it for later for now
+                val eventFromDB = db.getEvent(eventId, instanceStartTime)
+                if (eventFromDB != null) {
+
+                    val eventReloaded = eventFromDB.copy()
+                    calendarReloadManager.reloadSingleEvent(this, db, eventReloaded, calendarProvider, null) // would leave it for later for now
+                    event = eventReloaded
                 }
             }
         }
@@ -657,6 +660,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     else
                         R.layout.dialog_time_picker, null)
 
+    @SuppressLint("NewApi")
     fun snoozeUntilShowDatePickerDialog(initialValueForDate: Long, initialValueForTime: Long) {
 
         val dialogDate = inflateDatePickerDialog() ?: return

@@ -52,12 +52,7 @@ import java.util.*
 // TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
 // TODO: Android O support ?? https://github.com/quarck/CalendarNotification/issues/220
 
-// TODO: snooze - reload event
-
 // TODO: test dismiss all while scan is in progress
-
-// TODO: reduce APK size
-
 
 class TestButtonsAndToDoActivity : Activity() {
 

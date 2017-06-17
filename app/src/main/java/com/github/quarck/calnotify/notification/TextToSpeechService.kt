@@ -37,7 +37,7 @@ class TextToSpeechService : IntentService("TextToSpeechService") {
     override fun onHandleIntent(intent: Intent?) {
         DevLog.debug(LOG_TAG, "onHandleIntent")
 
-        wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.TTS_WAKE_LOCK_NAME) {
+        wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, TTS_WAKE_LOCK_NAME) {
             if (intent != null) {
                 val string = intent.getStringExtra(Consts.INTENT_TTS_TEXT)
                 if (string != null)
@@ -48,6 +48,7 @@ class TextToSpeechService : IntentService("TextToSpeechService") {
 
     companion object {
         private const val LOG_TAG = "TextToSpeechService"
+        private const val TTS_WAKE_LOCK_NAME = "TTS_WakeLock"
 
         fun playText(ctx: Context, text: String) {
             val intent = Intent(ctx, TextToSpeechService::class.java)

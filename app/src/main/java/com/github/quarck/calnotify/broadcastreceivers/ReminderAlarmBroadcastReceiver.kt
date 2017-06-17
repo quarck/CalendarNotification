@@ -51,7 +51,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
 
-        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, Consts.REMINDER_WAKE_LOCK_NAME) {
+        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
             if (!ApplicationController.hasActiveEvents(context)) {
                 DevLog.info(context, LOG_TAG, "Reminder broadcast alarm received: no active events")
@@ -180,6 +180,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         private const val LOG_TAG = "BroadcastReceiverReminderAlarm"
+        private const val REMINDER_WAKE_LOCK_NAME = "ReminderWakeLock"
     }
 }
 

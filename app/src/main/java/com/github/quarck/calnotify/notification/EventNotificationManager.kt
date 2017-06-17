@@ -103,7 +103,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             backgroundWakeLocked(
                     ctx.powerManager,
                     PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                    Consts.SCREEN_WAKE_LOCK_NAME) {
+                    SCREEN_WAKE_LOCK_NAME) {
                 // Screen would actually be turned on for a duration of screen timeout set by the user
                 // So don't need to keep wakelock for too long
                 Thread.sleep(Consts.WAKE_SCREEN_DURATION)
@@ -1210,6 +1210,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     companion object {
         private const val LOG_TAG = "EventNotificationManager"
+
+        private const val SCREEN_WAKE_LOCK_NAME = "ScreenWakeNotification"
 
         const val EVENT_CODE_SNOOOZE_OFFSET = 0
         const val EVENT_CODE_DISMISS_OFFSET = 1

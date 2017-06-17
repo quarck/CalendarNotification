@@ -14,9 +14,16 @@
         android:defaultValue="3"
         />
 
+    <CheckBoxPreference android:key="enable_manual_calendar_rescan"
+        android:title="@string/manual_event_rescan_title"
+        android:summary="@string/manual_event_rescan_summary"
+        android:defaultValue="true"
+        />
+
     <CheckBoxPreference android:key="remind_events_no_rmdnrs"
         android:title="@string/handle_events_with_no_reminders"
         android:summary="@string/handle_events_with_no_reminders_summary"
+        android:dependency="enable_manual_calendar_rescan"
         android:defaultValue="true"/>
 
     <com.github.quarck.calnotify.prefs.DefaultManualNotificationPreference

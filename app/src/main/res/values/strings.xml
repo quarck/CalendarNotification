@@ -350,5 +350,7 @@
     <string name="use_set_alarm_clock_for_events_summary">Only affects fail back event paths, don\'t need to set it if you are not missing any reminders</string>
     <string name="keep_logs_title">Keep application logs</string>
     <string name="keep_logs_summary">Do not enable unless asked by this app developer</string>
+    <string name="manual_event_rescan_title">Manual calendar rescan</string>
+    <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
 </resources>
 

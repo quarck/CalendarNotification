@@ -300,6 +300,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val shouldKeepLogs: Boolean
         get() = getBoolean(KEEP_APP_LOGS_KEY, false)
 
+    val enableCalendarRescan: Boolean
+        get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -414,6 +417,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DARKER_CALENDAR_COLORS_KEY = "darker_calendar_colors"
 
         private const val KEEP_APP_LOGS_KEY = "keep_logs"
+
+        private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

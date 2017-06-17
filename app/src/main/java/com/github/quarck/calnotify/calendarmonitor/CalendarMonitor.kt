@@ -132,6 +132,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onAlarmBroadcast(context: Context, intent: Intent) {
 
+        if (!Settings(context).enableCalendarRescan) {
+            DevLog.info(context, LOG_TAG, "onAlarmBroadcast - manual scan disabled")
+            return
+        }
+
         DevLog.info(context, LOG_TAG, "onAlarmBroadcast")
 
         try {
@@ -259,6 +264,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
+
+        if (!Settings(context).enableCalendarRescan) {
+            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire - manual scan disabled")
+            return false
+        }
 
         var ret = false
 

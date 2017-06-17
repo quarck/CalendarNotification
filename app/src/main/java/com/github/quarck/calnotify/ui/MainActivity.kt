@@ -46,6 +46,7 @@ import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.isSpecial
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private var lastEventDismissalScrollPosition: Int? = null
 
     private var useCompactView = true
+    private var calendarRescanEnabled = true
 
     private var shouldRemindForEventsWithNoReminders = true
 
@@ -146,6 +148,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 find<TextView>(R.id.text_view_style_message).text = resources.getString(R.string.usage_hints)
             }
         }
+
+        calendarRescanEnabled = settings.enableCalendarRescan
     }
 
     public override fun onStart() {
@@ -187,6 +191,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 reloadData()
             else
                 runOnUiThread { reloadLayout.visibility = View.VISIBLE }
+        }
+
+        if (calendarRescanEnabled != settings.enableCalendarRescan) {
+            calendarRescanEnabled = settings.enableCalendarRescan
+
+            if (!calendarRescanEnabled) {
+                CalendarMonitorState(this).firstScanEver = true
+            }
         }
 
         reloadData()

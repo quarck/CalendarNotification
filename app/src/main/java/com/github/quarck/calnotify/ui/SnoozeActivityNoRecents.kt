@@ -42,6 +42,7 @@ import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.permissions.PermissionsManager
 
 
 enum class SnoozeActivityStateCode(val code: Int) {
@@ -143,6 +144,11 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+
+        if (!PermissionsManager.hasAllPermissions(this)) {
+            finish()
+            return
+        }
 
         if (savedInstanceState != null)
             state = SnoozeActivityState.fromBundle(savedInstanceState)

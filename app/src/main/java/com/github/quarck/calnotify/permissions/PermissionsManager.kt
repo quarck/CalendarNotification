@@ -34,23 +34,30 @@ object PermissionsManager {
     private fun Activity.shouldShowRationale(perm: String) =
             ActivityCompat.shouldShowRequestPermissionRationale(this, perm)
 
+    fun hasWriteCalendarNoCache(context: Context)
+            = context.hasPermission(Manifest.permission.WRITE_CALENDAR)
+
+    fun hasReadCalendarNoCache(context: Context)
+            = context.hasPermission(Manifest.permission.READ_CALENDAR)
+
     private var hasWriteCalendarCached: Boolean = false
+    private var hasReadCalendarCached: Boolean = false
 
     fun hasWriteCalendar(context: Context): Boolean {
         if (!hasWriteCalendarCached)
-            hasWriteCalendarCached = context.hasPermission(Manifest.permission.WRITE_CALENDAR)
+            hasWriteCalendarCached = hasWriteCalendarNoCache(context)
         return hasWriteCalendarCached
     }
 
-    private var hasReadCalendarCached: Boolean = false
-
     fun hasReadCalendar(context: Context): Boolean {
         if (!hasReadCalendarCached)
-            hasReadCalendarCached = context.hasPermission(Manifest.permission.READ_CALENDAR)
+            hasReadCalendarCached = hasReadCalendarNoCache(context)
         return hasReadCalendarCached
     }
 
     fun hasAllPermissions(context: Context) = hasWriteCalendar(context) && hasReadCalendar(context)
+
+    fun hasAllPermissionsNoCache(context: Context) = hasWriteCalendarNoCache(context) && hasReadCalendarNoCache(context)
 
     fun shouldShowRationale(activity: Activity) =
             activity.shouldShowRationale(Manifest.permission.WRITE_CALENDAR)

@@ -84,7 +84,7 @@ class CalendarMonitorProvider(
     // should return true if we have fired at new events, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
-        if (!PermissionsManager.hasReadCalendar(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "manualFireEventsAt_NoHousekeeping: no permissions");
             return false;
         }
@@ -144,9 +144,9 @@ class CalendarMonitorProvider(
 
     fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-        if (!PermissionsManager.hasReadCalendar(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "scanNextEvent_NoHousekeping: no permissions");
-            return Pair(0L, false);
+            return Pair(Long.MAX_VALUE, false);
         }
 
         DevLog.debug(LOG_TAG, "scanNextEvent");

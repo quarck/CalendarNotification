@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroad
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
+import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
@@ -134,6 +135,13 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         if (!Settings(context).enableCalendarRescan) {
             DevLog.info(context, LOG_TAG, "onAlarmBroadcast - manual scan disabled")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
+            return
+        }
+
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.info(context, LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
@@ -192,6 +200,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // way of receiving information about ongoing events. Apparently not always
     // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
+
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.info(context, LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
+            return
+        }
 
         DevLog.info(context, LOG_TAG, "onProviderReminderBroadcast");
 
@@ -261,12 +275,18 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         ApplicationController.afterCalendarEventFired(context)
     }
 
-
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
 
         if (!Settings(context).enableCalendarRescan) {
             DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire - manual scan disabled")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
+            return false
+        }
+
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire - no calendar permission to proceed")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
             return false
         }
 
@@ -312,7 +332,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         val settings = Settings(context)
 
-        if (time != Long.MAX_VALUE) {
+        if (time != Long.MAX_VALUE && time != 0L) {
 
             val now = System.currentTimeMillis()
 

@@ -479,8 +479,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
 
-        if (!PermissionsManager.hasReadCalendar(context)
-                || !PermissionsManager.hasWriteCalendar(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: no permissions");
             return -1;
         }
@@ -685,8 +684,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
 
-        if (!PermissionsManager.hasReadCalendar(context)
-                || !PermissionsManager.hasWriteCalendar(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
             return false;
         }

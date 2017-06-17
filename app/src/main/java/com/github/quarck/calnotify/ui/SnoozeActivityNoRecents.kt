@@ -335,6 +335,10 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
+        else {
+            // not a single event and not snooze all - some mess
+            finish()
+        }
 
         if (event != null) {
             val menuButton = find<ImageView?>(R.id.snooze_view_menu)

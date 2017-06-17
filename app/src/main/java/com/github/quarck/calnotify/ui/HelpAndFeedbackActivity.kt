@@ -30,6 +30,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.logs.LogcatProvider
@@ -60,6 +61,11 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             // to implement proper filter :)
             find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
             find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
+        } else {
+            if (Settings(this).shouldKeepLogs) {
+                find<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
+                find<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
+            }
         }
 
         DevLog.debug(LOG_TAG, "onCreate")

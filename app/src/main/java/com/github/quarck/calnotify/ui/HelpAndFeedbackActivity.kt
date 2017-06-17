@@ -54,7 +54,9 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         val isKK = isKitkatOrAbove
-        if (!isKK) {
+        val shouldKeepLogs = Settings(this).shouldKeepLogs
+
+        if (!isKK || !shouldKeepLogs) {
             // this is to comply with privacy policy. KitKat and above
             // would allow us accessing only our own logs
             // we don't want to grab any other logs accidently and too lazy
@@ -62,10 +64,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
             find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         } else {
-            if (Settings(this).shouldKeepLogs) {
-                find<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
-                find<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
-            }
+            find<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
+            find<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
         }
 
         DevLog.debug(LOG_TAG, "onCreate")

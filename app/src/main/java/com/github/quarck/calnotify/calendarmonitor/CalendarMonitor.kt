@@ -134,30 +134,36 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         DevLog.info(context, LOG_TAG, "onAlarmBroadcast")
 
-        val state = CalendarMonitorState(context)
+        try {
 
-        val currentTime = System.currentTimeMillis()
+            val state = CalendarMonitorState(context)
 
-        var firedProvider = false
-        var firedManual = false
+            val currentTime = System.currentTimeMillis()
 
-        val nextEventFireFromProvider = state.nextEventFireFromProvider
-        if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
-            DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider < current time $currentTime + THRS, checking what to fire")
-            firedProvider = providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
+            var firedProvider = false
+            var firedManual = false
+
+            val nextEventFireFromProvider = state.nextEventFireFromProvider
+            if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
+                DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider < current time $currentTime + THRS, checking what to fire")
+                firedProvider = providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
+            }
+
+            val nextEventFireFromScan = state.nextEventFireFromScan
+            if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
+                DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time $currentTime + THRS, checking what to fire")
+                firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+            }
+
+            lastScan = System.currentTimeMillis()
+            val firedAnythingElse = scanAndScheduleAlarms_noAfterFire(context)
+
+            if (firedProvider || firedManual || firedAnythingElse) {
+                ApplicationController.afterCalendarEventFired(context)
+            }
         }
-
-        val nextEventFireFromScan = state.nextEventFireFromScan
-        if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
-            DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time $currentTime + THRS, checking what to fire")
-            firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
-        }
-
-        lastScan = System.currentTimeMillis()
-        val firedAnythingElse = scanAndScheduleAlarms_noAfterFire(context)
-
-        if (firedProvider || firedManual || firedAnythingElse) {
-            ApplicationController.afterCalendarEventFired(context)
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.message}, ${ex.stackTrace}")
         }
 
     }
@@ -254,30 +260,40 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // should return true if we have fired at new events, so UI should reload if it is open
     private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
 
-        val scanStart = System.currentTimeMillis()
+        var ret = false
 
-        schedulePeriodicRescanAlarm(context)
+        try {
 
-        val state = CalendarMonitorState(context)
+            val scanStart = System.currentTimeMillis()
 
-        val scanPh1 = System.currentTimeMillis()
+            schedulePeriodicRescanAlarm(context)
 
-        val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent_NoHousekeping(context, state)
+            val state = CalendarMonitorState(context)
 
-        val scanPh2 = System.currentTimeMillis()
+            val scanPh1 = System.currentTimeMillis()
 
-        val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent_NoHousekeping(context, state)
+            val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent_NoHousekeping(context, state)
 
-        val scanPh3 = System.currentTimeMillis()
+            val scanPh2 = System.currentTimeMillis()
 
-        setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
+            val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent_NoHousekeping(context, state)
 
-        val scanPh4 = System.currentTimeMillis()
+            val scanPh3 = System.currentTimeMillis()
 
-        DevLog.info(context, LOG_TAG, "Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
-                "perf: ${scanPh4 - scanStart}, ${scanPh1 - scanStart}, ${scanPh2 - scanPh1}, ${scanPh3 - scanPh2}, ${scanPh4 - scanPh3}")
+            setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
 
-        return firedEventsProvider || firedEventsManual
+            val scanPh4 = System.currentTimeMillis()
+
+            DevLog.info(context, LOG_TAG, "Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
+                    "perf: ${scanPh4 - scanStart}, ${scanPh1 - scanStart}, ${scanPh2 - scanPh1}, ${scanPh3 - scanPh2}, ${scanPh4 - scanPh3}")
+
+            ret = firedEventsProvider || firedEventsManual
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire: exception, ${ex.message}, ${ex.stackTrace}")
+        }
+
+        return ret
     }
 
     private fun setOrCancelAlarm(context: Context, time: Long) {

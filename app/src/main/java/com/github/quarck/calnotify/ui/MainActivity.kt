@@ -242,11 +242,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .setMessage(R.string.application_has_no_access)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
-                            x, y ->
+                            _, _ ->
                             PermissionsManager.requestPermissions(this)
                         }
                         .setNegativeButton(R.string.cancel) {
-                            x, y ->
+                            _, _ ->
                         }
                         .create()
                         .show()
@@ -286,11 +286,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 .setMessage(R.string.dismiss_all_events_confirmation)
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes) {
-                    x, y ->
+                    _, _ ->
                     doDismissAll()
                 }
                 .setNegativeButton(R.string.cancel) {
-                    x, y ->
+                    _, _ ->
                 }
                 .create()
                 .show()

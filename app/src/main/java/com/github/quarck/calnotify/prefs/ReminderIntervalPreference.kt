@@ -82,10 +82,10 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
                         .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
-                            x, y ->
+                            _, _ ->
                         }
                         .setNegativeButton(R.string.never_show_again) {
-                            x, y ->
+                            _, _ ->
                             Settings(context).dontShowMarshmallowWarningInSettings = true
                         }
                         .create()

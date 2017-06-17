@@ -138,11 +138,11 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
 
-        val uriValue = (getString(settingsKey, ringtoneNotSetValue) as String?)
+        val uriValue = getString(settingsKey, ringtoneNotSetValue)
 
-        if (uriValue == null || uriValue.isEmpty()) {
+        if (uriValue.isEmpty()) {
             // Silent mode -- string is empty
-            ringtone = null;
+            ringtone = null
         }
         else if (uriValue == ringtoneNotSetValue) {
             // use default -- not set

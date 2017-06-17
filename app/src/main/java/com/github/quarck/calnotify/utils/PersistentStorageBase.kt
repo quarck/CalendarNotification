@@ -91,9 +91,9 @@ open class PersistentStorageBase(ctx: Context, prefName: String? = null) {
 
     fun getFloat(key: String, default: Float): Float = state.getFloat(key, default)
 
-    fun getString(key: String, default: String): String = state.getString(key, default)
+    fun getString(key: String, default: String): String = state.getString(key, default) ?: default
 
-    fun getStringSet(key: String, default: Set<String>): Set<String> = state.getStringSet(key, default)
+    fun getStringSet(key: String, default: Set<String>): Set<String> = state.getStringSet(key, default) ?: default
 
 
     class BooleanProperty(val defaultValue: Boolean, val storageName: String? = null) {

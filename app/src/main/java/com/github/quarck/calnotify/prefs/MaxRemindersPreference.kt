@@ -32,7 +32,7 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 
 class NumberPickerController(val view: View, val minValue: Int, val maxValue: Int) {
 
-    lateinit var numberPicker: NumberPicker
+    var numberPicker: NumberPicker
 
     init {
         numberPicker = view.find<NumberPicker>(R.id.numberPickerMaxReminders)

@@ -122,8 +122,6 @@ class CalendarMonitorProvider(
         if (!newFires.isEmpty()) {
             ret = true
 
-            val settings = Settings(context)
-
             try {
                 ApplicationController.postEventNotifications(context, newFires)
 

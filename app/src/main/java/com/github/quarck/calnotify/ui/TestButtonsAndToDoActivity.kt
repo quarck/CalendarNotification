@@ -48,6 +48,7 @@ import java.util.*
 // TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
 // TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
 
+// TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 
 // TODO: Reminder behavior setting:
 // 1. Current behavior - each notification resets the counter

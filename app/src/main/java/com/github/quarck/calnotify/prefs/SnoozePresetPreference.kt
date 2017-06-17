@@ -32,16 +32,12 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.find
 
-class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreference(ctx, attrs) {
+class SnoozePresetPreference(internal var context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
     internal var snoozePresetValue: String? = null
 
     internal var edit: EditText? = null
 
-    internal lateinit var context: Context
-
     init {
-        context = ctx
-
         dialogLayoutResource = R.layout.dialog_snooze_presets;
 
         setPositiveButtonText(android.R.string.ok)
@@ -97,7 +93,7 @@ class SnoozePresetPreference(ctx: Context, attrs: AttributeSet) : DialogPreferen
         builder
                 .setMessage(context.getString(id))
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok) { x, y -> }
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
 
         builder.create().show()
     }

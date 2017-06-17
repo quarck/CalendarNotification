@@ -24,7 +24,7 @@ import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 interface MonitorStorageInterface {
 
     fun addAlert(entry: MonitorEventAlertEntry)
-    fun addAlerts(entry: Collection<MonitorEventAlertEntry>)
+    fun addAlerts(entries: Collection<MonitorEventAlertEntry>)
 
     fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
 

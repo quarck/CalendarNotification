@@ -24,8 +24,6 @@ object Consts {
 
     const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
 
-    const val MIN_REMINDER_INTERVAL = 60 * 1000
-
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
 
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
@@ -106,7 +104,7 @@ object Consts {
 
     const val ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
+    const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
 
     const val MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS = 1000L
     const val MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS = 1000L

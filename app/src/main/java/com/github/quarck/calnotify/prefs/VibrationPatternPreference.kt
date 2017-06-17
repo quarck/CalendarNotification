@@ -34,16 +34,13 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.vibratorService
 
 
-open class VibrationPatternPreference(ctx: Context, attrs: AttributeSet) : DialogPreference(ctx, attrs) {
+open class VibrationPatternPreference(internal var context: Context, attrs: AttributeSet)
+    : DialogPreference(context, attrs) {
     internal var patternValue: String? = null
 
     internal lateinit var edit: EditText
 
-    internal lateinit var context: Context
-
     init {
-        context = ctx
-
         dialogLayoutResource = layout.dialog_vibration_pattern
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
@@ -85,7 +82,7 @@ open class VibrationPatternPreference(ctx: Context, attrs: AttributeSet) : Dialo
         builder
                 .setMessage(context.getString(R.string.error_cannot_parse_pattern))
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.ok) { x, y -> }
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
 
         builder.create().show()
     }

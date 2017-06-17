@@ -477,11 +477,11 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         AlertDialog.Builder(this)
                 .setMessage(mmWarning).setCancelable(false)
                 .setPositiveButton(android.R.string.ok) {
-                    x, y ->
+                    _, _ ->
                     cont()
                 }
                 .setNegativeButton(R.string.never_show_again) {
-                    x, y ->
+                    _, _ ->
                     settings.dontShowMarshmallowWarning = true
                     cont()
                 }
@@ -515,7 +515,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                                 R.string.snooze_all_confirmation)
                     .setCancelable(false)
                     .setPositiveButton(android.R.string.yes) {
-                        x, y ->
+                        _, _ ->
 
                         DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
@@ -530,7 +530,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                             finish()
                     }
                     .setNegativeButton(R.string.cancel) {
-                        x, y ->
+                        _, _ ->
                     }
                     .create()
                     .show()
@@ -550,6 +550,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
@@ -628,7 +629,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         builder.setView(dialogView)
 
         builder.setPositiveButton(R.string.snooze) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
             this.persistentState.lastCustomSnoozeIntervalMillis = intervalMilliseconds
@@ -640,7 +641,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
 
         builder.setNegativeButton(R.string.cancel) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             state.state = SnoozeActivityStateCode.Normal
             customSnooze_TimeIntervalPickerController = null
@@ -700,7 +701,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         builder.setView(dialogDate)
 
         builder.setPositiveButton(R.string.next) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             datePicker.clearFocus()
 
@@ -711,7 +712,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
 
         builder.setNegativeButton(R.string.cancel) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             state.state = SnoozeActivityStateCode.Normal
             snoozeUntil_DatePicker = null
@@ -721,6 +722,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
     }
 
+    @Suppress("DEPRECATION")
     fun snoozeUntilShowTimePickerDialog(currentDateSelection: Long, initialTimeValue: Long) {
 
         val date = Calendar.getInstance()
@@ -740,9 +742,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             val cal = Calendar.getInstance()
             cal.timeInMillis = initialTimeValue
 
-            @Suppress("DEPRECATION")
             timePicker.currentHour = cal.get(Calendar.HOUR_OF_DAY)
-            @Suppress("DEPRECATION")
             timePicker.currentMinute = cal.get(Calendar.MINUTE)
         }
 
@@ -755,7 +755,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setView(dialogTime)
         builder.setPositiveButton(R.string.snooze) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             state.state = SnoozeActivityStateCode.Normal
             snoozeUntil_TimePicker = null
@@ -777,7 +777,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 AlertDialog.Builder(this)
                         .setTitle(R.string.selected_time_is_in_the_past)
                         .setNegativeButton(R.string.cancel) {
-                            x: DialogInterface?, y: Int ->
+                            _: DialogInterface?, _: Int ->
                         }
                         .create()
                         .show()
@@ -786,7 +786,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
 
         builder.setNegativeButton(R.string.cancel) {
-            x: DialogInterface?, y: Int ->
+            _: DialogInterface?, _: Int ->
 
             state.state = SnoozeActivityStateCode.Normal
             snoozeUntil_TimePicker = null

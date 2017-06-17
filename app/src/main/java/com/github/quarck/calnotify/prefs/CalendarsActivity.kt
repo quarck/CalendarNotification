@@ -58,12 +58,12 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
         : RecyclerView.ViewHolder(itemView) {
 
         var entry: CalendarListEntry? = null
-        lateinit var view: LinearLayout
-        lateinit var calendarOwner: TextView
-        lateinit var checkboxCalendarName: CheckBox
-        lateinit var colorView: View
-        lateinit var calendarEntryLayout: LinearLayout
-        lateinit var spacingView: View
+        var view: LinearLayout
+        var calendarOwner: TextView
+        var checkboxCalendarName: CheckBox
+        var colorView: View
+        var calendarEntryLayout: LinearLayout
+        var spacingView: View
 
         init {
             view = itemView.find<LinearLayout>(R.id.linearLyaoutCalendarView)
@@ -159,7 +159,7 @@ class CalendarsActivity : AppCompatActivity() {
         adapter = CalendarListAdapter(this, arrayOf<CalendarListEntry>())
 
         adapter.onItemChanged = {
-            view, calendarId, isEnabled ->
+            _, calendarId, isEnabled ->
             DevLog.debug(LOG_TAG, "Item has changed: $calendarId $isEnabled");
 
             settings.setCalendarIsHandled(calendarId, isEnabled)

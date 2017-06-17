@@ -29,8 +29,8 @@ import com.github.quarck.calnotify.utils.find
 
 class TimeIntervalPickerController(val view: View, titleId: Int?) {
 
-    lateinit var numberPicker: NumberPicker
-    lateinit var timeUnitsSpinners: Spinner
+    var numberPicker: NumberPicker
+    var timeUnitsSpinners: Spinner
 
     init {
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)

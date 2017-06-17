@@ -81,7 +81,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                 break
 
             try {
-                val reloadResult = reloadCalendarEvent(context, db, calendar, event, currentTime, movedHandler)
+                val reloadResult = reloadCalendarEvent(context, calendar, event, currentTime, movedHandler)
 
                 when (reloadResult.code) {
                 // nothing required
@@ -190,7 +190,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
     fun reloadCalendarEvent(
             context: Context,
-            db: EventsStorageInterface,
             calendarProvider: CalendarProviderInterface,
             event: EventAlertRecord,
             currentTime: Long,
@@ -228,7 +227,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         if (newEventInstance != null)
             return checkCalendarEventHasChanged(context, event, newEventInstance)
 
-        return reloadCalendarEventInstanceNotFound(context, db, calendarProvider, event, currentTime)
+        return reloadCalendarEventInstanceNotFound(context, calendarProvider, event, currentTime)
     }
 
     fun checkCalendarEventHasChanged(
@@ -307,7 +306,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
     }
 
     fun reloadCalendarEventInstanceNotFound(
-            context: Context, db: EventsStorageInterface,
+            context: Context,
             calendar: CalendarProviderInterface,
             event: EventAlertRecord,
             currentTime: Long
@@ -330,7 +329,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
         DevLog.info(context, LOG_TAG, "No instances of event ${event.eventId} were found in the future")
 
-        var changesDetected = false
+        //var changesDetected = false
 
         // Try loading at least basic params from "event"
         val newEvent = calendar.getEvent(context, event.eventId)

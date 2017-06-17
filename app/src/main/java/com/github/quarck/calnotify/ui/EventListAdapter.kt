@@ -309,11 +309,10 @@ class EventListAdapter(
             holder.compactViewContentLayout?.visibility = View.GONE
 
             holder.undoButton?.setOnClickListener {
-                v ->
+                _ ->
 
                 callback.onItemRestored(event)
 
-//                val runnable = pendingEventRemoveRunnables[event];
                 pendingEventRemoveRunnables.remove(event)
 
                 eventsPendingRemoval.remove(event)
@@ -467,7 +466,7 @@ class EventListAdapter(
 
     fun clearUndoState() {
 
-        for ((event, runnable) in pendingEventRemoveRunnables)
+        for ((_, runnable) in pendingEventRemoveRunnables)
             runnable.run()
         pendingEventRemoveRunnables.clear()
     }

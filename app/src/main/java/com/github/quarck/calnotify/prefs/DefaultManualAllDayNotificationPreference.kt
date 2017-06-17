@@ -48,6 +48,7 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
 
     }
 
+    @Suppress("DEPRECATION")
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
@@ -82,6 +83,7 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
         timePicker.clearFocus()
     }
 
+    @Suppress("DEPRECATION")
     override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {

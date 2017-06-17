@@ -23,7 +23,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
@@ -282,7 +281,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             DevLog.info(context, LOG_TAG, "Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
                     "perf: ${scanPh4 - scanStart}, ${scanPh1 - scanStart}, ${scanPh2 - scanPh1}, ${scanPh3 - scanPh2}, ${scanPh4 - scanPh3}")
 
-            firedAnything = firedEventsManual || firedEventsManual
+            firedAnything = firedEventsProvider || firedEventsManual
         }
         catch (ex: java.lang.SecurityException) {
             DevLog.error(context, LOG_TAG, "onRescanFromService: SecurityException, ${ex.message}, ${ex.stackTrace}")
@@ -322,8 +321,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             DevLog.info(context, LOG_TAG, "No next alerts, cancelling")
             context.alarmManager.cancelExactAndAlarm(
                     context,
-                    settings,
-                    ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                    ManualEventAlarmBroadcastReceiver::class.java,
                     ManualEventExactAlarmBroadcastReceiver::class.java
                     )
         }

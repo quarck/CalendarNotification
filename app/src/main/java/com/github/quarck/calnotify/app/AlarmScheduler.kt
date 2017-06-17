@@ -83,8 +83,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                 context.alarmManager.cancelExactAndAlarm(
                         context,
-                        settings,
-                        SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        SnoozeAlarmBroadcastReceiver::class.java,
                         SnoozeExactAlarmBroadcastReceiver::class.java)
             }
 
@@ -145,8 +144,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
             else {
                 context.alarmManager.cancelExactAndAlarm(
                         context,
-                        settings,
-                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                        ReminderAlarmBroadcastReceiver::class.java,
                         ReminderExactAlarmBroadcastReceiver::class.java)
             }
         }

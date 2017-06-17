@@ -245,6 +245,7 @@ object DevLog {
 
     fun debug(tag: String, message: String) = Log.d(tag, message)
 
+    @Suppress("UNUSED_PARAMETER")
     fun debug(context: Context?, tag: String, message: String) = debug(tag, message)
 
     fun clear(context: Context) = DevLoggerDB(context).use { it.clear() }

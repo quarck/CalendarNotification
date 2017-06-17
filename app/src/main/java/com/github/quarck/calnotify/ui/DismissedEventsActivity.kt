@@ -119,12 +119,12 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
                         .setMessage(resources.getString(R.string.remove_all_confirmation))
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
-                            x, y ->
+                            _, _ ->
                             DismissedEventsStorage(this).use { db -> db.clearHistory() }
                             adapter.removeAll()
                         }
                         .setNegativeButton(R.string.cancel) {
-                            x, y ->
+                            _, _ ->
                         }
                         .create()
                         .show()

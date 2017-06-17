@@ -44,6 +44,7 @@ import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.*
 
+@Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager : EventNotificationManagerInterface {
 
     var lastSoundTimestamp = 0L;

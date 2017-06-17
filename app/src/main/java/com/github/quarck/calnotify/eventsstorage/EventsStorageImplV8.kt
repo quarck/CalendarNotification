@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
+@Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventsStorageImplV8(val context: Context)
     : EventsStorageImplInterface {
 

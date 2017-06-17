@@ -10,18 +10,6 @@
         android:entryValues="@array/days_of_week_values"
         android:defaultValue="1" />
 
-    <CheckBoxPreference
-        android:key="halo_light_date"
-        android:title="@string/halo_light_theme_date_picker"
-        android:summary="@string/halo_light_theme_date_picker_summary"
-        android:defaultValue="false" />
-
-    <CheckBoxPreference
-        android:key="halo_light_time"
-        android:title="@string/halo_light_theme_time_picker"
-        android:summary="@string/halo_light_theme_time_picker_summary"
-        android:defaultValue="false" />
-
     <!-- use_set_alarm_clock -->
     <CheckBoxPreference
         android:key="use_set_alarm_clock"

@@ -17,7 +17,7 @@
     <CheckBoxPreference android:key="enable_manual_calendar_rescan"
         android:title="@string/manual_event_rescan_title"
         android:summary="@string/manual_event_rescan_summary"
-        android:defaultValue="true"
+        android:defaultValue="false"
         />
 
     <CheckBoxPreference android:key="remind_events_no_rmdnrs"

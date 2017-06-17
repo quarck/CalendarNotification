@@ -26,7 +26,6 @@ import android.content.Intent
 import android.os.Handler
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.app.AlarmScheduler
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmPerioidicRescanBroadcastReceiver
@@ -60,7 +59,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         lastScan = System.currentTimeMillis()
 
-        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        val firedAnything = scanAndScheduleAlarms(context)
         if (firedAnything) {
             // no need to reload calendar here, it would be reloaded from other places
             ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
@@ -73,7 +72,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         lastScan = System.currentTimeMillis()
 
-        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        val firedAnything = scanAndScheduleAlarms(context)
 
         if (firedAnything) {
             // no need to reload calendar here, it would be reloaded from other places
@@ -91,7 +90,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             return
         lastScan = currentTime
 
-        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        val firedAnything = scanAndScheduleAlarms(context)
         if (firedAnything) {
             ApplicationController.afterCalendarEventFired(context, reloadCalendar = true)
         }
@@ -107,7 +106,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             return false
         lastScan = currentTime
 
-        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        val firedAnything = scanAndScheduleAlarms(context)
         if (firedAnything) {
             // no need to reload calendar here, it would be reloaded from other places
             ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
@@ -122,7 +121,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         lastScan = System.currentTimeMillis()
 
-        val firedAnything = scanAndScheduleAlarms_noAfterFire(context)
+        val firedAnything = scanAndScheduleAlarms(context)
         if (firedAnything) {
             // no need to reload calendar here, it would be reloaded from other places
             ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
@@ -169,7 +168,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             }
 
             lastScan = System.currentTimeMillis()
-            val firedAnythingElse = scanAndScheduleAlarms_noAfterFire(context)
+            val firedAnythingElse = scanAndScheduleAlarms(context)
 
             if (firedProvider || firedManual || firedAnythingElse) {
                 ApplicationController.afterCalendarEventFired(context)
@@ -188,7 +187,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         val delayInMilliseconds = 1500L
         Handler().postDelayed(
                 {
-                    val fired = scanAndScheduleAlarms_noAfterFire(context)
+                    val fired = scanAndScheduleAlarms(context)
                     if (fired) {
                         // no neeed to reload calendar here -- another thread would be doing it
                         ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
@@ -214,7 +213,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime == null) {
             DevLog.error(context, LOG_TAG, "ERROR alertTime is null!")
-            val fired = scanAndScheduleAlarms_noAfterFire(context)
+            val fired = scanAndScheduleAlarms(context)
             if (fired)
                 ApplicationController.afterCalendarEventFired(context, reloadCalendar = true)
             return
@@ -270,22 +269,22 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             DevLog.error(context, LOG_TAG, "Exception while posting notifications: $ex, ${ex.stackTrace}")
         }
 
-        scanAndScheduleAlarms_noAfterFire(context)
+        scanAndScheduleAlarms(context)
 
         ApplicationController.afterCalendarEventFired(context)
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    private fun scanAndScheduleAlarms_noAfterFire(context: Context): Boolean {
+    private fun scanAndScheduleAlarms(context: Context): Boolean {
 
         if (!Settings(context).enableCalendarRescan) {
-            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire - manual scan disabled")
+            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms - manual scan disabled")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return false
         }
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire - no calendar permission to proceed")
+            DevLog.info(context, LOG_TAG, "scanAndScheduleAlarms - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return false
         }
@@ -302,11 +301,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val scanPh1 = System.currentTimeMillis()
 
-            val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent_NoHousekeping(context, state)
+            val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent(context, state)
 
             val scanPh2 = System.currentTimeMillis()
 
-            val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent_NoHousekeping(context, state)
+            val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent(context, state)
 
             val scanPh3 = System.currentTimeMillis()
 
@@ -319,8 +318,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             ret = firedEventsProvider || firedEventsManual
         }
+        catch (ex: java.lang.SecurityException) {
+            DevLog.error(context, LOG_TAG, "scanAndScheduleAlarms: SecurityException, ${ex.message}, ${ex.stackTrace}")
+        }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "scanAndScheduleAlarms_noAfterFire: exception, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "scanAndScheduleAlarms: exception, ${ex.message}, ${ex.stackTrace}")
         }
 
         return ret

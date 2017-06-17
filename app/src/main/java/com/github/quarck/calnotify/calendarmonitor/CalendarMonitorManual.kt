@@ -185,10 +185,10 @@ class CalendarMonitorManual(
         }
     }
 
-    fun scanNextEvent_NoHousekeping(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
+    fun scanNextEvent(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "scanNextEvent_NoHousekeping: no permissions");
+            DevLog.error(context, LOG_TAG, "scanNextEvent: no permissions");
             return Pair(Long.MAX_VALUE, false)
         }
 

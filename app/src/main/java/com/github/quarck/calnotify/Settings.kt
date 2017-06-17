@@ -301,7 +301,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(KEEP_APP_LOGS_KEY, false)
 
     val enableCalendarRescan: Boolean
-        get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, false)
+        get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(

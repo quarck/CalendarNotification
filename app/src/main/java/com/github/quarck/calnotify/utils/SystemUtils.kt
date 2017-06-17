@@ -89,33 +89,6 @@ inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: Strin
     }
 }
 
-@SuppressLint("NewApi")
-fun Notification.Builder.setShowWhenCompat(value: Boolean): Notification.Builder {
-    val build = android.os.Build.VERSION.SDK_INT
-    if (build >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        setShowWhen(value)
-    }
-    return this
-}
-
-@SuppressLint("NewApi")
-fun Notification.Builder.setSortKeyCompat(value: String): Notification.Builder {
-    val build = android.os.Build.VERSION.SDK_INT
-    if (build >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
-        setSortKey(value)
-    }
-    return this
-}
-
-@SuppressLint("NewApi")
-fun Notification.Builder.setEventCategoryCompat(): Notification.Builder {
-    val build = android.os.Build.VERSION.SDK_INT
-    if (build >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-        setCategory(Notification.CATEGORY_EVENT)
-    }
-    return this
-}
-
 val isMarshmallowOrAbove: Boolean
     get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
 

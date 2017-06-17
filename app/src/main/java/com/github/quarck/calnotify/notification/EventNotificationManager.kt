@@ -355,6 +355,24 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val text = context.getString(com.github.quarck.calnotify.R.string.multiple_events_details)
 
+        val bigText =
+                events
+                        .sortedByDescending { it.instanceStartTime }
+                        .take(30)
+                        .fold(
+                                StringBuilder(), {
+                            sb, ev ->
+
+                            val flags =
+                                    if (DateUtils.isToday(ev.displayedStartTime))
+                                        DateUtils.FORMAT_SHOW_TIME
+                                    else
+                                        DateUtils.FORMAT_SHOW_DATE
+
+                            sb.append("${DateUtils.formatDateTime(context, ev.displayedStartTime, flags)}: ${ev.title}\n")
+                        })
+                        .toString()
+
         val builder =
                 NotificationCompat.Builder(context)
                         .setContentTitle(title)
@@ -369,7 +387,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                        .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setNumber(numEvents)
                         .setShowWhen(false)
 
@@ -1099,6 +1117,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val bigText =
                 events
+                        .sortedByDescending { it.instanceStartTime }
+                        .take(30)
                         .fold(
                                 StringBuilder(), {
                             sb, ev ->
@@ -1114,7 +1134,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toString()
 
         val builder =
-                Notification.Builder(context)
+                NotificationCompat.Builder(context)
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
@@ -1122,8 +1142,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setStyle(Notification.BigTextStyle().bigText(bigText))
-                        .setShowWhenCompat(false)
+                        .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
+                        .setShowWhen(false)
 
         if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
             if (settings.ledPattern.size == 2)

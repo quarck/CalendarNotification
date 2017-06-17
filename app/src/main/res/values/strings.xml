@@ -352,5 +352,7 @@
     <string name="keep_logs_summary">Do not enable unless asked by this app developer</string>
     <string name="manual_event_rescan_title">Manual calendar rescan</string>
     <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
+    <string name="handle_email_only_events_title">Handle e-mail only events</string>
+    <string name="handle_email_only_events_summary">Notify locally about events with email-only reminders</string>
 </resources>
 

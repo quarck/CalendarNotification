@@ -846,6 +846,8 @@ object CalendarProvider : CalendarProviderInterface {
 
         val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
+        val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
+
         val defaultReminderTimeForEventWithNoReminder =
                 settings.defaultReminderTimeForEventWithNoReminder
 
@@ -926,13 +928,17 @@ object CalendarProvider : CalendarProviderInterface {
                                 .map {
                                     eventId ->
                                     eventId to
-                                            getEventLocalReminders(context, eventId)
-//                                        getEventReminders(context, eventId)
-//                                                .filter { reminder ->
-//                                                            reminder.method != CalendarContract.Reminders.METHOD_EMAIL &&
-//                                                            reminder.method != CalendarContract.Reminders.METHOD_SMS }
-//                                                .map { reminder -> reminder.millisecondsBefore }
-//                                                .toLongArray()
+                                        getEventReminders(context, eventId)
+                                                .filter {
+                                                    it.method != CalendarContract.Reminders.METHOD_SMS
+                                                }
+                                                .map {
+                                                    Pair(
+                                                            it.method != CalendarContract.Reminders.METHOD_EMAIL,
+                                                            it.millisecondsBefore
+                                                    )
+                                                }
+                                                .toTypedArray()
                                 }
                                 .toMap()
 
@@ -940,27 +946,43 @@ object CalendarProvider : CalendarProviderInterface {
                     val reminders = knownReminders[evt.eventId] // getEventLocalReminders(context, eventId);
 
                     var hasAnyReminders = false
+                    var hasNonLocalReminders = false
 
                     if (reminders != null)
-                        for (reminder in reminders) {
+                        for ((isLocal, reminderTime) in reminders) {
 
-                            val alertTime = evt.instanceStart - reminder//s[reminderIdx];
+                            if (isLocal) {
+                                val alertTime = evt.instanceStart - reminderTime
 
-                            val entry = MonitorEventAlertEntry(
-                                    evt.eventId,
-                                    evt.isAllDay != 0L,
-                                    alertTime,
-                                    evt.instanceStart,
-                                    evt.instanceEnd,
-                                    false,
-                                    false
-                            )
+                                val entry = MonitorEventAlertEntry(
+                                        evt.eventId,
+                                        evt.isAllDay != 0L,
+                                        alertTime,
+                                        evt.instanceStart,
+                                        evt.instanceEnd,
+                                        false,
+                                        false
+                                )
 
-                            ret.add(entry)
-                            hasAnyReminders = true
+                                ret.add(entry)
+                                hasAnyReminders = true
+                            }
+                            else
+                                hasNonLocalReminders = true
                         }
 
+                    var shouldAddManualReminder = false
+
+                    // has no reminders and we should notify about such events
                     if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
+
+                        // it also has no remote (email) reminders or we were configured to notify on such events
+                        if (!hasNonLocalReminders || notifyOnEmailOnlyEvents) {
+                            shouldAddManualReminder = true
+                        }
+                    }
+
+                    if (shouldAddManualReminder) {
 
                         val alertTime =
                                 if (evt.isAllDay == 0L)

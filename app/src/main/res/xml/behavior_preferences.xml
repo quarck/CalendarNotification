@@ -26,6 +26,13 @@
         android:dependency="enable_manual_calendar_rescan"
         android:defaultValue="true"/>
 
+    <CheckBoxPreference
+        android:key="notify_on_email_only_events"
+        android:title="@string/handle_email_only_events_title"
+        android:summary="@string/handle_email_only_events_summary"
+        android:defaultValue="false"
+        />
+
     <com.github.quarck.calnotify.prefs.DefaultManualNotificationPreference
         android:key="default_rminder_time"
         android:title="@string/default_reminder_time"

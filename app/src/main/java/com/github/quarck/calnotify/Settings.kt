@@ -303,6 +303,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableCalendarRescan: Boolean
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
 
+    val notifyOnEmailOnlyEvents: Boolean
+        get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -419,6 +422,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val KEEP_APP_LOGS_KEY = "keep_logs"
 
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
+        private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

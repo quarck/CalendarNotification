@@ -41,6 +41,14 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
+
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+
+
 // TODO: Reminder behavior setting:
 // 1. Current behavior - each notification resets the counter
 // 2. Remind N times since first unseen event, only reset when it is "all clear"

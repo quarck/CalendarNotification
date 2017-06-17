@@ -34,21 +34,21 @@ interface CalendarMonitorInterface {
 
     fun onPeriodicRescanBroadcast(context: Context, intent: Intent)
 
-    fun onBoot(context: Context): Boolean
+    fun onBoot(context: Context)
 
-    fun onAppResumed(context: Context, monitorSettingsChanged: Boolean): Boolean
+    fun onAppResumed(context: Context, monitorSettingsChanged: Boolean)
 
-    fun onUpgrade(context: Context): Boolean
+    fun onUpgrade(context: Context)
 
     fun onProviderReminderBroadcast(context: Context, intent: Intent)
 
     fun onCalendarChange(context: Context)
 
+    fun onRescanFromService(context: Context, intent: Intent?)
+
     fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>
 
     fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
-
-//    fun getAlertsAsEventAlertsAt(context: Context, time: Long, mayRescan: Boolean): List<EventAlertRecord>
 
     fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean)
 

@@ -20,10 +20,41 @@
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.app.IntentService
+import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
+import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.utils.powerManager
+import com.github.quarck.calnotify.utils.wakeLocked
 
 class CalendarMonitorService : IntentService("CalendarMonitorService") {
 
     override fun onHandleIntent(intent: Intent?) {
+
+        val startDelay = intent?.getIntExtra(START_DELAY, 0) ?: 0
+
+        wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_NAME) {
+
+            if (startDelay != 0) {
+                try {
+                    Thread.sleep(startDelay.toLong())
+                }
+                catch (ex: Exception) {
+                }
+            }
+
+            ApplicationController.CalendarMonitorService.onRescanFromService(this, intent)
+        }
+    }
+
+    companion object {
+        private const val WAKE_LOCK_NAME = "CalendarMonitor"
+        private const val START_DELAY = "start_delay"
+
+        fun startRescanService(context: Context, startDelay: Int) {
+            val intent = Intent(context, CalendarMonitorService::class.java)
+            intent.putExtra(START_DELAY, startDelay)
+            context.startService(intent)
+        }
     }
 }

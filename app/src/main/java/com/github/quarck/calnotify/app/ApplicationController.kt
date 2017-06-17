@@ -99,13 +99,13 @@ object ApplicationController : EventMovedHandler {
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
-        // this might fire new notifications
-        val monitorChanges = calendarMonitor.onUpgrade(context)
-
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes || monitorChanges)
+        if (changes)
             UINotifierService.notifyUI(context, false);
+
+        // this might fire new notifications
+        calendarMonitor.onUpgrade(context)
     }
 
     fun onBootComplete(context: Context) {
@@ -118,13 +118,13 @@ object ApplicationController : EventMovedHandler {
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
-        // this might fire new notifications
-        val monitorChanges = calendarMonitor.onBoot(context)
-
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes || monitorChanges)
+        if (changes)
             UINotifierService.notifyUI(context, false);
+
+        // this might fire new notifications
+        calendarMonitor.onBoot(context)
     }
 
     fun handleOnCalendarChanged(context: Context) {
@@ -632,10 +632,7 @@ object ApplicationController : EventMovedHandler {
                 calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS)
             };
 
-            // this might fire new notifications
-            val monitorChanges = calendarMonitor.onAppResumed(context, monitorSettingsChanged)
-
-            if (shouldRepost || changes || monitorChanges) {
+            if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
                 context.globalState.lastNotificationRePost = System.currentTimeMillis()
             }
@@ -644,6 +641,9 @@ object ApplicationController : EventMovedHandler {
 
             if (changes)
                 UINotifierService.notifyUI(context, true);
+
+            // this might fire new notifications
+            calendarMonitor.onAppResumed(context, monitorSettingsChanged)
         }
     }
 

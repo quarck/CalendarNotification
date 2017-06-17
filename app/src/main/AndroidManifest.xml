@@ -116,6 +116,8 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
+        <service android:name=".calendarmonitor.CalendarMonitorService" />
+
         <service android:name=".notification.NotificationActionDismissService" />
 
         <service android:name=".notification.NotificationActionSnoozeService" />

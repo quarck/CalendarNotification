@@ -30,6 +30,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.hourCompat
+import com.github.quarck.calnotify.utils.minuteCompat
 import java.text.DateFormat
 import java.util.*
 
@@ -70,15 +72,14 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         updateWidgetView()
     }
 
-    @Suppress("DEPRECATION")
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
         picker = view.find<TimePicker>(R.id.time_picker_pref_time_of_day)
 
         picker.setIs24HourView(isTwentyFourHour)
-        picker.currentHour = timeValue.component1()
-        picker.currentMinute = timeValue.component2()
+        picker.hourCompat = timeValue.component1()
+        picker.minuteCompat = timeValue.component2()
 
         updateWidgetView()
     }
@@ -88,14 +89,13 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         picker.clearFocus()
     }
 
-    @Suppress("DEPRECATION")
     override fun onDialogClosed(positiveResult: Boolean) {
 
         // When the user selects "OK", persist the new value
         if (positiveResult) {
             picker.clearFocus()
 
-            timeValue = Pair(picker.currentHour, picker.currentMinute)
+            timeValue = Pair(picker.hourCompat, picker.minuteCompat)
             persistInt(PreferenceUtils.packTime(timeValue))
             updateWidgetView()
         }

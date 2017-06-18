@@ -550,7 +550,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         }
     }
 
-    @Suppress("DEPRECATION")
     public override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
@@ -580,8 +579,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                     val time = Calendar.getInstance()
                     time.timeInMillis = state.timeAMillis
-                    time.set(Calendar.HOUR_OF_DAY, timePicker.currentHour)
-                    time.set(Calendar.MINUTE, timePicker.currentMinute)
+                    time.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+                    time.set(Calendar.MINUTE, timePicker.minuteCompat)
 
                     state.timeBMillis = time.timeInMillis
                 }
@@ -722,7 +721,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
     }
 
-    @Suppress("DEPRECATION")
     fun snoozeUntilShowTimePickerDialog(currentDateSelection: Long, initialTimeValue: Long) {
 
         val date = Calendar.getInstance()
@@ -742,8 +740,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             val cal = Calendar.getInstance()
             cal.timeInMillis = initialTimeValue
 
-            timePicker.currentHour = cal.get(Calendar.HOUR_OF_DAY)
-            timePicker.currentMinute = cal.get(Calendar.MINUTE)
+            timePicker.hourCompat = cal.get(Calendar.HOUR_OF_DAY)
+            timePicker.minuteCompat = cal.get(Calendar.MINUTE)
         }
 
         val title = dialogTime.find<TextView>(R.id.textViewSnoozeUntilDate)
@@ -764,8 +762,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             // grab time from timePicker + date picker
 
-            date.set(Calendar.HOUR_OF_DAY, timePicker.currentHour)
-            date.set(Calendar.MINUTE, timePicker.currentMinute)
+            date.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+            date.set(Calendar.MINUTE, timePicker.minuteCompat)
 
             val snoozeFor = date.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
 

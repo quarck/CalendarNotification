@@ -29,6 +29,8 @@ import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.hourCompat
+import com.github.quarck.calnotify.utils.minuteCompat
 
 class DefaultManualAllDayNotificationPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
@@ -48,7 +50,6 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
 
     }
 
-    @Suppress("DEPRECATION")
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
@@ -62,16 +63,16 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
         if (settingValue < 0) {
             // Reminder on the day before
             val hrMin = Consts.DAY_IN_MINUTES + settingValue
-            timePicker.currentHour = hrMin / 60
-            timePicker.currentMinute = hrMin % 60
+            timePicker.hourCompat = hrMin / 60
+            timePicker.minuteCompat = hrMin % 60
 
             radioButtonDayBefore.isChecked = true
             radioButtonDayOfEvent.isChecked = false
         }
         else {
             // Reminder at the day of event
-            timePicker.currentHour = settingValue / 60
-            timePicker.currentMinute = settingValue % 60
+            timePicker.hourCompat = settingValue / 60
+            timePicker.minuteCompat = settingValue % 60
 
             radioButtonDayBefore.isChecked = false
             radioButtonDayOfEvent.isChecked = true
@@ -83,14 +84,13 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
         timePicker.clearFocus()
     }
 
-    @Suppress("DEPRECATION")
     override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
             timePicker.clearFocus()
 
             val isDayBefore = radioButtonDayBefore.isChecked
-            val hrMin = timePicker.currentHour * 60 + timePicker.currentMinute
+            val hrMin = timePicker.hourCompat * 60 + timePicker.minuteCompat
 
             settingValue = if (isDayBefore) hrMin - Consts.DAY_IN_MINUTES else hrMin
 

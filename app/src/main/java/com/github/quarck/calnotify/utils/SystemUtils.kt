@@ -26,8 +26,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.PowerManager
 import android.os.Vibrator
+import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
@@ -178,3 +180,33 @@ fun AlarmManager.cancelExactAndAlarm(
 
     DevLog.info(context, LOG_TAG, "Cancelled alarm")
 }
+
+@Suppress("DEPRECATION")
+var TimePicker.hourCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour
+        else
+            this.currentHour
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour = value
+        else
+            this.currentHour = value
+    }
+
+@Suppress("DEPRECATION")
+var TimePicker.minuteCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute
+        else
+            this.currentMinute
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute = value
+        else
+            this.currentMinute = value
+    }

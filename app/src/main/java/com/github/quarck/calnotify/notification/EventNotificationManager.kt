@@ -174,13 +174,22 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val (recentEvents, collapsedEvents) = arrangeEvents(db, currentTime, settings)
 
-            updatedAnything =
-                    postDisplayedEventNotifications(
-                            context, db, settings,
-                            formatter,
-                            recentEvents,
-                            force, isQuietPeriodActive,
-                            primaryEventId)
+
+            if (recentEvents.isNotEmpty()) {
+
+                val ongoingSummary =
+                        (settings.showDismissButton && !settings.allowSwipeToSnooze) || recentEvents.isNotEmpty()
+
+                updatedAnything =
+                        postDisplayedEventNotifications(
+                                context, db, settings,
+                                formatter,
+                                recentEvents,
+                                force, isQuietPeriodActive,
+                                primaryEventId,
+                                ongoingSummary
+                                )
+            }
 
             if (!recentEvents.isEmpty())
                 collapseDisplayedNotifications(context, db, collapsedEvents, settings, force, isQuietPeriodActive)
@@ -499,7 +508,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             events: List<EventAlertRecord>,
             force: Boolean,
             isQuietPeriodActive: Boolean,
-            primaryEventId: Long?
+            primaryEventId: Long?,
+            summaryNotificationIsOngoing: Boolean
     ): Boolean {
 
         DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications")
@@ -511,6 +521,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         var postedNotification = false
         var playedAnySound = false
+
+        val snoozePresets = settings.snoozePresets
+
+        if (isMarshmallowOrAbove && settings.useBundledNotifications) {
+            postGroupNotification(
+                    context,
+                    notificationsSettingsQuiet,
+                    snoozePresets,
+                    summaryNotificationIsOngoing
+            )
+        }
 
         for (event in events) {
             if (event.snoozedUntil == 0L) {
@@ -569,7 +590,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
                             force,
                             wasCollapsed,
-                            settings.snoozePresets,
+                            snoozePresets,
                             isQuietPeriodActive)
 
                     // Update db to indicate that this event is currently actively displayed
@@ -596,7 +617,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings,
                         force,
                         false,
-                        settings.snoozePresets,
+                        snoozePresets,
                         isQuietPeriodActive)
 
                 val currentTime = System.currentTimeMillis()
@@ -799,7 +820,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun postGroupNotification(
             ctx: Context,
             notificationSettings: NotificationSettingsSnapshot,
-            snoozePresets: LongArray
+            snoozePresets: LongArray,
+            summaryNotificationIsOngoing: Boolean
     ) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
@@ -817,6 +839,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
                 )
+
+        if (summaryNotificationIsOngoing)
+            groupBuilder.setOngoing(true)
 
         if (notificationSettings.showDismissButton) {
             if (notificationSettings.allowSwipeToSnooze) {
@@ -863,15 +888,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             snoozePresets: LongArray,
             isQuietPeriodActive: Boolean
     ) {
-
         val notificationManager = NotificationManagerCompat.from(ctx)
-
-        if (isMarshmallowOrAbove && settings.useBundledNotifications) {
-            postGroupNotification(ctx,
-                    notificationSettings,
-                    snoozePresets
-            )
-        }
 
         val calendarIntent = CalendarIntents.getCalendarViewIntent(event)
 

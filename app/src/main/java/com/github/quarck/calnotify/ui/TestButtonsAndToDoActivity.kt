@@ -40,17 +40,6 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-
 // TODO: Group - only when not using persistent notification
 
 // TODO: do not addGroup and do not post grouped notification on android < 6
@@ -68,16 +57,12 @@ import java.util.*
 
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 
-// TODO: Reminder behavior setting:
-// 1. Current behavior - each notification resets the counter
-// 2. Remind N times since first unseen event, only reset when it is "all clear"
-
 // TODO: add event button (off by default)
 
-// TODO: stop reminders after UI is opened (could be quickly implemented by setting "fire count" to max+1 -- this must be a setting!!
-
 // TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
-// TODO: Android O support ?? https://github.com/quarck/CalendarNotification/issues/220
+
+
+// TODO: Android O support! See background limitations: https://github.com/quarck/CalendarNotification/issues/220
 
 class TestButtonsAndToDoActivity : Activity() {
 

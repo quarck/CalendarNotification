@@ -102,7 +102,7 @@ class EventsStorage(val context: Context)
                              startTime: Long?,
                              endTime: Long?,
                              location: String?,
-                             lastEventVisibility: Long?,
+                             lastStatusChangeTime: Long?,
                              displayStatus: EventDisplayStatus?,
                              color: Int?,
                              isRepeating: Boolean?
@@ -115,7 +115,7 @@ class EventsStorage(val context: Context)
                         startTime = startTime ?: event.startTime,
                         endTime = endTime ?: event.endTime,
                         location = location ?: event.location,
-                        lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                        lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color,
                         isRepeating = isRepeating ?: event.isRepeating
@@ -134,7 +134,7 @@ class EventsStorage(val context: Context)
                               startTime: Long?,
                               endTime: Long?,
                               location: String?,
-                              lastEventVisibility: Long?,
+                              lastStatusChangeTime: Long?,
                               displayStatus: EventDisplayStatus?,
                               color: Int?,
                               isRepeating: Boolean?): Boolean {
@@ -149,7 +149,7 @@ class EventsStorage(val context: Context)
                             startTime = startTime ?: event.startTime,
                             endTime = endTime ?: event.endTime,
                             location = location ?: event.location,
-                            lastEventVisibility = lastEventVisibility ?: event.lastEventVisibility,
+                            lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                             displayStatus = displayStatus ?: event.displayStatus,
                             color = color ?: event.color,
                             isRepeating = isRepeating ?: event.isRepeating)

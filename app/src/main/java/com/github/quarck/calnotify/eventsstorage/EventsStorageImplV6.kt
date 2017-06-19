@@ -285,7 +285,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         values.put(KEY_INSTANCE_END, event.instanceEndTime);
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_FIRE, event.lastEventVisibility);
+        values.put(KEY_LAST_EVENT_FIRE, event.lastStatusChangeTime);
         values.put(KEY_IS_DISPLAYED, event.displayStatus.code);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_ALERT_TIME, event.alertTime)
@@ -306,7 +306,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
                 instanceEndTime = cursor.getLong(7),
                 location = cursor.getString(8),
                 snoozedUntil = cursor.getLong(9),
-                lastEventVisibility = cursor.getLong(10),
+                lastStatusChangeTime = cursor.getLong(10),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(11)),
                 color = cursor.getInt(12),
                 alertTime = cursor.getLong(13),

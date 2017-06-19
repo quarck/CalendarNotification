@@ -102,7 +102,7 @@ object CalendarProvider : CalendarProviderInterface {
                         instanceStartTime = instanceStart ?: 0L,
                         instanceEndTime = instanceEnd ?: 0L,
                         location = location ?: "",
-                        lastEventVisibility = 0L,
+                        lastStatusChangeTime = 0L,
                         displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                         isRepeating = false, // has to be updated separately

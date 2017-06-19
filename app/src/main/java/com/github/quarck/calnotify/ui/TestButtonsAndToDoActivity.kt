@@ -40,6 +40,9 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+
+// TODO!: pebble - reminders - option to don't forward them
+
 // TODO: Group - only when not using persistent notification
 
 // TODO: do not addGroup and do not post grouped notification on android < 6

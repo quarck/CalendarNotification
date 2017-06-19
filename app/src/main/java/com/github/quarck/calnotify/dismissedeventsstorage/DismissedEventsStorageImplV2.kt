@@ -192,7 +192,7 @@ class DismissedEventsStorageImplV2()
         values.put(KEY_INSTANCE_END, event.instanceEndTime);
         values.put(KEY_LOCATION, event.location);
         values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastEventVisibility);
+        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime);
         values.put(KEY_DISPLAY_STATUS, event.displayStatus.code);
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
@@ -230,7 +230,7 @@ class DismissedEventsStorageImplV2()
                 instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
                 location = cursor.getString(PROJECTION_KEY_LOCATION),
                 snoozedUntil = cursor.getLong(PROJECTION_KEY_SNOOZED_UNTIL),
-                lastEventVisibility = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
+                lastStatusChangeTime = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
                 color = cursor.getInt(PROJECTION_KEY_COLOR),
                 isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,

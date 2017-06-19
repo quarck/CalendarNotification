@@ -64,7 +64,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         EventsStorage(context).use {
             it.updateEvent(event,
                     // do not update last event visibility, so preserve original sorting order in the activity
-                    // lastEventVisibility = System.currentTimeMillis(),
+                    // lastStatusChangeTime = System.currentTimeMillis(),
                     displayStatus = EventDisplayStatus.Hidden)
         }
 
@@ -139,7 +139,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             return Pair(listOf<EventAlertRecord>(), events)
         }
 
-        val activeEvents = events.sortedBy { it.lastEventVisibility }
+        val activeEvents = events.sortedBy { it.lastStatusChangeTime }
 
         val maxNotifications = settings.maxNotifications
         val collapseEverything = settings.collapseEverything
@@ -234,7 +234,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             }
 
             val numActiveEvents = activeEvents.count()
-            val lastVisibility = activeEvents.map { it.lastEventVisibility }.max() ?: 0L
+            val lastVisibility = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
 
             if (numActiveEvents > 0) {
 
@@ -533,7 +533,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
 
+        var currentTime = System.currentTimeMillis()
+
         for (event in events) {
+
+            currentTime++ // so last change times are not all the same
+
             if (event.snoozedUntil == 0L) {
                 // snooze zero could mean
                 // - this is a new event -- we have to display it, it would have displayStatus == hidden
@@ -620,8 +625,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         snoozePresets,
                         isQuietPeriodActive)
 
-                val currentTime = System.currentTimeMillis()
-
                 if (event.snoozedUntil + Consts.ALARM_THRESHOLD < currentTime) {
 
                     val warningMessage = "snooze alarm is very late: expected at ${event.snoozedUntil}, " +
@@ -639,8 +642,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 // also update 'lastVisible' time since event just re-appeared
                 db.updateEvent(event,
                         snoozedUntil = 0,
-                        displayStatus = EventDisplayStatus.DisplayedNormal)//,
-                        //lastEventVisibility = currentTime)
+                        displayStatus = EventDisplayStatus.DisplayedNormal,
+                        lastStatusChangeTime = currentTime)
 
                 postedNotification = true
                 playedAnySound = playedAnySound || !isQuietPeriodActive
@@ -665,11 +668,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return postedNotification
     }
 
-    private fun lastVisibilityToSortingKey(lastEventVisibility: Long): String {
+    private fun lastStatusChangeToSortingKey(lastStatusChangeTime: Long): String {
 
         val sb = StringBuffer(20);
 
-        var temp = lastEventVisibility
+        var temp = lastStatusChangeTime
 
         while (temp > 0) {
 
@@ -752,7 +755,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setShowWhen(false)
                 .setSortKey(
-                        lastVisibilityToSortingKey(lastVisibility)
+                        lastStatusChangeToSortingKey(lastVisibility)
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_REMINDER
@@ -925,9 +928,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             title = "#${event.origin},${(event.timeFirstSeen - event.alertTime) / 60000L}m# ${event.title}"
         }
 
-        val sortKey = lastVisibilityToSortingKey(event.lastEventVisibility)
+        val sortKey = lastStatusChangeToSortingKey(event.lastStatusChangeTime)
 
-        DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastEventVisibility} -> $sortKey")
+        DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
@@ -955,7 +958,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         NotificationCompat.BigTextStyle().bigText(notificationText)
                 )
                 .setWhen(
-                        event.lastEventVisibility
+                        event.lastStatusChangeTime
                 )
                 .setShowWhen(false)
                 .setSortKey(

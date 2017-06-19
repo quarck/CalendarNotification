@@ -109,7 +109,7 @@ data class EventAlertRecord(
         var instanceStartTime: Long,
         var instanceEndTime: Long,
         var location: String,
-        var lastEventVisibility: Long,
+        var lastStatusChangeTime: Long,
         var snoozedUntil: Long = 0,
         var displayStatus: EventDisplayStatus = EventDisplayStatus.Hidden,
         var color: Int = 0,
@@ -265,7 +265,7 @@ fun CreateEventAlertSpecialScanOverHundredEvents(ctx: Context, missedEvents: Int
             instanceStartTime = Long.MAX_VALUE,
             instanceEndTime = Long.MAX_VALUE,
             location = "",
-            lastEventVisibility = Long.MAX_VALUE - 2,
+            lastStatusChangeTime = Long.MAX_VALUE - 2,
             snoozedUntil = 0L,
             color = 0xffff0000.toInt()
     )

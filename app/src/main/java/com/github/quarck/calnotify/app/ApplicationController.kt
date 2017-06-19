@@ -223,9 +223,9 @@ object ApplicationController : EventMovedHandler {
             db ->
 
             if (event.isNotSpecial)
-                event.lastEventVisibility = System.currentTimeMillis()
+                event.lastStatusChangeTime = System.currentTimeMillis()
             else
-                event.lastEventVisibility = Long.MAX_VALUE
+                event.lastStatusChangeTime = Long.MAX_VALUE
 
             if (event.isRepeating) {
                 // repeating event - always simply add
@@ -356,7 +356,7 @@ object ApplicationController : EventMovedHandler {
 
                 var currentTime = System.currentTimeMillis()
                 for ((_, event) in pairsToAdd)
-                    event.lastEventVisibility = currentTime++
+                    event.lastStatusChangeTime = currentTime++
 
                 db.addEvents(pairsToAdd.map { it.second }) // ignoring result of add - here we are using another way to validate succesfull add
             }
@@ -523,7 +523,7 @@ object ApplicationController : EventMovedHandler {
 
                         val (success, newEvent) = db.updateEvent(event,
                                 snoozedUntil = snoozedUntil,
-                                lastEventVisibility = currentTime,
+                                lastStatusChangeTime = currentTime,
                                 displayStatus = EventDisplayStatus.Hidden)
 
                         event = if (success) newEvent else null
@@ -587,7 +587,7 @@ object ApplicationController : EventMovedHandler {
                             db.updateEvent(
                                     event,
                                     snoozedUntil = newSnoozeUntil,
-                                    lastEventVisibility = currentTime
+                                    lastStatusChangeTime = currentTime
                             )
 
                     allSuccess = allSuccess && success;
@@ -706,7 +706,7 @@ object ApplicationController : EventMovedHandler {
 
         val ret = events.any {
             event ->
-            (event.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
+            (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
                     (event.snoozedUntil == 0L)
         }
 
@@ -721,7 +721,7 @@ object ApplicationController : EventMovedHandler {
             db ->
             val eventsToDismiss = db.events.filter {
                 event ->
-                (event.lastEventVisibility < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
+                (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
                         (event.snoozedUntil == 0L) &&
                         event.isNotSpecial
             }

@@ -42,7 +42,7 @@ interface EventsStorageInterface {
             startTime: Long? = null,
             endTime: Long? = null,
             location: String? = null,
-            lastEventVisibility: Long? = null,
+            lastStatusChangeTime: Long? = null,
             displayStatus: EventDisplayStatus? = null,
             color: Int? = null,
             isRepeating: Boolean? = null): Pair<Boolean, EventAlertRecord>
@@ -55,7 +55,7 @@ interface EventsStorageInterface {
             startTime: Long? = null,
             endTime: Long? = null,
             location: String? = null,
-            lastEventVisibility: Long? = null,
+            lastStatusChangeTime: Long? = null,
             displayStatus: EventDisplayStatus? = null,
             color: Int? = null,
             isRepeating: Boolean? = null): Boolean

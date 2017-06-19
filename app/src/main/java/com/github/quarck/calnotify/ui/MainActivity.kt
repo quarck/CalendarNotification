@@ -386,9 +386,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                     else if (lhs.snoozedUntil > rhs.snoozedUntil)
                                         return@Comparator 1;
 
-                                    if (lhs.lastEventVisibility > rhs.lastEventVisibility)
+                                    if (lhs.lastStatusChangeTime > rhs.lastStatusChangeTime)
                                         return@Comparator -1;
-                                    else if (lhs.lastEventVisibility < rhs.lastEventVisibility)
+                                    else if (lhs.lastStatusChangeTime < rhs.lastStatusChangeTime)
                                         return@Comparator 1;
 
                                     return@Comparator 0;

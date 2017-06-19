@@ -41,7 +41,16 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO!: pebble - reminders - option to don't forward them
+// TODO!: pebble - reminders - option to don't forward them and also:
+/*try {
+    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+    r.play();
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+*/
 
 // TODO: Group - only when not using persistent notification
 

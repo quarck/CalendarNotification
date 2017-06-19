@@ -354,5 +354,7 @@
     <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
     <string name="handle_email_only_events_title">Handle e-mail only events</string>
     <string name="handle_email_only_events_summary">Notify locally about events with email-only reminders</string>
+    <string name="bundle_notifications_title">Bundle notifications</string>
+    <string name="bundle_notifications_summary">Use bundled notifications on Android 6+</string>
 </resources>
 

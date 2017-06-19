@@ -519,7 +519,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                         DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
 
-                        val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange);
+                        val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange, false);
                         if (result != null) {
                             checkForMarshmallowWarningAndContinueWith(result) {
                                 result.toast(this)

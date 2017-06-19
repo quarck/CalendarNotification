@@ -30,8 +30,6 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-// FIXME: introduce another lighter interface for methods used by EventsTorage only, and drop most of this and V7, V8 classes.
-
 class EventsStorageImplV6() : EventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")

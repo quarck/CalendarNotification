@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.notification
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
@@ -28,6 +27,7 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.text.format.DateUtils
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
@@ -72,14 +72,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     override fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
-        removeNotification(context, eventId, notificationId)
+        removeNotification(context, notificationId)
         postEventNotifications(context, formatter, false, null)
     }
 
-    override fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>, postNotifications: Boolean) {
+    override fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>, postNotifications: Boolean, hasActiveEvents: Boolean) {
 
         for (event in events) {
-            removeNotification(context, event.eventId, event.notificationId)
+            removeNotification(context, event.notificationId)
+        }
+
+        if (!hasActiveEvents) {
+            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
         }
 
         if (postNotifications) {
@@ -88,7 +92,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     override fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
-        removeNotification(context, eventId, notificationId)
+        removeNotification(context, notificationId)
         postEventNotifications(context, formatter, false, null)
     }
 
@@ -183,6 +187,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             else {
                 if (postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false))
                     updatedAnything = true
+            }
+
+            if (recentEvents.isEmpty() && collapsedEvents.isEmpty()) {
+                removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
             }
         }
 
@@ -346,7 +354,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         // now build actual notification and notify
         val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, MAIN_ACTIVITY_EVERYTHING_COLLAPSED_CODE, intent, 0)
 
         val numEvents = events.size
 
@@ -465,7 +473,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         for (event in events) {
             if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
                 //DevLog.debug(LOG_TAG, "Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
-                removeNotification(context, event.eventId, event.notificationId)
+                removeNotification(context, event.notificationId)
             }
             else {
                 //DevLog.debug(LOG_TAG, "Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
@@ -610,8 +618,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 // also update 'lastVisible' time since event just re-appeared
                 db.updateEvent(event,
                         snoozedUntil = 0,
-                        displayStatus = EventDisplayStatus.DisplayedNormal,
-                        lastEventVisibility = currentTime)
+                        displayStatus = EventDisplayStatus.DisplayedNormal)//,
+                        //lastEventVisibility = currentTime)
 
                 postedNotification = true
                 playedAnySound = playedAnySound || !isQuietPeriodActive
@@ -661,10 +669,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationSettings: NotificationSettingsSnapshot,
             isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
     ) {
-        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = NotificationManagerCompat.from(ctx)
 
         val intent = Intent(ctx, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(ctx, MAIN_ACTIVITY_REMINDER_CODE, intent, 0)
 
         val persistentState = ctx.persistentState
 
@@ -788,12 +796,60 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return pendingIntent != null
     }
 
-    @Suppress("unused")
-    private fun isCollapsedNotificationVisible(ctx: Context): Boolean {
-        val intent = Intent(ctx, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_NO_CREATE)
+    private fun postGroupNotification(
+            ctx: Context,
+            notificationSettings: NotificationSettingsSnapshot,
+            snoozePresets: LongArray
+    ) {
+        val notificationManager = NotificationManagerCompat.from(ctx)
 
-        return pendingIntent != null
+        val intent = Intent(ctx, MainActivity::class.java)
+
+        val pendingIntent = PendingIntent.getActivity(ctx, MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE, intent, 0)
+
+        val groupBuilder = NotificationCompat.Builder(ctx)
+                .setSmallIcon(R.drawable.stat_notify_calendar)
+                .setContentTitle(ctx.resources.getString(R.string.app_name))
+                .setContentText("")
+                .setGroupSummary(true)
+                .setGroup(NOTIFICATION_GROUP)
+                .setContentIntent(pendingIntent)
+                .setCategory(
+                        NotificationCompat.CATEGORY_EVENT
+                )
+
+        if (notificationSettings.showDismissButton) {
+            if (notificationSettings.allowSwipeToSnooze) {
+
+                val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePresets[0])
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+
+                val pendingSnoozeIntent =
+                        pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+
+                groupBuilder.setDeleteIntent(pendingSnoozeIntent)
+            }
+        }
+        else {
+            val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
+            dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+
+            val pendingDismissIntent =
+                    pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+
+            groupBuilder.setDeleteIntent(pendingDismissIntent)
+        }
+
+        try {
+            notificationManager.notify(
+                    Consts.NOTIFICATION_ID_BUNDLED_GROUP,
+                    groupBuilder.build()
+            )
+        }
+        catch (ex: Exception) {
+            DevLog.error(ctx, LOG_TAG, "Exception: $ex")
+        }
     }
 
     private fun postNotification(
@@ -807,7 +863,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
             snoozePresets: LongArray,
             isQuietPeriodActive: Boolean
     ) {
-        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val notificationManager = NotificationManagerCompat.from(ctx)
+
+        if (isMarshmallowOrAbove && settings.useBundledNotifications) {
+            postGroupNotification(ctx,
+                    notificationSettings,
+                    snoozePresets
+            )
+        }
 
         val calendarIntent = CalendarIntents.getCalendarViewIntent(event)
 
@@ -844,6 +908,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             title = "#${event.origin},${(event.timeFirstSeen - event.alertTime) / 60000L}m# ${event.title}"
         }
 
+        val sortKey = lastVisibilityToSortingKey(event.lastEventVisibility)
+
+        DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastEventVisibility} -> $sortKey")
+
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
                 .setContentText(notificationText)
@@ -874,11 +942,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setShowWhen(false)
                 .setSortKey(
-                        lastVisibilityToSortingKey(event.lastEventVisibility)
+                        sortKey
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
                 )
+                .setGroup(NOTIFICATION_GROUP)
 
         val defaultSnooze0PendingIntent =
                 pendingServiceIntent(ctx,
@@ -961,7 +1030,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val dismissEventAction =
                     NotificationCompat.Action.Builder(
                             R.drawable.ic_clear_white_24dp,
-                            ctx.getString(com.github.quarck.calnotify.R.string.full_dismiss),
+                            ctx.getString(com.github.quarck.calnotify.R.string.dismiss),
                             dismissPendingIntent
                     ).build()
 
@@ -1075,21 +1144,20 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun removeNotification(ctx: Context, eventId: Long, notificationId: Int) {
-        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private fun removeNotification(ctx: Context, notificationId: Int) {
+        val notificationManager = NotificationManagerCompat.from(ctx)
         notificationManager.cancel(notificationId)
     }
 
     private fun removeNotifications(ctx: Context, events: Collection<EventAlertRecord>) {
-        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = NotificationManagerCompat.from(ctx)
 
         for (event in events)
             notificationManager.cancel(event.notificationId)
     }
 
     private fun removeVisibleNotifications(ctx: Context, events: Collection<EventAlertRecord>) {
-        val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = NotificationManagerCompat.from(ctx)
 
         for (event in events) {
             if (event.displayStatus != EventDisplayStatus.Hidden)
@@ -1108,7 +1176,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} events")
 
         val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, intent, 0)
 
         val numEvents = events.size
 
@@ -1145,6 +1213,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setOngoing(true)
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setShowWhen(false)
+                        .setGroup(NOTIFICATION_GROUP)
 
         if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
             if (settings.ledPattern.size == 2)
@@ -1165,7 +1234,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     fun postDebugNotification(context: Context, notificationId: Int, title: String, text: String) {
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = NotificationManagerCompat.from(context)
 
         val appPendingIntent = pendingActivityIntent(context,
                 Intent(context, MainActivity::class.java), notificationId)
@@ -1234,6 +1303,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         private const val SCREEN_WAKE_LOCK_NAME = "ScreenWakeNotification"
 
+        private const val NOTIFICATION_GROUP = "GROUP_1"
+
         const val EVENT_CODE_SNOOOZE_OFFSET = 0
         const val EVENT_CODE_DISMISS_OFFSET = 1
         @Suppress("unused")
@@ -1242,5 +1313,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
         const val EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET = 4
         const val EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS = 10
         const val EVENT_CODES_TOTAL = 16
+
+        const val MAIN_ACTIVITY_EVERYTHING_COLLAPSED_CODE = 0
+        const val MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE = 1
+        const val MAIN_ACTIVITY_REMINDER_CODE = 2
+        const val MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE = 3
     }
 }

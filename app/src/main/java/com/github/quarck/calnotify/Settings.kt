@@ -306,6 +306,16 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
+    val useBundledNotifications: Boolean
+        get() {
+            var enabled = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
+
+            if (showDismissButton && !allowSwipeToSnooze)
+                enabled = false
+
+            return enabled
+        }
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
@@ -423,6 +433,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"
+
+        private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

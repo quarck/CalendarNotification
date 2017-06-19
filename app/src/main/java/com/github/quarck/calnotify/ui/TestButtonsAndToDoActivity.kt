@@ -40,13 +40,31 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+
+// TODO: Group - only when not using persistent notification
+
+// TODO: do not addGroup and do not post grouped notification on android < 6
+
+// TODO: snooze on swipe - don't disable when 'dismiss button' is off
+
+// TODO: Android Wear
 
 
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
-// TODO: investigate that rapid event re-arrangement once again!!!! !!!!!
+
+
+// TODO: NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this); and extender - review
+
+
 
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 

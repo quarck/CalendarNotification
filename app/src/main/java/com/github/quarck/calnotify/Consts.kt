@@ -35,10 +35,10 @@ object Consts {
     const val NOTIFICATION_ID_COLLAPSED = 0;
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
     const val NOTIFICATION_ID_REMINDER = Int.MAX_VALUE - 1
+    const val NOTIFICATION_ID_BUNDLED_GROUP = Int.MAX_VALUE - 2
     const val NOTIFICATION_ID_DEBUG0_AUTO_DISMISS = Int.MAX_VALUE - 10
     const val NOTIFICATION_ID_DEBUG1_ALARM_DELAYS = Int.MAX_VALUE - 11
     const val NOTIFICATION_ID_DEBUG2_SNOOZE_ALARM_DELAYS = Int.MAX_VALUE - 12
-    const val NOTIFICATION_ID_DEBUG3 = Int.MAX_VALUE - 13
 
     //
     const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
@@ -47,6 +47,8 @@ object Consts {
     const val INTENT_SNOOZE_ALL_IS_CHANGE = "snooze_all_is_change"
     const val INTENT_SNOOZE_FROM_MAIN_ACTIVITY = "snooze_by_main_activity"
     const val INTENT_SNOOZE_PRESET = "snooze_preset"
+    const val INTENT_SNOOZE_ALL_KEY = "snooze_all"
+    const val INTENT_DISMISS_ALL_KEY = "dismiss_all"
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 

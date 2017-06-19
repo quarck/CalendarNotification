@@ -1,6 +1,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- CheckBoxPreference
+        android:key="pref_enable_bundled_notifications"
+        android:title="@string/bundle_notifications_title"
+        android:summary="@string/bundle_notifications_summary"
+        android:defaultValue="false"
+        /-->
+
     <CheckBoxPreference
         android:key="pref_key_enable_dismiss_button"
         android:title="@string/restrict_swipe_to_dismiss"

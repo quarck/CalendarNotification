@@ -341,11 +341,14 @@ object ApplicationController : EventMovedHandler {
                 // delete old instances for the same event id (should be only one, but who knows)
                 db.deleteEvents(eventsToDismiss)
 
+                val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
+
                 notificationManager.onEventsDismissed(
                         context,
                         EventFormatter(context),
                         eventsToDismiss,
-                        postNotifications = false   // don't repost notifications at this stage, but only dismiss currently active
+                        postNotifications = false,   // don't repost notifications at this stage, but only dismiss currently active
+                        hasActiveEvents = hasActiveEvents
                 )
             }
 
@@ -544,7 +547,7 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
-    fun snoozeAllEvents(context: Context, snoozeDelay: Long, isChange: Boolean): SnoozeResult? {
+    fun snoozeAllEvents(context: Context, snoozeDelay: Long, isChange: Boolean, onlySnoozeVisible: Boolean): SnoozeResult? {
 
         var ret: SnoozeResult? = null
 
@@ -568,10 +571,24 @@ object ApplicationController : EventMovedHandler {
 
                 val newSnoozeUntil = currentTime + snoozeDelay + snoozeAdjust
 
-                if (isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil) {
-                    val (success, _) = db.updateEvent(event,
-                            snoozedUntil = newSnoozeUntil,
-                            lastEventVisibility = currentTime)
+                // onlySnoozeVisible
+
+                var snoozeThisEvent  = false
+
+                if (!onlySnoozeVisible) {
+                    snoozeThisEvent = isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil
+                }
+                else {
+                    snoozeThisEvent = event.snoozedUntil == 0L
+                }
+
+                if (snoozeThisEvent) {
+                    val (success, _) =
+                            db.updateEvent(
+                                    event,
+                                    snoozedUntil = newSnoozeUntil,
+                                    lastEventVisibility = currentTime
+                            )
 
                     allSuccess = allSuccess && success;
 
@@ -670,7 +687,9 @@ object ApplicationController : EventMovedHandler {
 
         if (db.deleteEvents(events) == events.size) {
 
-            notificationManager.onEventsDismissed(context, EventFormatter(context), events);
+            val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
+
+            notificationManager.onEventsDismissed(context, EventFormatter(context), events, true, hasActiveEvents);
 
             ReminderState(context).onUserInteraction(System.currentTimeMillis())
 

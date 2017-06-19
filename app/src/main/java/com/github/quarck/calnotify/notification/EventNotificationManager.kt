@@ -187,7 +187,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                                 recentEvents,
                                 force, isQuietPeriodActive,
                                 primaryEventId,
-                                ongoingSummary
+                                ongoingSummary,
+                                numTotalEvents = recentEvents.size + collapsedEvents.size
                                 )
             }
 
@@ -509,7 +510,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             force: Boolean,
             isQuietPeriodActive: Boolean,
             primaryEventId: Long?,
-            summaryNotificationIsOngoing: Boolean
+            summaryNotificationIsOngoing: Boolean,
+            numTotalEvents: Int
     ): Boolean {
 
         DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications")
@@ -529,7 +531,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     context,
                     notificationsSettingsQuiet,
                     snoozePresets,
-                    summaryNotificationIsOngoing
+                    summaryNotificationIsOngoing,
+                    numTotalEvents
             )
         }
 
@@ -824,7 +827,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ctx: Context,
             notificationSettings: NotificationSettingsSnapshot,
             snoozePresets: LongArray,
-            summaryNotificationIsOngoing: Boolean
+            summaryNotificationIsOngoing: Boolean,
+            numTotalEvents: Int
     ) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
@@ -835,7 +839,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val groupBuilder = NotificationCompat.Builder(ctx)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setContentTitle(ctx.resources.getString(R.string.app_name))
-                .setContentText("")
+                .setContentText(ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents))
                 .setGroupSummary(true)
                 .setGroup(NOTIFICATION_GROUP)
                 .setContentIntent(pendingIntent)

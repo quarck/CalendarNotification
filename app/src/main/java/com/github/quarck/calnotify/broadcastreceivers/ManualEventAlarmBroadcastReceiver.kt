@@ -32,7 +32,7 @@ open class ManualEventAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         if (context == null || intent == null)
             return
 
-        ApplicationController.CalendarMonitorService.onAlarmBroadcast(context, intent)
+        ApplicationController.CalendarMonitor.onAlarmBroadcast(context, intent)
     }
 }
 
@@ -49,6 +49,6 @@ class ManualEventAlarmPerioidicRescanBroadcastReceiver : BroadcastReceiver() {
         if (context == null || intent == null)
             return
 
-        ApplicationController.CalendarMonitorService.onPeriodicRescanBroadcast(context, intent)
+        ApplicationController.CalendarMonitor.onPeriodicRescanBroadcast(context, intent)
     }
 }

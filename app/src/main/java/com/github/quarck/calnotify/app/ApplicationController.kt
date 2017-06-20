@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorInterface
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorService
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -64,10 +65,10 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
 
-    private val calendarMonitor: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
+    private val calendarMonitorInternal: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
 
-    val CalendarMonitorService: CalendarMonitorInterface
-        get() = calendarMonitor
+    val CalendarMonitor: CalendarMonitorInterface
+        get() = calendarMonitorInternal
 
     fun hasActiveEvents(context: Context) =
             EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
@@ -93,45 +94,55 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(context, LOG_TAG, "Application updated")
 
-        val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS)
-        }
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes)
-            UINotifierService.notifyUI(context, false);
-
-        // this might fire new notifications
-        calendarMonitor.onUpgrade(context)
+        CalendarMonitorService.startRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = true,
+                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS
+        )
     }
 
     fun onBootComplete(context: Context) {
 
         DevLog.info(context, LOG_TAG, "OS boot is complete")
 
-        val changes = EventsStorage(context).use {
-            calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS)
-        };
         // this will post event notifications for existing known events
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        if (changes)
-            UINotifierService.notifyUI(context, false);
-
-        // this might fire new notifications
-        calendarMonitor.onBoot(context)
+        CalendarMonitorService.startRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = true,
+                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS
+        )
     }
 
-    fun handleOnCalendarChanged(context: Context) {
+    fun onCalendarChanged(context: Context) {
+
+        DevLog.info(context, LOG_TAG, "onCalendarChanged")
+
+        CalendarMonitorService.startRescanService(
+                context,
+                startDelay = 2000,
+                reloadCalendar = true,
+                rescanMonitor = true,
+                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+        )
+    }
+
+    fun onCalendarReloadFromService(context: Context, maxTime: Long) {
+
+        DevLog.info(context, LOG_TAG, "calendarReloadFromService")
 
         val changes = EventsStorage(context).use {
-            db ->
-            calendarReloadManager.reloadCalendar(context, db, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_CALENDAR_CHANGED_MILLIS)
+            db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this, maxTime)
         }
 
         if (changes) {
@@ -146,28 +157,10 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun onCalendarChanged(context: Context) {
-
-        DevLog.info(context, LOG_TAG, "onCalendarChanged")
-
-        calendarMonitor.onCalendarChange(context)
-
-        val delayInMilliseconds = 2000L
-        Handler().postDelayed({ handleOnCalendarChanged(context) }, delayInMilliseconds)
-    }
-
     // some housekeeping that we have to do after firing calendar event
-    fun afterCalendarEventFired(context: Context, reloadCalendar: Boolean = true) {
-
-        if (reloadCalendar) {
-            // reload all the other events - check if there are any changes yet
-            EventsStorage(context).use {
-                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS)
-            }
-        }
+    fun afterCalendarEventFired(context: Context) {
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
         UINotifierService.notifyUI(context, false);
     }
 
@@ -660,13 +653,13 @@ object ApplicationController : EventMovedHandler {
                 UINotifierService.notifyUI(context, true);
 
             // this might fire new notifications
-            calendarMonitor.onAppResumed(context, monitorSettingsChanged)
+            calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
         }
     }
 
     fun onTimeChanged(context: Context) {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-        calendarMonitor.onSystemTimeChange(context)
+        calendarMonitorInternal.onSystemTimeChange(context)
     }
 
     fun dismissEvents(

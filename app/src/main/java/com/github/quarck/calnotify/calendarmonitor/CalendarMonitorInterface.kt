@@ -34,11 +34,7 @@ interface CalendarMonitorInterface {
 
     fun onPeriodicRescanBroadcast(context: Context, intent: Intent)
 
-    fun onBoot(context: Context)
-
     fun onAppResumed(context: Context, monitorSettingsChanged: Boolean)
-
-    fun onUpgrade(context: Context)
 
     fun onProviderReminderBroadcast(context: Context, intent: Intent)
 

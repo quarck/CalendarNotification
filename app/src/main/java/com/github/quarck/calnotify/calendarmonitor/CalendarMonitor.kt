@@ -58,12 +58,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(context)
     }
 
-    // should return true if we have fired at new events, so UI should reload if it is open
-    override fun onBoot(context: Context) {
-        DevLog.info(context, LOG_TAG, "onBoot")
-        launchRescanService(context)
-    }
-
     override fun onPeriodicRescanBroadcast(context: Context, intent: Intent) {
 
         DevLog.info(context, LOG_TAG, "onPeriodicRescanBroadcast");
@@ -84,12 +78,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         if (!monitorSettingsChanged && (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4))
             return
 
-        launchRescanService(context)
-    }
-
-    // should return true if we have fired at new events, so UI should reload if it is open
-    override fun onUpgrade(context: Context) {
-        DevLog.info(context, LOG_TAG, "onAppResumed")
         launchRescanService(context)
     }
 
@@ -134,7 +122,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                 ApplicationController.afterCalendarEventFired(context)
             }
 
-            launchRescanService(context)
+            launchRescanService(
+                    context,
+                    reloadCalendar = true,
+                    rescanMonitor = true,
+                    maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+            )
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.message}, ${ex.stackTrace}")
@@ -228,14 +221,25 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         ApplicationController.afterCalendarEventFired(context)
 
-        launchRescanService(context)
+        launchRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = true,
+                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+        )
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    private fun launchRescanService(context: Context, delayed: Int = 0) {
+    private fun launchRescanService(
+            context: Context,
+            delayed: Int = 0,
+            reloadCalendar: Boolean =  false,
+            rescanMonitor: Boolean = true,
+            maxReloadTime: Long = 0L
+    ) {
         lastScan = System.currentTimeMillis()
 
-        CalendarMonitorService.startRescanService(context, delayed)
+        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, maxReloadTime)
     }
 
     override fun onRescanFromService(context: Context, intent: Intent?) {
@@ -291,7 +295,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
 
         if (firedAnything)
-            ApplicationController.afterCalendarEventFired(context, reloadCalendar = false)
+            ApplicationController.afterCalendarEventFired(context)
     }
 
     private fun setOrCancelAlarm(context: Context, time: Long) {

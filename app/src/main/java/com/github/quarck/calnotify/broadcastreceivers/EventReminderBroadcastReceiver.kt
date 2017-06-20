@@ -35,7 +35,7 @@ class EventReminderBroadcastReceiver : BroadcastReceiver() {
 
         DevLog.debug(LOG_TAG, "Event reminder received, ${intent.data}, ${intent.action}");
 
-        ApplicationController.CalendarMonitorService.onProviderReminderBroadcast(context, intent)
+        ApplicationController.CalendarMonitor.onProviderReminderBroadcast(context, intent)
     }
 
     companion object {

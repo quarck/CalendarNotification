@@ -41,6 +41,10 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
+// TODO:
+
+// TODO: Regular calendar reloading -into separate service
+
 // TODO!: pebble - reminders - option to don't forward them and also:
 /*try {
     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

@@ -836,16 +836,21 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val pendingIntent = PendingIntent.getActivity(ctx, MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE, intent, 0)
 
+        val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
+
         val groupBuilder = NotificationCompat.Builder(ctx)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
-                .setContentTitle(ctx.resources.getString(R.string.app_name))
-                .setContentText(ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents))
+                .setContentTitle(ctx.resources.getString(R.string.calendar))
+                .setContentText(text)
+                .setSubText(text)
                 .setGroupSummary(true)
                 .setGroup(NOTIFICATION_GROUP)
                 .setContentIntent(pendingIntent)
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
                 )
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(false)
 
         if (summaryNotificationIsOngoing)
             groupBuilder.setOngoing(true)

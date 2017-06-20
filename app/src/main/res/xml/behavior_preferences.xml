@@ -24,7 +24,7 @@
         android:title="@string/handle_events_with_no_reminders"
         android:summary="@string/handle_events_with_no_reminders_summary"
         android:dependency="enable_manual_calendar_rescan"
-        android:defaultValue="true"/>
+        android:defaultValue="false"/>
 
     <CheckBoxPreference
         android:key="notify_on_email_only_events"

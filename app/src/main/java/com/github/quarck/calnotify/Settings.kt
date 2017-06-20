@@ -267,7 +267,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY, false)
 
     val shouldRemindForEventsWithNoReminders: Boolean
-        get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, true)
+        get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, false)
 
     val defaultReminderTimeForEventWithNoReminder: Long
         get() = getInt(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15) * 60L * 1000L
@@ -307,7 +307,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
     val useBundledNotifications: Boolean
-        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
+        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, true)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(

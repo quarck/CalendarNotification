@@ -363,5 +363,8 @@
     <string name="vibration">Vibration</string>
     <string name="led">LED</string>
     <string name="notification_behavior">Notification behavior</string>
+    <string name="pebble">Pebble</string>
+    <string name="pebble_forward_reminders">Forward reminders to pebble</string>
+    <string name="pebble_forward_reminders_summary">By default only original event notifications are forwarded</string>
 </resources>
 

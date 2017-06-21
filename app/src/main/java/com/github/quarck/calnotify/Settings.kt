@@ -38,9 +38,9 @@ data class NotificationSettingsSnapshot
         val ledColor: Int,
         val ledPattern: IntArray,
         val headsUpNotification: Boolean,
-        val forwardToPebble: Boolean,
+        val forwardEventToPebble: Boolean,
         val pebbleOldFirmware: Boolean,
-        val pebbleForwardRemindersOnly: Boolean,
+        val forwardReminderToPebble: Boolean,
         val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
         val quietHoursMuteLED: Boolean,
@@ -93,14 +93,14 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 .map { it.toInt() }
                 .toIntArray()
 
-    val forwardToPebble: Boolean
+    val forwardEventToPebble: Boolean
         get() = getBoolean(FORWARD_TO_PEBBLE_KEY, false)
 
     val pebbleOldFirmware: Boolean
         get() = getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
 
-    val pebbleForwardRemindersOnly: Boolean
-        get() = getBoolean(PEBBLE_FORWARD_ONLY_REMINDER_KEY, false)
+    val forwardReminderToPebble: Boolean
+        get() = getBoolean(PEBBLE_FORWARD_REMINDERS_KEY, false)
 
     val headsUpNotification: Boolean
         get() = getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
@@ -320,9 +320,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 ledColor = ledColor,
                 ledPattern = ledPattern,
                 headsUpNotification = headsUpNotification,
-                forwardToPebble = forwardToPebble,
+                forwardEventToPebble = forwardEventToPebble,
                 pebbleOldFirmware = pebbleOldFirmware,
-                pebbleForwardRemindersOnly = pebbleForwardRemindersOnly,
+                forwardReminderToPebble = forwardReminderToPebble,
                 showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
                 quietHoursMuteLED = quietHoursMuteLED,
@@ -370,7 +370,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
-        private const val PEBBLE_FORWARD_ONLY_REMINDER_KEY = "pebble_forward_reminder_only"
+        private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders"
 
         private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone"
         private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration"

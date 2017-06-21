@@ -460,7 +460,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 reminderState.quietHoursOneTimeReminderEnabled = true
         }
 
-        if (shouldPlayAndVibrate && notificationsSettings.forwardToPebble)
+        if (shouldPlayAndVibrate && notificationsSettings.forwardEventToPebble)
             PebbleUtils.forwardNotificationToPebble(context, title, "", true)
 
         return postedNotification
@@ -519,7 +519,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notificationsSettings = settings.notificationSettingsSnapshot
 
         val notificationsSettingsQuiet =
-                notificationsSettings.copy(ringtoneUri = null, vibrationOn = false, forwardToPebble = false)
+                notificationsSettings.copy(
+                        ringtoneUri = null,
+                        vibrationOn = false,
+                        forwardEventToPebble = false,
+                        forwardReminderToPebble = false
+                )
 
         var postedNotification = false
         var playedAnySound = false
@@ -809,7 +814,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardToPebble) {
+        if (notificationSettings.forwardReminderToPebble) {
             PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebbleOldFirmware)
         }
     }
@@ -1123,7 +1128,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardToPebble && !notificationSettings.pebbleForwardRemindersOnly) {
+        if (notificationSettings.forwardEventToPebble) {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
         }
     }

@@ -178,7 +178,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             if (recentEvents.isNotEmpty()) {
 
                 val ongoingSummary =
-                        (settings.showDismissButton && !settings.allowSwipeToSnooze) || recentEvents.isNotEmpty()
+                        settings.showDismissButton || recentEvents.isNotEmpty()
 
                 updatedAnything =
                         postDisplayedEventNotifications(
@@ -852,23 +852,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setWhen(System.currentTimeMillis())
                 .setShowWhen(false)
 
-        if (summaryNotificationIsOngoing)
+        if (summaryNotificationIsOngoing || notificationSettings.showDismissButton)
             groupBuilder.setOngoing(true)
 
-        if (notificationSettings.showDismissButton) {
-            if (notificationSettings.allowSwipeToSnooze) {
 
-                val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
-                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePresets[0])
-                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+        if (notificationSettings.notificationSwipeDoesSnooze) {
+            // swipe does snooze
+            val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePresets[0])
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
-                val pendingSnoozeIntent =
-                        pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+            val pendingSnoozeIntent =
+                    pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
 
-                groupBuilder.setDeleteIntent(pendingSnoozeIntent)
-            }
+            groupBuilder.setDeleteIntent(pendingSnoozeIntent)
         }
-        else {
+        else if (!notificationSettings.showDismissButton) {
+            // swipe does dismiss
             val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
             dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
 
@@ -876,6 +876,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
 
             groupBuilder.setDeleteIntent(pendingDismissIntent)
+        }
+        else {
+            // swipe is not allowed - ignore
         }
 
         try {
@@ -961,7 +964,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         false // !notificationSettings.showDismissButton // let user swipe to dismiss even if dismiss button is disabled - otherwise we would not receive any notification on dismiss when user clicks event
                 )
                 .setOngoing(
-                        notificationSettings.showDismissButton && !notificationSettings.allowSwipeToSnooze
+                        notificationSettings.showDismissButton && !notificationSettings.notificationSwipeDoesSnooze
                 )
                 .setStyle(
                         NotificationCompat.BigTextStyle().bigText(notificationText)
@@ -1011,13 +1014,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.addAction(snoozeAction)
         }
 
-        if (notificationSettings.showDismissButton) {
-            builder.addAction(dismissAction)
-            if (notificationSettings.allowSwipeToSnooze)
-                builder.setDeleteIntent(defaultSnooze0PendingIntent)
+        if (notificationSettings.notificationSwipeDoesSnooze) {
+            // swipe does snooze
+            builder.setDeleteIntent(defaultSnooze0PendingIntent)
+        }
+        else if (!notificationSettings.showDismissButton) {
+            // swipe does dismiss
+            builder.setDeleteIntent(dismissPendingIntent)
         }
         else {
-            builder.setDeleteIntent(dismissPendingIntent)
+            // swipe is not allowed - add dismiss action
+            builder.addAction(dismissAction)
         }
 
         val extender =
@@ -1054,7 +1061,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             extender.addAction(action)
         }
 
-        if (notificationSettings.showDismissButton && notificationSettings.allowSwipeToSnooze) {
+        if (notificationSettings.showDismissButton && notificationSettings.notificationSwipeDoesSnooze) {
             // in this case regular "dismiss" would actually snooze
             val dismissEventAction =
                     NotificationCompat.Action.Builder(

@@ -30,7 +30,7 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 data class NotificationSettingsSnapshot
 (
         val showDismissButton: Boolean,
-        val allowSwipeToSnooze: Boolean,
+        val notificationSwipeDoesSnooze: Boolean,
         val ringtoneUri: Uri?,
         val vibrationOn: Boolean,
         val vibrationPattern: LongArray,
@@ -52,8 +52,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val showDismissButton: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
-    val allowSwipeToSnooze: Boolean
-        get() = getBoolean(ALLOW_SWIPE_TO_SNOOZE_KEY, false)
+    val notificationSwipeDoesSnooze: Boolean
+        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
 
     val vibraOn: Boolean
         get() = getBoolean(VIBRATION_ENABLED_KEY, true)
@@ -312,7 +312,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 showDismissButton = showDismissButton,
-                allowSwipeToSnooze = allowSwipeToSnooze,
+                notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 ringtoneUri = ringtoneURI,
                 vibrationOn = vibraOn,
                 vibrationPattern = vibrationPattern,
@@ -337,7 +337,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
 
-        private const val ALLOW_SWIPE_TO_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
+        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
         private const val RINGTONE_KEY = "pref_key_ringtone"
         private const val VIBRATION_ENABLED_KEY = "vibra_on"

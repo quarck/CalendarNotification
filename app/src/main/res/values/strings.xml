@@ -359,5 +359,9 @@
 
     <string name="calendar">Calendar</string>
     <string name="N_calendar_events" formatted="false">%d events</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="vibration">Vibration</string>
+    <string name="led">LED</string>
+    <string name="notification_behavior">Notification behavior</string>
 </resources>
 

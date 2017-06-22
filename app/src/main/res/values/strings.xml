@@ -369,5 +369,7 @@
     <string name="pebble_forward_reminders_summary">By default only original event notifications are forwarded</string>
     <string name="reminders_play_directly_title">Play reminders directly</string>
     <string name="reminders_play_directly_summary">Do not post reminder notifications</string>
+    <string name="allow_notification_swipe_title">Allow notification swipe</string>
+    <string name="allow_notification_swipe_summary">Use notification swipe instead of \'dismiss\' action to dismiss the event</string>
 </resources>
 

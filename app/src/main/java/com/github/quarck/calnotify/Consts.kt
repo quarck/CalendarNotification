@@ -26,6 +26,8 @@ object Consts {
 
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
 
+    const val NEW_NOTIFICATION_SWIPE_SETTINGS_VER = 4241
+
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val DAY_IN_MINUTES: Int = 60*24

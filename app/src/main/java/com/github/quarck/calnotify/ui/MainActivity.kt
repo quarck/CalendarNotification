@@ -150,6 +150,34 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         calendarRescanEnabled = settings.enableCalendarRescan
+
+        if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {
+
+            if (!settings.notificationSettingsMigrated) {
+                // Previous behavior:
+                // Show Dismiss On & Swipe does snooze Off
+                // - Don't allow swiping
+                // Show Dismiss Off & Swipe does snooze Off
+                // - Swipe would dismiss
+                // Show Dismiss Off & Swipe does snooze On
+                // - Swipe would snooze
+
+                if (settings.showDismissButtonDepricated && settings.notificationSwipeDoesSnooze) {
+
+                    settings.allowNotificationSwipe = true
+                    settings.notificationSwipeDoesSnooze = true
+                } else if (settings.showDismissButtonDepricated && !settings.notificationSwipeDoesSnooze) {
+
+                    settings.allowNotificationSwipe = false
+                    settings.notificationSwipeDoesSnooze = false
+                } else {
+                    settings.allowNotificationSwipe = true
+                    settings.notificationSwipeDoesSnooze = false
+                }
+
+                settings.notificationSettingsMigrated = true;
+            }
+        }
     }
 
     public override fun onStart() {

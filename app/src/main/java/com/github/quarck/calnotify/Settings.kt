@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 
 data class NotificationSettingsSnapshot
 (
-        val showDismissButton: Boolean,
+        val allowNotificationSwipe: Boolean,
         val notificationSwipeDoesSnooze: Boolean,
         val ringtoneUri: Uri?,
         val vibrationOn: Boolean,
@@ -50,11 +50,21 @@ data class NotificationSettingsSnapshot
 
 class Settings(context: Context) : PersistentStorageBase(context) {
 
-    val showDismissButton: Boolean
+    val showDismissButtonDepricated: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
-    val notificationSwipeDoesSnooze: Boolean
+    var notificationSettingsMigrated: Boolean
+        get() = getBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, false)
+        set(value) = setBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, value)
+
+    var allowNotificationSwipe: Boolean
+        get() = getBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, false)
+        set(value) = setBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, value)
+
+    var notificationSwipeDoesSnooze: Boolean
         get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
+        set(value) = setBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, value)
+
 
     val vibraOn: Boolean
         get() = getBoolean(VIBRATION_ENABLED_KEY, true)
@@ -315,7 +325,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                showDismissButton = showDismissButton,
+                allowNotificationSwipe = allowNotificationSwipe,
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 ringtoneUri = ringtoneURI,
                 vibrationOn = vibraOn,
@@ -341,6 +351,11 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val USE_COMPACT_LAYOUT_KEY = "compact_layout"
 
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
+
+        private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe"
+
+        private const val NOTIFICATION_SETTINGS_MIGRATED_KEY = "notification_settings_migrated"
+
 
         private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 

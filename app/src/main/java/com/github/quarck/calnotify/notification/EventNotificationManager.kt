@@ -179,7 +179,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             if (recentEvents.isNotEmpty()) {
 
                 val ongoingSummary =
-                        settings.showDismissButton || recentEvents.isNotEmpty()
+                        settings.showDismissButton || collapsedEvents.isNotEmpty()
 
                 updatedAnything =
                         postDisplayedEventNotifications(

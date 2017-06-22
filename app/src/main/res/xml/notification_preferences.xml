@@ -71,7 +71,7 @@
             android:key="pref_enable_bundled_notifications"
             android:title="@string/bundle_notifications_title"
             android:summary="@string/bundle_notifications_summary"
-            android:defaultValue="true"
+            android:defaultValue="false"
             />
 
         <CheckBoxPreference

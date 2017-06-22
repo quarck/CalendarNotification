@@ -311,7 +311,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
     val useBundledNotifications: Boolean
-        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, true)
+        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(

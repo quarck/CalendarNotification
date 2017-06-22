@@ -44,7 +44,8 @@ data class NotificationSettingsSnapshot
         val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
         val quietHoursMuteLED: Boolean,
-        val useAlarmStream: Boolean
+        val useAlarmStream: Boolean,
+        val useBundledNotifications: Boolean
 )
 
 class Settings(context: Context) : PersistentStorageBase(context) {
@@ -198,6 +199,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val remindersEnabled: Boolean
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
+    val remindersPlayDirectly: Boolean
+        get() = getBoolean(REMINDERS_PLAY_DIRECTLY_KEY, false)
+
     val remindersIntervalMillis: Long
         get() = getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
 
@@ -326,7 +330,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
                 quietHoursMuteLED = quietHoursMuteLED,
-                useAlarmStream = notificationUseAlarmStream
+                useAlarmStream = notificationUseAlarmStream,
+                useBundledNotifications = useBundledNotifications
         )
 
     companion object {
@@ -428,6 +433,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"
 
         private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
+
+        private const val REMINDERS_PLAY_DIRECTLY_KEY = "reminders_play_directly"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

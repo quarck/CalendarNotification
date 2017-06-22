@@ -25,6 +25,7 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -242,14 +243,26 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
                     postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
 
-                postReminderNotification(
-                        context,
-                        numActiveEvents,
-                        lastVisibility,
-                        notificationSettings,
-                        isQuietPeriodActive,
-                        itIsAfterQuietHoursReminder
-                )
+                if (!settings.remindersPlayDirectly) {
+                    postReminderNotification(
+                            context,
+                            numActiveEvents,
+                            lastVisibility,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            itIsAfterQuietHoursReminder
+                    )
+                }
+                else {
+                    playReminderDirectly(
+                            context,
+                            numActiveEvents,
+                            lastVisibility,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            itIsAfterQuietHoursReminder
+                    )
+                }
 
                 wakeScreenIfRequired(context, settings)
 
@@ -531,14 +544,19 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val snoozePresets = settings.snoozePresets
 
-        if (isMarshmallowOrAbove && settings.useBundledNotifications) {
-            postGroupNotification(
-                    context,
-                    notificationsSettingsQuiet,
-                    snoozePresets,
-                    summaryNotificationIsOngoing,
-                    numTotalEvents
-            )
+        if (isMarshmallowOrAbove) {
+            if (notificationsSettings.useBundledNotifications) {
+                postGroupNotification(
+                        context,
+                        notificationsSettingsQuiet,
+                        snoozePresets,
+                        summaryNotificationIsOngoing,
+                        numTotalEvents
+                )
+            }
+            else {
+                removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
+            }
         }
 
         var currentTime = System.currentTimeMillis()
@@ -691,6 +709,56 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         return sb.reverse().toString()
+    }
+
+    private fun playReminderDirectly(
+            ctx: Context,
+            numActiveEvents: Int,
+            lastVisibility: Long,
+            notificationSettings: NotificationSettingsSnapshot,
+            isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
+    ) {
+        wakeLocked(ctx.powerManager, PowerManager.PARTIAL_WAKE_LOCK, DIRECT_REMINDER_WAKE_LOCK_NAME) {
+
+            val persistentState = ctx.persistentState
+
+            val currentTime = System.currentTimeMillis()
+            val msAgo: Long = (currentTime - persistentState.notificationLastFireTime)
+
+
+            if (notificationSettings.vibrationOn
+                    && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
+
+                lastVibrationTimestamp = currentTime
+
+                ctx.vibratorService.vibrate(notificationSettings.vibrationPattern, -1)
+            }
+
+            if (notificationSettings.ringtoneUri != null
+                    && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
+
+                lastSoundTimestamp = currentTime
+
+                val mediaPlayer = MediaPlayer()
+
+                mediaPlayer.setDataSource(ctx, notificationSettings.ringtoneUri)
+
+                if (notificationSettings.useAlarmStream)
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
+                else
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
+
+                mediaPlayer.prepare()
+                mediaPlayer.setOnCompletionListener { mp -> mp.release() }
+                mediaPlayer.start()
+
+                for (maxWait in 0..30) {
+                    if (!mediaPlayer.isPlaying)
+                        break
+                    Thread.sleep(300);
+                }
+            }
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -860,8 +928,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
         if (summaryNotificationIsOngoing || notificationSettings.showDismissButton)
             groupBuilder.setOngoing(true)
 
-
-        if (notificationSettings.notificationSwipeDoesSnooze) {
+        if (notificationSettings.showDismissButton) {
+            // swipe is not allowed - ignore
+        }
+        else if (notificationSettings.notificationSwipeDoesSnooze) {
             // swipe does snooze
             val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
             snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePresets[0])
@@ -872,7 +942,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             groupBuilder.setDeleteIntent(pendingSnoozeIntent)
         }
-        else if (!notificationSettings.showDismissButton) {
+        else {
             // swipe does dismiss
             val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
             dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
@@ -881,9 +951,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
 
             groupBuilder.setDeleteIntent(pendingDismissIntent)
-        }
-        else {
-            // swipe is not allowed - ignore
         }
 
         try {
@@ -969,7 +1036,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         false // !notificationSettings.showDismissButton // let user swipe to dismiss even if dismiss button is disabled - otherwise we would not receive any notification on dismiss when user clicks event
                 )
                 .setOngoing(
-                        notificationSettings.showDismissButton && !notificationSettings.notificationSwipeDoesSnooze
+                        notificationSettings.showDismissButton
                 )
                 .setStyle(
                         NotificationCompat.BigTextStyle().bigText(notificationText)
@@ -984,7 +1051,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
                 )
-                .setGroup(NOTIFICATION_GROUP)
+
+        if (notificationSettings.useBundledNotifications) {
+            builder.setGroup(NOTIFICATION_GROUP)
+        }
 
         val defaultSnooze0PendingIntent =
                 pendingServiceIntent(ctx,
@@ -1019,17 +1089,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.addAction(snoozeAction)
         }
 
-        if (notificationSettings.notificationSwipeDoesSnooze) {
+        if (notificationSettings.showDismissButton) {
+            // swipe not allowed - show snooze and dismiss
+            builder.addAction(dismissAction)
+        }
+        else if (notificationSettings.notificationSwipeDoesSnooze) {
             // swipe does snooze
             builder.setDeleteIntent(defaultSnooze0PendingIntent)
-        }
-        else if (!notificationSettings.showDismissButton) {
-            // swipe does dismiss
-            builder.setDeleteIntent(dismissPendingIntent)
+            builder.addAction(dismissAction)
         }
         else {
-            // swipe is not allowed - add dismiss action
-            builder.addAction(dismissAction)
+            // swipe does dismiss
+            builder.setDeleteIntent(dismissPendingIntent)
         }
 
         val extender =
@@ -1066,12 +1137,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
             extender.addAction(action)
         }
 
-        if (notificationSettings.showDismissButton && notificationSettings.notificationSwipeDoesSnooze) {
-            // in this case regular "dismiss" would actually snooze
+        if (notificationSettings.notificationSwipeDoesSnooze && !notificationSettings.showDismissButton) {
+            // In this combination of settings dismissing the notification would actually snooze it, so
+            // add another "Dismiss Event" wearable action so to make it possible to actually dismiss
+            // the event form wearable
             val dismissEventAction =
                     NotificationCompat.Action.Builder(
                             R.drawable.ic_clear_white_24dp,
-                            ctx.getString(com.github.quarck.calnotify.R.string.dismiss),
+                            ctx.getString(com.github.quarck.calnotify.R.string.dismiss_event),
                             dismissPendingIntent
                     ).build()
 
@@ -1254,7 +1327,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setOngoing(true)
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setShowWhen(false)
-                        .setGroup(NOTIFICATION_GROUP)
+
+        if (settings.useBundledNotifications) {
+            builder.setGroup(NOTIFICATION_GROUP)
+        }
 
         if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
             if (settings.ledPattern.size == 2)
@@ -1343,6 +1419,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         private const val LOG_TAG = "EventNotificationManager"
 
         private const val SCREEN_WAKE_LOCK_NAME = "ScreenWakeNotification"
+        private const val DIRECT_REMINDER_WAKE_LOCK_NAME = "DirectReminder"
 
         private const val NOTIFICATION_GROUP = "GROUP_1"
 

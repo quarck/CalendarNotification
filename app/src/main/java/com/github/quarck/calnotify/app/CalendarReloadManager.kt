@@ -50,7 +50,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             val setDisplayStatusHidden: Boolean = true
     )
 
-    fun reloadCalendarInternal(
+    private fun reloadCalendarInternal(
             context: Context,
             db: EventsStorageInterface,
             events: List<EventAlertRecord>,

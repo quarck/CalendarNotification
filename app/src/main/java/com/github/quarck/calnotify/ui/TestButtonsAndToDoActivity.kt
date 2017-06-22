@@ -41,32 +41,16 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO:
+// TODO: sort-key: append hash (2-chr) of the event ID
 
-// TODO: Regular calendar reloading -into separate service
-
-// TODO!: pebble - reminders - option to don't forward them and also:
-/*try {
-    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-    r.play();
-} catch (Exception e) {
-    e.printStackTrace();
-}
-
-*/
 
 // TODO: Android Wear
 
 
-// TODO: NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this); and extender - review
-
-
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 
-// TODO: add event button (off by default)
 
-// TODO: Bundled notification support - https://github.com/quarck/CalendarNotification/issues/227
+// TODO: add event button (off by default)
 
 
 // TODO: Android O support! See background limitations: https://github.com/quarck/CalendarNotification/issues/220

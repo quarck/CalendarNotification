@@ -37,6 +37,7 @@
             android:textColor="@color/primary_text"
             android:text="version XXX"
             android:layout_gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -46,6 +47,7 @@
             android:textColor="@color/primary_text"
             android:text="build time"
             android:layout_gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <TextView
@@ -174,6 +176,7 @@
             android:paddingBottom="0dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -191,6 +194,7 @@
             android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -208,6 +212,7 @@
             android:paddingBottom="0dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -225,6 +230,7 @@
             android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -242,6 +248,7 @@
             android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -259,6 +266,7 @@
             android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -276,6 +284,7 @@
             android:paddingBottom="0dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -293,6 +302,43 @@
             android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
+            />
+
+        <!-- Not translatable, deliberately not in resources-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Flavien Chiron"
+            android:textColor="@color/primary_text"
+            android:paddingLeft="@dimen/activity_help_credits_padding_left"
+            android:paddingStart="@dimen/activity_help_credits_padding_left"
+            android:paddingRight="@dimen/activity_help_credits_padding_right"
+            android:paddingEnd="@dimen/activity_help_credits_padding_right"
+            android:paddingTop="@dimen/activity_help_credits_padding_vertical"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
+            />
+
+        <!-- Not translatable, deliberately not in resources-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="(github/Flavien06)"
+            android:textColor="@color/secondary_text"
+            android:paddingLeft="@dimen/activity_help_credits_padding_left"
+            android:paddingStart="@dimen/activity_help_credits_padding_left"
+            android:paddingRight="@dimen/activity_help_credits_padding_right"
+            android:paddingEnd="@dimen/activity_help_credits_padding_right"
+            android:paddingTop="2dp"
+            android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <View
@@ -328,6 +374,7 @@
             android:paddingBottom="0dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
         <!-- Not translatable, deliberately not in resources-->
@@ -397,6 +444,7 @@
             android:textColor="@color/primary_text"
             android:text="(c) 2017 Sergey Parshin"
             android:layout_gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -405,6 +453,7 @@
             android:textColor="@color/secondary_text"
             android:text="(quarck@gmail.com)"
             android:layout_gravity="center_horizontal"
+            tools:ignore="HardcodedText"
             />
 
     </LinearLayout>

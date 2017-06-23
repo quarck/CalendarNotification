@@ -64,7 +64,7 @@
     <string name="same_time_tomorrow">"Déplacer à demain"</string>
     <string name="next_week_same_day">"Déplacer à la semaine prochaine"</string>
     <string name="custom_pick_a_date">"Personnalisé (choisir une date)"</string>
-    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">"ActivityTestButtonsAndToDo"</string>
+    <!-- string name="title_activity_activity_test_buttons_and_to_do" translatable="false">"ActivityTestButtonsAndToDo"</string -->
 
     <string name="snoozed_until_string">"Suspendu jusqu'à "</string>
     <string name="card_view_btn_change">"CHANGER"</string>
@@ -73,9 +73,9 @@
     <string name="new_events_detected">"Rechargez pour voir de nouveaux événements"</string>
     <string name="button_reload">"RECHARGER"</string>
     <string name="settings_name">"Paramètres"</string>
-    <string name="credits_icon_author" translatable="false">"Cornmanthe 3rd"</string>
+    <!-- string name="credits_icon_author" translatable="false">"Cornmanthe 3rd"</string -->
     <string name="app_icon_credit">"Crédit d'icône:"</string>
-    <string name="kotlin_language" translatable="false">"Kotlin Language"</string>
+    <!-- string name="kotlin_language" translatable="false">"Kotlin Language"</string -->
     <string name="app_created_with">"Créé avec"</string>
     <string name="notification_settings">"Paramètres de notification"</string>
     <string name="snooze_presets">"Paramètres des répétitions"</string>
@@ -224,7 +224,7 @@
 
     <string name="usage_hints">"Conseils d'utilisation:"</string>
 
-    <string name="hyphen" translatable="false">"—"</string>
+    <!-- string name="hyphen" translatable="false">"—"</string -->
     <string name="compact_vs_card_view">"Vue Compact contre Carte"</string>
     <string name="no_calendars_found">"Aucun calendrier trouvé"</string>
     <string name="dismissed">"Rejeté"</string>

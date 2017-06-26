@@ -209,8 +209,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val remindersEnabled: Boolean
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
-    val remindersPlayDirectly: Boolean
-        get() = getBoolean(REMINDERS_PLAY_DIRECTLY_KEY, false)
+    val separateReminderNotification: Boolean
+        get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, true)
 
     val remindersIntervalMillis: Long
         get() = getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
@@ -449,7 +449,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
 
-        private const val REMINDERS_PLAY_DIRECTLY_KEY = "reminders_play_directly"
+        private const val SEPARATE_REMINDER_NOTIFICATION_KEY = "separate_reminder_notification"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

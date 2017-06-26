@@ -371,5 +371,7 @@
     <string name="reminders_play_directly_summary">Do not post reminder notifications</string>
     <string name="allow_notification_swipe_title">Allow notification swipe</string>
     <string name="allow_notification_swipe_summary">Use notification swipe instead of \'dismiss\' action to dismiss the event</string>
+    <string name="separate_reminder_notification_title">Separate reminder notification</string>
+    <string name="separate_reminder_notification_summary">Would remind via posting a sepaarate short-living reminder notification (auto-dismissed in a few seconds)</string>
 </resources>
 

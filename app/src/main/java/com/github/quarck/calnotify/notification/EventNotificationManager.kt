@@ -25,7 +25,6 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -119,21 +118,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     fun arrangeEvents(
-            db: EventsStorage,
-            currentTime: Long,
+            events: List<EventAlertRecord>,
             settings: Settings
     ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
-
-        // events with snoozedUntil == 0 are currently visible ones
-        // events with experied snoozedUntil are the ones to beep about
-        // everything else should be hidden and waiting for the next alarm
-
-        val events =
-                db.events.filter {
-                    ((it.snoozedUntil == 0L)
-                            || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
-                            && it.isNotSpecial
-                }
 
         if (events.size >= Consts.MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING) {
             // short-cut to avoid heavy memory load on dealing with lots of events...
@@ -158,6 +145,26 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         return Pair(recentEvents, collapsedEvents)
+    }
+
+    fun arrangeEvents(
+            db: EventsStorage,
+            currentTime: Long,
+            settings: Settings
+    ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
+
+        // events with snoozedUntil == 0 are currently visible ones
+        // events with experied snoozedUntil are the ones to beep about
+        // everything else should be hidden and waiting for the next alarm
+
+        val events =
+                db.events.filter {
+                    ((it.snoozedUntil == 0L)
+                            || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
+                            && it.isNotSpecial
+                }
+
+        return arrangeEvents(events, settings)
     }
 
     override fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?) {
@@ -240,10 +247,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (numActiveEvents > 0) {
 
-                if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
-                    postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+                if (settings.separateReminderNotification) {
 
-                if (!settings.remindersPlayDirectly) {
+                    if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
+                        postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+
                     postReminderNotification(
                             context,
                             numActiveEvents,
@@ -254,18 +262,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     )
                 }
                 else {
-                    playReminderDirectly(
+                    fireEventReminderNoSeparateNotification(
                             context,
-                            numActiveEvents,
-                            lastVisibility,
+                            db,
+                            EventFormatter(context),
+                            settings,
                             notificationSettings,
                             isQuietPeriodActive,
-                            itIsAfterQuietHoursReminder
+                            activeEvents
                     )
                 }
 
                 wakeScreenIfRequired(context, settings)
-
             }
             else {
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -273,15 +281,70 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
+    fun fireEventReminderNoSeparateNotification(
+            context: Context,
+            db: EventsStorage,
+            formatter: EventFormatterInterface,
+            settings: Settings,
+            notificationSettings: NotificationSettingsSnapshot,
+            quietPeriodActive: Boolean,
+            activeEvents: List<EventAlertRecord>
+    ) {
+        val (recentEvents, collapsedEvents) = arrangeEvents(activeEvents, settings)
+
+        if (!recentEvents.isEmpty()) {
+            // normal
+            val firstEvent = recentEvents.first()
+
+            context.notificationManager.cancel(firstEvent.notificationId)
+
+            postNotification(
+                    context,
+                    settings,
+                    formatter,
+                    firstEvent,
+                    notificationSettings,
+                    true, // force, so it won't randomly pop-up this notification
+                    false, // was collapsed
+                    settings.snoozePresets,
+                    quietPeriodActive,
+                    isReminder = true
+            )
+        } else if (!collapsedEvents.isEmpty()) {
+            // collapsed
+            context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
+
+            postEverythingCollapsed(
+                    context,
+                    db,
+                    collapsedEvents,
+                    settings,
+                    notificationSettings,
+                    false,
+                    quietPeriodActive,
+                    null,
+                    true
+            )
+        }
+    }
+
+
+
     override fun cleanupEventReminder(context: Context) {
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
     }
 
     private fun postEverythingCollapsed(
-            context: Context, db: EventsStorage,
-            events: List<EventAlertRecord>, settings: Settings,
+            context: Context,
+            db: EventsStorage,
+            events: List<EventAlertRecord>,
+            settings: Settings,
             notificationsSettingsIn: NotificationSettingsSnapshot?,
-            force: Boolean, isQuietPeriodActive: Boolean, primaryEventId: Long?, playReminderSound: Boolean): Boolean {
+            force: Boolean,
+            isQuietPeriodActive: Boolean,
+            primaryEventId: Long?,
+            playReminderSound: Boolean
+    ): Boolean {
 
         if (events.isEmpty()) {
             hideCollapsedEventsNotification(context)
@@ -711,56 +774,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return sb.reverse().toString()
     }
 
-    private fun playReminderDirectly(
-            ctx: Context,
-            numActiveEvents: Int,
-            lastVisibility: Long,
-            notificationSettings: NotificationSettingsSnapshot,
-            isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
-    ) {
-        wakeLocked(ctx.powerManager, PowerManager.PARTIAL_WAKE_LOCK, DIRECT_REMINDER_WAKE_LOCK_NAME) {
-
-            val persistentState = ctx.persistentState
-
-            val currentTime = System.currentTimeMillis()
-            val msAgo: Long = (currentTime - persistentState.notificationLastFireTime)
-
-
-            if (notificationSettings.vibrationOn
-                    && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
-
-                lastVibrationTimestamp = currentTime
-
-                ctx.vibratorService.vibrate(notificationSettings.vibrationPattern, -1)
-            }
-
-            if (notificationSettings.ringtoneUri != null
-                    && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
-
-                lastSoundTimestamp = currentTime
-
-                val mediaPlayer = MediaPlayer()
-
-                mediaPlayer.setDataSource(ctx, notificationSettings.ringtoneUri)
-
-                if (notificationSettings.useAlarmStream)
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
-                else
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION)
-
-                mediaPlayer.prepare()
-                mediaPlayer.setOnCompletionListener { mp -> mp.release() }
-                mediaPlayer.start()
-
-                for (maxWait in 0..30) {
-                    if (!mediaPlayer.isPlaying)
-                        break
-                    Thread.sleep(300);
-                }
-            }
-        }
-    }
-
     @Suppress("DEPRECATION")
     private fun postReminderNotification(
             ctx: Context,
@@ -973,7 +986,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isForce: Boolean,
             wasCollapsed: Boolean,
             snoozePresets: LongArray,
-            isQuietPeriodActive: Boolean
+            isQuietPeriodActive: Boolean,
+            isReminder: Boolean = false
     ) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
@@ -1201,7 +1215,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             ex.printStackTrace()
         }
 
-        if (notificationSettings.forwardEventToPebble) {
+        if ((!isReminder && notificationSettings.forwardEventToPebble) ||
+                (isReminder && notificationSettings.forwardReminderToPebble)) {
             PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
         }
     }

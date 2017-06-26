@@ -62,10 +62,10 @@
             android:dependency="reminders_custom_vibration"/>
 
         <CheckBoxPreference
-                android:key="reminders_play_directly"
-                android:title="@string/reminders_play_directly_title"
-                android:summary="@string/reminders_play_directly_summary"
-                android:defaultValue="false"
+                android:key="separate_reminder_notification"
+                android:title="@string/separate_reminder_notification_title"
+                android:summary="@string/separate_reminder_notification_summary"
+                android:defaultValue="true"
                 />
 
 </PreferenceScreen>

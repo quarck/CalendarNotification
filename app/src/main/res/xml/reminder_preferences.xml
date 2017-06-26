@@ -66,6 +66,7 @@
                 android:title="@string/separate_reminder_notification_title"
                 android:summary="@string/separate_reminder_notification_summary"
                 android:defaultValue="true"
-                />
+                android:dependency="enable_reminding_key"
+            />
 
 </PreferenceScreen>

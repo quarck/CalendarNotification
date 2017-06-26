@@ -124,4 +124,6 @@ object Consts {
 
     const val MIN_INTERVAL_BETWEEN_SOUNDS = 1000L
     const val MIN_INTERVAL_BETWEEN_VIBRATIONS = 1000L
+
+    const val FAILBACK_SHORT_SNOOZE = 60000L
 }

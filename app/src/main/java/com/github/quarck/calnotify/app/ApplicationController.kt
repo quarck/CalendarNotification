@@ -508,11 +508,16 @@ object ApplicationController : EventMovedHandler {
                     var event = db.getEvent(eventId, instanceStartTime)
 
                     if (event != null) {
-                        val snoozedUntil =
+                        var snoozedUntil =
                                 if (snoozeDelay > 0L)
                                     currentTime + snoozeDelay
                                 else
                                     event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
+
+                        if (snoozedUntil < currentTime + Consts.ALARM_THRESHOLD) {
+                            DevLog.error(context, LOG_TAG, "snooze: $eventId / $instanceStartTime by $snoozeDelay: new time is in the past, snoozing by 1m instead")
+                            snoozedUntil = currentTime + Consts.FAILBACK_SHORT_SNOOZE
+                        }
 
                         val (success, newEvent) = db.updateEvent(event,
                                 snoozedUntil = snoozedUntil,
@@ -535,6 +540,11 @@ object ApplicationController : EventMovedHandler {
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
 
             ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil, silentUntil)
+
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} snoozed: by $snoozeDelay: $ret")
+        }
+        else {
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $snoozeDelay")
         }
 
         return ret
@@ -601,6 +611,11 @@ object ApplicationController : EventMovedHandler {
             val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedUntil)
 
             ret = SnoozeResult(SnoozeType.Snoozed, snoozedUntil, silentUntil)
+
+            DevLog.info(context, LOG_TAG, "Snooze all by $snoozeDelay: success, $ret")
+        }
+        else {
+            DevLog.info(context, LOG_TAG, "Snooze all by $snoozeDelay: failed")
         }
 
         return ret

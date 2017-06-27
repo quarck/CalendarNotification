@@ -46,6 +46,7 @@
             android:gravity="left|bottom"
             android:ellipsize="end"
             android:maxLines="3"
+            android:scrollbars = "vertical"
             />
 
         <ImageView

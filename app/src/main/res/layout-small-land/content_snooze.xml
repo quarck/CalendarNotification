@@ -38,6 +38,8 @@
             android:gravity="left|bottom"
             android:ellipsize="end"
             android:maxLines="1"
+            android:scrollbars = "vertical"
+            tools:ignore="HardcodedText"
             />
 
         <ImageView

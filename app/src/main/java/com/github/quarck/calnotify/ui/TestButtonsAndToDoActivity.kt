@@ -43,14 +43,7 @@ import java.util.*
 
 // TODO: Make notification title scrollable
 
-// TODO: sort-key: append hash (2-chr) of the event ID
-
-
-// TODO: Android Wear
-
-
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
-
 
 // TODO: add event button (off by default)
 

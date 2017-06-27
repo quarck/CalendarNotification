@@ -243,7 +243,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             }
 
             val numActiveEvents = activeEvents.count()
-            val lastVisibility = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
+            val lastStatusChange = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
 
             if (numActiveEvents > 0) {
 
@@ -255,7 +255,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     postReminderNotification(
                             context,
                             numActiveEvents,
-                            lastVisibility,
+                            lastStatusChange,
                             notificationSettings,
                             isQuietPeriodActive,
                             itIsAfterQuietHoursReminder
@@ -760,11 +760,21 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return postedNotification
     }
 
-    private fun lastStatusChangeToSortingKey(lastStatusChangeTime: Long): String {
+    private fun lastStatusChangeToSortingKey(lastStatusChangeTime: Long, eventId: Long): String {
 
         val sb = StringBuffer(20);
 
-        var temp = lastStatusChangeTime
+        var temp = eventId % (24 * 3)
+
+        for (i in 0..3) {
+
+            val chr = 24 - temp % 24;
+            temp /= 24
+
+            sb.append(('A'.toInt() + chr).toChar())
+        }
+
+        temp = lastStatusChangeTime
 
         while (temp > 0) {
 
@@ -781,7 +791,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun postReminderNotification(
             ctx: Context,
             numActiveEvents: Int,
-            lastVisibility: Long,
+            lastStatusChange: Long,
             notificationSettings: NotificationSettingsSnapshot,
             isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
     ) {
@@ -843,11 +853,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         NotificationCompat.BigTextStyle().bigText(text)
                 )
                 .setWhen(
-                        lastVisibility
+                        lastStatusChange
                 )
                 .setShowWhen(false)
                 .setSortKey(
-                        lastStatusChangeToSortingKey(lastVisibility)
+                        lastStatusChangeToSortingKey(lastStatusChange, 0)
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_REMINDER
@@ -1029,7 +1039,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             title = "#${event.origin},${(event.timeFirstSeen - event.alertTime) / 60000L}m# ${event.title}"
         }
 
-        val sortKey = lastStatusChangeToSortingKey(event.lastStatusChangeTime)
+        val sortKey = lastStatusChangeToSortingKey(event.lastStatusChangeTime, event.eventId)
 
         DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 

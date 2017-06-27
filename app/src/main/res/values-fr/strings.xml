@@ -371,5 +371,5 @@
     <string name="reminders_play_directly_title">"Jouez les rappels directement"</string>
     <string name="reminders_play_directly_summary">"Ne pas afficher la notifications de rappel"</string>
     <string name="allow_notification_swipe_title">"Autoriser le glissement des notifications"</string>
-    <string name="allow_notification_swipe_summary">Le glissement de la notificaton 'rejètera' l'évenement</string>
+    <string name="allow_notification_swipe_summary">Le glissement de la notificaton \'rejètera\' l\'évenement</string>
 </resources>

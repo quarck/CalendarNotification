@@ -80,7 +80,7 @@ object ApplicationController : EventMovedHandler {
         val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
         val currentTime = System.currentTimeMillis()
 
-        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context, EventFormatter(context), false, null);
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -659,7 +659,7 @@ object ApplicationController : EventMovedHandler {
 
             if (shouldRepost || changes) {
                 notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
-                context.globalState.lastNotificationRePost = System.currentTimeMillis()
+                context.globalState?.lastNotificationRePost = System.currentTimeMillis()
             }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);

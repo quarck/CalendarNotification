@@ -41,14 +41,11 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO: Make notification title scrollable
-
-// TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
-
 // TODO: add event button (off by default)
 
 
-// TODO: Android O support! See background limitations: https://github.com/quarck/CalendarNotification/issues/220
+// TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
+//       ...see Android O background limitations: https://github.com/quarck/CalendarNotification/issues/220
 
 class TestButtonsAndToDoActivity : Activity() {
 

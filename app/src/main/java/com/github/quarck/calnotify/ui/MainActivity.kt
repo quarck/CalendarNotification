@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        shouldForceRepost = (System.currentTimeMillis() - globalState.lastNotificationRePost) > Consts.MIN_FORCE_REPOST_INTERVAL
+        shouldForceRepost = (System.currentTimeMillis() - (globalState?.lastNotificationRePost ?: 0L)) > Consts.MIN_FORCE_REPOST_INTERVAL
 
         refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 

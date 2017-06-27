@@ -27,6 +27,12 @@ class GlobalState : android.app.Application() {
     var lastTimerBroadcastReceived: Long = 0
 }
 
-val Context.globalState: GlobalState
-    get() = applicationContext as GlobalState
+val Context.globalState: GlobalState?
+    get() {
+        val appCtx = applicationContext
+        if (appCtx is GlobalState)
+            return appCtx
+
+        return null
+    }
 

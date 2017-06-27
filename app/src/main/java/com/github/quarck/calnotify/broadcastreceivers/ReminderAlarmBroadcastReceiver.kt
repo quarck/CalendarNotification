@@ -49,7 +49,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             return;
         }
 
-        context.globalState.lastTimerBroadcastReceived = System.currentTimeMillis()
+        context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 

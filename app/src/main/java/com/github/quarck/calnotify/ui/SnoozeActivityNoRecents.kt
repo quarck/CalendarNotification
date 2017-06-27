@@ -451,7 +451,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             return
         }
 
-        val lastAlarm = globalState.lastTimerBroadcastReceived
+        val lastAlarm = globalState?.lastTimerBroadcastReceived ?: 0L
         val currentTime = System.currentTimeMillis()
 
         val untilNextAlarmFromLastAlarm = res.snoozedUntil - lastAlarm

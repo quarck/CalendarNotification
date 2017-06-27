@@ -210,7 +210,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
     val separateReminderNotification: Boolean
-        get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, true)
+        get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, false)
 
     val remindersIntervalMillis: Long
         get() = getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;

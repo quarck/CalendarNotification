@@ -65,7 +65,7 @@
                 android:key="separate_reminder_notification"
                 android:title="@string/separate_reminder_notification_title"
                 android:summary="@string/separate_reminder_notification_summary"
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:dependency="enable_reminding_key"
             />
 

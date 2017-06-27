@@ -294,7 +294,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (!recentEvents.isEmpty()) {
             // normal
-            val firstEvent = recentEvents.first()
+            val firstEvent = recentEvents.last()
 
             context.notificationManager.cancel(firstEvent.notificationId)
 

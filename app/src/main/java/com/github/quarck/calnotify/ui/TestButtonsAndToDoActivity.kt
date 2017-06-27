@@ -43,8 +43,6 @@ import java.util.*
 
 // TODO: Make notification title scrollable
 
-// TODO: unsnoozing notification - update last changed time
-
 // TODO: sort-key: append hash (2-chr) of the event ID
 
 

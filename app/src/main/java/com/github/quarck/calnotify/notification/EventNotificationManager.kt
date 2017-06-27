@@ -703,6 +703,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 DevLog.info(context, LOG_TAG, "Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
+                // Update this time before posting notification as this is now used as a sort-key
+                event.lastStatusChangeTime = currentTime
+
                 postNotification(
                         context,
                         settings,

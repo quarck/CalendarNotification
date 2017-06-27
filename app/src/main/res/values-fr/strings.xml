@@ -37,7 +37,7 @@
 
     <string name="feedback">"Commentaire"</string>
 
-    <string name="help_title">"Si vous avez trouvé un bug, avez une question ou souhaitez suggérer une fonctionnalité ou apporter un commentaire - contactez le développeur par courrier électronique.\n\nNe prévoyez pas de réponse instantanée. Je développe cette application dans mon temps libre et ne peut répondre que lorsque j'ai le temps"</string>
+    <string name="help_title">"Si vous avez trouvé un bug, avez une question ou souhaitez suggérer une fonctionnalité ou apporter un commentaire contactez le développeur par courrier électronique.\n\nNe prévoyez pas de réponse instantanée. Je développe cette application dans mon temps libre et ne peut répondre que lorsque j'ai le temps"</string>
     <string name="email_developer">"EMAIL DU DÉVELOPPEUR"</string>
 
     <string name="forward_to_pebble">"Envoyer sur Pebble"</string>
@@ -67,7 +67,7 @@
     <!-- string name="title_activity_activity_test_buttons_and_to_do" translatable="false">"ActivityTestButtonsAndToDo"</string -->
 
     <string name="snoozed_until_string">"Suspendu jusqu'à "</string>
-    <string name="card_view_btn_change">"CHANGER"</string>
+    <string name="card_view_btn_change">"RÉPÉTER"</string>
     <string name="card_view_btn_snooze">"RÉPÉTER"</string>
     <string name="card_view_btn_dismiss">"REJETER"</string>
     <string name="new_events_detected">"Rechargez pour voir de nouveaux événements"</string>
@@ -97,7 +97,7 @@
     <string name="minute">"minute"</string>
     <string name="seconds">"secondes"</string>
     <string name="second">"seconde"</string>
-    <string name="no_events_to_display">"Aucune notification à afficher\nLes notifications d'événement actives et répétées apparaîtraient ici"</string>
+    <string name="no_events_to_display">"Aucune notification à afficher\nLes notifications d'événements actives et répétées apparaîtraient ici"</string>
     <string name="no_calendar_permissions_main">"L'application n'a pas la permission du calendrier"</string>
     <string name="view_after_edit">"Afficher après l'édition"</string>
     <string name="view_after_edit_summary">"Activer pour afficher automatiquement l'événement dans le calendrier après avoir changé l'heure de l'événement en utilisant la répétition"</string>
@@ -114,7 +114,7 @@
 
     <string name="pebble_notification_title">"Calendrier"</string>
     <string name="heads_up_notification">"Notification 'Heads-up'"</string>
-    <string name="heads_up_notification_summary">"Montrez brièvement la notification en haut de l'écran"</string>
+    <string name="heads_up_notification_summary">"Affiche brièvement la notification en haut de l'écran"</string>
     <string name="projectPageOnGitHub">"Page de projet sur GitHub"</string>
     <string name="snooze_all">"Tout répéter"</string>
     <string name="change_all">"Changer tout"</string>
@@ -144,7 +144,7 @@
     <string name="quiet_hours">"Heures silencieuses"</string>
 
     <string formatted="false" name="snoozed_time_inside_quiet_hours">"REMARQUE: Le rappel des répétitions atteint une période de tranquillité, aucun son ou vibration ne sera joué jusqu'à la fin de la période: %s"</string>
-    <string name="quiet_hours_summary">"Utilisez la tranquillité pour couper tous les rappels, les notifications d'événements principales continuent à jouer du son et à vibrer (selon les paramètres)"</string>
+    <string name="quiet_hours_summary">"Utiliser la tranquillité pour couper tous les rappels, les notifications d'événements principals continuent à jouer du son et à vibrer (selon les paramètres)"</string>
 
     <string name="quiet_hours_mute_primary">"Sourdine des notifications principales"</string>
     <string name="quiet_hours_mute_primary_summary">"Active la sourdine des notifications principales pendant le temps de tranquillité, de sorte que l'application devient complètement silencieuse. La notification principale est une première notification pour un événement particulier"</string>
@@ -176,7 +176,7 @@
     <string name="never_show_again">"Ne plus afficher"</string>
 
 
-    <string name="dialog_snooze_text_label_v2">"La liste des préréglages de répétition doit êtres séparée par des virgules\n\nLes valeurs prises en charge sont '15m', '2h' ou '3d' ainsi que des valeurs négatives comme '-5m' (\"5 minutes avant l'événement\")\n\nLimite de 6 éléments dans la liste\n\nLaissez vide pour utiliser les valeurs par défaut"</string>
+    <string name="dialog_snooze_text_label_v2">"La liste des préréglages de répétition doit êtres séparée par des virgules\n\nLes valeurs prises en charge sont '15m', '2h' ou '3d' ainsi que des valeurs négatives comme '-5m' (\"5 minutes avant l'événement\")\n\nLimite de 6 éléments dans la liste\n\nLaisser vide pour utiliser les valeurs par défaut"</string>
 
     <string name="before_event">"avant"</string>
     <string name="menu_about">"À propos"</string>
@@ -213,10 +213,10 @@
     <string name="restart_the_app_to_apply_changes">"Redémarrez l'application pour appliquer les modifications"</string>
     <string name="event_list_style_summary">"Sélectionnez entre la vue compacte et la vue carte ici\nLa modification de ce paramètre nécessiterait un redémarrage d'application pour appliquer de nouveaux paramètres"</string>
     <string name="compact_view">"Vue compacte"</string>
-    <string name="compact_view_explanation">"— Balayer l’événement pour l'ignorer\n— Cliquez sur l'événement pour le répéter\n— Cliquez sur l'événement puis sur le titre pour ouvrir dans le calendrier"</string>
+    <string name="compact_view_explanation">"— Balayer l’événement pour le rejeter\n— Cliquer sur l'événement pour le répéter\n— Cliquer sur l'événement puis sur le titre pour ouvrir dans le calendrier"</string>
     <string name="list_item_look_like">"L’événement ressemblera à:"</string>
     <string name="card_view">"Vue carte"</string>
-    <string name="card_view_explanation">"— Cliquez sur l'événement pour ouvrir dans le calendrier\n— Utilisez les boutons répéter ou ignorer l'événement"</string>
+    <string name="card_view_explanation">"— Cliquer sur l'événement pour l'ouvrir dans le calendrier\n— Utiliser les boutons répéter ou rejeter l'événement"</string>
     <string name="ok">"OK"</string>
     <string name="compact_view_is_a_default_style_now">"La vue compacte est le style par défaut"</string>
     <string name="switch_to_cards">"PASSER AUX CARTES"</string>
@@ -241,9 +241,9 @@
     <string name="halo_light_theme_time_picker_summary">"Utiliser le sélectionneurs d'heure de Android Jellybean"</string>
 
     <string name="max_notifications_before_collapse">"Notifications maximales"</string>
-    <string name="max_notifications_before_collapse_summary">"Nombre de notifications maximales autorisées à êtres afficher par l'application simultanément\n\nNote: le nombre par défault est limité à 8 pour éviter les crash de SystemUI sur certains appareils lorsque l'application publie trop de notifications"</string>
+    <string name="max_notifications_before_collapse_summary">"Nombre de notifications maximales autorisées à être affiché simultanément\n\nNote: le nombre par défault est limité à 8 pour éviter les crash de SystemUI sur certains appareils lorsque l'application publie trop de notifications"</string>
     <string name="collapse_everything">"Réduire tout si excès"</string>
-    <string name="collapse_everything_summary">"Lorsque le nombre de notifications actives totales dépasse le nombre maximales, elles seront envoyer dans une notification groupée"</string>
+    <string name="collapse_everything_summary">"Lorsque le nombre de notifications actives totales dépasse le nombre maximale, elles seront envoyées dans une notification groupée"</string>
 
     <string name="multiple_events_single_notification">"%d événements du calendrier"</string>
     <string name="advanced">"Avancée"</string>
@@ -288,14 +288,14 @@
     <string name="pebble_forward_only_reminders">"Pebble - rappels avant seulement"</string>
     <string name="pebble_forward_only_reminders_summary">"Laissez Pebble gérer les calendriers"</string>
     <string name="event_color_notification">"Couleur de l'événement dans la notification"</string>
-    <string name="event_color_notification_summary">"Afficher la couleur de l'événement dans l'icône de notification"</string>
+    <string name="event_color_notification_summary">"Afficher la couleur de l'événement dans la notification"</string>
     <string name="notfication_opens_snooze">"La notification ouvre la boîte de dialogue de répétition"</string>
-    <string name="notfication_opens_snooze_summary">"Activez si vous souhaitez que la notification ouvre la boîte de dialogue de répétition ai lieu du calendrier\nCliquez sur le titre de l'événement dans la boîte de dialogue de répétition pour l'ouvrir dans le calendrier"</string>
-    <string name="notification_auto_dismiss_on_reschedule">>Rejet automatique si modification</string>
-    <string name="notification_auto_dismiss_on_reschedule_summary">"Désactiver la notification lorsque l'événement est modifier via l'application Calendrier\nL'événement doit être déplacé d'au moins 15 minutes pour que cette fonctionnalité fonctionne\nNote: cette fonctionnalité dépend du fournisseur de calendrier pour avertir l'application des changements. Cette notification est habituellement reçue avec un certain retard, ce qui provoque un certain délai entre l'édition de l'événement et le renvoi automatique de la notification (jusqu'à 60 secondes)"</string>
+    <string name="notfication_opens_snooze_summary">"Activez l'option si vous souhaitez que la notification ouvre la boîte de dialogue de répétition au lieu du calendrier\nCliquer sur le titre de l'événement dans la boîte de dialogue de répétition pour l'ouvrir dans le calendrier"</string>
+    <string name="notification_auto_dismiss_on_reschedule">Rejet automatique si modification</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">"Désactiver la notification lorsque l'événement est modifié via l'application Calendrier\nL'événement doit être déplacé au moins de 15 minutes pour fonctionner\nNote: cette fonctionnalité dépend du fournisseur de calendrier. Cette notification est habituellement reçue avec un certain retard, ce qui provoque un certain délai entre l'édition de l'événement et le renvoi automatique de la notification (jusqu'à 60 secondes)"</string>
     <string name="attach_applicatoin_log">"Joindre les log de l'application"</string>
     <string name="attach_applicatoin_log_perm">"Les log sont limités à l'application actuelle uniquement\n\nAucune information textuelle sur l'événement n'est visible dans le log (il n'y a pas de titres d'événement, d'emplacements, etc.)\n\nLes fichiers envoyés par courrier électronique peuvent être interceptés par des tiers!"</string>
-    <string name="use_set_alarm_clock_title">"Utilisez setAlarmClock pour les rappels"</string>
+    <string name="use_set_alarm_clock_title">"Utiliser setAlarmClock pour les rappels"</string>
     <string name="use_set_alarm_clock_summary">"Marshmallow and above only!\nThis would trigger app to use setAlarmClock API call when scheduling reminders and snoozed events\nThis would increase reminders time accuracy\nAs a side effect, user would see 'alarm' icon on UI when there are snoozed events or active reminders"</string>
     <string name="reminder_fallback_method_title">"Fallback playback method"</string>
     <string name="reminder_fallback_method_summary">"Essayez de sélectionner ceci si le son des rappels ne fonctionne pas"</string>
@@ -334,7 +334,7 @@
     <string name="first_day_of_week">"Premier jour de la semaine"</string>
     <string name="first_day_of_week_summary">"(Seulement pour Android 5 et plus)"</string>
     <string name="use_alarm_stream">"Utiliser le volume d'alarme"</string>
-    <string name="use_alarm_stream_summary">"Utiliser le volume de l'alarme/n(au lieu du volume de notification)"</string>
+    <string name="use_alarm_stream_summary">"Utiliser le volume de l'alarme (au lieu du volume de notification)"</string>
 
     <string name="restrict_swipe_to_dismiss">"Limiter le glissement de notification"</string>
     <string name="snooze_on_swipe">"Glisser pour répéter"</string>
@@ -348,7 +348,7 @@
 
     <string formatted="false" name="next_reminder_fmt">"Rappel suivant: %s"</string>
     <string name="darker_calendar_color">"Couleurs de calendrier plus sombres"</string>
-    <string name="use_set_alarm_clock_for_events">"Utilisez setAlarmClock pour les événements"</string>
+    <string name="use_set_alarm_clock_for_events">"Utiliser setAlarmClock pour les événements"</string>
     <string name="use_set_alarm_clock_for_events_summary">"Only affects fail back event paths, don't need to set it if you are not missing any reminders"</string>
     <string name="keep_logs_title">"Garder les log de l'application"</string>
     <string name="keep_logs_summary">"Ne pas activer sauf si demandé par le développeur de l'application"</string>
@@ -357,7 +357,7 @@
     <string name="handle_email_only_events_title">Handle e-mail only events</string>
     <string name="handle_email_only_events_summary">"Notify locally about events with email-only reminders"</string>
     <string name="bundle_notifications_title">"Notifications grouper"</string>
-    <string name="bundle_notifications_summary">"Utilisez les notifications groupées sur Android 6+"</string>
+    <string name="bundle_notifications_summary">"Utiliser les notifications groupées sur Android 6+"</string>
 
     <string name="calendar">"Calendrier"</string>
     <string formatted="false" name="N_calendar_events">"%d événements"</string>
@@ -366,10 +366,14 @@
     <string name="led">"LED"</string>
     <string name="notification_behavior">"Comportement des notifications"</string>
     <string name="pebble">"Pebble"</string>
-    <string name="pebble_forward_reminders">"Envoyer les rappel sur Pebble"</string>
-    <string name="pebble_forward_reminders_summary">"Par défaut, les notifications d'événement originales sont transmises"</string>
+    <string name="pebble_forward_reminders">"Envoyer les rappels sur Pebble"</string>
+    <string name="pebble_forward_reminders_summary">"Par défaut, les notifications d'événements originaux sont transmises"</string>
     <string name="reminders_play_directly_title">"Jouez les rappels directement"</string>
     <string name="reminders_play_directly_summary">"Ne pas afficher la notifications de rappel"</string>
     <string name="allow_notification_swipe_title">"Autoriser le glissement des notifications"</string>
-    <string name="allow_notification_swipe_summary">Le glissement de la notificaton \'rejètera\' l\'évenement</string>
+    <string name="allow_notification_swipe_summary">Le glissement de la notificaton \'rejètera\' l\'événement</string>
+    <string name="separate_reminder_notification_title">Notification de rappel séparée</string>
+    <string name="separate_reminder_notification_summary">Rappel avec une notification de courte durée séparée (auto-rejet quelques secondes plus tard)</string>
 </resources>
+
+

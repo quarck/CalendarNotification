@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="pref_vibration_pattern_entries">
+        <item>Single Long</item>
+        <item>Single Très Long</item>
+        <item>Court Court Court </item>
+        <item>Long Court Court Court</item>
+        <item>Court Court Court Long</item>
+    </string-array>
+
+    <string-array
+        name="pref_vibration_pattern_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array
+        name="days_of_week_entries">
+        <item>Lundi</item>
+        <item>Mardi</item>
+        <item>Mercredi</item>
+        <item>Jeudi</item>
+        <item>Vendredi</item>
+        <item>Samedi</item>
+        <item>Dimanche</item>
+    </string-array>
+
+    <string-array
+        name="days_of_week_values">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>1</item>
+    </string-array>
+
+</resources>

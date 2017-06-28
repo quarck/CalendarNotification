@@ -30,6 +30,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import java.util.*
 
 object CalendarProvider : CalendarProviderInterface {
     private const val LOG_TAG = "CalendarProvider"
@@ -392,8 +393,8 @@ object CalendarProvider : CalendarProviderInterface {
 
             val calendarId: Long? = cursor.getLong(0)
             val title: String? = cursor.getString(1)
-            val start: Long? = cursor.getLong(2)
-            val end: Long? = cursor.getLong(3)
+            var start: Long? = cursor.getLong(2)
+            var end: Long? = cursor.getLong(3)
             val allDay: Int? = cursor.getInt(4)
             val location: String? = cursor.getString(5)
             val color: Int? = cursor.getInt(6)
@@ -401,6 +402,20 @@ object CalendarProvider : CalendarProviderInterface {
             val attendance: Int? = cursor.getInt(8)
 
             if (title != null && start != null) {
+
+                if (allDay != null && allDay != 0) {
+
+                    // all day events are always in UTC - convert to local time
+
+                    val timezone = TimeZone.getDefault()
+                    val tzOffset = timezone.getOffset(start)
+
+                    start += tzOffset
+                    end = (end ?: start) + tzOffset
+
+                    DevLog.info(context, LOG_TAG, "GMT offset $tzOffset applied to event $eventId")
+                }
+
                 ret =
                         EventRecord(
                                 calendarId = calendarId ?: -1L,

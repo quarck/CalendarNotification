@@ -417,8 +417,8 @@ object CalendarProvider : CalendarProviderInterface {
                     val timezone = TimeZone.getDefault()
                     val tzOffset = timezone.getOffset(start)
 
-                    start += tzOffset
-                    end += tzOffset
+                    start -= tzOffset
+                    end -= tzOffset
 
                     DevLog.info(context, LOG_TAG, "GMT offset $tzOffset applied to event $eventId")
                 }
@@ -953,8 +953,8 @@ object CalendarProvider : CalendarProviderInterface {
                     intermitEvents.add(
                             EventEntry(
                                     eventId = eventId,
-                                    instanceStart = instanceStart + startOffset,
-                                    instanceEnd = instanceEnd + startOffset,
+                                    instanceStart = instanceStart - startOffset,
+                                    instanceEnd = instanceEnd - startOffset,
                                     isAllDay = isAllDay
                             ))
 
@@ -991,6 +991,8 @@ object CalendarProvider : CalendarProviderInterface {
                         for ((isLocal, reminderTime) in reminders) {
 
                             if (isLocal) {
+                                DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
+
                                 val alertTime = evt.instanceStart - reminderTime
 
                                 val entry = MonitorEventAlertEntry(

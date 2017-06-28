@@ -209,7 +209,7 @@ object ApplicationController : EventMovedHandler {
             return ret;
         }
 
-        DevLog.info(context, LOG_TAG, "Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}")
+        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -305,7 +305,7 @@ object ApplicationController : EventMovedHandler {
 
             for ((alert, event) in handledPairs) {
 
-                DevLog.info(context, LOG_TAG, "Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
+                DevLog.info(context, LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
                 if (event.isRepeating) {
                     // repeating event - always simply add

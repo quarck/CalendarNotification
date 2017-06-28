@@ -35,7 +35,7 @@ class CalendarMonitorManual(
         val calendarMonitor: CalendarMonitorInterface
 ) {
 
-    private fun manualFireAlertList_NoHousekeeping(context: Context, alerts: List<MonitorEventAlertEntry>): Boolean {
+    private fun manualFireAlertList(context: Context, alerts: List<MonitorEventAlertEntry>): Boolean {
 
         var fired = false
 
@@ -89,7 +89,7 @@ class CalendarMonitorManual(
 
         DevLog.info(context, LOG_TAG, "manualFireEventsAt: got ${alerts.size} alerts to fire at");
 
-        return manualFireAlertList_NoHousekeeping(context, alerts)
+        return manualFireAlertList(context, alerts)
     }
 
     private fun registerFiredEventsInDB(
@@ -259,7 +259,7 @@ class CalendarMonitorManual(
                         .takeLast(Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN)
             }
 
-            if (manualFireAlertList_NoHousekeeping(context, dueAlerts))
+            if (manualFireAlertList(context, dueAlerts))
                 hasFiredAnything = true
 
             if (special != null)

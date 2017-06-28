@@ -310,6 +310,10 @@ class EventsStorageImplV9(val context: Context)
             if (ret)
                 db.setTransactionSuccessful()
         }
+        catch (ex: SQLiteConstraintException) {
+            // Ignore -- it is already there
+            DevLog.error(context, LOG_TAG, "updateEventsAndInstanceTimesImpl: hit SQLiteConstraintException: ${ex.message}")
+        }
         finally {
             db.endTransaction()
         }

@@ -395,7 +395,7 @@ object CalendarProvider : CalendarProviderInterface {
             val title: String? = cursor.getString(1)
             var start: Long? = cursor.getLong(2)
             var end: Long? = cursor.getLong(3)
-            val allDay: Int? = cursor.getInt(4)
+            var allDay: Int? = cursor.getInt(4)
             val location: String? = cursor.getString(5)
             val color: Int? = cursor.getInt(6)
             val status: Int? = cursor.getInt(7)
@@ -403,15 +403,22 @@ object CalendarProvider : CalendarProviderInterface {
 
             if (title != null && start != null) {
 
-                if (allDay != null && allDay != 0) {
+                allDay = allDay ?: 0
 
+                if (end == null) {
+                    if (allDay == 0)
+                        end = start + Consts.HOUR_IN_MILLISECONDS
+                    else
+                        end = start + Consts.DAY_IN_MILLISECONDS
+                }
+
+                if (allDay != 0) {
                     // all day events are always in UTC - convert to local time
-
                     val timezone = TimeZone.getDefault()
                     val tzOffset = timezone.getOffset(start)
 
                     start += tzOffset
-                    end = (end ?: start) + tzOffset
+                    end += tzOffset
 
                     DevLog.info(context, LOG_TAG, "GMT offset $tzOffset applied to event $eventId")
                 }
@@ -422,8 +429,8 @@ object CalendarProvider : CalendarProviderInterface {
                                 eventId = eventId,
                                 title = title,
                                 startTime = start,
-                                endTime = end ?: 0L,
-                                isAllDay = (allDay ?: 0) != 0,
+                                endTime = end,
+                                isAllDay = allDay != 0,
                                 location = location ?: "",
                                 color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                                 reminders = listOf<EventReminderRecord>(), // stub for now
@@ -870,6 +877,8 @@ object CalendarProvider : CalendarProviderInterface {
                 settings.defaultReminderTimeForAllDayEventWithNoreminder
 
         try {
+            val timezone = TimeZone.getDefault()
+
             val projection =
                     arrayOf(
                             CalendarContract.Instances.EVENT_ID,
@@ -907,9 +916,9 @@ object CalendarProvider : CalendarProviderInterface {
 
                     val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
 
-                    val instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
+                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
 
-                    val isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
+                    var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
                     if (instanceStart == null || eventId == null || calendarId == null) {
                         DevLog.info(context, LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
@@ -926,12 +935,27 @@ object CalendarProvider : CalendarProviderInterface {
                         continue
                     }
 
+                    isAllDay = isAllDay ?: 0L
+
+                    if (instanceEnd == null) {
+                        if (isAllDay == 0L)
+                            instanceEnd = instanceStart + Consts.HOUR_IN_MILLISECONDS
+                        else
+                            instanceEnd = instanceStart + Consts.DAY_IN_MILLISECONDS
+                    }
+
+                    var startOffset = 0
+                    if (isAllDay != 0L) {
+                        startOffset = timezone.getOffset(instanceStart)
+                        DevLog.debug(LOG_TAG, "Event id ${eventId}, GMT offset $startOffset applied to $instanceStart")
+                    }
+
                     intermitEvents.add(
                             EventEntry(
                                     eventId = eventId,
-                                    instanceStart = instanceStart,
-                                    instanceEnd = instanceEnd ?: instanceStart + 3600L * 1000L,
-                                    isAllDay = isAllDay ?: 0L
+                                    instanceStart = instanceStart + startOffset,
+                                    instanceEnd = instanceEnd + startOffset,
+                                    isAllDay = isAllDay
                             ))
 
                 } while (instanceCursor.moveToNext())

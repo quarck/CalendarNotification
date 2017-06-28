@@ -32,6 +32,7 @@ object Consts {
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val DAY_IN_MINUTES: Int = 60*24
     const val HOUR_IN_SECONDS: Long = 3600L
+    const val HOUR_IN_MILLISECONDS: Long = 3600L * 1000L
     const val MINUTE_IN_SECONDS: Long = 60L;
 
     const val NOTIFICATION_ID_COLLAPSED = 0;

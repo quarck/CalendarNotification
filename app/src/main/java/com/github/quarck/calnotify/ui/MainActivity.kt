@@ -201,6 +201,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
 
+        checkPermissions()
+
         if (settings.useCompactView != useCompactView) {
             val intent = intent
             finish()
@@ -232,8 +234,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         reloadData()
 
         refreshReminderLastFired()
-
-        checkPermissions()
 
         var monitorSettingsChanged = false
         if (settings.shouldRemindForEventsWithNoReminders != shouldRemindForEventsWithNoReminders) {

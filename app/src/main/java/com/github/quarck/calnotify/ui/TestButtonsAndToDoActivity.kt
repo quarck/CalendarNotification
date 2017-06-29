@@ -41,8 +41,6 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO: rescan from service all the times, even when launched from the UI
-
 // TODO: review calendar reload, m.b. worth optimizing (first reload visible events)
 
 // TODO: add event button (off by default)

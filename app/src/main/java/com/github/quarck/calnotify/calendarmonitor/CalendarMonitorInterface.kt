@@ -38,8 +38,6 @@ interface CalendarMonitorInterface {
 
     fun onProviderReminderBroadcast(context: Context, intent: Intent)
 
-    fun onCalendarChange(context: Context)
-
     fun onRescanFromService(context: Context, intent: Intent?)
 
     fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>
@@ -51,4 +49,12 @@ interface CalendarMonitorInterface {
     fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean
 
     fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean
+
+    fun launchRescanService(
+            context: Context,
+            delayed: Int = 0,
+            reloadCalendar: Boolean =  false,
+            rescanMonitor: Boolean = true,
+            maxReloadTime: Long = 0L
+    )
 }

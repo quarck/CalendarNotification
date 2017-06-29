@@ -26,7 +26,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorInterface
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorService
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -99,11 +98,11 @@ object ApplicationController : EventMovedHandler {
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        CalendarMonitorService.startRescanService(
+        calendarMonitorInternal.launchRescanService(
                 context,
                 reloadCalendar = true,
                 rescanMonitor = true,
-                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS
+                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS
         )
     }
 
@@ -116,11 +115,11 @@ object ApplicationController : EventMovedHandler {
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        CalendarMonitorService.startRescanService(
+        calendarMonitorInternal.launchRescanService(
                 context,
                 reloadCalendar = true,
                 rescanMonitor = true,
-                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS
+                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS
         )
     }
 
@@ -128,12 +127,12 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(context, LOG_TAG, "onCalendarChanged")
 
-        CalendarMonitorService.startRescanService(
+        calendarMonitorInternal.launchRescanService(
                 context,
-                startDelay = 2000,
+                delayed = 2000,
                 reloadCalendar = true,
                 rescanMonitor = true,
-                maxReloadCalendarTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
         )
     }
 
@@ -146,11 +145,16 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (changes) {
-            notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
+            notificationManager.postEventNotifications(
+                    context,
+                    EventFormatter(context),
+                    force = true,
+                    primaryEventId = null
+            );
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-            UINotifierService.notifyUI(context, false);
+            UINotifierService.notifyUI(context, isUserAction = false);
         }
         else {
             DevLog.debug(LOG_TAG, "No caclendar changes detected")
@@ -653,21 +657,20 @@ object ApplicationController : EventMovedHandler {
 
             cleanupEventReminder(context)
 
-            val changes = EventsStorage(context).use {
-                calendarReloadManager.reloadCalendar(context, it, calendarProvider, this, Consts.MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS)
-            };
-
-            if (shouldRepost || changes) {
-                notificationManager.postEventNotifications(context, EventFormatter(context), true, null)
+            if (shouldRepost) {
+                notificationManager.postEventNotifications(
+                        context,
+                        EventFormatter(context),
+                        force = true,
+                        primaryEventId = null
+                )
                 context.globalState?.lastNotificationRePost = System.currentTimeMillis()
             }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-            if (changes)
-                UINotifierService.notifyUI(context, true);
-
             // this might fire new notifications
+            // This would automatically launch the rescan of calendar and monitor
             calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
         }
     }

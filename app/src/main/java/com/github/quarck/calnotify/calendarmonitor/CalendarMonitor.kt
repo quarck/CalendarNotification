@@ -75,10 +75,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         DevLog.info(context, LOG_TAG, "onAppResumed")
 
         val currentTime = System.currentTimeMillis()
-        if (!monitorSettingsChanged && (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4))
-            return
+        val doMonitorRescan = monitorSettingsChanged || (currentTime - lastScan >= Consts.ALARM_THRESHOLD / 4)
 
-        launchRescanService(context)
+        launchRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = doMonitorRescan,
+                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS
+        )
     }
 
     override fun onAlarmBroadcast(context: Context, intent: Intent) {
@@ -133,18 +137,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.message}, ${ex.stackTrace}")
         }
 
-    }
-
-    override fun onCalendarChange(context: Context) {
-
-        DevLog.info(context, LOG_TAG, "onCalendarChange");
-
-        launchRescanService(context, delayed=1500)
-
-//        val delayInMilliseconds = 1500L
-//        Handler().postDelayed(
-//                {
-//                }, delayInMilliseconds)
     }
 
     // proper broadcast from the Calendar Provider. Normally this is a proper
@@ -230,12 +222,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     // should return true if we have fired at new events, so UI should reload if it is open
-    private fun launchRescanService(
+    override fun launchRescanService(
             context: Context,
-            delayed: Int = 0,
-            reloadCalendar: Boolean =  false,
-            rescanMonitor: Boolean = true,
-            maxReloadTime: Long = 0L
+            delayed: Int,
+            reloadCalendar: Boolean,
+            rescanMonitor: Boolean,
+            maxReloadTime: Long
     ) {
         lastScan = System.currentTimeMillis()
 

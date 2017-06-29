@@ -412,17 +412,6 @@ object CalendarProvider : CalendarProviderInterface {
                         end = start + Consts.DAY_IN_MILLISECONDS
                 }
 
-                if (allDay != 0) {
-                    // all day events are always in UTC - convert to local time
-                    val timezone = TimeZone.getDefault()
-                    val tzOffset = timezone.getOffset(start)
-
-                    start -= tzOffset
-                    end -= tzOffset
-
-                    DevLog.info(context, LOG_TAG, "GMT offset $tzOffset applied to event $eventId")
-                }
-
                 ret =
                         EventRecord(
                                 calendarId = calendarId ?: -1L,
@@ -944,17 +933,11 @@ object CalendarProvider : CalendarProviderInterface {
                             instanceEnd = instanceStart + Consts.DAY_IN_MILLISECONDS
                     }
 
-                    var startOffset = 0
-                    if (isAllDay != 0L) {
-                        startOffset = timezone.getOffset(instanceStart)
-                        DevLog.debug(LOG_TAG, "Event id ${eventId}, GMT offset $startOffset applied to $instanceStart")
-                    }
-
                     intermitEvents.add(
                             EventEntry(
                                     eventId = eventId,
-                                    instanceStart = instanceStart - startOffset,
-                                    instanceEnd = instanceEnd - startOffset,
+                                    instanceStart = instanceStart,
+                                    instanceEnd = instanceEnd,
                                     isAllDay = isAllDay
                             ))
 
@@ -987,29 +970,38 @@ object CalendarProvider : CalendarProviderInterface {
                     var hasAnyReminders = false
                     var hasNonLocalReminders = false
 
+
                     if (reminders != null)
                         for ((isLocal, reminderTime) in reminders) {
 
-                            if (isLocal) {
-                                DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
-
-                                val alertTime = evt.instanceStart - reminderTime
-
-                                val entry = MonitorEventAlertEntry(
-                                        evt.eventId,
-                                        evt.isAllDay != 0L,
-                                        alertTime,
-                                        evt.instanceStart,
-                                        evt.instanceEnd,
-                                        false,
-                                        false
-                                )
-
-                                ret.add(entry)
-                                hasAnyReminders = true
-                            }
-                            else
+                            if (!isLocal) {
                                 hasNonLocalReminders = true
+                                continue
+                            }
+
+                            DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
+
+                            var utcOffset = 0
+
+                            if (evt.isAllDay != 0L) {
+                                utcOffset = timezone.getOffset(evt.instanceStart)
+                                DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStart} - $reminderTime")
+                            }
+
+                            val alertTime = evt.instanceStart - reminderTime - utcOffset
+
+                            val entry = MonitorEventAlertEntry(
+                                    evt.eventId,
+                                    evt.isAllDay != 0L,
+                                    alertTime,
+                                    evt.instanceStart,
+                                    evt.instanceEnd,
+                                    false,
+                                    false
+                            )
+
+                            ret.add(entry)
+                            hasAnyReminders = true
                         }
 
                     var shouldAddManualReminder = false
@@ -1025,11 +1017,16 @@ object CalendarProvider : CalendarProviderInterface {
 
                     if (shouldAddManualReminder) {
 
-                        val alertTime =
-                                if (evt.isAllDay == 0L)
-                                    evt.instanceStart - defaultReminderTimeForEventWithNoReminder
-                                else
-                                    evt.instanceStart + defaultReminderTimeForAllDayEventWithNoreminder
+                        var alertTime = 0L
+
+                        if (evt.isAllDay == 0L) {
+                            alertTime = evt.instanceStart - defaultReminderTimeForEventWithNoReminder
+                        }
+                        else {
+                            val utcOffset = timezone.getOffset(evt.instanceStart)
+                            alertTime = evt.instanceStart + defaultReminderTimeForAllDayEventWithNoreminder - utcOffset
+                            DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStart} - $defaultReminderTimeForAllDayEventWithNoreminder")
+                        }
 
                         val entry = MonitorEventAlertEntry(
                                 evt.eventId,

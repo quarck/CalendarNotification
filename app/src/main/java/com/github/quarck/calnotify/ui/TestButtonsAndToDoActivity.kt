@@ -40,6 +40,9 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+// TODO: split bin and behavior settings
+
+// TODO: cleanup DevLog on app (UI) startup
 
 // TODO: review calendar reload, m.b. worth optimizing (first reload visible events)
 

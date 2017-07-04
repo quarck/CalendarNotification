@@ -254,7 +254,7 @@ object ApplicationController : EventMovedHandler {
                 // non-repeating event - make sure we don't create two records with the same eventId
                 val oldEvents = db.getEventInstances(event.eventId)
 
-                DevLog.error(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+                DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
 
                 try {
                     // delete old instances for the same event id (should be only one, but who knows)
@@ -340,7 +340,7 @@ object ApplicationController : EventMovedHandler {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents = db.getEventInstances(event.eventId)
 
-                    DevLog.error(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+                    DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
 
                     try {
                         // delete old instances for the same event id (should be only one, but who knows)

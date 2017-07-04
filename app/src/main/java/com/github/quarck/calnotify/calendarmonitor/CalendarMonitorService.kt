@@ -43,7 +43,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
         val shouldReloadCalendar = intent?.getBooleanExtra(RELOAD_CALENDAR, false)
         val shouldRescanMonitor = intent?.getBooleanExtra(RESCAN_MONITOR, true)
 
-        DevLog.error(this, LOG_TAG,
+        DevLog.info(this, LOG_TAG,
                 "onHandleIntent: " +
                 "startDelay=$startDelay, " +
                 "shouldReloadCalendar=$shouldReloadCalendar, " +

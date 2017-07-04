@@ -979,7 +979,7 @@ object CalendarProvider : CalendarProviderInterface {
                                 continue
                             }
 
-                            DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
+                            //DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
 
                             var utcOffset = 0
 

@@ -41,8 +41,6 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO: event reloading issue
-
 // TODO: bundled notifications: fix tiny things (see email)
 
 // TODO: split bin and behavior settings

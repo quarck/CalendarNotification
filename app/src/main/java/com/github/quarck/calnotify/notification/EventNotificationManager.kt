@@ -938,7 +938,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
 
         val groupBuilder = NotificationCompat.Builder(ctx)
-                .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setContentTitle(ctx.resources.getString(R.string.calendar))
                 .setContentText(text)
                 .setSubText(text)
@@ -950,6 +949,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setWhen(System.currentTimeMillis())
                 .setShowWhen(false)
+                .setNumber(numTotalEvents)
+
+        if (numTotalEvents > 1) {
+            groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar_multiple)
+        }
+        else {
+            groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar)
+        }
 
         if (summaryNotificationIsOngoing || !notificationSettings.allowNotificationSwipe)
             groupBuilder.setOngoing(true)

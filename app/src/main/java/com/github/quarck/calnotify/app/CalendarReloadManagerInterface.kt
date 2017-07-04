@@ -41,8 +41,7 @@ interface CalendarReloadManagerInterface {
             context: Context,
             db: EventsStorageInterface,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?,
-            maxProviderPollingTimeMillis: Long = 0
+            movedHandler: EventMovedHandler?
     ): Boolean
 
     // returns true if event has changed. Event is updated in place
@@ -52,5 +51,12 @@ interface CalendarReloadManagerInterface {
             event: EventAlertRecord,
             calendar: CalendarProviderInterface,
             movedHandler: EventMovedHandler?
+    ): Boolean
+
+    fun rescanForRescheduledEvents(
+            context: Context,
+            db: EventsStorageInterface,
+            calendar: CalendarProviderInterface,
+            movedHandler: EventMovedHandler
     ): Boolean
 }

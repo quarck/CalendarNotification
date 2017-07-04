@@ -54,7 +54,6 @@ interface CalendarMonitorInterface {
             context: Context,
             delayed: Int = 0,
             reloadCalendar: Boolean =  false,
-            rescanMonitor: Boolean = true,
-            maxReloadTime: Long = 0L
+            rescanMonitor: Boolean = true
     )
 }

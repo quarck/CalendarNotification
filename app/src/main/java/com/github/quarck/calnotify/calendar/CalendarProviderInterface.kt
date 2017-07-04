@@ -29,7 +29,7 @@ interface CalendarProviderInterface {
 
     fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord?
 
-    fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord>
+//    fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord>
 
     fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord>
 

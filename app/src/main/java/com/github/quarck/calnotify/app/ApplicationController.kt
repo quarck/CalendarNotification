@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.app
 
 import android.content.Context
-import android.os.Handler
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
@@ -101,8 +100,7 @@ object ApplicationController : EventMovedHandler {
         calendarMonitorInternal.launchRescanService(
                 context,
                 reloadCalendar = true,
-                rescanMonitor = true,
-                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_UPDATE_MILLIS
+                rescanMonitor = true
         )
     }
 
@@ -118,8 +116,7 @@ object ApplicationController : EventMovedHandler {
         calendarMonitorInternal.launchRescanService(
                 context,
                 reloadCalendar = true,
-                rescanMonitor = true,
-                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_BOOT_MILLIS
+                rescanMonitor = true
         )
     }
 
@@ -131,17 +128,16 @@ object ApplicationController : EventMovedHandler {
                 context,
                 delayed = 2000,
                 reloadCalendar = true,
-                rescanMonitor = true,
-                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+                rescanMonitor = true
         )
     }
 
-    fun onCalendarReloadFromService(context: Context, maxTime: Long) {
+    fun onCalendarRescanForRescheduledFromService(context: Context) {
 
-        DevLog.info(context, LOG_TAG, "calendarReloadFromService")
+        DevLog.info(context, LOG_TAG, "onCalendarRescanForRescheduledFromService")
 
         val changes = EventsStorage(context).use {
-            db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this, maxTime)
+            db -> calendarReloadManager.rescanForRescheduledEvents(context, db, calendarProvider, this)
         }
 
         if (changes) {
@@ -157,7 +153,32 @@ object ApplicationController : EventMovedHandler {
             UINotifierService.notifyUI(context, isUserAction = false);
         }
         else {
-            DevLog.debug(LOG_TAG, "No caclendar changes detected")
+            DevLog.debug(LOG_TAG, "No calendar changes detected")
+        }
+    }
+
+    fun onCalendarReloadFromService(context: Context) {
+
+        DevLog.info(context, LOG_TAG, "calendarReloadFromService")
+
+        val changes = EventsStorage(context).use {
+            db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
+        }
+
+        if (changes) {
+            notificationManager.postEventNotifications(
+                    context,
+                    EventFormatter(context),
+                    force = true,
+                    primaryEventId = null
+            );
+
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+            UINotifierService.notifyUI(context, isUserAction = false);
+        }
+        else {
+            DevLog.debug(LOG_TAG, "No calendar changes detected")
         }
     }
 

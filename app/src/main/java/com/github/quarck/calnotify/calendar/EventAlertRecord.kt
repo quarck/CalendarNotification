@@ -216,6 +216,38 @@ fun EventAlertRecord.updateFrom(newEvent: EventRecord): Boolean {
     return ret
 }
 
+fun EventAlertRecord.updateFromWithoutTime(newEvent: EventRecord): Boolean {
+    var ret = false
+
+    if (title != newEvent.title) {
+        title = newEvent.title
+        ret = true
+    }
+
+    if (color != newEvent.color) {
+        color = newEvent.color
+        ret = true
+    }
+
+    if (isAllDay != newEvent.isAllDay) {
+        isAllDay = newEvent.isAllDay
+        ret = true
+    }
+
+    if (eventStatus != newEvent.eventStatus) {
+        eventStatus = newEvent.eventStatus
+        ret = true
+    }
+
+    if (attendanceStatus != newEvent.attendanceStatus) {
+        attendanceStatus = newEvent.attendanceStatus
+        ret = true
+    }
+
+    return ret
+}
+
+
 val EventAlertRecord.displayedStartTime: Long
     get() = if (instanceStartTime != 0L) instanceStartTime else startTime
 

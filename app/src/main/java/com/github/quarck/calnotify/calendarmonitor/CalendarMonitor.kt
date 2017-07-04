@@ -80,8 +80,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(
                 context,
                 reloadCalendar = true,
-                rescanMonitor = doMonitorRescan,
-                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_UI_START_MILLIS
+                rescanMonitor = doMonitorRescan
         )
     }
 
@@ -129,8 +128,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             launchRescanService(
                     context,
                     reloadCalendar = true,
-                    rescanMonitor = true,
-                    maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+                    rescanMonitor = true
             )
         }
         catch (ex: Exception) {
@@ -216,8 +214,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(
                 context,
                 reloadCalendar = true,
-                rescanMonitor = true,
-                maxReloadTime = Consts.MAX_CAL_RELOAD_TIME_ON_AFTER_FIRE_MILLIS
+                rescanMonitor = true
         )
     }
 
@@ -226,12 +223,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             context: Context,
             delayed: Int,
             reloadCalendar: Boolean,
-            rescanMonitor: Boolean,
-            maxReloadTime: Long
+            rescanMonitor: Boolean
     ) {
         lastScan = System.currentTimeMillis()
 
-        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, maxReloadTime)
+        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor)
     }
 
     override fun onRescanFromService(context: Context, intent: Intent?) {

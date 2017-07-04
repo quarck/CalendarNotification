@@ -38,34 +38,39 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
             return
         }
 
-        val startDelay = intent?.getIntExtra(START_DELAY, 0)
+        var startDelay = intent?.getIntExtra(START_DELAY, 0)
 
         val shouldReloadCalendar = intent?.getBooleanExtra(RELOAD_CALENDAR, false)
         val shouldRescanMonitor = intent?.getBooleanExtra(RESCAN_MONITOR, true)
-
-        val maxCalendarReloadTime = intent?.getLongExtra(MAX_RELOAD_TIME, Consts.MAX_CAL_RELOAD_TIME_DEFAULT)
 
         DevLog.error(this, LOG_TAG,
                 "onHandleIntent: " +
                 "startDelay=$startDelay, " +
                 "shouldReloadCalendar=$shouldReloadCalendar, " +
-                "maxCalendarReloadTime=$maxCalendarReloadTime, " +
                 "shouldRescanMonitor=$shouldRescanMonitor, "
         )
 
         wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_NAME) {
 
-            if (startDelay != 0) {
-                try {
-                    Thread.sleep(startDelay.toLong())
+            if (shouldReloadCalendar && startDelay > MAX_TIME_WITHOUT_QUICK_RESCAN) {
+                try  {
+                    sleep(QUICK_RESCAN_SLEEP_BEFORE)
+                    startDelay -= QUICK_RESCAN_SLEEP_BEFORE
+
+                    ApplicationController.onCalendarRescanForRescheduledFromService(this)
                 }
                 catch (ex: Exception) {
+                    DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
                 }
+            }
+
+            if (startDelay != 0) {
+                sleep(startDelay)
             }
 
             if (shouldReloadCalendar) {
                 try  {
-                    ApplicationController.onCalendarReloadFromService(this, maxCalendarReloadTime)
+                    ApplicationController.onCalendarReloadFromService(this)
                 }
                 catch (ex: Exception) {
                     DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
@@ -83,6 +88,14 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
         }
     }
 
+    fun sleep(time: Int) {
+        try {
+            Thread.sleep(time.toLong())
+        }
+        catch (ex: Exception) {
+        }
+    }
+
     companion object {
         private const val LOG_TAG = "CalendarMonitorSvc"
 
@@ -90,21 +103,21 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
         private const val START_DELAY = "start_delay"
         private const val RELOAD_CALENDAR = "reload_calendar"
         private const val RESCAN_MONITOR = "rescan_monitor"
-        private const val MAX_RELOAD_TIME = "max_reload_time"
+
+        private const val MAX_TIME_WITHOUT_QUICK_RESCAN = 1000
+        private const val QUICK_RESCAN_SLEEP_BEFORE = 300
 
         fun startRescanService(
                 context: Context,
                 startDelay: Int = 0,
                 reloadCalendar: Boolean = false, // should reload existing reminders
-                rescanMonitor: Boolean = true,   // should perform calendar monitor rescan
-                maxReloadCalendarTime: Long = Consts.MAX_CAL_RELOAD_TIME_DEFAULT // only affects reload, not rescan
+                rescanMonitor: Boolean = true   // should perform calendar monitor rescan
         ) {
             val intent = Intent(context, CalendarMonitorService::class.java)
 
             intent.putExtra(START_DELAY, startDelay)
             intent.putExtra(RELOAD_CALENDAR, reloadCalendar)
             intent.putExtra(RESCAN_MONITOR, rescanMonitor)
-            intent.putExtra(MAX_RELOAD_TIME, maxReloadCalendarTime)
 
             context.startService(intent)
         }

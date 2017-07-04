@@ -40,6 +40,11 @@ import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
+
+// TODO: event reloading issue
+
+// TODO: bundled notifications: fix tiny things (see email)
+
 // TODO: split bin and behavior settings
 
 // TODO: cleanup DevLog on app (UI) startup

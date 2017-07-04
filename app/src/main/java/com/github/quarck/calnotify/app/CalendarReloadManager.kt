@@ -55,8 +55,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             db: EventsStorageInterface,
             events: List<EventAlertRecord>,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?,
-            maxProviderPollingTimeMillis: Long
+            movedHandler: EventMovedHandler?
     ): Boolean {
 
         DevLog.debug(LOG_TAG, "Reloading calendar")
@@ -69,19 +68,10 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         val eventsToUpdate = arrayListOf<ReloadCalendarResult>()
         val eventsToUpdateWithTime = arrayListOf<ReloadCalendarResult>()
 
-        val scanUntil =
-                if (maxProviderPollingTimeMillis != 0L)
-                    System.currentTimeMillis() + maxProviderPollingTimeMillis
-                else
-                    0L
-
         for (event in events) {
 
-            if (scanUntil != 0L && System.currentTimeMillis() > scanUntil)
-                break
-
             try {
-                val reloadResult = reloadCalendarEvent(context, calendar, event, currentTime, movedHandler)
+                val reloadResult = reloadCalendarEventAlert(context, settings, calendar, event, currentTime, movedHandler)
 
                 when (reloadResult.code) {
                 // nothing required
@@ -168,13 +158,75 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             context: Context,
             db: EventsStorageInterface,
             calendar: CalendarProviderInterface,
-            movedHandler: EventMovedHandler?,
-            maxProviderPollingTimeMillis: Long
+            movedHandler: EventMovedHandler?
     ): Boolean {
-
         // don't rescan manually created events - we won't find most of them
         val events = db.events.filter { event -> event.origin != EventOrigin.FullManual && event.isNotSpecial }
-        return reloadCalendarInternal(context, db, events, calendar, movedHandler, maxProviderPollingTimeMillis)
+        return reloadCalendarInternal(context, db, events, calendar, movedHandler)
+    }
+
+    override fun rescanForRescheduledEvents(
+            context: Context,
+            db: EventsStorageInterface,
+            calendar: CalendarProviderInterface,
+            movedHandler: EventMovedHandler
+    ): Boolean {
+
+        val settings = Settings(context)
+
+        if (!settings.notificationAutoDismissOnReschedule)
+            return false
+
+        val events = db.events.filter {
+            event ->
+            event.origin != EventOrigin.FullManual
+                    && event.isNotSpecial
+                    && event.snoozedUntil != 0L
+                    && !event.isRepeating
+        }
+
+        val currentTime = System.currentTimeMillis()
+
+        var autoDismissEvents = mutableListOf<EventAlertRecord>()
+
+        for (event in events) {
+
+            val newEvent = calendar.getEvent(context, event.eventId)
+
+            if (newEvent == null)
+                continue
+
+            val newAlertTime = newEvent.nextAlarmTime(currentTime)
+
+            if (event.startTime != newEvent.startTime) {
+
+                DevLog.info(context, LOG_TAG, "Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
+
+                val shouldAutoDismiss = movedHandler.checkShouldRemoveMovedEvent(context, event, newEvent, newAlertTime)
+                if (shouldAutoDismiss)
+                    autoDismissEvents.add(event)
+            }
+        }
+
+        var changedDetected = false
+
+        if (!autoDismissEvents.isEmpty()) {
+            changedDetected = true
+
+            ApplicationController.dismissEvents(
+                    context,
+                    db,
+                    autoDismissEvents,
+                    EventDismissType.AutoDismissedDueToCalendarMove,
+                    true
+            )
+
+            if (settings.debugNotificationAutoDismiss) {
+                ApplicationController.postNotificationsAutoDismissedDebugMessage(context)
+            }
+        }
+
+        return changedDetected
     }
 
     // returns true if event has changed. Event is updated in place
@@ -185,21 +237,23 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             calendar: CalendarProviderInterface,
             movedHandler: EventMovedHandler?
     ): Boolean {
-        return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler, 0L)
+        return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler)
     }
 
-    fun reloadCalendarEvent(
+    fun reloadCalendarEventAlert(
             context: Context,
+            settings: Settings,
             calendarProvider: CalendarProviderInterface,
             event: EventAlertRecord,
             currentTime: Long,
             movedHandler: EventMovedHandler?
     ): ReloadCalendarResult {
 
-        //DevLog.info(context, LOG_TAG, "reloading event ${event.eventId} / ${event.instanceStartTime}")
-
-        // check if event was moved
-        if (movedHandler != null && !event.isRepeating) {
+        // Quick short-cut for non-repeating events: quickly check if instance time is different now
+        // - can't use the same for repeating events
+        if (settings.notificationAutoDismissOnReschedule &&
+                movedHandler != null &&
+                !event.isRepeating) {
 
             val newEvent = calendarProvider.getEvent(context, event.eventId)
 
@@ -225,22 +279,16 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
         val newEventInstance = calendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
         if (newEventInstance != null)
-            return checkCalendarEventHasChanged(context, event, newEventInstance)
+            return checkCalendarAlertHasChanged(context, event, newEventInstance)
 
-        return reloadCalendarEventInstanceNotFound(context, calendarProvider, event, currentTime)
+        return reloadCalendarEventAlertFromEvent(context, calendarProvider, event, currentTime)
     }
 
-    fun checkCalendarEventHasChanged(
+    fun checkCalendarAlertHasChanged(
             context: Context,
             event: EventAlertRecord,
             newEventAlert: EventAlertRecord
     ): ReloadCalendarResult {
-
-//        DevLog.debug(LOG_TAG, "event ${event.eventId} / ${event.instanceStartTime} - instance found")
-
-        // Things to remember:
-        // multiple instances for same eventId
-        // reload 'isRepeating' (for upgrade)
 
         if (!newEventAlert.isRepeating) {
 
@@ -254,9 +302,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                             event
                     )
 
-//                    db.updateEvent(
-//                        event,
-//                        displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
                 }
                 else {
                     DevLog.info(context, LOG_TAG, "Non-repeating event ${event.eventId} / ${event.instanceStartTime} was updated, new instance start ${newEventAlert.instanceStartTime} -- event was moved");
@@ -267,17 +312,11 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                             newEventAlert.instanceStartTime,
                             newEventAlert.instanceEndTime
                     )
-
-//                    db.updateEventAndInstanceTimes(
-//                            event.copy(displayStatus = EventDisplayStatus.Hidden), // so this will en-force event to be posted
-//                            instanceStart = newEventAlert.instanceStartTime,
-//                            instanceEnd = newEventAlert.instanceEndTime)
                 }
 
             } /*else {
                 DevLog.info(context, LOG_TAG, "Non-repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
             }*/
-
         }
         else {
             if (event.updateFrom(newEventAlert)) {
@@ -288,12 +327,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                         ReloadCalendarResultCode.EventDetailsUpdatedShouldUpdate,
                         event
                 )
-
-//                db.updateEvent(
-//                    event,
-//                    displayStatus = EventDisplayStatus.Hidden) // so this will en-force event to be posted
-
-
             } /*else {
                 DevLog.info(context, LOG_TAG, "Repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
             }*/
@@ -305,7 +338,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         )
     }
 
-    fun reloadCalendarEventInstanceNotFound(
+    fun reloadCalendarEventAlertFromEvent(
             context: Context,
             calendar: CalendarProviderInterface,
             event: EventAlertRecord,
@@ -320,16 +353,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             // can't do anything about it - just ignore, assuming no change
             return ReloadCalendarResult(ReloadCalendarResultCode.NoChange, event)
         }
-
-        val instances = calendar.getEventAlerts(context, event.eventId, event.alertTime, 2)
-        if (instances.size == 1) {
-            DevLog.info(context, LOG_TAG, "Non-repeating event ${event.eventId} was found at new alert time ${instances[0].alertTime}, instance start ${instances[0].instanceStartTime}");
-            return checkCalendarEventHasChanged(context, event, instances[0])
-        }
-
-        DevLog.info(context, LOG_TAG, "No instances of event ${event.eventId} were found in the future")
-
-        //var changesDetected = false
 
         // Try loading at least basic params from "event"
         val newEvent = calendar.getEvent(context, event.eventId)

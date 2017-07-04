@@ -211,57 +211,57 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
-
-        if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEventAlerts: has no permissions");
-            return listOf();
-        }
-
-        val ret = arrayListOf<EventAlertRecord>()
-
-        val selection =
-                "${CalendarContract.CalendarAlerts.ALARM_TIME} > ? AND ${CalendarContract.CalendarAlerts.EVENT_ID} = ?"
-
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                        alertFields,
-                        selection,
-                        arrayOf(startingAlertTime.toString(), eventId.toString()),
-                        null
-                );
-
-        var totalEntries = 0
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val eventPair = cursorToAlertRecord(cursor, null)
-                val event = eventPair.component2()
-
-                if (event != null && event.eventId == eventId) {
-                    ret.add(event)
-                    ++totalEntries
-                    if (totalEntries >= maxEntries)
-                        break;
-                }
-
-            } while (cursor.moveToNext())
-
-        }
-        else {
-            DevLog.error(context, LOG_TAG, "Event $eventId not found")
-        }
-
-        cursor?.close()
-
-        ret.forEach {
-            event ->
-            event.isRepeating = isRepeatingEvent(context, event) ?: false
-        }
-
-        return ret
-    }
+//    override fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
+//
+//        if (!PermissionsManager.hasReadCalendar(context)) {
+//            DevLog.error(context, LOG_TAG, "getEventAlerts: has no permissions");
+//            return listOf();
+//        }
+//
+//        val ret = arrayListOf<EventAlertRecord>()
+//
+//        val selection =
+//                "${CalendarContract.CalendarAlerts.ALARM_TIME} > ? AND ${CalendarContract.CalendarAlerts.EVENT_ID} = ?"
+//
+//        val cursor: Cursor? =
+//                context.contentResolver.query(
+//                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
+//                        alertFields,
+//                        selection,
+//                        arrayOf(startingAlertTime.toString(), eventId.toString()),
+//                        null
+//                );
+//
+//        var totalEntries = 0
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            do {
+//                val eventPair = cursorToAlertRecord(cursor, null)
+//                val event = eventPair.component2()
+//
+//                if (event != null && event.eventId == eventId) {
+//                    ret.add(event)
+//                    ++totalEntries
+//                    if (totalEntries >= maxEntries)
+//                        break;
+//                }
+//
+//            } while (cursor.moveToNext())
+//
+//        }
+//        else {
+//            DevLog.error(context, LOG_TAG, "Event $eventId not found")
+//        }
+//
+//        cursor?.close()
+//
+//        ret.forEach {
+//            event ->
+//            event.isRepeating = isRepeatingEvent(context, event) ?: false
+//        }
+//
+//        return ret
+//    }
 
     override fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
 

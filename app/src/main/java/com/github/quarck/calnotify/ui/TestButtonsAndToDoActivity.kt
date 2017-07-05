@@ -41,16 +41,11 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
-// TODO: bundled notifications: fix tiny things (see email)
-
 // TODO: split bin and behavior settings
 
 // TODO: cleanup DevLog on app (UI) startup
 
-// TODO: review calendar reload, m.b. worth optimizing (first reload visible events)
-
 // TODO: add event button (off by default)
-
 
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 //       ...see Android O background limitations: https://github.com/quarck/CalendarNotification/issues/220

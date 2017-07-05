@@ -267,6 +267,8 @@
     <string name="keep_bin_events_days">Days to keep events in the Bin</string>
     <string name="app_behavior">Behavior</string>
 
+    <string name="bin_setting_group_name">Bin</string>
+
     <string name="dismissed_general" formatted="false">Dismissed on %s</string>
     <string name="dismissed_from_the_app" formatted="false">Dismissed from the app on %s</string>
     <string name="dismissed_from_notification" formatted="false">Dismissed via notification %s</string>

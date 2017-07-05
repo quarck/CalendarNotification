@@ -29,12 +29,6 @@
         android:summary="" />
 
     <header
-        android:fragment="com.github.quarck.calnotify.prefs.fragments.BinSettingsFragment"
-        android:title="@string/bin_setting_group_name"
-        android:summary=""
-        />
-
-    <header
         android:fragment="com.github.quarck.calnotify.prefs.fragments.BehaviorSettingsFragment"
         android:title="@string/app_behavior"
         android:summary=""
@@ -47,6 +41,12 @@
             android:action="com.github.quarck.calnotify.prefs.AppStylePrefActivity"/>
     </header>
 
+
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.BinSettingsFragment"
+        android:title="@string/bin_setting_group_name"
+        android:summary=""
+        />
 
 
     <header

@@ -2,6 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <PreferenceCategory
+            android:title="@string/android_wear"
+            android:key="_smartwatch_awear">
+
+                <com.github.quarck.calnotify.prefs.AndroidWearInstructionPreference
+                    android:key="text_placeholder_smartwatch"
+                    android:title="@string/instructions_for_android_wear"
+                    />
+
+        </PreferenceCategory>
+
+        <PreferenceCategory
             android:title="@string/pebble"
             android:key="_smartwatch_pebble">
 

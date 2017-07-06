@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/PickerDialogTheme">
+    android:theme="@style/PickerDialogTheme"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/android_wear_actual_instruction"
-        android:layout_gravity="left"
-        android:paddingLeft="30dp"
-        android:paddingStart="30dp"
-        android:paddingRight="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:textStyle="bold"
-        android:textColor="@color/secondary_text"
-        />
+        >
 
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/android_wear_actual_instruction"
+            android:layout_gravity="start"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/primary_text"
+            />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -378,6 +378,10 @@
     <string name="separate_reminder_notification_summary">Would remind via posting a sepaarate short-living reminder notification (auto-dismissed in a few seconds)</string>
 
     <string name="instructions_for_android_wear">Instructions for Android Wear</string>
-    <string name="android_wear_actual_instruction">To enable notifications on your Android Wear device, please enable \'Allow notification Swipe\' setting under \'Notification settings\'\n\nTo protect from accidental dismiss of the notification it is possible to use \'Snooze on swipe\' instead, so swiping notififcation off would snooze the event intead of dismissing it</string>
+    <string name="android_wear_actual_instruction">
+        To enable notifications on your Android Wear device, enable \'Allow notification Swipe\' setting under \'Notification settings\'
+        \n\nThis would switch this app to use regular notification instead of ongoing notification, and it would get picked by Android Wear automatically.
+        \n\nTo protect from accidentally dismissing the notification it is possible to use \'Snooze on swipe\' option (same location), it would chnage behavior of swiping off notification from dismissing the event to snoozing with #1st snooze preset
+    </string>
 </resources>
 

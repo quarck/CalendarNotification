@@ -312,15 +312,25 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         val ret: String
 
         if (time != 0L) {
-            var flags = DateUtils.FORMAT_SHOW_TIME
 
-            if (!DateUtils.isToday(time))
-                flags = flags or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY
+            val isToday = DateUtils.isToday(time)
+            val isTomorrow = DateUtils.isToday(time - Consts.DAY_IN_MILLISECONDS)
 
-            if ((time - System.currentTimeMillis()) / (Consts.DAY_IN_MILLISECONDS * 30) >= 3L) // over 3mon - show year
-                flags = flags or DateUtils.FORMAT_SHOW_YEAR
+            if (isToday) { // only need to show time
+                ret = DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME)
+            }
+            else if (isTomorrow) { // Tomorrow + time
+                ret = ctx.resources.getString(R.string.tomorrow) + " "
+                        DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME)
+            }
+            else {
+                var flags = DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY
 
-            ret = DateUtils.formatDateTime(ctx, time, flags)
+                if ((time - System.currentTimeMillis()) / (Consts.DAY_IN_MILLISECONDS * 30) >= 3L) // over 3mon - show year
+                    flags = flags or DateUtils.FORMAT_SHOW_YEAR
+
+                ret = DateUtils.formatDateTime(ctx, time, flags)
+            }
         }
         else {
             ret = ""

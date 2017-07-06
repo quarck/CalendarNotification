@@ -24,25 +24,34 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.utils.PersistentStorageBase
 import java.io.Closeable
 
 
-class DevLoggerSettings(val ctx: Context) {
+class DevLoggerSettings(val ctx: Context) : PersistentStorageBase(ctx, FILE_NAME) {
 
     var enabled
         get() = Settings(ctx).shouldKeepLogs
         set(value) {
-            // ignored
         }
+
+    var lastCleanupTime by LongProperty(0)
+
+    companion object {
+        private const val FILE_NAME = "devlogger"
+    }
 }
 
 interface LoggerStorageInterface {
     fun addMessage(severity: Int, tag: String, message: String)
     fun getMessages(): String
     fun clear()
+    fun checkAndPerformCleanup()
 }
 
 class DevLoggerDB(val context: Context):
@@ -79,19 +88,24 @@ class DevLoggerDB(val context: Context):
 
     override fun addMessage(severity: Int, tag: String, message: String) {
 
-        writableDatabase.use {
-            db ->
+        try {
+            writableDatabase.use {
+                db ->
 
-            val values = ContentValues();
+                val values = ContentValues();
 
-            values.put(KEY_TIME, System.currentTimeMillis())
-            values.put(KEY_SEVERITY, severity)
-            values.put(KEY_TAG, tag)
-            values.put(KEY_MESSAGE, message);
+                values.put(KEY_TIME, System.currentTimeMillis())
+                values.put(KEY_SEVERITY, severity)
+                values.put(KEY_TAG, tag)
+                values.put(KEY_MESSAGE, message);
 
-            db.insert(TABLE_NAME, // table
-                    null, // nullColumnHack
-                    values) // key/value -> keys = column names/ values = column
+                db.insert(TABLE_NAME, // table
+                        null, // nullColumnHack
+                        values) // key/value -> keys = column names/ values = column
+            }
+        }
+        catch (ex: SQLiteException) {
+            Log.e(LOG_TAG, "addMessage() failed", ex)
         }
     }
 
@@ -99,34 +113,84 @@ class DevLoggerDB(val context: Context):
 
         val ret = mutableListOf<String>()
 
-        readableDatabase.use {
-            db->
+        try {
+            readableDatabase.use {
+                db ->
 
-            val cursor = db.query(TABLE_NAME, // a. table
-                    SELECTION_COLUMNS, // b. column names
-                    null, // c. selections
-                    null,
-                    null, // e. group by
-                    null, // f. h aving
-                    null, // g. order by
-                    null) // h. limit
+                val cursor = db.query(
+                        TABLE_NAME, // a. table
+                        SELECTION_COLUMNS, // b. column names
+                        null, // c. selections
+                        null,
+                        null, // e. group by
+                        null, // f. h aving
+                        null, // g. order by
+                        null) // h. limit
 
-            if (cursor.moveToFirst()) {
+                if (cursor.moveToFirst()) {
 
-                do {
-                    ret.add(cursorToLogLine(cursor))
+                    do {
+                        ret.add(cursorToLogLine(cursor))
 
-                } while (cursor.moveToNext())
+                    } while (cursor.moveToNext())
+                }
+                cursor.close()
             }
-            cursor.close()
+        }
+        catch (ex: SQLiteException) {
+            Log.e(LOG_TAG, "getMessaged() failed", ex)
         }
 
         return ret.joinToString("\n")
+
     }
 
     override fun clear() {
-        writableDatabase.use { db ->
-            db.delete(TABLE_NAME, null, null)
+        try {
+            writableDatabase.use { db ->
+                db.delete(TABLE_NAME, null, null)
+            }
+        }
+        catch (ex: SQLiteException) {
+            Log.e(LOG_TAG, "clear() failed", ex)
+        }
+    }
+
+    override fun checkAndPerformCleanup() {
+
+        try {
+            val settings = DevLoggerSettings(context)
+
+            if (!settings.enabled)
+                return // no need to do anything
+
+            val lastCleanup = settings.lastCleanupTime
+            val currentTime = System.currentTimeMillis()
+
+            if (currentTime - lastCleanup > Consts.LOG_CLEANUP_INTERVAL) {
+                removeRecordsOlderThan(currentTime - Consts.LOG_CLEANUP_INTERVAL);
+                settings.lastCleanupTime = currentTime
+            }
+        }
+        catch (ex: SQLiteException) {
+            Log.e(LOG_TAG, "checkAndPerformCleanup() failed", ex)
+        }
+    }
+
+    fun removeRecordsOlderThan(time: Long) {
+
+        try {
+            writableDatabase.use {
+                db ->
+                db.delete(
+                        TABLE_NAME,
+                        "$KEY_TIME < ?",
+                        arrayOf(time.toString())
+                )
+            }
+        }
+        catch (ex: SQLiteException) {
+            Log.e(LOG_TAG, "removeRecordsOlderThan() failed", ex)
         }
     }
 
@@ -141,8 +205,9 @@ class DevLoggerDB(val context: Context):
         val sec = (time / 1000L) % 60L
         val min = (time /  60000L) % 60L
         val hr = (time / 3600000L) % 24L
+        val dayInt = (time / 3600000L / 24L);
 
-        val timeStr = "%02d:%02d:%02d.%03d UTC".format(hr, min, sec, usec)
+        val timeStr = "%06d %02d:%02d:%02d.%03d UTC".format(dayInt, hr, min, sec, usec)
 
         val sevString =
                 when (sev) {
@@ -163,6 +228,8 @@ class DevLoggerDB(val context: Context):
 
 
     companion object {
+        const val LOG_TAG = "DevLogDB"
+
         const val DATABASE_NAME = "devlogV3"
         const val TABLE_NAME = "messages"
         const val DATABASE_CURRENT_VERSION = 3
@@ -251,4 +318,10 @@ object DevLog {
     fun clear(context: Context) = DevLoggerDB(context).use { it.clear() }
 
     fun getMessages(context: Context) = DevLoggerDB(context).use { it.getMessages() }
+
+    fun checkAndPerformCleanup(context: Context) {
+        DevLoggerDB(context).use {
+            it.checkAndPerformCleanup()
+        }
+    }
 }

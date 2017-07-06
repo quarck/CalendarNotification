@@ -693,6 +693,8 @@ object ApplicationController : EventMovedHandler {
             // this might fire new notifications
             // This would automatically launch the rescan of calendar and monitor
             calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
+
+            DevLog.checkAndPerformCleanup(context)
         }
     }
 

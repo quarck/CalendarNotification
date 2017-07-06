@@ -380,7 +380,7 @@
     <string name="instructions_for_android_wear">Instructions for Android Wear</string>
     <string name="android_wear_actual_instruction">
         To enable notifications on your Android Wear device, enable \'Allow notification Swipe\' setting under \'Notification settings\'
-        \n\nThis would switch this app to use regular notification instead of ongoing notification, and it would get picked by Android Wear automatically.
+        \n\nThis would switch this app to use regular notification instead of ongoing notifications, and it would get picked by Android Wear automatically.
         \n\nTo protect from accidentally dismissing the notification it is possible to use \'Snooze on swipe\' option (same location), it would chnage behavior of swiping off notification from dismissing the event to snoozing with #1st snooze preset
     </string>
 </resources>

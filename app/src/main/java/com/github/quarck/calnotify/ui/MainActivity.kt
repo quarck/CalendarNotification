@@ -260,8 +260,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun checkPermissions() {
         val hasPermissions = PermissionsManager.hasAllPermissions(this)
 
-        find<TextView>(R.id.no_permissions_view).visibility =
-                if (hasPermissions) View.GONE else View.VISIBLE;
+        //find<TextView>(R.id.no_permissions_view).visibility = if (hasPermissions) View.GONE else View.VISIBLE;
 
         if (!hasPermissions) {
             if (PermissionsManager.shouldShowRationale(this)) {
@@ -273,8 +272,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             _, _ ->
                             PermissionsManager.requestPermissions(this)
                         }
-                        .setNegativeButton(R.string.cancel) {
+                        .setNegativeButton(R.string.exit) {
                             _, _ ->
+                            this@MainActivity.finish()
                         }
                         .create()
                         .show()
@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 granted = false
         }
 
-        find<TextView>(R.id.no_permissions_view).visibility = if (granted) View.GONE else View.VISIBLE;
+        //find<TextView>(R.id.no_permissions_view).visibility = if (granted) View.GONE else View.VISIBLE;
     }
 
     public override fun onPause() {

@@ -383,5 +383,6 @@
         \n\nThis would switch this app to use regular notification instead of ongoing notifications, and it would get picked by Android Wear automatically.
         \n\nTo protect from accidentally dismissing the notification it is possible to use \'Snooze on swipe\' option (same location), it would chnage behavior of swiping off notification from dismissing the event to snoozing with #1st snooze preset
     </string>
+    <string name="exit">Exit</string>
 </resources>
 

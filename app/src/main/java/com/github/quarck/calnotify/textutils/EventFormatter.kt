@@ -320,7 +320,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
                 ret = DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME)
             }
             else if (isTomorrow) { // Tomorrow + time
-                ret = ctx.resources.getString(R.string.tomorrow) + " "
+                ret = ctx.resources.getString(R.string.tomorrow) + ", " +
                         DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME)
             }
             else {

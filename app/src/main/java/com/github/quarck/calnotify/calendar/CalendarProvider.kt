@@ -752,43 +752,55 @@ object CalendarProvider : CalendarProviderInterface {
 
         val ret = mutableListOf<CalendarRecord>()
 
-        val fields =
-                arrayOf(
-                        CalendarContract.Calendars._ID,
-                        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                        CalendarContract.Calendars.OWNER_ACCOUNT,
-                        CalendarContract.Calendars.ACCOUNT_NAME,
-                        CalendarContract.Calendars.ACCOUNT_TYPE,
-                        CalendarContract.Calendars.CALENDAR_COLOR
-                )
-
-        val uri = CalendarContract.Calendars.CONTENT_URI
-
-        val cursor = context.contentResolver.query(uri, fields, null, null, null);
-
-        while (cursor != null && cursor.moveToNext()) {
-
-            // Get the field values
-            val calID: Long? = cursor.getLong(0);
-            val displayName: String? = cursor.getString(1);
-            val accountName: String? = cursor.getString(2);
-            val ownerName: String? = cursor.getString(3);
-            val accountType: String? = cursor.getString(4)
-            val color: Int? = cursor.getInt(5)
-
-            // Do something with the values...
-
-            ret.add(CalendarRecord(
-                    calendarId = calID ?: -1L,
-                    owner = ownerName ?: "",
-                    accountName = accountName ?: "",
-                    accountType = accountType ?: "",
-                    name = displayName ?: "",
-                    color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
-            ))
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "getCalendars: no permissions");
+            return ret;
         }
 
-        cursor?.close()
+        try {
+
+            val fields =
+                    arrayOf(
+                            CalendarContract.Calendars._ID,
+                            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                            CalendarContract.Calendars.OWNER_ACCOUNT,
+                            CalendarContract.Calendars.ACCOUNT_NAME,
+                            CalendarContract.Calendars.ACCOUNT_TYPE,
+                            CalendarContract.Calendars.CALENDAR_COLOR
+                    )
+
+            val uri = CalendarContract.Calendars.CONTENT_URI
+
+            val cursor = context.contentResolver.query(uri, fields, null, null, null);
+
+            while (cursor != null && cursor.moveToNext()) {
+
+                // Get the field values
+                val calID: Long? = cursor.getLong(0);
+                val displayName: String? = cursor.getString(1);
+                val accountName: String? = cursor.getString(2);
+                val ownerName: String? = cursor.getString(3);
+                val accountType: String? = cursor.getString(4)
+                val color: Int? = cursor.getInt(5)
+
+                // Do something with the values...
+
+                ret.add(CalendarRecord(
+                        calendarId = calID ?: -1L,
+                        owner = ownerName ?: "",
+                        accountName = accountName ?: "",
+                        accountType = accountType ?: "",
+                        name = displayName ?: "",
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+                ))
+            }
+
+            cursor?.close()
+
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+        }
 
         return ret
     }

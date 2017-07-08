@@ -1005,7 +1005,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationSettings: NotificationSettingsSnapshot,
             isForce: Boolean,
             wasCollapsed: Boolean,
-            snoozePresets: LongArray,
+            snoozePresetsNotFiltered: LongArray,
             isQuietPeriodActive: Boolean,
             isReminder: Boolean = false
     ) {
@@ -1089,6 +1089,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
         if (notificationSettings.useBundledNotifications) {
             builder.setGroup(NOTIFICATION_GROUP)
         }
+
+        var snoozePresets =
+                snoozePresetsNotFiltered
+                        .filter {
+                            snoozeTimeInMillis ->
+                            snoozeTimeInMillis >= 0 ||
+                                    (event.instanceStartTime + snoozeTimeInMillis + Consts.ALARM_THRESHOLD) > currentTime
+                        }
+                        .toLongArray()
+
+        if (snoozePresets.isEmpty())
+            snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
 
         val defaultSnooze0PendingIntent =
                 pendingServiceIntent(ctx,

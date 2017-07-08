@@ -34,6 +34,9 @@ object Consts {
     const val HOUR_IN_SECONDS: Long = 3600L
     const val HOUR_IN_MILLISECONDS: Long = 3600L * 1000L
     const val MINUTE_IN_SECONDS: Long = 60L;
+    const val MINUTE_IN_MILLISECONDS: Long = 60L * 1000L;
+
+    const val DEFAULT_SNOOZE_TIME_IF_NONE = 15L * 60L * 1000L
 
     const val NOTIFICATION_ID_COLLAPSED = 0;
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1;

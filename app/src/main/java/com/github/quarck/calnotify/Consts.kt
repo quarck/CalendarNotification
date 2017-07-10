@@ -123,5 +123,5 @@ object Consts {
     const val MIN_INTERVAL_BETWEEN_VIBRATIONS = 1000L
 
     const val FAILBACK_SHORT_SNOOZE = 60000L
-    const val LOG_CLEANUP_INTERVAL: Long = 3600L * 24L * 3L // every 3 days
+    const val LOG_CLEANUP_INTERVAL: Long = 3600L * 24L * 3L * 1000L // every 3 days
 }

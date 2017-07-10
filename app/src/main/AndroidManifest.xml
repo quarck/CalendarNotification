@@ -84,7 +84,7 @@
         </activity>
 
         <activity
-            android:name=".ui.TestButtonsAndToDoActivity"
+            android:name=".ui.TestActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do"
             android:theme="@style/AppTheme.NoActionBar" />
 

@@ -28,6 +28,7 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
@@ -160,7 +161,8 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
 
         if (++easterEggCount > 13) {
             if (System.currentTimeMillis() - firstClick < 5000L) {
-                startActivity(Intent(this, TestButtonsAndToDoActivity::class.java))
+                Settings(this).devModeEnabled = true
+                Toast.makeText(this, "Developer Mode Enabled", Toast.LENGTH_LONG).show()
             }
             else {
                 easterEggCount = 0;

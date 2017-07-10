@@ -356,6 +356,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
         }
 
+        if (settings.devModeEnabled) {
+            menu.findItem(R.id.action_test_page)?.isVisible = true
+        }
+
         return true
     }
 
@@ -386,6 +390,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_dismiss_all ->
                 onDismissAll()
+
+            R.id.action_test_page ->
+                startActivity(Intent(this, TestActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

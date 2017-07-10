@@ -46,13 +46,13 @@ import java.util.*
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 //       ...see Android O background limitations: https://github.com/quarck/CalendarNotification/issues/220
 
-class TestButtonsAndToDoActivity : Activity() {
+class TestActivity : Activity() {
 
     private val settings by lazy { Settings(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test_buttons_and_to_do)
+        setContentView(R.layout.activity_test)
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
         find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = false
         find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss

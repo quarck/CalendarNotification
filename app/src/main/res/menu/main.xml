@@ -44,5 +44,14 @@
         app:showAsAction="never"
         android:title="@string/menu_about" />
 
+    <item
+        android:id="@+id/action_test_page"
+        android:orderInCategory="10000"
+        app:showAsAction="never"
+        android:title="Dev page"
+        tools:ignore="HardcodedText"
+        android:visible="false"
+        />
+
 
 </menu>

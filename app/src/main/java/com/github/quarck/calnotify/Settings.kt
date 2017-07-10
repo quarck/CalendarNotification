@@ -50,6 +50,10 @@ data class NotificationSettingsSnapshot
 
 class Settings(context: Context) : PersistentStorageBase(context) {
 
+    var devModeEnabled: Boolean
+        get() = getBoolean(DEVELOPER_MODE_KEY, false)
+        set(value) = setBoolean(DEVELOPER_MODE_KEY, value)
+
     val showDismissButtonDepricated: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
@@ -450,6 +454,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
 
         private const val SEPARATE_REMINDER_NOTIFICATION_KEY = "separate_reminder_notification"
+
+        private const val DEVELOPER_MODE_KEY = "dev"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

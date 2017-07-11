@@ -25,5 +25,6 @@ data class CalendarRecord(
         val accountName: String,
         val name: String,
         val color: Int,
-        val accountType: String
+        val accountType: String,
+        val isPrimary: Boolean
 )

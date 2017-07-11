@@ -25,6 +25,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.provider.CalendarContract
+import android.text.format.Time
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
@@ -648,6 +649,75 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
+    fun createTestEvent(context: Context, calendarId: Long, title: String, startTime: Long, endTime: Long, reminder: Long): Long {
+
+        // http://www.grokkingandroid.com/androids-calendarcontract-provider/
+
+        var ret = -1L;
+
+        DevLog.debug(LOG_TAG, "Request to create Test Event, title: $title, startTime: $startTime, endTime: $endTime, reminder: $reminder");
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "createTestEvent: no permissions");
+            return -1;
+        }
+
+        val values = ContentValues()
+
+        values.put(CalendarContract.Events.TITLE, title);
+        values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, Time.getCurrentTimezone()); // Irish summer time
+        values.put(CalendarContract.Events.DESCRIPTION, "Test event created by the app");
+
+        values.put(CalendarContract.Events.DTSTART, startTime);
+        values.put(CalendarContract.Events.DTEND, endTime);
+
+        values.put(CalendarContract.Events.EVENT_LOCATION, "");
+
+        //
+
+        //values.put(CalendarContract.Events.EVENT_COLOR, 0x7fff0000); // just something
+
+        values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT);
+        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+        values.put(CalendarContract.Events.HAS_ALARM, 1);
+        //values.put(CalendarContract.Events.ALL_DAY, 0);
+        //values.put(CalendarContract.Events.DURATION, duration);
+        //values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone);
+        //values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp);
+        //values.put(CalendarContract.Events.ORGANIZER, organizer);
+        //values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage);
+        //values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri);
+
+        values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+
+        try {
+            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+
+            // get the event ID that is the last element in the Uri
+            ret = uri.lastPathSegment.toLong()
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+        }
+
+        if (ret != -1L) {
+            // Now copy reminders
+            val reminderValues = ContentValues()
+            reminderValues.put(CalendarContract.Reminders.MINUTES, 15)
+            reminderValues.put(CalendarContract.Reminders.EVENT_ID, ret)
+            reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
+            context.contentResolver.insert(
+                    CalendarContract.Reminders.CONTENT_URI,
+                    reminderValues
+            )
+        }
+
+        return ret;
+    }
+
     private fun isRepeatingEvent(context: Context, event: EventAlertRecord)
             = isRepeatingEvent(context, event.eventId)
 
@@ -766,7 +836,8 @@ object CalendarProvider : CalendarProviderInterface {
                             CalendarContract.Calendars.OWNER_ACCOUNT,
                             CalendarContract.Calendars.ACCOUNT_NAME,
                             CalendarContract.Calendars.ACCOUNT_TYPE,
-                            CalendarContract.Calendars.CALENDAR_COLOR
+                            CalendarContract.Calendars.CALENDAR_COLOR,
+                            CalendarContract.Calendars.IS_PRIMARY
                     )
 
             val uri = CalendarContract.Calendars.CONTENT_URI
@@ -782,6 +853,7 @@ object CalendarProvider : CalendarProviderInterface {
                 val ownerName: String? = cursor.getString(3);
                 val accountType: String? = cursor.getString(4)
                 val color: Int? = cursor.getInt(5)
+                val isPrimary: Int? = cursor.getInt(6)
 
                 // Do something with the values...
 
@@ -791,7 +863,8 @@ object CalendarProvider : CalendarProviderInterface {
                         accountName = accountName ?: "",
                         accountType = accountType ?: "",
                         name = displayName ?: "",
-                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                        isPrimary = (isPrimary ?: 0) != 0
                 ))
             }
 

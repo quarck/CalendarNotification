@@ -95,17 +95,16 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:padding="14dp"
                 />
 
-
-            <ToggleButton
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/buttonTestToggleRemove"
-                android:onClick="OnButtonToggleRemoveClick"
+                android:text="ADD EVENT TO PROVIDER"
+                android:id="@+id/buttonTest4"
+                android:onClick="OnButtonAddProvierEventClick"
                 android:visibility="visible"
-                android:textOn="MARK EVENTS AS HANDLED IN PROVIDER"
-                android:textOff="DO NOT MARK EVENTS AS HANDLED IN PROVIDER"
                 android:padding="14dp"
                 />
+
 
             <ToggleButton
                 android:layout_width="match_parent"
@@ -140,23 +139,12 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
                 android:padding="14dp"
                 />
 
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/buttonTestToggleDevLog"
-                android:onClick="OnButtonToggleDevLogClick"
-                android:visibility="visible"
-                android:textOn="DEVLOG ON"
-                android:textOff="DEVLOG OFF"
-                android:padding="14dp"
-                />
-
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CLEAR DEV LOG"
-                android:id="@+id/buttonClearDevLog"
-                android:onClick="OnButtonClearDevLog"
+                android:text="HIDE THIS PAGE"
+                android:id="@+id/buttonTest5"
+                android:onClick="OnButtonDisableDevPage"
                 android:visibility="visible"
                 android:padding="14dp"
                 />

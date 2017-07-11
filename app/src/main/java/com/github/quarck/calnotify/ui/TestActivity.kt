@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.DevLog
@@ -54,12 +55,9 @@ class TestActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
         find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<ToggleButton>(R.id.buttonTestToggleRemove).isChecked = false
         find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
         find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
         find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
-
-        find<ToggleButton>(R.id.buttonTestToggleDevLog).isChecked = DevLoggerSettings(this).enabled
     }
 
 
@@ -221,16 +219,32 @@ class TestActivity : Activity() {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
+    fun OnButtonAddProvierEventClick(v: View) {
+        val currentTime = System.currentTimeMillis()
+
+        val cal = CalendarProvider.getCalendars(this).filter { it.isPrimary }.firstOrNull()
+
+        if (cal != null) {
+            val id = CalendarProvider.createTestEvent(this,
+                    CalendarProvider.getCalendars(this)[2].calendarId,
+                    randomTitle(currentTime),
+                    currentTime + 3600000L, currentTime + 7200000L, 15000L)
+
+            startActivity(
+                    Intent(Intent.ACTION_VIEW).setData(
+                            ContentUris.withAppendedId(
+                                    CalendarContract.Events.CONTENT_URI,
+                                    id)))
+        }
+    }
+
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleRemoveClick(v: View) {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAutoDismissDebugClick(v: View) {
         settings.debugNotificationAutoDismiss = find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleBroadcastAbortClick(v: View) {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -244,12 +258,7 @@ class TestActivity : Activity() {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleDevLogClick(v: View) {
-        DevLoggerSettings(this).enabled = find<ToggleButton>(R.id.buttonTestToggleDevLog).isChecked
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonClearDevLog(v: View) {
-        DevLog.clear(this)
+    fun OnButtonDisableDevPage(v: View) {
+        Settings(this).devModeEnabled = false
     }
 }

@@ -220,22 +220,28 @@ class TestActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonAddProvierEventClick(v: View) {
-        val currentTime = System.currentTimeMillis()
 
-        val cal = CalendarProvider.getCalendars(this).filter { it.isPrimary }.firstOrNull()
+        startActivity(Intent(this, AddEventActivity::class.java))
 
-        if (cal != null) {
-            val id = CalendarProvider.createTestEvent(this,
-                    CalendarProvider.getCalendars(this)[2].calendarId,
-                    randomTitle(currentTime),
-                    currentTime + 3600000L, currentTime + 7200000L, 15000L)
+//        val currentTime = System.currentTimeMillis()
+//
+//        val cal = CalendarProvider.getCalendars(this).filter { it.isPrimary }.firstOrNull()
+//
+//        if (cal != null) {
+//            val id = CalendarProvider.createTestEvent(this,
+//                    CalendarProvider.getCalendars(this)[2].calendarId,
+//                    randomTitle(currentTime),
+//                    currentTime + 3600000L, currentTime + 7200000L, 15000L)
 
-            startActivity(
-                    Intent(Intent.ACTION_VIEW).setData(
-                            ContentUris.withAppendedId(
-                                    CalendarContract.Events.CONTENT_URI,
-                                    id)))
-        }
+//            startActivity(
+//                    Intent(Intent.ACTION_VIEW).setData(
+//                            ContentUris.withAppendedId(
+//                                    CalendarContract.Events.CONTENT_URI,
+//                                    id)))
+
+
+
+//        }
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

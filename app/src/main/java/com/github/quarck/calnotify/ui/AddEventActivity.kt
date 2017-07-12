@@ -3,6 +3,7 @@ package com.github.quarck.calnotify.ui
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.View
 
 import com.github.quarck.calnotify.R
@@ -15,6 +16,12 @@ class AddEventActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_event)
 
         val toolbar = find<Toolbar?>(R.id.toolbar)
-        toolbar?.visibility = View.GONE
+        toolbar?.visibility = View.VISIBLE
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.add_event, menu)
+        return true
+    }
+
 }

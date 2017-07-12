@@ -99,6 +99,7 @@
             android:name=".ui.AddEventActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".ui.MainActivity"
+            android:label="@string/empty"
             />
 
         <provider

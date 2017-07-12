@@ -38,18 +38,18 @@
             android:maxHeight="@dimen/snooze_view_event_title_max_height"
             android:gravity="start|left|bottom"
             android:ellipsize="end"
-            android:maxLines="3"
+            android:maxLines="2"
             android:scrollbars = "vertical"
             android:inputType="text"
             tools:ignore="HardcodedText"
             />
 
-        <ImageView
+        <!-- ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:longClickable="false"
             android:id="@+id/add_event_view_cancel"
-            android:src="@drawable/ic_clear_white_24dp"
+            android:src="@drawable/ic_navigate_before_white_24dp"
             android:paddingTop="@dimen/snooze_view_img_padding_start"
             android:paddingBottom="@dimen/snooze_view_img_padding_start"
             android:paddingStart="@dimen/snooze_view_img_padding_start"
@@ -79,7 +79,7 @@
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             android:textColor="@color/icons"
-            />
+            /-->
 
 
     </RelativeLayout>

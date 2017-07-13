@@ -109,12 +109,13 @@
             android:paddingTop="@dimen/snooze_view_details_initial_padding"
             >
 
+            <!-- Account name-->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffffff"
-                android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                android:paddingTop="@dimen/snooze_view_action_padding_top"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
 
                 <ImageView
@@ -122,90 +123,149 @@
                     android:layout_height="wrap_content"
                     android:longClickable="false"
                     android:src="@drawable/ic_schedule_black_24dp"
-                    android:paddingStart="@dimen/snooze_view_img_padding_start"
-                    android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                    android:paddingRight="@dimen/snooze_view_img_padding_end"
-                    android:paddingLeft="@dimen/snooze_view_img_padding_start"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="10dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingLeft="@dimen/add_event_image_start"
+                    android:paddingRight="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
                     android:importantForAccessibility="no"
                     />
 
-                <TextView
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/account_name"
+                    android:text="Events (<username>@gmail.com)"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingRight="@dimen/add_event_date_end"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+            <!-- Date / time -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffffff"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_schedule_black_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingLeft="@dimen/add_event_image_start"
+                    android:paddingRight="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/add_event_date_from"
                     android:text="7/03/2018"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp"
-                    android:paddingStart="60dp"
-                    android:paddingEnd="20dp"
-                    android:paddingLeft="60dp"
-                    android:paddingRight="20dp"
-                    android:clickable="true"
-                    tools:ignore="HardcodedText"/>
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingRight="@dimen/add_event_date_end"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
 
-                <TextView
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/add_event_time_from"
                     android:text="13:00"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="40dp"
-                    android:paddingRight="40dp"
-                    android:paddingStart="10dp"
-                    android:paddingLeft="10dp"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingEnd="@dimen/add_event_time_end"
+                    android:paddingRight="@dimen/add_event_time_end"
+                    android:paddingStart="@dimen/add_event_time_start"
+                    android:paddingLeft="@dimen/add_event_time_start"
                     android:layout_alignBaseline="@id/add_event_date_from"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:clickable="true"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
 
 
-                <TextView
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/add_event_date_to"
                     android:text="7/03/2018"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp"
-                    android:paddingStart="60dp"
-                    android:paddingEnd="20dp"
-                    android:paddingLeft="60dp"
-                    android:paddingRight="20dp"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingRight="@dimen/add_event_date_end"
                     android:layout_below="@id/add_event_date_from"
-                    android:clickable="true"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
 
-                <TextView
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/add_event_time_to"
-                    android:text="13:00"
+                    android:text="14:00"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="40dp"
-                    android:paddingRight="40dp"
-                    android:paddingStart="10dp"
-                    android:paddingLeft="10dp"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingEnd="@dimen/add_event_time_end"
+                    android:paddingRight="@dimen/add_event_time_end"
+                    android:paddingStart="@dimen/add_event_time_start"
+                    android:paddingLeft="@dimen/add_event_time_start"
                     android:layout_alignBaseline="@id/add_event_date_to"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:clickable="true"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
 
 
             </RelativeLayout>
 
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+            <!-- Garbage -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -358,6 +358,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (settings.devModeEnabled) {
             menu.findItem(R.id.action_test_page)?.isVisible = true
+            menu.findItem(R.id.action_add_event)?.isVisible = true
         }
 
         return true
@@ -393,6 +394,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_test_page ->
                 startActivity(Intent(this, TestActivity::class.java))
+
+            R.id.action_add_event ->
+                startActivity(Intent(this, AddEventActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

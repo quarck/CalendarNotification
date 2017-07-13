@@ -384,6 +384,13 @@
         \n\nTo protect from accidentally dismissing the notification it is possible to use \'Snooze on swipe\' option (same location), it would chnage behavior of swiping off notification from dismissing the event to snoozing with #1st snooze preset
     </string>
     <string name="exit">Exit</string>
-    <string name="save_button_title">Save</string>
+    <string name="save_button_title">SAVE</string>
+    <string name="add_event">Add event</string>
+
+    <string name="discard_new_event">Discard?</string>
+    <string name="event_title_hint">Even title</string>
+    <string name="back_button">Back button</string>
+    <string name="save_button">Save button</string>
+
 </resources>
 

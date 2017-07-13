@@ -22,6 +22,9 @@
     <color name="primary_text_inverse">#3f737272</color>
     <color name="secondary_text_inverse">#3fb0b0b0</color>
 
+    <color name="event_title_color">#FFFFFF</color>
+    <color name="event_title_hint_color">#7f7f7f</color>
+
 <!--
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>

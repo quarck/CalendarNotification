@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
+        <!-- android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,7 +22,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextAppearance="@style/ToolbarTitle"
             android:elevation="@dimen/toolbar_elevation"
-            tools:targetApi="m"/>
+            tools:targetApi="m" / -->
 
     </android.support.design.widget.AppBarLayout>
 

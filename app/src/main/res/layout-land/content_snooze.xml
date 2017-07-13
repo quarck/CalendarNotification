@@ -28,7 +28,7 @@
             android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
             android:textAppearance="?android:textAppearanceLarge"
             android:textSize="24.0sp"
-            android:textColor="@color/icons"
+            android:textColor="@color/event_title_color"
             android:paddingBottom="@dimen/snooze_view_header_padding_bottom"
             android:paddingTop="@dimen/snooze_view_header_padding_top"
             android:paddingStart="@dimen/snooze_view_padding_start"

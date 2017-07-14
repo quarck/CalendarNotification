@@ -81,16 +81,28 @@
     <dimen name="compact_view_right_margin">10dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="add_event_text_start">70dp</dimen>
+
+
+    <dimen name="add_event_text_start">20dp</dimen>
+    <dimen name="add_event_text_end">20dp</dimen>
     <dimen name="add_event_image_start">20dp</dimen>
     <dimen name="add_event_image_end">16dp</dimen>
     <dimen name="add_event_padding_top">16dp</dimen>
     <dimen name="add_event_image_padding_bottom">10dp</dimen>
     <dimen name="add_event_padding_bottom">16dp</dimen>
-    <dimen name="add_event_date_end">20dp</dimen>
+    <dimen name="add_event_date_end">30dp</dimen>
     <dimen name="add_event_time_end">40dp</dimen>
-    <dimen name="add_event_time_start">20dp</dimen>
-    <dimen name="add_event_view_action_padding_top">8dp</dimen>
-    <dimen name="add_event_view_action_padding_bottom">8dp</dimen>
+    <dimen name="add_event_time_start">30dp</dimen>
+    <dimen name="add_event_view_action_padding_top">12dp</dimen>
+    <dimen name="add_event_view_action_padding_bottom">12dp</dimen>
+    <dimen name="add_event_view_event_title_max_height">160dp</dimen>
+    <dimen name="add_event_view_header_padding_top">16dp</dimen>
+    <dimen name="add_event_view_header_padding_bottom">24dp</dimen>
+    <dimen name="add_event_view_header_spacing">22dp</dimen>
+    <dimen name="add_event_view_padding_start">60dp</dimen>
+    <dimen name="add_event_view_padding_end">20dp</dimen>
+    <dimen name="add_event_view_img_padding_start">16dp</dimen>
+    <dimen name="add_event_view_img_padding_end">16dp</dimen>
+
 
 </resources>

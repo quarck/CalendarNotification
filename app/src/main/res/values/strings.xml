@@ -391,6 +391,7 @@
     <string name="event_title_hint">Even title</string>
     <string name="back_button">Back button</string>
     <string name="save_button">Save button</string>
+    <string name="add_location">Add location</string>
 
 </resources>
 

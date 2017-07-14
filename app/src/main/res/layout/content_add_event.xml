@@ -134,26 +134,26 @@
                     android:importantForAccessibility="no"
                     />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
                     android:id="@+id/account_name"
-                    android:text="Events (&lt;username&gt;@gmail.com)"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/primary_text"
-                    android:paddingBottom="@dimen/add_event_padding_bottom"
-                    android:paddingTop="@dimen/add_event_padding_top"
-                    android:paddingStart="@dimen/add_event_text_start"
-                    android:paddingLeft="@dimen/add_event_text_start"
-                    android:paddingEnd="@dimen/add_event_date_end"
-                    android:paddingRight="@dimen/add_event_date_end"
-                    tools:ignore="HardcodedText"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_toEndOf="@id/image_account_name"
                     android:layout_toRightOf="@id/image_account_name"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    />
+                    android:background="?android:attr/selectableItemBackground"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingRight="@dimen/add_event_date_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="Events (&lt;.."
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    tools:ignore="HardcodedText"
+                    android:clickable="true"/>
 
 
             </RelativeLayout>
@@ -271,6 +271,15 @@
 
             </RelativeLayout>
 
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+
             <!-- Location -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -296,26 +305,118 @@
                     />
 
                 <EditText
+                    android:id="@+id/event_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/event_location"
-                    android:text="@string/empty"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_toEndOf="@id/image_event_location"
+                    android:layout_toRightOf="@id/image_event_location"
                     android:hint="@string/add_location"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_text_end"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingRight="@dimen/add_event_text_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="@string/empty"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:textColorHint="@color/secondary_text"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+            <!-- notification -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffffff"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:id="@+id/image_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_schedule_black_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingLeft="@dimen/add_event_image_start"
+                    android:paddingRight="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_toEndOf="@id/image_notification"
+                    android:layout_toRightOf="@id/image_notification"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:padding="0dp"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/notification1"
+                        android:text="15 minutes before"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/primary_text"
+                        android:paddingBottom="@dimen/add_event_padding_bottom"
+                        android:paddingTop="@dimen/add_event_padding_top"
+                        android:paddingStart="@dimen/add_event_text_start"
+                        android:paddingLeft="@dimen/add_event_text_start"
+                        android:paddingEnd="@dimen/add_event_date_end"
+                        android:paddingRight="@dimen/add_event_date_end"
+                        tools:ignore="HardcodedText"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_notification"
+                    android:text="@string/add_notification"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/secondary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingStart="@dimen/add_event_text_start"
                     android:paddingLeft="@dimen/add_event_text_start"
-                    android:paddingEnd="@dimen/add_event_text_end"
-                    android:paddingRight="@dimen/add_event_text_end"
-                    android:layout_toEndOf="@id/image_event_location"
-                    android:layout_toRightOf="@id/image_event_location"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingRight="@dimen/add_event_date_end"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:layout_toEndOf="@id/image_notification"
+                    android:layout_toRightOf="@id/image_notification"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    />
 
+                    android:layout_below="@id/notifications"
+
+                    android:clickable="true"
+                    />
 
 
             </RelativeLayout>
@@ -329,7 +430,55 @@
                 />
 
 
+            <!-- Location -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffffff"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
 
+                <ImageView
+                    android:id="@+id/image_event_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_schedule_black_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingLeft="@dimen/add_event_image_start"
+                    android:paddingRight="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <EditText
+                    android:id="@+id/event_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_toEndOf="@id/image_event_note"
+                    android:layout_toRightOf="@id/image_event_note"
+                    android:hint="@string/add_note"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_text_end"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingRight="@dimen/add_event_text_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="@string/empty"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:maxLines="10"
+                    />
+
+
+            </RelativeLayout>
 
         </LinearLayout>
 

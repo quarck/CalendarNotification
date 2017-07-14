@@ -394,6 +394,7 @@
     <string name="add_location">Add location</string>
     <string name="add_note">Add note</string>
     <string name="add_notification">Add another notification</string>
+    <string name="all_day">All day</string>
 
 </resources>
 

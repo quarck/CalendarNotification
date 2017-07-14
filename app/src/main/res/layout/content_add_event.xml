@@ -190,6 +190,23 @@
                     android:importantForAccessibility="no"
                     />
 
+                <Switch
+                    android:id="@+id/switch_all_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingLeft="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingRight="@dimen/add_event_date_end"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/all_day"
+                    android:layout_toEndOf="@id/image_date_time"
+                    android:layout_toRightOf="@id/image_date_time"
+
+                    />
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -207,6 +224,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_toEndOf="@id/image_date_time"
                     android:layout_toRightOf="@id/image_date_time"
+                    android:layout_below="@id/switch_all_day"
                     />
 
                 <Button

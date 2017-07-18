@@ -47,6 +47,9 @@ import java.util.*
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)
 //       ...see Android O background limitations: https://github.com/quarck/CalendarNotification/issues/220
 
+// TODO: help and feedback: add notice about possible delay in responce and mention that app is non-commercial 
+// and etc..
+
 class TestActivity : Activity() {
 
     private val settings by lazy { Settings(this) }

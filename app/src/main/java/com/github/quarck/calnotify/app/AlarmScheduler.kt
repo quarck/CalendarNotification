@@ -79,7 +79,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
             }
             else { // if (nextEventAlarm != null) {
 
-                DevLog.info(context, LOG_TAG, "Cancelling alarms");
+                DevLog.info(context, LOG_TAG, "Cancelling alarms (snooze and reminder)");
 
                 context.alarmManager.cancelExactAndAlarm(
                         context,

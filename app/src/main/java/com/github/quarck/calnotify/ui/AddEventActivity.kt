@@ -2,26 +2,24 @@ package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.format.DateUtils
 import android.view.Menu
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
-
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
+import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.DateTimeUtils
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.R.string.dismiss
-import android.content.DialogInterface
-import android.widget.ArrayAdapter
-import com.github.quarck.calnotify.logs.DevLog
+import java.util.*
 
 
 class AddEventActivity : AppCompatActivity() {
@@ -53,6 +51,9 @@ class AddEventActivity : AppCompatActivity() {
     lateinit var calendar: CalendarRecord
 
     lateinit var settings: Settings
+
+    lateinit var from: Calendar
+    lateinit var to: Calendar
 
     var calendarProvider: CalendarProviderInterface = CalendarProvider
 
@@ -128,7 +129,30 @@ class AddEventActivity : AppCompatActivity() {
 
         notification1.setOnClickListener (this::onNotificationOneClick)
         addNotification.setOnClickListener (this::onAddNotificationClick)
+
+
+        // Set default date and time
+
+        val currentTime = System.currentTimeMillis()
+        from = DateTimeUtils.createCalendarTime(currentTime, 0, 0)
+        if (from.timeInMillis < currentTime)
+            from.timeInMillis += Consts.DAY_IN_MILLISECONDS
+
+        to = from
+        to.timeInMillis += Consts.HOUR_IN_MILLISECONDS
+
+        updateDateTimeUI();
     }
+
+    fun updateDateTimeUI() {
+
+        dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
+        timeFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+
+        dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
+        timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.add_event, menu)

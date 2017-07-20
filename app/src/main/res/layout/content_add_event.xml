@@ -60,7 +60,6 @@
             android:paddingRight="@dimen/add_event_view_img_padding_end"
             android:paddingLeft="@dimen/add_event_view_img_padding_start"
             android:background="?android:attr/selectableItemBackground"
-            android:onClick="onButtonCancelClick"
             android:contentDescription="@string/back_button"
             />
 
@@ -82,7 +81,6 @@
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             android:textColor="@color/icons"
-            android:onClick="onButtonSaveClick"
             tools:ignore="RelativeOverlap"
             android:contentDescription="@string/save_button"
             />

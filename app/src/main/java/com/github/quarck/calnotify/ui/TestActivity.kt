@@ -42,6 +42,8 @@ import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
 
+// TODO: add current UTC offset into the log
+
 // TODO: add event button (off by default)
 
 // TODO: option to run rescan service in foreground (could be helpful for ongoing android versions, off by default)

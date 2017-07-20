@@ -837,7 +837,8 @@ object CalendarProvider : CalendarProviderInterface {
                             CalendarContract.Calendars.ACCOUNT_NAME,
                             CalendarContract.Calendars.ACCOUNT_TYPE,
                             CalendarContract.Calendars.CALENDAR_COLOR,
-                            CalendarContract.Calendars.IS_PRIMARY
+                            CalendarContract.Calendars.IS_PRIMARY,
+                            CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL
                     )
 
             val uri = CalendarContract.Calendars.CONTENT_URI
@@ -854,8 +855,15 @@ object CalendarProvider : CalendarProviderInterface {
                 val accountType: String? = cursor.getString(4)
                 val color: Int? = cursor.getInt(5)
                 val isPrimary: Int? = cursor.getInt(6)
+                val accessLevel: Int? = cursor.getInt(7)
 
-                // Do something with the values...
+                val isEditable =
+                        when(accessLevel ?: 0) {
+                            CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR -> true
+                            CalendarContract.Calendars.CAL_ACCESS_OWNER -> true
+                            CalendarContract.Calendars.CAL_ACCESS_ROOT -> true
+                            else -> false
+                        }
 
                 ret.add(CalendarRecord(
                         calendarId = calID ?: -1L,
@@ -864,7 +872,8 @@ object CalendarProvider : CalendarProviderInterface {
                         accountType = accountType ?: "",
                         name = displayName ?: "",
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                        isPrimary = (isPrimary ?: 0) != 0
+                        isPrimary = (isPrimary ?: 0) != 0,
+                        isReadOnly = !isEditable
                 ))
             }
 

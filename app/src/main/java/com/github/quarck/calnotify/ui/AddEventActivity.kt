@@ -18,6 +18,11 @@ import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.R.string.dismiss
+import android.content.DialogInterface
+import android.widget.ArrayAdapter
+import com.github.quarck.calnotify.logs.DevLog
+
 
 class AddEventActivity : AppCompatActivity() {
 
@@ -44,6 +49,7 @@ class AddEventActivity : AppCompatActivity() {
 
     lateinit var note: EditText
 
+    lateinit var calendars: List<CalendarRecord>
     lateinit var calendar: CalendarRecord
 
     lateinit var settings: Settings
@@ -62,6 +68,7 @@ class AddEventActivity : AppCompatActivity() {
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
+        // get all the objects first
         eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
 
         buttonSave = find<Button?>(R.id.add_event_save) ?: throw Exception("Can't find add_event_save")
@@ -86,14 +93,41 @@ class AddEventActivity : AppCompatActivity() {
         note = find<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
 
 
+        // settings
         settings = Settings(this)
 
 
-        val calendars = calendarProvider.getCalendars(this)
-        calendar = calendars.filter { it.isPrimary }.firstOrNull() ?: throw Exception("No primary calendar")
+        // Default calendar
+        calendars = calendarProvider.getCalendars(this).filter { !it.isReadOnly }
 
+        if (calendars.isEmpty()) {
+            DevLog.error(this, LOG_TAG, "You have no calendars")
+            finish()
+        }
+
+        calendar = calendars.filter { it.isPrimary }.firstOrNull() ?: calendars[0]
+
+
+        // Initialize default values
         accountName.text = calendar.name
         eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+        // Set onClickListener-s
+        buttonSave.setOnClickListener (this::onButtonSaveClick)
+        buttonCancel.setOnClickListener (this::onButtonCancelClick)
+
+        accountName.setOnClickListener (this::onAccountClick)
+
+        switchAllDay.setOnClickListener (this::onSwitchAllDayClick)
+
+        dateFrom.setOnClickListener (this::onDateFromClick)
+        timeFrom.setOnClickListener (this::onTimeFromClick)
+
+        dateTo.setOnClickListener (this::onDateToClick)
+        timeTo.setOnClickListener (this::onTimeToClick)
+
+        notification1.setOnClickListener (this::onNotificationOneClick)
+        addNotification.setOnClickListener (this::onAddNotificationClick)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -122,7 +156,72 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
+    fun onAccountClick(v: View) {
+
+        // FIXME: needs custom nice layout instead of this
+        val builder = AlertDialog.Builder(this)
+        //builder.setIcon(R.drawable.ic_launcher)
+
+        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+
+        adapter.addAll(
+                calendars.filter { true }.map { it.name }.toList()
+        )
+
+//        builderSingle.setNegativeButton(R.string.cancel) {
+//            dialog, which ->
+//            dialog.dismiss()
+//        }
+
+        builder.setCancelable(true)
+
+        builder.setAdapter(adapter) {
+            dialog, which ->
+            val name = adapter.getItem(which)
+            val newCalendar = calendars.find { it.name == name }
+            if (newCalendar != null) {
+                calendar = newCalendar
+
+                accountName.text = calendar.name
+                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+            }
+        }
+        builder.show()
+    }
+
     fun onButtonSaveClick(v: View) {
 
+    }
+
+    fun onSwitchAllDayClick(v: View) {
+
+    }
+
+    fun onDateFromClick(v: View) {
+
+    }
+
+    fun onTimeFromClick(v: View) {
+
+    }
+
+    fun onDateToClick(v: View) {
+
+    }
+
+    fun onTimeToClick(v: View) {
+
+    }
+
+    fun onNotificationOneClick(v: View) {
+
+    }
+
+    fun onAddNotificationClick(v: View) {
+
+    }
+
+    companion object {
+        private const val LOG_TAG = "AddEventActivity"
     }
 }

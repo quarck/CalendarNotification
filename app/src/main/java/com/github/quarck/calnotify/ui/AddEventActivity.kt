@@ -2,6 +2,7 @@ package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -253,6 +254,27 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onTimeFromClick(v: View) {
 
+        val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
+
+        val dialog = TimePickerDialog(
+                this,
+                {
+                    picker, hour, min ->
+
+                    from.hourOfDay = hour
+                    from.minute = min
+
+                    to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+                    to.addMinutes(durationMinutes.toInt())
+
+                    updateDateTimeUI()
+                },
+                from.hourOfDay,
+                from.minute,
+                android.text.format.DateFormat.is24HourFormat(this)
+        )
+
+        dialog.show()
     }
 
     fun onDateToClick(v: View) {
@@ -285,6 +307,30 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onTimeToClick(v: View) {
 
+        val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
+
+        val dialog = TimePickerDialog(
+                this,
+                {
+                    picker, hour, min ->
+
+                    to.hourOfDay = hour
+                    to.minute = min
+
+                    if (to.before(from)) {
+                        Toast.makeText(this, getString(R.string.end_time_before_start_time), Toast.LENGTH_LONG).show()
+                        to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+                        to.addMinutes(durationMinutes.toInt())
+                    }
+
+                    updateDateTimeUI()
+                },
+                to.hourOfDay,
+                to.minute,
+                android.text.format.DateFormat.is24HourFormat(this)
+        )
+
+        dialog.show()
     }
 
     fun onNotificationOneClick(v: View) {

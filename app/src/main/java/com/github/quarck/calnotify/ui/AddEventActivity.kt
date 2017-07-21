@@ -1,6 +1,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -16,9 +17,7 @@ import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.utils.DateTimeUtils
-import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.*
 import java.util.*
 
 
@@ -133,13 +132,17 @@ class AddEventActivity : AppCompatActivity() {
 
         // Set default date and time
 
-        val currentTime = System.currentTimeMillis()
+        var currentTime = System.currentTimeMillis()
+        currentTime = currentTime - (currentTime % 1000)
+
         from = DateTimeUtils.createCalendarTime(currentTime, 0, 0)
         if (from.timeInMillis < currentTime)
-            from.timeInMillis += Consts.DAY_IN_MILLISECONDS
+            from.addDays(1)
 
-        to = from
-        to.timeInMillis += Consts.HOUR_IN_MILLISECONDS
+        to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+        to.addHours(1)
+
+        DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
         updateDateTimeUI();
     }
@@ -223,6 +226,29 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onDateFromClick(v: View) {
 
+        val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
+
+        val dialog = DatePickerDialog(
+                this,
+                {
+                    picker, year, month, day ->
+
+                    from.year = year
+                    from.month = month
+                    from.dayOfMonth = day
+
+                    to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+                    to.addMinutes(durationMinutes.toInt())
+
+                    updateDateTimeUI()
+
+                },
+                from.year,
+                from.month,
+                from.dayOfMonth
+        )
+        dialog.show()
+        //builder.setIcon(R.drawable.ic_launcher)
     }
 
     fun onTimeFromClick(v: View) {
@@ -231,7 +257,31 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onDateToClick(v: View) {
 
-    }
+        val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
+
+        val dialog = DatePickerDialog(
+                this,
+                {
+                    picker, year, month, day ->
+
+                    to.year = year
+                    to.month = month
+                    to.dayOfMonth = day
+
+                    if (to.before(from)) {
+                        Toast.makeText(this, getString(R.string.end_time_before_start_time), Toast.LENGTH_LONG).show()
+                        to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+                        to.addMinutes(durationMinutes.toInt())
+                    }
+
+                    updateDateTimeUI()
+
+                },
+                to.year,
+                to.month,
+                to.dayOfMonth
+        )
+        dialog.show()    }
 
     fun onTimeToClick(v: View) {
 

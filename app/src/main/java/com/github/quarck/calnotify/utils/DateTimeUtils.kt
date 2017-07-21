@@ -90,3 +90,14 @@ var Calendar.second: Int
     get() = this.get(Calendar.SECOND)
     set(value) = this.set(Calendar.SECOND, value)
 
+fun Calendar.addDays(days: Int) {
+    this.add(Calendar.DATE, days)
+}
+
+fun Calendar.addHours(hours: Int) {
+    this.add(Calendar.HOUR, hours)
+}
+
+fun Calendar.addMinutes(minutes: Int) {
+    this.add(Calendar.MINUTE, minutes)
+}

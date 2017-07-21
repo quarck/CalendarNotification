@@ -23,6 +23,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.DateTimeUtils
+import com.github.quarck.calnotify.utils.addDays
 import java.util.*
 
 object QuietHoursManager : QuietHoursManagerInterface {
@@ -59,12 +60,12 @@ object QuietHoursManager : QuietHoursManagerInterface {
         DevLog.debug(LOG_TAG, "getSilentUntil: ct=$currentTime, $from to $to");
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.add(Calendar.DATE, -1);
-        silentTo.add(Calendar.DATE, -1);
+        silentFrom.addDays(-1);
+        silentTo.addDays(-1);
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.add(Calendar.DATE, 1);
+            silentTo.addDays(1);
 
         var cnt = 0
 
@@ -77,8 +78,8 @@ object QuietHoursManager : QuietHoursManagerInterface {
                 break;
             }
 
-            silentFrom.add(Calendar.DATE, 1);
-            silentTo.add(Calendar.DATE, 1);
+            silentFrom.addDays(1);
+            silentTo.addDays(1);
 
             if (++cnt > 1000)
                 break;
@@ -112,12 +113,12 @@ object QuietHoursManager : QuietHoursManagerInterface {
         val silentTo = DateTimeUtils.createCalendarTime(currentTimes[0], to.component1(), to.component2())
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.add(Calendar.DATE, -1);
-        silentTo.add(Calendar.DATE, -1);
+        silentFrom.addDays(-1);
+        silentTo.addDays(-1);
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.add(Calendar.DATE, 1);
+            silentTo.addDays(1);
 
         var cnt = 0
 
@@ -139,8 +140,8 @@ object QuietHoursManager : QuietHoursManagerInterface {
             if (allPassed)
                 break
 
-            silentFrom.add(Calendar.DATE, 1);
-            silentTo.add(Calendar.DATE, 1);
+            silentFrom.addDays(1);
+            silentTo.addDays(1);
 
             if (++cnt > 1000)
                 break;

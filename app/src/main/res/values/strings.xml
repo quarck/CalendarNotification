@@ -395,6 +395,7 @@
     <string name="add_note">Add note</string>
     <string name="add_notification">Add another notification</string>
     <string name="all_day">All day</string>
+    <string name="end_time_before_start_time">End time before start time!</string>
 
 </resources>
 

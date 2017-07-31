@@ -33,6 +33,14 @@ object DateTimeUtils {
         return ret
     }
 
+    fun createUTCCalendarDate(year: Int, month: Int, dayOfMonth: Int): Calendar {
+        val ret = Calendar.getInstance(utcTimeZone)
+        ret.set(Calendar.YEAR, year)
+        ret.set(Calendar.MONTH, month)
+        ret.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        return ret
+    }
+
     fun createCalendarTime(timeMillis: Long, hour: Int, minute: Int): Calendar {
         val ret = Calendar.getInstance()
         ret.timeInMillis = timeMillis

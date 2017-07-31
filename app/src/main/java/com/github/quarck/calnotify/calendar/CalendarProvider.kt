@@ -718,6 +718,85 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
+    fun createEvent(
+            context: Context,
+            calendarId: Long,
+            title: String,
+            desc: String,
+            location: String,
+            startTime: Long,
+            endTime: Long,
+            isAllDay: Boolean,
+            reminder: Long
+    ): Long {
+
+        var ret = -1L;
+
+        DevLog.debug(LOG_TAG, "Request to create Event, startTime: $startTime, endTime: $endTime, reminder: $reminder");
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "createEvent: no permissions");
+            return -1;
+        }
+
+        val values = ContentValues()
+
+        values.put(CalendarContract.Events.TITLE, title);
+        values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, Time.getCurrentTimezone()); // Irish summer time
+        values.put(CalendarContract.Events.DESCRIPTION, desc);
+
+        values.put(CalendarContract.Events.DTSTART, startTime);
+        values.put(CalendarContract.Events.DTEND, endTime);
+
+        values.put(CalendarContract.Events.EVENT_LOCATION, location);
+
+        //
+
+        //values.put(CalendarContract.Events.EVENT_COLOR, 0x7fff0000); // just something
+
+        values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT);
+        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+        values.put(CalendarContract.Events.HAS_ALARM, 1);
+        values.put(CalendarContract.Events.ALL_DAY, if (isAllDay) 1 else 0);
+
+        //values.put(CalendarContract.Events.DURATION, duration);
+        //values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone);
+        //values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp);
+        //values.put(CalendarContract.Events.ORGANIZER, organizer);
+        //values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage);
+        //values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri);
+
+        values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+
+        try {
+            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+
+            // get the event ID that is the last element in the Uri
+            ret = uri.lastPathSegment.toLong()
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+        }
+
+        if (ret != -1L) {
+            // Now add reminders
+            val reminderValues = ContentValues()
+            reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder/Consts.MINUTE_IN_MILLISECONDS).toInt())
+            reminderValues.put(CalendarContract.Reminders.EVENT_ID, ret)
+            reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
+            context.contentResolver.insert(
+                    CalendarContract.Reminders.CONTENT_URI,
+                    reminderValues
+            )
+        }
+
+        return ret;
+    }
+
+
     private fun isRepeatingEvent(context: Context, event: EventAlertRecord)
             = isRepeatingEvent(context, event.eventId)
 

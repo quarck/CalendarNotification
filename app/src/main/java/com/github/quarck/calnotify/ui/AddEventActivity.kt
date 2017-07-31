@@ -3,8 +3,11 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ContentUris
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
@@ -14,6 +17,7 @@ import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
@@ -24,36 +28,37 @@ import java.util.*
 
 class AddEventActivity : AppCompatActivity() {
 
-    lateinit var eventTitleText: EditText
+    private lateinit var eventTitleText: EditText
 
-    lateinit var buttonSave: Button
-    lateinit var buttonCancel: ImageView
+    private lateinit var buttonSave: Button
+    private lateinit var buttonCancel: ImageView
 
-    lateinit var accountName: TextView
+    private lateinit var accountName: TextView
 
-    lateinit var switchAllDay: Switch
+    private lateinit var switchAllDay: Switch
 
-    lateinit var dateFrom: Button
-    lateinit var timeFrom: Button
+    private lateinit var dateFrom: Button
+    private lateinit var timeFrom: Button
 
-    lateinit var dateTo: Button
-    lateinit var timeTo: Button
+    private lateinit var dateTo: Button
+    private lateinit var timeTo: Button
 
-    lateinit var eventLocation: EditText
+    private lateinit var eventLocation: EditText
 
-    lateinit var notificationsLayout: LinearLayout
-    lateinit var notification1: TextView
-    lateinit var addNotification: TextView
+    private lateinit var notificationsLayout: LinearLayout
+    private lateinit var notification1: TextView
+    private lateinit var addNotification: TextView
 
-    lateinit var note: EditText
+    private lateinit var note: EditText
 
-    lateinit var calendars: List<CalendarRecord>
-    lateinit var calendar: CalendarRecord
+    private lateinit var calendars: List<CalendarRecord>
+    private lateinit var calendar: CalendarRecord
 
-    lateinit var settings: Settings
+    private lateinit var settings: Settings
 
-    lateinit var from: Calendar
-    lateinit var to: Calendar
+    private lateinit var from: Calendar
+    private lateinit var to: Calendar
+    private var isAllDay: Boolean = false
 
     var calendarProvider: CalendarProviderInterface = CalendarProvider
 
@@ -219,10 +224,57 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onButtonSaveClick(v: View) {
 
+        var startTime = from.timeInMillis
+        var endTime = to.timeInMillis
+
+        if (isAllDay) {
+            startTime = DateTimeUtils.createUTCCalendarDate(from.year, from.month, from.dayOfMonth).timeInMillis
+            endTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
+        }
+
+        val id =
+                CalendarProvider.createEvent(
+                        this,
+                        calendar.calendarId,
+                        eventTitleText.text.toString(),
+                        note.text.toString(),
+                        eventLocation.text.toString(),
+                        startTime,
+                        endTime,
+                        isAllDay,
+                        15*60000L // default reminder for now
+                )
+
+        if (id > 0) {
+            DevLog.debug(this, LOG_TAG, "Event created: id=$id")
+
+            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
+            val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+
+            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
+            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
+
+            startActivity(intent)
+
+        } else {
+            DevLog.error(this, LOG_TAG, "Failed to create event")
+        }
+
     }
 
     fun onSwitchAllDayClick(v: View) {
+        isAllDay = switchAllDay.isChecked
 
+        if (isAllDay) {
+            timeTo.visibility = View.GONE
+            timeFrom.visibility = View.GONE
+        }
+        else {
+            timeTo.visibility = View.VISIBLE
+            timeFrom.visibility = View.VISIBLE
+        }
+
+        updateDateTimeUI()
     }
 
     fun onDateFromClick(v: View) {

@@ -6,17 +6,23 @@ import android.app.TimePickerDialog
 import android.content.ContentUris
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
+import android.text.format.Time
 import android.view.Menu
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.addevent.AddEventPersistentState
+import com.github.quarck.calnotify.addevent.storage.NewEventRecord
+import com.github.quarck.calnotify.addevent.storage.NewEventReminder
+import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
 import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
@@ -60,6 +66,8 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var to: Calendar
     private var isAllDay: Boolean = false
 
+    private lateinit var persistentState: AddEventPersistentState
+
     var calendarProvider: CalendarProviderInterface = CalendarProvider
 
     val anyChanges: Boolean
@@ -73,6 +81,8 @@ class AddEventActivity : AppCompatActivity() {
 
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
+
+        persistentState = AddEventPersistentState(this)
 
         // get all the objects first
         eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
@@ -111,8 +121,13 @@ class AddEventActivity : AppCompatActivity() {
             finish()
         }
 
-        calendar = calendars.filter { it.isPrimary }.firstOrNull() ?: calendars[0]
-
+        val lastCalendar = persistentState.lastCalendar
+        if (lastCalendar != -1L) {
+            calendar = calendars.filter { it.calendarId == lastCalendar }.firstOrNull() ?: calendars[0]
+        }
+        else {
+            calendar = calendars.filter { it.isPrimary }.firstOrNull() ?: calendars[0]
+        }
 
         // Initialize default values
         accountName.text = calendar.name
@@ -155,11 +170,23 @@ class AddEventActivity : AppCompatActivity() {
 
     fun updateDateTimeUI() {
 
-        dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
-        timeFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+//        val is24hr = android.text.format.DateFormat.is24HourFormat(this)
 
-        dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR)
-        timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+        val dateFormat =
+                DateUtils.FORMAT_SHOW_DATE or
+                        DateUtils.FORMAT_SHOW_YEAR or
+                        DateUtils.FORMAT_SHOW_WEEKDAY or
+                        DateUtils.FORMAT_ABBREV_MONTH or
+                        DateUtils.FORMAT_ABBREV_WEEKDAY
+
+        val timeFormat =
+                DateUtils.FORMAT_SHOW_TIME
+
+        dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, dateFormat)
+        timeFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, timeFormat)
+
+        dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, dateFormat)
+        timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, timeFormat)
     }
 
 
@@ -198,7 +225,7 @@ class AddEventActivity : AppCompatActivity() {
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
 
         adapter.addAll(
-                calendars.filter { true }.map { it.name }.toList()
+                calendars.filter { true }.map { "${it.name} <${it.accountName}>" }.toList()
         )
 
 //        builderSingle.setNegativeButton(R.string.cancel) {
@@ -214,6 +241,8 @@ class AddEventActivity : AppCompatActivity() {
             val newCalendar = calendars.find { it.name == name }
             if (newCalendar != null) {
                 calendar = newCalendar
+
+                persistentState.lastCalendar = calendar.calendarId
 
                 accountName.text = calendar.name
                 eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
@@ -232,21 +261,33 @@ class AddEventActivity : AppCompatActivity() {
             endTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
         }
 
-        val id =
-                CalendarProvider.createEvent(
-                        this,
-                        calendar.calendarId,
-                        eventTitleText.text.toString(),
-                        note.text.toString(),
-                        eventLocation.text.toString(),
-                        startTime,
-                        endTime,
-                        isAllDay,
-                        15*60000L // default reminder for now
-                )
+        val newEvent = NewEventRecord(
+                id = -1L,
+                eventId = -1L,
+                calendarId = calendar.calendarId,
+                title = eventTitleText.text.toString(),
+                desc = note.text.toString(),
+                location = eventLocation.text.toString(),
+                timezone = Time.getCurrentTimezone(),
+                startTime = startTime,
+                endTime = endTime,
+                isAllDay = isAllDay,
+                repeatingRule = "",
+                colour = 0, // No specificed
+                reminders =  listOf(NewEventReminder(15*60000L, false))
+        )
+
+        val storage = NewEventsStorage(this)
+
+        storage.use { it.addEvent(newEvent) }
+
+        val id = CalendarProvider.createEvent(this, newEvent)
 
         if (id > 0) {
             DevLog.debug(this, LOG_TAG, "Event created: id=$id")
+
+            newEvent.eventId = id
+            storage.use { it.updateEvent(newEvent) }
 
             val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
             val intent = Intent(Intent.ACTION_VIEW).setData(uri)
@@ -301,6 +342,12 @@ class AddEventActivity : AppCompatActivity() {
                 from.month,
                 from.dayOfMonth
         )
+
+        val firstDayOfWeek = Settings(this).firstDayOfWeek
+        if (firstDayOfWeek != -1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            dialog.datePicker.firstDayOfWeek = firstDayOfWeek
+        }
+
         dialog.show()
         //builder.setIcon(R.drawable.ic_launcher)
     }
@@ -356,7 +403,13 @@ class AddEventActivity : AppCompatActivity() {
                 to.month,
                 to.dayOfMonth
         )
-        dialog.show()    }
+        val firstDayOfWeek = Settings(this).firstDayOfWeek
+        if (firstDayOfWeek != -1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            dialog.datePicker.firstDayOfWeek = firstDayOfWeek
+        }
+
+        dialog.show()
+    }
 
     fun onTimeToClick(v: View) {
 

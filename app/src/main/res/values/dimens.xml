@@ -83,9 +83,9 @@
     <dimen name="fab_margin">16dp</dimen>
 
 
-    <dimen name="add_event_text_start">20dp</dimen>
-    <dimen name="add_event_text_end">20dp</dimen>
-    <dimen name="add_event_image_start">20dp</dimen>
+    <dimen name="add_event_text_start">16dp</dimen>
+    <dimen name="add_event_text_end">16dp</dimen>
+    <dimen name="add_event_image_start">16dp</dimen>
     <dimen name="add_event_image_end">16dp</dimen>
     <dimen name="add_event_padding_top">16dp</dimen>
     <dimen name="add_event_image_padding_bottom">10dp</dimen>

@@ -23,7 +23,7 @@
     <color name="secondary_text_inverse">#3fb0b0b0</color>
 
     <color name="event_title_color">#FFFFFF</color>
-    <color name="event_title_hint_color">#bebebe</color>
+    <color name="event_title_hint_color">#CECECE</color>
 
 <!--
     <color name="primary">#3F51B5</color>

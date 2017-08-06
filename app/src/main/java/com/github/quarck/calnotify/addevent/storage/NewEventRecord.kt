@@ -43,7 +43,7 @@ fun String.deserializeNewEventReminders()
 
 data class NewEventRecord(
         var id: Long,
-        val eventId: Long,
+        var eventId: Long,
         val calendarId: Long,
         val title: String,
         val desc: String,

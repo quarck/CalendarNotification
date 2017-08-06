@@ -255,6 +255,7 @@ class AddEventActivity : AppCompatActivity() {
             intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
 
             startActivity(intent)
+            finish()
 
         } else {
             DevLog.error(this, LOG_TAG, "Failed to create event")

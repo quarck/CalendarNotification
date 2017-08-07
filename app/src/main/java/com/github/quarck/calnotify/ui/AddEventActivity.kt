@@ -224,9 +224,9 @@ class AddEventActivity : AppCompatActivity() {
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
 
-        adapter.addAll(
-                calendars.filter { true }.map { "${it.name} <${it.accountName}>" }.toList()
-        )
+        val listCalendars = calendars.filter { true }.map { "${it.name} <${it.accountName}>" }.toList()
+
+        adapter.addAll(listCalendars)
 
 //        builderSingle.setNegativeButton(R.string.cancel) {
 //            dialog, which ->
@@ -237,8 +237,7 @@ class AddEventActivity : AppCompatActivity() {
 
         builder.setAdapter(adapter) {
             dialog, which ->
-            val name = adapter.getItem(which)
-            val newCalendar = calendars.find { it.name == name }
+            val newCalendar = calendars.get(which)
             if (newCalendar != null) {
                 calendar = newCalendar
 

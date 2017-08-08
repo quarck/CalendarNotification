@@ -86,7 +86,7 @@
     <dimen name="add_event_text_start">16dp</dimen>
     <dimen name="add_event_text_end">16dp</dimen>
     <dimen name="add_event_image_start">16dp</dimen>
-    <dimen name="add_event_image_end">16dp</dimen>
+    <dimen name="add_event_image_end">8dp</dimen>
     <dimen name="add_event_padding_top">16dp</dimen>
     <dimen name="add_event_image_padding_bottom">10dp</dimen>
     <dimen name="add_event_padding_bottom">16dp</dimen>
@@ -99,7 +99,7 @@
     <dimen name="add_event_view_header_padding_top">16dp</dimen>
     <dimen name="add_event_view_header_padding_bottom">24dp</dimen>
     <dimen name="add_event_view_header_spacing">22dp</dimen>
-    <dimen name="add_event_view_padding_start">60dp</dimen>
+    <dimen name="add_event_view_padding_start">50dp</dimen>
     <dimen name="add_event_view_padding_end">20dp</dimen>
     <dimen name="add_event_view_img_padding_start">16dp</dimen>
     <dimen name="add_event_view_img_padding_end">16dp</dimen>

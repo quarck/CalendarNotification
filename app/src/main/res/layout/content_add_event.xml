@@ -43,7 +43,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:scrollbars = "vertical"
-            android:inputType="text"
+            android:inputType="text|textLongMessage|textCapSentences"
             tools:ignore="HardcodedText"
             />
 
@@ -79,7 +79,7 @@
             android:paddingTop="@dimen/snooze_view_img_padding_start"
             android:text="@string/save_button_title"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold"
+            android:textStyle="normal"
             android:textColor="@color/icons"
             tools:ignore="RelativeOverlap"
             android:contentDescription="@string/save_button"
@@ -338,7 +338,9 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:textColorHint="@color/secondary_text"
-                    android:background="?android:attr/selectableItemBackground"/>
+                    android:background="?android:attr/colorBackground"
+
+                    />
 
             </RelativeLayout>
 
@@ -488,7 +490,7 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:textColorHint="@color/secondary_text"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?android:attr/colorBackground"
                     android:maxLines="10"
                     />
 

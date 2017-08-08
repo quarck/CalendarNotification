@@ -137,14 +137,17 @@ class EventsStorageImplV9(val context: Context)
         catch (ex: SQLiteConstraintException) {
             DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
             // persist original notification id in this case
-            event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
-            ret = updateEventImpl(db, event)
+
+            val originalEvent = getEventImpl(db, event.eventId, event.instanceStartTime)
+
+            if (originalEvent != null) {
+                event.notificationId = originalEvent.notificationId
+                ret = updateEventImpl(db, event)
+            }
+            else {
+                ret = false
+            }
         }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
 
         return ret
     }
@@ -169,10 +172,6 @@ class EventsStorageImplV9(val context: Context)
         finally {
             db.endTransaction()
         }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
 
         return ret
     }
@@ -216,10 +215,6 @@ class EventsStorageImplV9(val context: Context)
                         "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
                         arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
 
-//        if (numRowsAffected != 1) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
         return numRowsAffected == 1
     }
 
@@ -253,11 +248,6 @@ class EventsStorageImplV9(val context: Context)
             db.endTransaction()
         }
 
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-
         return ret
     }
 
@@ -274,11 +264,6 @@ class EventsStorageImplV9(val context: Context)
                         values, // column/value
                         "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
                         arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
-
-
-//        if (numRowsAffected != 1) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
 
         return numRowsAffected == 1
     }
@@ -317,10 +302,6 @@ class EventsStorageImplV9(val context: Context)
         finally {
             db.endTransaction()
         }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
 
         return ret
     }

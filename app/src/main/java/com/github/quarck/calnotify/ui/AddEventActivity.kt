@@ -15,6 +15,7 @@ import android.text.format.DateUtils
 import android.text.format.Time
 import android.view.Menu
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
@@ -23,7 +24,6 @@ import com.github.quarck.calnotify.addevent.AddEventPersistentState
 import com.github.quarck.calnotify.addevent.storage.NewEventRecord
 import com.github.quarck.calnotify.addevent.storage.NewEventReminder
 import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
-import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
@@ -52,7 +52,7 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var eventLocation: EditText
 
     private lateinit var notificationsLayout: LinearLayout
-    private lateinit var notification1: TextView
+    private lateinit var notificationPrototype: TextView
     private lateinit var addNotification: TextView
 
     private lateinit var note: EditText
@@ -103,10 +103,12 @@ class AddEventActivity : AppCompatActivity() {
         eventLocation = find<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
 
         notificationsLayout = find<LinearLayout?>(R.id.notifications) ?: throw Exception("Can't find notifications")
-        notification1 = find<TextView?>(R.id.notification1) ?: throw Exception("Can't find notification1")
+        notificationPrototype = find<TextView?>(R.id.notificationPrototype) ?: throw Exception("Can't find notificationPrototype")
         addNotification = find<TextView?>(R.id.add_notification) ?: throw Exception("Can't find add_notification")
 
         note = find<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
+
+        notificationPrototype.visibility = View.GONE
 
 
         // settings
@@ -147,7 +149,7 @@ class AddEventActivity : AppCompatActivity() {
         dateTo.setOnClickListener (this::onDateToClick)
         timeTo.setOnClickListener (this::onTimeToClick)
 
-        notification1.setOnClickListener (this::onNotificationOneClick)
+        notificationPrototype.setOnClickListener (this::onNotificationOneClick)
         addNotification.setOnClickListener (this::onAddNotificationClick)
 
 
@@ -166,6 +168,8 @@ class AddEventActivity : AppCompatActivity() {
         DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
         updateDateTimeUI();
+
+        addNotificationView("15 mins")
     }
 
     fun updateDateTimeUI() {
@@ -442,7 +446,77 @@ class AddEventActivity : AppCompatActivity() {
 
     }
 
+    fun addNotificationView(title: String) {
+
+        val textView = TextView(this)
+        textView.text = title
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            textView.setTextAppearance(android.R.style.TextAppearance_Medium)
+        }
+        else {
+            textView.setTextAppearance(this, android.R.style.TextAppearance_Medium)
+        }
+
+        textView.setTextColor(notificationPrototype.textColors)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            textView.setPaddingRelative(
+                    notificationPrototype.paddingStart,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingEnd,
+                    notificationPrototype.paddingBottom)
+        }
+        else {
+            textView.setPadding(
+                    notificationPrototype.paddingLeft,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingRight,
+                    notificationPrototype.paddingBottom)
+        }
+
+        textView.isClickable = true
+        textView.background = notificationPrototype.background
+
+        val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        notificationsLayout.addView(textView, lp)
+    }
+
+
     fun onAddNotificationClick(v: View) {
+
+        val text1 = TextView(this)
+        text1.text = "Another notification"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            text1.setTextAppearance(android.R.style.TextAppearance_Medium)
+        }
+        else {
+            text1.setTextAppearance(this, android.R.style.TextAppearance_Medium)
+        }
+        text1.setTextColor(notificationPrototype.textColors)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            text1.setPaddingRelative(
+                    notificationPrototype.paddingStart,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingEnd,
+                    notificationPrototype.paddingBottom)
+        }
+        else {
+            text1.setPadding(
+                    notificationPrototype.paddingLeft,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingRight,
+                    notificationPrototype.paddingBottom)
+        }
+
+        text1.isClickable = true
+        text1.background = notificationPrototype.background
+
+        val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        notificationsLayout.addView(text1, lp)
 
     }
 

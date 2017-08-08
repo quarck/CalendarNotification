@@ -392,7 +392,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/notification1"
+                        android:id="@+id/notificationPrototype"
                         android:text="15 minutes before"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"

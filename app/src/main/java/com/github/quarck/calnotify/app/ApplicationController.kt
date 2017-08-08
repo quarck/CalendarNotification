@@ -132,7 +132,7 @@ object ApplicationController : EventMovedHandler {
         )
     }
 
-    fun onCalendarRescanForRescheduledFromService(context: Context) {
+    fun onCalendarRescanForRescheduledFromService(context: Context, userActionUntil: Long) {
 
         DevLog.info(context, LOG_TAG, "onCalendarRescanForRescheduledFromService")
 
@@ -150,14 +150,15 @@ object ApplicationController : EventMovedHandler {
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-            UINotifierService.notifyUI(context, isUserAction = false);
+            val isUserAction = (System.currentTimeMillis() < userActionUntil)
+            UINotifierService.notifyUI(context, isUserAction);
         }
         else {
             DevLog.debug(LOG_TAG, "No calendar changes detected")
         }
     }
 
-    fun onCalendarReloadFromService(context: Context) {
+    fun onCalendarReloadFromService(context: Context, userActionUntil: Long) {
 
         DevLog.info(context, LOG_TAG, "calendarReloadFromService")
 
@@ -175,7 +176,8 @@ object ApplicationController : EventMovedHandler {
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-            UINotifierService.notifyUI(context, isUserAction = false);
+            val isUserAction = (System.currentTimeMillis() < userActionUntil)
+            UINotifierService.notifyUI(context, isUserAction);
         }
         else {
             DevLog.debug(LOG_TAG, "No calendar changes detected")

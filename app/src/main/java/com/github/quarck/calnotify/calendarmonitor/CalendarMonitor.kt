@@ -80,7 +80,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(
                 context,
                 reloadCalendar = true,
-                rescanMonitor = doMonitorRescan
+                rescanMonitor = doMonitorRescan,
+                userActionUntil = System.currentTimeMillis() + Consts.MAX_USER_ACTION_DELAY
         )
     }
 
@@ -223,11 +224,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             context: Context,
             delayed: Int,
             reloadCalendar: Boolean,
-            rescanMonitor: Boolean
+            rescanMonitor: Boolean,
+            userActionUntil: Long
     ) {
         lastScan = System.currentTimeMillis()
 
-        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor)
+        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, userActionUntil)
     }
 
     override fun onRescanFromService(context: Context, intent: Intent?) {

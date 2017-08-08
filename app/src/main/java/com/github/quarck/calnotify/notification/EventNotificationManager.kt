@@ -61,14 +61,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     override fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
-        EventsStorage(context).use {
-            it.updateEvent(event,
-                    // do not update last event visibility, so preserve original sorting order in the activity
-                    // lastStatusChangeTime = System.currentTimeMillis(),
-                    displayStatus = EventDisplayStatus.Hidden)
+
+        if (event.displayStatus != EventDisplayStatus.Hidden) {
+            EventsStorage(context).use {
+                it.updateEvent(event, displayStatus = EventDisplayStatus.Hidden)
+            }
         }
 
-        postEventNotifications(context, formatter, true, event.eventId)
+        postEventNotifications(context, formatter, true, null)
     }
 
     override fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {

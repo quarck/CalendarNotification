@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.SnoozeActivityNoRecents"
     tools:showIn="@layout/activity_snooze"
-    android:background="#ffffffff">
+    android:background="@color/background">
 
 
     <RelativeLayout

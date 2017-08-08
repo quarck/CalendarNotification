@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffffff"
+        android:background="@color/background"
         android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
         android:paddingTop="@dimen/snooze_view_action_padding_top"
         android:id="@+id/layout_snooze_time"
@@ -89,7 +89,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/snooze_view_location_layout"
-        android:background="#ffffffff"
+        android:background="@color/background"
         android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
         android:paddingTop="@dimen/snooze_view_action_padding_top"
         android:visibility="gone">
@@ -152,7 +152,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFffffff"
+        android:background="@color/background"
         android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
         android:paddingTop="@dimen/snooze_view_action_padding_top">
 
@@ -624,7 +624,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFffffff"
+        android:background="@color/background"
         android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
         android:paddingTop="@dimen/snooze_view_action_padding_top"
         android:id="@+id/snooze_reschedule_layout"

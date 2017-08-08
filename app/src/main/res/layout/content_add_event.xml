@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.AddEventActivity"
     tools:showIn="@layout/activity_add_event"
-    android:background="#ffffffff">
+    android:background="@color/background">
 
 
     <RelativeLayout
@@ -111,7 +111,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
+                android:background="@color/background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -167,7 +167,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
+                android:background="@color/background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -299,7 +299,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
+                android:background="@color/background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -338,7 +338,7 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:textColorHint="@color/secondary_text"
-                    android:background="?android:attr/colorBackground"
+                    android:background="@color/background"
 
                     />
 
@@ -357,7 +357,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
+                android:background="@color/background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -451,7 +451,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffffff"
+                android:background="@color/background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -490,7 +490,7 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:textColorHint="@color/secondary_text"
-                    android:background="?android:attr/colorBackground"
+                    android:background="@color/background"
                     android:maxLines="10"
                     />
 

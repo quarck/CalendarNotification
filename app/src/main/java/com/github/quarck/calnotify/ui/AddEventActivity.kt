@@ -34,6 +34,8 @@ import java.util.*
 
 class AddEventActivity : AppCompatActivity() {
 
+    data class ReminderWrapper(val view: TextView, val reminder: NewEventReminder)
+
     private lateinit var eventTitleText: EditText
 
     private lateinit var buttonSave: Button
@@ -70,9 +72,13 @@ class AddEventActivity : AppCompatActivity() {
 
     var calendarProvider: CalendarProviderInterface = CalendarProvider
 
+    val reminders = mutableListOf<ReminderWrapper>()
+
     val anyChanges: Boolean
         get() {
-            return eventTitleText.text.isNotEmpty()
+            return eventTitleText.text.isNotEmpty() ||
+                    eventLocation.text.isNotEmpty() ||
+                    note.text.isNotEmpty()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,9 +155,7 @@ class AddEventActivity : AppCompatActivity() {
         dateTo.setOnClickListener (this::onDateToClick)
         timeTo.setOnClickListener (this::onTimeToClick)
 
-        notificationPrototype.setOnClickListener (this::onNotificationOneClick)
         addNotification.setOnClickListener (this::onAddNotificationClick)
-
 
         // Set default date and time
 
@@ -169,7 +173,7 @@ class AddEventActivity : AppCompatActivity() {
 
         updateDateTimeUI();
 
-        addNotificationView("15 mins")
+        addReminder(NewEventReminder(15*60000L, false))
     }
 
     fun updateDateTimeUI() {
@@ -274,7 +278,7 @@ class AddEventActivity : AppCompatActivity() {
                 isAllDay = isAllDay,
                 repeatingRule = "",
                 colour = 0, // No specificed
-                reminders =  listOf(NewEventReminder(15*60000L, false))
+                reminders =  reminders.map { it.reminder }.toList()
         )
 
         val storage = NewEventsStorage(this)
@@ -439,14 +443,20 @@ class AddEventActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    fun onNotificationOneClick(v: View) {
+    fun onNotificationClick(v: View) {
 
     }
 
-    fun addNotificationView(title: String) {
+    fun onAddNotificationClick(v: View) {
+        addReminder(NewEventReminder(15*60000L, false))
+    }
+
+    fun addReminder(reminder: NewEventReminder) {
 
         val textView = TextView(this)
-        textView.text = title
+        textView.text = "${reminder.time/60000L}m ${reminder.isEmail}" // FIXME
+
+        textView.setOnClickListener (this::onNotificationClick)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             textView.setTextAppearance(android.R.style.TextAppearance_Medium)
@@ -478,43 +488,8 @@ class AddEventActivity : AppCompatActivity() {
 
         val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         notificationsLayout.addView(textView, lp)
-    }
 
-
-    fun onAddNotificationClick(v: View) {
-
-        val text1 = TextView(this)
-        text1.text = "Another notification"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            text1.setTextAppearance(android.R.style.TextAppearance_Medium)
-        }
-        else {
-            text1.setTextAppearance(this, android.R.style.TextAppearance_Medium)
-        }
-        text1.setTextColor(notificationPrototype.textColors)
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            text1.setPaddingRelative(
-                    notificationPrototype.paddingStart,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingEnd,
-                    notificationPrototype.paddingBottom)
-        }
-        else {
-            text1.setPadding(
-                    notificationPrototype.paddingLeft,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingRight,
-                    notificationPrototype.paddingBottom)
-        }
-
-        text1.isClickable = true
-        text1.background = notificationPrototype.background
-
-        val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        notificationsLayout.addView(text1, lp)
-
+        reminders.add(ReminderWrapper(textView, reminder))
     }
 
     companion object {

@@ -24,6 +24,7 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.os.Build
 import android.provider.CalendarContract
 import android.text.format.Time
 import com.github.quarck.calnotify.Consts
@@ -905,33 +906,51 @@ object CalendarProvider : CalendarProviderInterface {
 
         try {
 
-            val fields =
-                    arrayOf(
-                            CalendarContract.Calendars._ID,
-                            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                            CalendarContract.Calendars.OWNER_ACCOUNT,
-                            CalendarContract.Calendars.ACCOUNT_NAME,
-                            CalendarContract.Calendars.ACCOUNT_TYPE,
-                            CalendarContract.Calendars.CALENDAR_COLOR,
-                            CalendarContract.Calendars.IS_PRIMARY,
-                            CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL
-                    )
+            val fields = mutableListOf(
+                    CalendarContract.Calendars._ID,
+                    CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                    CalendarContract.Calendars.NAME,
+                    CalendarContract.Calendars.OWNER_ACCOUNT,
+                    CalendarContract.Calendars.ACCOUNT_NAME,
+                    CalendarContract.Calendars.ACCOUNT_TYPE,
+                    CalendarContract.Calendars.CALENDAR_COLOR,
+
+                    CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
+                    CalendarContract.Calendars.CALENDAR_TIME_ZONE,
+                    CalendarContract.Calendars.SYNC_EVENTS,
+                    CalendarContract.Calendars.VISIBLE
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                fields.add(CalendarContract.Calendars.IS_PRIMARY)
+            }
 
             val uri = CalendarContract.Calendars.CONTENT_URI
 
-            val cursor = context.contentResolver.query(uri, fields, null, null, null);
+            val cursor = context.contentResolver.query(
+                    uri, fields.toTypedArray(), null, null, null);
 
             while (cursor != null && cursor.moveToNext()) {
 
                 // Get the field values
-                val calID: Long? = cursor.getLong(0);
-                val displayName: String? = cursor.getString(1);
-                val accountName: String? = cursor.getString(2);
-                val ownerName: String? = cursor.getString(3);
-                val accountType: String? = cursor.getString(4)
-                val color: Int? = cursor.getInt(5)
-                val isPrimary: Int? = cursor.getInt(6)
+                val calID: Long? = cursor.getLong(0)
+                val displayName: String? = cursor.getString(1)
+                val name: String? = cursor.getString(2)
+                val ownerAcconut: String? = cursor.getString(3)
+                val accountName: String? = cursor.getString(4)
+                val accountType: String? = cursor.getString(5)
+                val color: Int? = cursor.getInt(6)
                 val accessLevel: Int? = cursor.getInt(7)
+                val timeZone: String? = cursor.getString(8)
+                val syncEvents: Int? = cursor.getInt(9)
+                val visible: Int? = cursor.getInt(10)
+
+                val isPrimary: Int? =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            cursor.getInt(11)
+                        } else {
+                            0
+                        }
 
                 val isEditable =
                         when(accessLevel ?: 0) {
@@ -943,13 +962,17 @@ object CalendarProvider : CalendarProviderInterface {
 
                 ret.add(CalendarRecord(
                         calendarId = calID ?: -1L,
-                        owner = ownerName ?: "",
+                        owner = ownerAcconut ?: "",
                         accountName = accountName ?: "",
                         accountType = accountType ?: "",
-                        name = displayName ?: "",
+                        displayName = displayName ?: "",
+                        name = name ?: "",
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                         isPrimary = (isPrimary ?: 0) != 0,
-                        isReadOnly = !isEditable
+                        isReadOnly = !isEditable,
+                        isVisible = (visible ?: 0) != 0,
+                        isSynced = (syncEvents ?: 0) != 0,
+                        timeZone = timeZone ?: Time.getCurrentTimezone()
                 ))
             }
 

@@ -22,10 +22,14 @@ package com.github.quarck.calnotify.calendar
 data class CalendarRecord(
         val calendarId: Long,
         val owner: String,
-        val accountName: String,
+        val displayName: String,
         val name: String,
-        val color: Int,
+        val accountName: String,
         val accountType: String,
+        val timeZone: String,
+        val color: Int,
+        val isVisible: Boolean,
         val isPrimary: Boolean,
-        val isReadOnly: Boolean
+        val isReadOnly: Boolean,
+        val isSynced: Boolean
 )

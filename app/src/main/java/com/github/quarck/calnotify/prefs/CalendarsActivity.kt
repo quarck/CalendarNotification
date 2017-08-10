@@ -59,7 +59,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
         var entry: CalendarListEntry? = null
         var view: LinearLayout
-        var calendarOwner: TextView
+        var calendarAccountName: TextView
         var checkboxCalendarName: CheckBox
         var colorView: View
         var calendarEntryLayout: LinearLayout
@@ -68,7 +68,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
         init {
             view = itemView.find<LinearLayout>(R.id.linearLyaoutCalendarView)
 
-            calendarOwner = view.find<TextView>(R.id.textViewCalendarOwner)
+            calendarAccountName = view.find<TextView>(R.id.textViewCalendarOwner)
             checkboxCalendarName = view.find<CheckBox>(R.id.checkBoxCalendarSelection)
             colorView = view.find<View>(R.id.viewCalendarColor)
             calendarEntryLayout = view.find<LinearLayout>(R.id.linearLayoutCalendarEntry)
@@ -100,15 +100,15 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
             when (entry.type) {
                 CalendarListEntryType.Header -> {
-                    holder.calendarOwner.text = entry.headerTitle
-                    holder.calendarOwner.visibility = View.VISIBLE
+                    holder.calendarAccountName.text = entry.headerTitle
+                    holder.calendarAccountName.visibility = View.VISIBLE
                     holder.calendarEntryLayout.visibility = View.GONE
                     holder.spacingView.visibility = View.GONE
                 }
 
                 CalendarListEntryType.Calendar -> {
                     holder.checkboxCalendarName.text = entry.calendar?.name ?: ""
-                    holder.calendarOwner.visibility = View.GONE
+                    holder.calendarAccountName.visibility = View.GONE
                     holder.calendarEntryLayout.visibility = View.VISIBLE
                     holder.colorView.background = ColorDrawable(entry.calendar?.color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR)
                     holder.checkboxCalendarName.isChecked = entry.isHandled
@@ -117,7 +117,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
                 CalendarListEntryType.Divider -> {
                     holder.calendarEntryLayout.visibility = View.GONE
-                    holder.calendarOwner.visibility = View.GONE
+                    holder.calendarAccountName.visibility = View.GONE
                     holder.spacingView.visibility = View.VISIBLE
                 }
             }
@@ -182,16 +182,16 @@ class CalendarsActivity : AppCompatActivity() {
 
             val entries = mutableListOf<CalendarListEntry>()
 
-            // Arrange entries by owner calendar
-            for ((owner, type) in calendars.map { Pair(it.owner, it.accountType) }.toSet()) {
+            // Arrange entries by accountName calendar
+            for ((accountName, type) in calendars.map { Pair(it.accountName, it.accountType) }.toSet()) {
 
                 // Add group title
-                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = owner))
+                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = accountName))
 
-                // Add all the calendars for this owner
+                // Add all the calendars for this accountName
                 entries.addAll(
                         calendars
-                                .filter { it.owner == owner && it.accountType == type }
+                                .filter { it.accountName == accountName && it.accountType == type }
                                 .sortedBy { it.calendarId }
                                 .map {
                                     CalendarListEntry(

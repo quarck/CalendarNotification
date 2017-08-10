@@ -228,27 +228,24 @@ class AddEventActivity : AppCompatActivity() {
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
 
-        val listCalendars = calendars.filter { true }.map { "${it.name} <${it.accountName}>" }.toList()
+        val listCalendars = calendars.filter { !it.isReadOnly }.map { "${it.displayName} <${it.accountName}>" }.toList()
 
         adapter.addAll(listCalendars)
 
-//        builderSingle.setNegativeButton(R.string.cancel) {
-//            dialog, which ->
-//            dialog.dismiss()
-//        }
 
         builder.setCancelable(true)
 
         builder.setAdapter(adapter) {
             dialog, which ->
-            val newCalendar = calendars.get(which)
-            if (newCalendar != null) {
-                calendar = newCalendar
+            if (which in 0..calendars.size-1) {
+
+                calendar = calendars.get(which)
 
                 persistentState.lastCalendar = calendar.calendarId
 
                 accountName.text = calendar.name
-                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+                eventTitleText.background = ColorDrawable(
+                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
             }
         }
         builder.show()
@@ -271,7 +268,7 @@ class AddEventActivity : AppCompatActivity() {
                 title = eventTitleText.text.toString(),
                 desc = note.text.toString(),
                 location = eventLocation.text.toString(),
-                timezone = Time.getCurrentTimezone(),
+                timezone = calendar.timeZone,
                 startTime = startTime,
                 endTime = endTime,
                 isAllDay = isAllDay,

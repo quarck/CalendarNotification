@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentUris
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -12,7 +14,6 @@ import android.provider.CalendarContract
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
-import android.text.format.Time
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
@@ -28,13 +29,82 @@ import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: handle all day reminder creation
+// FIXME: handle all day reminder creation
+// FIXME: handle all day reminder creation
+// FIXME: handle all day reminder creation
+// FIXME: handle all day reminder creation
+// FIXME: handle all day reminder creation
+
+// FIXME: handle repeating events
+
+// FIXME: handle timezones
+
+fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
+
+    val ret = StringBuilder()
+
+    if (!isAllDay) {
+        val duration = EventFormatter(ctx).formatTimeDuration(this.time, 60L)
+
+        ret.append(
+                ctx.resources.getString(R.string.add_event_fmt_before).format(duration)
+        )
+    }
+    else {
+        var timeOfDayMillis = 0L
+        var fullDaysBefore = 0
+
+        if (this.time < 0L) { // on the day of event
+            timeOfDayMillis = -this.time
+        }
+        else {
+            fullDaysBefore = ((this.time / Consts.DAY_IN_MILLISECONDS)).toInt() + 1
+
+            val timeBefore2400 = this.time % Consts.DAY_IN_MILLISECONDS
+            timeOfDayMillis = Consts.DAY_IN_MILLISECONDS - timeBefore2400
+        }
+
+        val timeOfDayMinutes = timeOfDayMillis.toInt() / 1000 / 60
+
+        val cal = DateTimeUtils.createCalendarTime(System.currentTimeMillis())
+
+        cal.minute = timeOfDayMinutes % 60
+        cal.hourOfDay = timeOfDayMinutes / 60
+
+        val time = DateUtils.formatDateTime(ctx, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
+
+        when (fullDaysBefore) {
+            0 ->
+                ret.append(
+                        ctx.resources.getString(R.string.add_event_zero_days_before).format(time)
+                )
+            1 ->
+                ret.append(
+                        ctx.resources.getString(R.string.add_event_one_day_before).format(time)
+                )
+            else ->
+                ret.append(
+                        ctx.resources.getString(R.string.add_event_n_days_before).format(fullDaysBefore, time)
+                )
+        }
+    }
+
+    if (this.isEmail) {
+        ret.append(" ")
+        ret.append(ctx.resources.getString(R.string.add_event_as_email_suffix))
+    }
+
+    return ret.toString()
+}
 
 class AddEventActivity : AppCompatActivity() {
 
-    data class ReminderWrapper(val view: TextView, val reminder: NewEventReminder)
+    data class ReminderWrapper(val view: TextView, var reminder: NewEventReminder)
 
     private lateinit var eventTitleText: EditText
 
@@ -173,7 +243,7 @@ class AddEventActivity : AppCompatActivity() {
 
         updateDateTimeUI();
 
-        addReminder(NewEventReminder(15*60000L, false))
+        addReminder(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false))
     }
 
     fun updateDateTimeUI() {
@@ -228,7 +298,6 @@ class AddEventActivity : AppCompatActivity() {
 
         // FIXME: needs custom nice layout instead of this
         val builder = AlertDialog.Builder(this)
-        //builder.setIcon(R.drawable.ic_launcher)
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
 
@@ -445,16 +514,88 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onNotificationClick(v: View) {
 
+        val wrapper = reminders.find { it.view == v }
+
+        if (wrapper != null)
+            showAddReminderDialog(wrapper.reminder, wrapper.view)
     }
+
+    fun showAddReminderDialog(defaultReminder: NewEventReminder, existingReminderView: View?) {
+
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
+
+        val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
+        timeIntervalPicker.intervalMilliseconds = defaultReminder.time
+
+        val builder = AlertDialog.Builder(this)
+
+        builder.setView(dialogView)
+
+        builder.setPositiveButton(android.R.string.ok) {
+            _: DialogInterface?, _: Int ->
+
+            val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
+
+            if (existingReminderView != null)
+                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, false))
+            else
+                addReminder(NewEventReminder(intervalMilliseconds, false))
+        }
+
+        if (existingReminderView != null) {
+            builder.setNegativeButton(R.string.remove_reminder) {
+                _: DialogInterface?, _: Int ->
+                removeReminder(existingReminderView)
+            }
+        }
+        else {
+            builder.setNegativeButton(android.R.string.cancel) {
+                _: DialogInterface?, _: Int ->
+            }
+        }
+
+        builder.create().show()
+    }
+
 
     fun onAddNotificationClick(v: View) {
-        addReminder(NewEventReminder(15*60000L, false))
+        showAddReminderDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
     }
 
-    fun addReminder(reminder: NewEventReminder) {
+
+    private fun removeReminder(existingReminderView: View) {
+
+        val wrapper = reminders.find { it.view == existingReminderView }
+        if (wrapper != null) {
+            reminders.remove(wrapper)
+            notificationsLayout.removeView(wrapper.view)
+        }
+    }
+
+    private fun modifyReminder(existingReminderView: View, newReminder: NewEventReminder) {
+
+        if (reminders.find { it.reminder == newReminder && it.view != existingReminderView} != null) {
+            // we have another reminder with the same params in the list -- remove this one (cruel!!)
+            removeReminder(existingReminderView)
+            return
+        }
+
+        val wrapper = reminders.find { it.view == existingReminderView }
+        if (wrapper != null) {
+            wrapper.reminder = newReminder
+            wrapper.view.text = newReminder.toLocalizedString(this, isAllDay)
+        }
+    }
+
+    private fun addReminder(reminder: NewEventReminder) {
+
+        if (reminders.find { it.reminder == reminder} != null) {
+            DevLog.warn(this, LOG_TAG, "Not adding reminder: already in the list")
+            return
+        }
 
         val textView = TextView(this)
-        textView.text = "${reminder.time/60000L}m ${reminder.isEmail}" // FIXME
+        textView.text = reminder.toLocalizedString(this, isAllDay)
 
         textView.setOnClickListener (this::onNotificationClick)
 

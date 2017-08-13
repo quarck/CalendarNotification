@@ -40,8 +40,6 @@ import java.util.*
 // FIXME: handle all day reminder creation
 // FIXME: handle all day reminder creation
 
-// FIXME: isEmail is not handled
-
 // FIXME: handle repeating events
 
 // FIXME: handle timezones
@@ -530,6 +528,8 @@ class AddEventActivity : AppCompatActivity() {
         val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
         timeIntervalPicker.intervalMilliseconds = currentReminder.time
 
+        val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)
+
         val builder = AlertDialog.Builder(this)
 
         builder.setView(dialogView)
@@ -538,11 +538,12 @@ class AddEventActivity : AppCompatActivity() {
             _: DialogInterface?, _: Int ->
 
             val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
+            val isEmail = isEmailCb?.isChecked ?: false
 
             if (existingReminderView != null)
-                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, false))
+                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
             else
-                addReminder(NewEventReminder(intervalMilliseconds, false))
+                addReminder(NewEventReminder(intervalMilliseconds, isEmail))
         }
 
         if (existingReminderView != null) {

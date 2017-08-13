@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -73,6 +74,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
     private var refreshLayout: SwipeRefreshLayout? = null
+
+    private lateinit var floatingAddEvent: FloatingActionButton
 
     private lateinit var adapter: EventListAdapter
 
@@ -150,6 +153,15 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         calendarRescanEnabled = settings.enableCalendarRescan
+
+        floatingAddEvent = find<FloatingActionButton>(R.id.action_btn_add_event)
+
+        if (settings.devModeEnabled) {
+            floatingAddEvent.visibility = View.VISIBLE
+            floatingAddEvent.setOnClickListener {
+                startActivity(Intent(this, AddEventActivity::class.java))
+            }
+        }
 
         if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {
 

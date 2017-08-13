@@ -53,13 +53,4 @@
         android:visible="false"
         />
 
-    <item
-        android:id="@+id/action_add_event"
-        android:orderInCategory="10000"
-        app:showAsAction="never"
-        android:title="@string/add_event"
-        android:visible="false"
-        />
-
-
 </menu>

@@ -408,6 +408,7 @@
     <string name="add_event_one_day_before" formatted="false">Day before at %s</string>
     <string name="add_event_zero_days_before" formatted="false">On the day at %s</string>
     <string name="remove_reminder">Remove</string>
+    <string name="made_in_ireland">This software was made in Ireland</string>
 
     <string-array
         name="default_reminder_intervals">

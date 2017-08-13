@@ -40,6 +40,8 @@ import java.util.*
 // FIXME: handle all day reminder creation
 // FIXME: handle all day reminder creation
 
+// FIXME: only show handled calendars
+
 // FIXME: handle repeating events
 
 // FIXME: handle timezones

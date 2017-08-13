@@ -31,7 +31,7 @@
     <include layout="@layout/content_main"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/ic_add_white_24dp"
         android:id="@+id/action_btn_add_event"
         app:fabSize="normal"
         android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
         android:layout_margin="16dp"
         android:visibility="gone"
         android:elevation="@dimen/toolbar_elevation"
-        app:backgroundTint="#fffd3f3f"
+        app:backgroundTint="#134093"
         tools:targetApi="m"
         />
 

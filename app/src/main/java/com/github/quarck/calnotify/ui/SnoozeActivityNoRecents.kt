@@ -616,7 +616,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
     fun customSnoozeShowSimplifiedDialog(initialTimeValue: Long) {
 
         val intervalNames: Array<String> = this.resources.getStringArray(R.array.default_snooze_intervals)
-        val intervalValues = this.resources.getIntArray(R.array.default_snooze_intervals_milliseconds_values)
+        val intervalValues = this.resources.getIntArray(R.array.default_snooze_intervals_seconds_values)
 
         val builder = AlertDialog.Builder(this)
 
@@ -630,9 +630,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             dialog, which ->
             if (which in 0..intervalValues.size-1) {
 
-                val intervalMillis = intervalValues[which].toLong()
-                if (intervalMillis != -1L) {
-                    snoozeEvent(intervalMillis)
+                val intervalSeconds = intervalValues[which].toLong()
+                if (intervalSeconds != -1L) {
+                    snoozeEvent(intervalSeconds * 1000L)
                 } else {
                     customSnoozeShowDialog(initialTimeValue)
                 }

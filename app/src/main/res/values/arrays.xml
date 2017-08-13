@@ -54,15 +54,25 @@
     </integer-array>
 
     <integer-array
-        name="default_snooze_intervals_milliseconds_values">
-        <item>900000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>7200000</item>
-        <item>14400000</item>
-        <item>28800000</item>
-        <item>86400000</item>
+        name="default_snooze_intervals_seconds_values">
         <item>-1</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>2700</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>14400</item>
+        <item>21600</item>
+        <item>28800</item>
+        <item>43200</item>
+        <item>64800</item>
+        <item>86400</item>
+        <item>129600</item>
+        <item>172800</item>
+        <item>259200</item>
+        <item>345600</item>
+        <item>604800</item>
     </integer-array>
 
 

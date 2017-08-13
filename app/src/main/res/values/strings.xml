@@ -425,14 +425,24 @@
 
     <string-array
         name="default_snooze_intervals">
+        <item>Manual</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
+        <item>45 minutes</item>
         <item>1 hour</item>
         <item>2 hours</item>
+        <item>3 hours</item>
         <item>4 hours</item>
+        <item>6 hours</item>
         <item>8 hours</item>
+        <item>12 hours</item>
+        <item>18 hours</item>
         <item>1 day</item>
-        <item>Custom</item>
+        <item>1.5 days</item>
+        <item>2 days</item>
+        <item>3 days</item>
+        <item>4 days</item>
+        <item>7 days</item>
     </string-array>
 
 

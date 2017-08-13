@@ -40,4 +40,30 @@
         <item>1</item>
     </string-array>
 
+    <integer-array
+        name="default_reminder_intervals_milliseconds_values">
+        <item>60000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>14400000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+        <item>-1</item>
+    </integer-array>
+
+    <integer-array
+        name="default_snooze_intervals_milliseconds_values">
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>14400000</item>
+        <item>28800000</item>
+        <item>86400000</item>
+        <item>-1</item>
+    </integer-array>
+
+
 </resources>

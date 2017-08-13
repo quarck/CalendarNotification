@@ -409,5 +409,31 @@
     <string name="add_event_zero_days_before" formatted="false">On the day at %s</string>
     <string name="remove_reminder">Remove</string>
 
+    <string-array
+        name="default_reminder_intervals">
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>1 day</item>
+        <item>1 week</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array
+        name="default_snooze_intervals">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>1 day</item>
+        <item>Custom</item>
+    </string-array>
+
+
 </resources>
 

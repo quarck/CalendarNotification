@@ -40,6 +40,8 @@ import java.util.*
 // FIXME: handle all day reminder creation
 // FIXME: handle all day reminder creation
 
+// FIXME: isEmail is not handled
+
 // FIXME: handle repeating events
 
 // FIXME: handle timezones
@@ -232,9 +234,10 @@ class AddEventActivity : AppCompatActivity() {
         var currentTime = System.currentTimeMillis()
         currentTime = currentTime - (currentTime % 1000)
 
-        from = DateTimeUtils.createCalendarTime(currentTime, 0, 0)
-        if (from.timeInMillis < currentTime)
-            from.addDays(1)
+        from = DateTimeUtils.createCalendarTime(currentTime)
+        from.addHours(4)
+        from.minute = 0
+        from.second = 0
 
         to = DateTimeUtils.createCalendarTime(from.timeInMillis)
         to.addHours(1)
@@ -517,15 +520,15 @@ class AddEventActivity : AppCompatActivity() {
         val wrapper = reminders.find { it.view == v }
 
         if (wrapper != null)
-            showAddReminderDialog(wrapper.reminder, wrapper.view)
+            showAddReminderListDialog(wrapper.reminder, wrapper.view)
     }
 
-    fun showAddReminderDialog(defaultReminder: NewEventReminder, existingReminderView: View?) {
+    fun showAddReminderCustomDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
 
         val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
-        timeIntervalPicker.intervalMilliseconds = defaultReminder.time
+        timeIntervalPicker.intervalMilliseconds = currentReminder.time
 
         val builder = AlertDialog.Builder(this)
 
@@ -557,9 +560,60 @@ class AddEventActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    fun showAddReminderListDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+
+        if (currentReminder.isEmail)
+            return showAddReminderCustomDialog(currentReminder, existingReminderView)
+
+        val intervalNames: Array<String> = this.resources.getStringArray(R.array.default_reminder_intervals)
+        val intervalValues = this.resources.getIntArray(R.array.default_reminder_intervals_milliseconds_values)
+
+        if (intervalValues.find { it.toLong() == currentReminder.time } == null) {
+            // reminder is not one of standard ones - we have to show custom idalog
+            return showAddReminderCustomDialog(currentReminder, existingReminderView)
+        }
+
+        val builder = AlertDialog.Builder(this)
+
+        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+
+        adapter.addAll(intervalNames.toMutableList())
+
+        builder.setCancelable(true)
+
+        builder.setAdapter(adapter) {
+            dialog, which ->
+            if (which in 0..intervalValues.size-1) {
+
+                val intervalMillis = intervalValues[which].toLong()
+                if (intervalMillis != -1L) {
+                    if (existingReminderView != null)
+                        modifyReminder(existingReminderView, NewEventReminder(intervalMillis, false))
+                    else
+                        addReminder(NewEventReminder(intervalMillis, false))
+                } else {
+                    showAddReminderCustomDialog(currentReminder, existingReminderView)
+                }
+            }
+        }
+
+        if (existingReminderView != null) {
+            builder.setNegativeButton(R.string.remove_reminder) {
+                _: DialogInterface?, _: Int ->
+                removeReminder(existingReminderView)
+            }
+        }
+        else {
+            builder.setNegativeButton(android.R.string.cancel) {
+                _: DialogInterface?, _: Int ->
+            }
+        }
+
+        builder.show()
+    }
 
     fun onAddNotificationClick(v: View) {
-        showAddReminderDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
+        showAddReminderListDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
     }
 
 
@@ -610,6 +664,8 @@ class AddEventActivity : AppCompatActivity() {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DevLog.debug("", "Current padding: ${notificationPrototype.paddingStart} ${notificationPrototype.paddingTop} " +
+                    "${notificationPrototype.paddingEnd} ${notificationPrototype.paddingBottom}")
             textView.setPaddingRelative(
                     notificationPrototype.paddingStart,
                     notificationPrototype.paddingTop,
@@ -617,6 +673,8 @@ class AddEventActivity : AppCompatActivity() {
                     notificationPrototype.paddingBottom)
         }
         else {
+            DevLog.debug("", "Current padding[-]: ${notificationPrototype.paddingLeft} ${notificationPrototype.paddingTop} " +
+                    "${notificationPrototype.paddingRight} ${notificationPrototype.paddingBottom}")
             textView.setPadding(
                     notificationPrototype.paddingLeft,
                     notificationPrototype.paddingTop,

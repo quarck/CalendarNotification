@@ -610,7 +610,36 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonCustomSnoozeClick(v: View?) {
-        customSnoozeShowDialog(persistentState.lastCustomSnoozeIntervalMillis)
+        customSnoozeShowSimplifiedDialog(persistentState.lastCustomSnoozeIntervalMillis)
+    }
+
+    fun customSnoozeShowSimplifiedDialog(initialTimeValue: Long) {
+
+        val intervalNames: Array<String> = this.resources.getStringArray(R.array.default_snooze_intervals)
+        val intervalValues = this.resources.getIntArray(R.array.default_snooze_intervals_milliseconds_values)
+
+        val builder = AlertDialog.Builder(this)
+
+        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+
+        adapter.addAll(intervalNames.toMutableList())
+
+        builder.setCancelable(true)
+
+        builder.setAdapter(adapter) {
+            dialog, which ->
+            if (which in 0..intervalValues.size-1) {
+
+                val intervalMillis = intervalValues[which].toLong()
+                if (intervalMillis != -1L) {
+                    snoozeEvent(intervalMillis)
+                } else {
+                    customSnoozeShowDialog(initialTimeValue)
+                }
+            }
+        }
+
+        builder.show()
     }
 
     fun customSnoozeShowDialog(initialTimeValue: Long) {

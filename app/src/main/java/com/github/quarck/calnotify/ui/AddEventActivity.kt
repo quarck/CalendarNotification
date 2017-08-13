@@ -40,6 +40,14 @@ import java.util.*
 // FIXME: handle all day reminder creation
 // FIXME: handle all day reminder creation
 
+// FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
+
+// FIXME: handle back key (hardware)
+
+// FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
+
+// FIXME: correct UI icons 
+
 // FIXME: only show handled calendars
 
 // FIXME: handle repeating events

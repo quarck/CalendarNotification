@@ -46,7 +46,7 @@ import java.util.*
 
 // FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
 
-// FIXME: correct UI icons 
+// FIXME: correct UI icons
 
 // FIXME: only show handled calendars
 

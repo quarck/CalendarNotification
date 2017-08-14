@@ -34,11 +34,6 @@ import com.github.quarck.calnotify.utils.*
 import java.util.*
 
 // FIXME: handle all day reminder creation
-// FIXME: handle all day reminder creation
-// FIXME: handle all day reminder creation
-// FIXME: handle all day reminder creation
-// FIXME: handle all day reminder creation
-// FIXME: handle all day reminder creation
 
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
@@ -53,6 +48,8 @@ import java.util.*
 // FIXME: handle repeating events
 
 // FIXME: handle timezones
+
+// FIXME: needs custom nice layout for account selection
 
 fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -114,7 +111,7 @@ fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String 
 
 class AddEventActivity : AppCompatActivity() {
 
-    data class ReminderWrapper(val view: TextView, var reminder: NewEventReminder)
+    data class ReminderWrapper(val view: TextView, var reminder: NewEventReminder, val isForAllDay: Boolean)
 
     private lateinit var eventTitleText: EditText
 
@@ -254,7 +251,8 @@ class AddEventActivity : AppCompatActivity() {
 
         updateDateTimeUI();
 
-        addReminder(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false))
+        addReminder(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), false)
+        addReminder(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), true)
     }
 
     fun updateDateTimeUI() {
@@ -276,6 +274,18 @@ class AddEventActivity : AppCompatActivity() {
 
         dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, dateFormat)
         timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, timeFormat)
+    }
+
+    fun updateReminders() {
+
+        for (reminder in reminders) {
+            if (reminder.isForAllDay == isAllDay) {
+                reminder.view.visibility = View.VISIBLE
+            }
+            else {
+                reminder.view.visibility = View.GONE
+            }
+        }
     }
 
 
@@ -307,7 +317,6 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onAccountClick(v: View) {
 
-        // FIXME: needs custom nice layout instead of this
         val builder = AlertDialog.Builder(this)
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
@@ -345,6 +354,8 @@ class AddEventActivity : AppCompatActivity() {
             endTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
         }
 
+        val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
+
         val newEvent = NewEventRecord(
                 id = -1L,
                 eventId = -1L,
@@ -357,8 +368,8 @@ class AddEventActivity : AppCompatActivity() {
                 endTime = endTime,
                 isAllDay = isAllDay,
                 repeatingRule = "",
-                colour = 0, // No specificed
-                reminders =  reminders.map { it.reminder }.toList()
+                colour = 0, // Not specified
+                reminders =  remindersToAdd
         )
 
         val storage = NewEventsStorage(this)
@@ -401,6 +412,7 @@ class AddEventActivity : AppCompatActivity() {
         }
 
         updateDateTimeUI()
+        updateReminders()
     }
 
     fun onDateFromClick(v: View) {
@@ -553,7 +565,7 @@ class AddEventActivity : AppCompatActivity() {
             if (existingReminderView != null)
                 modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
             else
-                addReminder(NewEventReminder(intervalMilliseconds, isEmail))
+                addReminder(NewEventReminder(intervalMilliseconds, isEmail), isForAllDay = false)
         }
 
         if (existingReminderView != null) {
@@ -601,7 +613,7 @@ class AddEventActivity : AppCompatActivity() {
                     if (existingReminderView != null)
                         modifyReminder(existingReminderView, NewEventReminder(intervalMillis, false))
                     else
-                        addReminder(NewEventReminder(intervalMillis, false))
+                        addReminder(NewEventReminder(intervalMillis, false), isForAllDay = false)
                 } else {
                     showAddReminderCustomDialog(currentReminder, existingReminderView)
                 }
@@ -623,10 +635,60 @@ class AddEventActivity : AppCompatActivity() {
         builder.show()
     }
 
-    fun onAddNotificationClick(v: View) {
-        showAddReminderListDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
+    fun showAddReminderCustomAllDayDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+
+        // FIXME: change dialog completely, this one is wrong here
+        // FIXME: change dialog completely, this one is wrong here
+        // FIXME: change dialog completely, this one is wrong here
+        // FIXME: change dialog completely, this one is wrong here
+
+
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
+
+        val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
+        timeIntervalPicker.intervalMilliseconds = currentReminder.time
+
+        val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)
+
+        val builder = AlertDialog.Builder(this)
+
+        builder.setView(dialogView)
+
+        builder.setPositiveButton(android.R.string.ok) {
+            _: DialogInterface?, _: Int ->
+
+            val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
+            val isEmail = isEmailCb?.isChecked ?: false
+
+            if (existingReminderView != null)
+                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
+            else
+                addReminder(NewEventReminder(intervalMilliseconds, isEmail), isForAllDay = true)
+        }
+
+        if (existingReminderView != null) {
+            builder.setNegativeButton(R.string.remove_reminder) {
+                _: DialogInterface?, _: Int ->
+                removeReminder(existingReminderView)
+            }
+        }
+        else {
+            builder.setNegativeButton(android.R.string.cancel) {
+                _: DialogInterface?, _: Int ->
+            }
+        }
+
+        builder.create().show()
     }
 
+    fun onAddNotificationClick(v: View) {
+        if (!isAllDay) {
+            showAddReminderListDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
+        }
+        else {
+            showAddReminderCustomAllDayDialog(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), null)
+        }
+    }
 
     private fun removeReminder(existingReminderView: View) {
 
@@ -652,7 +714,7 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
-    private fun addReminder(reminder: NewEventReminder) {
+    private fun addReminder(reminder: NewEventReminder, isForAllDay: Boolean) {
 
         if (reminders.find { it.reminder == reminder} != null) {
             DevLog.warn(this, LOG_TAG, "Not adding reminder: already in the list")
@@ -675,8 +737,6 @@ class AddEventActivity : AppCompatActivity() {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            DevLog.debug("", "Current padding: ${notificationPrototype.paddingStart} ${notificationPrototype.paddingTop} " +
-                    "${notificationPrototype.paddingEnd} ${notificationPrototype.paddingBottom}")
             textView.setPaddingRelative(
                     notificationPrototype.paddingStart,
                     notificationPrototype.paddingTop,
@@ -684,8 +744,6 @@ class AddEventActivity : AppCompatActivity() {
                     notificationPrototype.paddingBottom)
         }
         else {
-            DevLog.debug("", "Current padding[-]: ${notificationPrototype.paddingLeft} ${notificationPrototype.paddingTop} " +
-                    "${notificationPrototype.paddingRight} ${notificationPrototype.paddingBottom}")
             textView.setPadding(
                     notificationPrototype.paddingLeft,
                     notificationPrototype.paddingTop,
@@ -699,7 +757,7 @@ class AddEventActivity : AppCompatActivity() {
         val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         notificationsLayout.addView(textView, lp)
 
-        reminders.add(ReminderWrapper(textView, reminder))
+        reminders.add(ReminderWrapper(textView, reminder, isForAllDay))
     }
 
     companion object {

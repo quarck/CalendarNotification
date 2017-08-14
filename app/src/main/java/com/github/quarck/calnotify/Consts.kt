@@ -128,4 +128,5 @@ object Consts {
     const val MAX_USER_ACTION_DELAY: Long = 1500L
 
     const val DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
+    const val DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before
 }

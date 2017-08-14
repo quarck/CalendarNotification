@@ -253,6 +253,8 @@ class AddEventActivity : AppCompatActivity() {
 
         addReminder(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), false)
         addReminder(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), true)
+
+        updateReminders()
     }
 
     fun updateDateTimeUI() {
@@ -319,7 +321,7 @@ class AddEventActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_medium)
 
         val listCalendars = calendars.filter { !it.isReadOnly }.map { "${it.displayName} <${it.accountName}>" }.toList()
 
@@ -598,7 +600,7 @@ class AddEventActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
 
         adapter.addAll(intervalNames.toMutableList())
 

@@ -620,7 +620,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
 
         adapter.addAll(intervalNames.toMutableList())
 

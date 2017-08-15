@@ -54,6 +54,18 @@
     </integer-array>
 
     <integer-array
+        name="default_reminder_intervals_all_day_seconds_values">
+        <item>-2147483648</item>     <!-- since both negative and positive values are legal here, -2^31 is used as an indicator for 'enter manually' -->
+        <item>57600</item>
+        <item>43200</item>
+        <item>21600</item>
+        <item>10800</item>
+        <item>-28800</item>
+        <item>-43200</item>
+    </integer-array>
+
+
+    <integer-array
         name="default_snooze_intervals_seconds_values">
         <item>-1</item>
         <item>900</item>

@@ -33,9 +33,15 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: fix event title padding and change text to just 'title'
+
+// FIXME: allday - give a list by default also with 'customize' option
+
 // FIXME: handle all day reminder creation
 
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
+
+// FIXME: main activity - remove 'refresh' button and increase timeout to show text abour calendar reload
 
 // FIXME: handle back key (hardware)
 
@@ -50,6 +56,8 @@ import java.util.*
 // FIXME: handle timezones
 
 // FIXME: needs custom nice layout for account selection
+
+// FIXME: validate reminders - max 28 days before!!
 
 fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -639,18 +647,20 @@ class AddEventActivity : AppCompatActivity() {
 
     fun showAddReminderCustomAllDayDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
 
-        // FIXME: change dialog completely, this one is wrong here
-        // FIXME: change dialog completely, this one is wrong here
-        // FIXME: change dialog completely, this one is wrong here
-        // FIXME: change dialog completely, this one is wrong here
+        val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_allday_notification, null);
 
+        val numberPicker = dialogView.find<NumberPicker>(R.id.number_picker_days_before)
+        val timePicker = dialogView.find<TimePicker>(R.id.time_picker_notification_time_of_day)
+        val isEmailCb = dialogView.find<CheckBox>(R.id.checkbox_as_email)
 
-        val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
+        numberPicker.minValue = 0
+        numberPicker.maxValue = 28
+        numberPicker.value = 1
 
-        val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
-        timeIntervalPicker.intervalMilliseconds = currentReminder.time
+        timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
+        timePicker.hourCompat = 18
+        timePicker.minuteCompat = 0
 
-        val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)
 
         val builder = AlertDialog.Builder(this)
 
@@ -659,13 +669,23 @@ class AddEventActivity : AppCompatActivity() {
         builder.setPositiveButton(android.R.string.ok) {
             _: DialogInterface?, _: Int ->
 
-            val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
-            val isEmail = isEmailCb?.isChecked ?: false
+            numberPicker.clearFocus()
+            timePicker.clearFocus()
+
+            val daysBefore = numberPicker.value
+            val hr = timePicker.hourCompat
+            val min = timePicker.minuteCompat
+
+            val daysInMilliseconds = daysBefore * Consts.DAY_IN_MILLISECONDS
+            val hrMinInMilliseconds = hr * Consts.HOUR_IN_MILLISECONDS + min * Consts.MINUTE_IN_MILLISECONDS
+            val reminderTimeMilliseconds = daysInMilliseconds - hrMinInMilliseconds
+
+            val isEmail = isEmailCb.isChecked
 
             if (existingReminderView != null)
-                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
+                modifyReminder(existingReminderView, NewEventReminder(reminderTimeMilliseconds, isEmail))
             else
-                addReminder(NewEventReminder(intervalMilliseconds, isEmail), isForAllDay = true)
+                addReminder(NewEventReminder(reminderTimeMilliseconds, isEmail), isForAllDay = true)
         }
 
         if (existingReminderView != null) {
@@ -683,12 +703,70 @@ class AddEventActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    fun showAddReminderListAllDayDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+
+        if (currentReminder.isEmail)
+            return showAddReminderCustomAllDayDialog(currentReminder, existingReminderView)
+
+        val reminderNames: Array<String> = this.resources.getStringArray(R.array.default_reminder_intervals_all_day)
+        val reminderValues = this.resources.getIntArray(R.array.default_reminder_intervals_all_day_seconds_values)
+
+        val enterManuallyValue = -2147483648
+
+        if (reminderValues.find { it.toLong() == currentReminder.time / 1000L } == null) {
+            // reminder is not one of standard ones - we have to show custom idalog
+            return showAddReminderCustomAllDayDialog(currentReminder, existingReminderView)
+        }
+
+        val builder = AlertDialog.Builder(this)
+
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
+
+        adapter.addAll(reminderNames.toMutableList())
+
+        builder.setCancelable(true)
+
+        builder.setAdapter(adapter) {
+            dialog, which ->
+            if (which in 0..reminderValues.size-1) {
+
+                val reminderSeconds = reminderValues[which]
+                if (reminderSeconds != enterManuallyValue) {
+
+                    val reminderTimeMillis = reminderSeconds.toLong() * 1000L
+
+                    if (existingReminderView != null)
+                        modifyReminder(existingReminderView, NewEventReminder(reminderTimeMillis, false))
+                    else
+                        addReminder(NewEventReminder(reminderTimeMillis, false), isForAllDay = true)
+                } else {
+                    showAddReminderCustomAllDayDialog(currentReminder, existingReminderView)
+                }
+            }
+        }
+
+        if (existingReminderView != null) {
+            builder.setNegativeButton(R.string.remove_reminder) {
+                _: DialogInterface?, _: Int ->
+                removeReminder(existingReminderView)
+            }
+        }
+        else {
+            builder.setNegativeButton(android.R.string.cancel) {
+                _: DialogInterface?, _: Int ->
+            }
+        }
+
+        builder.show()
+    }
+
+
     fun onAddNotificationClick(v: View) {
         if (!isAllDay) {
             showAddReminderListDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
         }
         else {
-            showAddReminderCustomAllDayDialog(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), null)
+            showAddReminderListAllDayDialog(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), null)
         }
     }
 
@@ -724,7 +802,7 @@ class AddEventActivity : AppCompatActivity() {
         }
 
         val textView = TextView(this)
-        textView.text = reminder.toLocalizedString(this, isAllDay)
+        textView.text = reminder.toLocalizedString(this, isForAllDay)
 
         textView.setOnClickListener (this::onNotificationClick)
 

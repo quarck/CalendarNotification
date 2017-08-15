@@ -15,9 +15,7 @@
         android:text="__DIALOG_TITLE__"
         android:id="@+id/textViewTimeIntervalTitle"
         android:layout_gravity="left"
-        android:paddingLeft="30dp"
         android:paddingStart="30dp"
-        android:paddingRight="10dp"
         android:paddingEnd="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
@@ -38,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/numberPickerTimeInterval"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="center"
             />
 
@@ -59,15 +57,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/notification_as_email"
-        android:paddingLeft="30dp"
-        android:paddingStart="30dp"
-        android:paddingRight="10dp"
+        android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
         android:paddingBottom="10dp"
-        android:textStyle="bold"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/primary_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center"
         />
 
 </LinearLayout>

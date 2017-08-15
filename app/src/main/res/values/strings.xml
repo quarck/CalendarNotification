@@ -409,6 +409,8 @@
     <string name="add_event_zero_days_before" formatted="false">On the day at %s</string>
     <string name="remove_reminder">Remove</string>
     <string name="made_in_ireland">This software was made in Ireland</string>
+    <string name="days_before">days before, at:</string>
+    <string name="remind">Remind</string>
 
     <string-array
         name="default_reminder_intervals">
@@ -424,8 +426,19 @@
     </string-array>
 
     <string-array
+        name="default_reminder_intervals_all_day">
+        <item>Enter manually</item>
+        <item>Day before at 8:00</item>
+        <item>Day before at 12:00</item>
+        <item>Day before at 18:00</item>
+        <item>Day before at 21:00</item>
+        <item>On the day at 8:00</item>
+        <item>On the day at 12:00</item>
+    </string-array>
+
+    <string-array
         name="default_snooze_intervals">
-        <item>Manual</item>
+        <item>Enter manually</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
         <item>45 minutes</item>

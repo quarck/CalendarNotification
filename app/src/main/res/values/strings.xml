@@ -460,5 +460,7 @@
 
     <string name="new_event_max_reminder_is_28_days">Max reminder interval is 28 days before the event</string>
 
+    <string name="add_event_event_title_hint">Title</string>
+
 </resources>
 

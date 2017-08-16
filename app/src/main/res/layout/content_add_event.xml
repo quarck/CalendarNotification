@@ -21,14 +21,15 @@
         android:elevation="@dimen/toolbar_elevation"
         tools:targetApi="m">
 
+        <!--             android:textSize="18.0sp"
+-->
         <EditText
             android:layout_width="match_parent"
             android:layout_height="@dimen/snooze_view_title_height"
             android:id="@+id/add_event_title"
             android:text="@string/empty"
-            android:hint="@string/event_title_hint"
+            android:hint="@string/add_event_event_title_hint"
             android:textAppearance="?android:textAppearanceLarge"
-            android:textSize="20.0sp"
             android:textColor="@color/event_title_color"
             android:textColorHint="@color/event_title_hint_color"
 
@@ -36,10 +37,8 @@
             android:paddingTop="@dimen/add_event_view_header_padding_top"
             android:paddingStart="@dimen/add_event_view_padding_start"
             android:paddingEnd="@dimen/add_event_view_padding_end"
-            android:paddingRight="@dimen/add_event_view_padding_end"
-            android:paddingLeft="@dimen/add_event_view_padding_start"
             android:maxHeight="@dimen/add_event_view_event_title_max_height"
-            android:gravity="start|left|bottom"
+            android:gravity="start|bottom"
             android:ellipsize="end"
             android:maxLines="1"
             android:scrollbars = "vertical"
@@ -57,8 +56,6 @@
             android:paddingBottom="@dimen/add_event_view_img_padding_end"
             android:paddingStart="@dimen/add_event_view_img_padding_start"
             android:paddingEnd="@dimen/add_event_view_img_padding_end"
-            android:paddingRight="@dimen/add_event_view_img_padding_end"
-            android:paddingLeft="@dimen/add_event_view_img_padding_start"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/back_button"
             />
@@ -68,13 +65,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:background="?android:attr/selectableItemBackground"
             android:longClickable="false"
             android:paddingBottom="@dimen/snooze_view_img_padding_start"
             android:paddingEnd="@dimen/snooze_view_img_padding_end"
-            android:paddingLeft="@dimen/snooze_view_img_padding_start"
-            android:paddingRight="@dimen/snooze_view_img_padding_end"
             android:paddingStart="@dimen/snooze_view_img_padding_start"
             android:paddingTop="@dimen/snooze_view_img_padding_start"
             android:text="@string/save_button_title"

@@ -35,11 +35,11 @@ import java.util.*
 
 // FIXME: fix event title padding and change text to just 'title'
 
+// FIXME: event title - m.b. smaller a bit
+
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
 // FIXME: main activity - remove 'refresh' button and increase timeout to show text abour calendar reload
-
-// FIXME: handle back key (hardware)
 
 // FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
 
@@ -52,8 +52,6 @@ import java.util.*
 // FIXME: handle timezones
 
 // FIXME: needs custom nice layout for account selection
-
-// FIXME: validate reminders - max 28 days before!!
 
 fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -286,7 +284,7 @@ class AddEventActivity : AppCompatActivity() {
         return true
     }
 
-    fun onButtonCancelClick(v: View) {
+    override fun onBackPressed() {
         if (anyChanges) {
 
             AlertDialog.Builder(this)
@@ -305,6 +303,10 @@ class AddEventActivity : AppCompatActivity() {
         else {
             finish()
         }
+    }
+
+    fun onButtonCancelClick(v: View) {
+        onBackPressed()
     }
 
     fun onAccountClick(v: View) {
@@ -600,7 +602,7 @@ class AddEventActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
 
-        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_medium)
 
         adapter.addAll(intervalNames.toMutableList())
 
@@ -715,7 +717,7 @@ class AddEventActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
 
-        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
+        val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_medium)
 
         adapter.addAll(reminderNames.toMutableList())
 

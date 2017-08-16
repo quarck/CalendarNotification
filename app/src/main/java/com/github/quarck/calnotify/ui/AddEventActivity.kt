@@ -241,8 +241,8 @@ class AddEventActivity : AppCompatActivity() {
 
         updateDateTimeUI();
 
-        addReminder(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), false)
-        addReminder(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), true)
+        addReminder(NewEventReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), false)
+        addReminder(NewEventReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), true)
 
         updateReminders()
     }
@@ -543,7 +543,8 @@ class AddEventActivity : AppCompatActivity() {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
 
-        val timeIntervalPicker = TimeIntervalPickerController(dialogView, null)
+        val timeIntervalPicker = TimeIntervalPickerController(dialogView, null,
+                Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE)
         timeIntervalPicker.intervalMilliseconds = currentReminder.time
 
         val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)
@@ -555,8 +556,13 @@ class AddEventActivity : AppCompatActivity() {
         builder.setPositiveButton(android.R.string.ok) {
             _: DialogInterface?, _: Int ->
 
-            val intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
+            var intervalMilliseconds = timeIntervalPicker.intervalMilliseconds
             val isEmail = isEmailCb?.isChecked ?: false
+
+            if (intervalMilliseconds > Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE) {
+                intervalMilliseconds = Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE
+                Toast.makeText(this, R.string.new_event_max_reminder_is_28_days, Toast.LENGTH_LONG).show()
+            }
 
             if (existingReminderView != null)
                 modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
@@ -640,7 +646,7 @@ class AddEventActivity : AppCompatActivity() {
         val isEmailCb = dialogView.find<CheckBox>(R.id.checkbox_as_email)
 
         numberPicker.minValue = 0
-        numberPicker.maxValue = 28
+        numberPicker.maxValue = Consts.NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE
         numberPicker.value = currentReminder.allDayDaysBefore
 
         timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
@@ -752,10 +758,10 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onAddNotificationClick(v: View) {
         if (!isAllDay) {
-            showAddReminderListDialog(NewEventReminder(Consts.DEFAULT_NEW_EVENT_REMINDER, false), null)
+            showAddReminderListDialog(NewEventReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), null)
         }
         else {
-            showAddReminderListAllDayDialog(NewEventReminder(Consts.DEFAULT_ALL_DAY_REMINDER, false), null)
+            showAddReminderListAllDayDialog(NewEventReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), null)
         }
     }
 

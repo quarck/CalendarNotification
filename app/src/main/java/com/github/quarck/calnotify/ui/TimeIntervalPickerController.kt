@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.view.View
+import android.widget.AdapterView
 import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.TextView
@@ -27,7 +28,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
-class TimeIntervalPickerController(val view: View, titleId: Int?) {
+class TimeIntervalPickerController(val view: View, titleId: Int?, val maxIntervalMilliseconds: Long = 0L) : AdapterView.OnItemSelectedListener {
 
     var numberPicker: NumberPicker
     var timeUnitsSpinners: Spinner
@@ -44,6 +45,8 @@ class TimeIntervalPickerController(val view: View, titleId: Int?) {
 
         timeUnitsSpinners.setSelection(MINUTES_ID)
 
+        timeUnitsSpinners.onItemSelectedListener = this
+
         numberPicker.minValue = 1
         numberPicker.maxValue = 100
     }
@@ -52,6 +55,34 @@ class TimeIntervalPickerController(val view: View, titleId: Int?) {
         numberPicker.clearFocus()
         timeUnitsSpinners.clearFocus()
     }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+        if (maxIntervalMilliseconds == 0L) // no cap - nothing to do
+            return
+
+        val maxValue =
+            when (timeUnitsSpinners.selectedItemPosition) {
+                MINUTES_ID ->
+                    maxIntervalMilliseconds / Consts.MINUTE_IN_MILLISECONDS
+                HOURS_ID ->
+                    maxIntervalMilliseconds / Consts.HOUR_IN_MILLISECONDS
+                DAYS_ID ->
+                    maxIntervalMilliseconds / Consts.DAY_IN_MILLISECONDS
+                else ->
+                    throw Exception("Unknown time unit")
+            }
+
+        numberPicker.maxValue =
+                if (maxValue < 100)
+                    maxValue.toInt()
+                else
+                    100
+    }
+
 
     var intervalMinutes: Int
         get() {

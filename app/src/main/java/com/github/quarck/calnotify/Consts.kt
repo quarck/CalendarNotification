@@ -127,9 +127,11 @@ object Consts {
 
     const val MAX_USER_ACTION_DELAY: Long = 1500L
 
-    const val DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
-    const val DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before
+    const val NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
+    const val NEW_EVENT_DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before
     const val NEW_EVENT_DEFAULT_ADD_HOURS: Int = 4
     // FIXME: move const below into the setting
     const val NEW_EVENT_DEFAULT_EVENT_DURATION_MINUTES: Int = 15
+    const val NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE: Int = 28
+    const val NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE: Long = 28L * DAY_IN_MILLISECONDS
 }

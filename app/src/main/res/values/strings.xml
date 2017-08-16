@@ -458,6 +458,7 @@
         <item>7 days</item>
     </string-array>
 
+    <string name="new_event_max_reminder_is_28_days">Max reminder interval is 28 days before the event</string>
 
 </resources>
 

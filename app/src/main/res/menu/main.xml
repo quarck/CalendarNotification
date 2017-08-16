@@ -52,5 +52,4 @@
         tools:ignore="HardcodedText"
         android:visible="false"
         />
-
 </menu>

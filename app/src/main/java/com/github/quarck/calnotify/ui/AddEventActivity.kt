@@ -33,10 +33,6 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
-// FIXME: fix event title padding and change text to just 'title'
-
-// FIXME: event title - m.b. smaller a bit
-
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
 // FIXME: main activity - remove 'refresh' button and increase timeout to show text abour calendar reload

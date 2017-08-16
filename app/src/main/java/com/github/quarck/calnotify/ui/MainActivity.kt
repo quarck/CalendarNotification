@@ -479,11 +479,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         reloadData()
     }
 
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onReloadButtonClick(v: View) {
-        reloadLayout.visibility = View.GONE;
-        reloadData();
-    }
+//    @Suppress("unused", "UNUSED_PARAMETER")
+//    fun onReloadButtonClick(v: View) {
+//        reloadLayout.visibility = View.GONE;
+//        reloadData();
+//    }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onRevertToCardViewClick(v: View) {

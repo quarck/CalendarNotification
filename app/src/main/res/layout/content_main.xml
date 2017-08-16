@@ -191,44 +191,21 @@
                 android:background="@color/divider"
                 />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_reload"
-                android:id="@+id/activity_main_button_reload"
-                android:visibility="visible"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/accent"
-                android:paddingStart="@dimen/activity_main_action_buttons_start_padding"
-                android:paddingLeft="@dimen/activity_main_action_buttons_start_padding"
-                android:paddingEnd="@dimen/activity_main_action_buttons_end_padding"
-                android:paddingRight="@dimen/activity_main_action_buttons_end_padding"
-                android:paddingTop="@dimen/activity_main_action_buttons_top_padding"
-                android:paddingBottom="@dimen/activity_main_action_buttons_bottom_padding"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:onClick="onReloadButtonClick"
-                android:textStyle="bold"
-                />
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/activity_main_rationale"
-                android:text="@string/new_events_detected"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:text="@string/calendar_was_changed_pull_down_to_refresh"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/primary_text"
-                android:gravity="left"
+                android:gravity="start"
                 android:paddingTop="@dimen/activity_main_text_pading_top"
                 android:paddingBottom="@dimen/activity_main_text_pading_bottom"
                 android:paddingStart="@dimen/activity_main_text_pading_start"
                 android:paddingEnd="@dimen/activity_main_text_pading_end"
-                android:paddingRight="@dimen/activity_main_text_pading_end"
-                android:paddingLeft="@dimen/activity_main_text_pading_start"
                 android:background="?android:attr/selectableItemBackground"
-                android:layout_toStartOf="@id/activity_main_button_reload"
-                android:layout_toLeftOf="@id/activity_main_button_reload"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 />
 
         </RelativeLayout>

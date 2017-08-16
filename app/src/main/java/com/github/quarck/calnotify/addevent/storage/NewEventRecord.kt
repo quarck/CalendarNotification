@@ -19,6 +19,8 @@
 
 package com.github.quarck.calnotify.addevent.storage
 
+import com.github.quarck.calnotify.Consts
+
 data class NewEventReminder(val time: Long, val isEmail: Boolean) {
 
     fun serialize() = "$time,${if(isEmail) 1 else 0}"
@@ -32,6 +34,27 @@ data class NewEventReminder(val time: Long, val isEmail: Boolean) {
             )
         }
     }
+
+    val allDayDaysBefore: Int
+        get() = ((this.time + Consts.DAY_IN_MILLISECONDS) / Consts.DAY_IN_MILLISECONDS).toInt()
+
+    val allDayHourOfDayAndMinute: Pair<Int, Int>
+        get() {
+            val timeOfDayMillis =
+                    if (this.time >= 0L) { // on the day of event
+                        Consts.DAY_IN_MILLISECONDS - this.time % Consts.DAY_IN_MILLISECONDS
+                    }
+                    else  {
+                        -this.time
+                    }
+
+            val timeOfDayMinutes = timeOfDayMillis.toInt() / 1000 / 60
+
+            val minute = timeOfDayMinutes % 60
+            val hourOfDay = timeOfDayMinutes / 60
+
+            return Pair(hourOfDay, minute)
+        }
 }
 
 fun List<NewEventReminder>.serialize()

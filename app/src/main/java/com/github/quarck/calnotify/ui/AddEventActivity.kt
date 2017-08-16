@@ -35,10 +35,6 @@ import java.util.*
 
 // FIXME: fix event title padding and change text to just 'title'
 
-// FIXME: allday - give a list by default also with 'customize' option
-
-// FIXME: handle all day reminder creation
-
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
 // FIXME: main activity - remove 'refresh' button and increase timeout to show text abour calendar reload
@@ -71,25 +67,10 @@ fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String 
         )
     }
     else {
-        var timeOfDayMillis = 0L
-        var fullDaysBefore = 0
+        val fullDaysBefore = allDayDaysBefore
+        val (hr, min) = allDayHourOfDayAndMinute
 
-        if (this.time < 0L) { // on the day of event
-            timeOfDayMillis = -this.time
-        }
-        else {
-            fullDaysBefore = ((this.time / Consts.DAY_IN_MILLISECONDS)).toInt() + 1
-
-            val timeBefore2400 = this.time % Consts.DAY_IN_MILLISECONDS
-            timeOfDayMillis = Consts.DAY_IN_MILLISECONDS - timeBefore2400
-        }
-
-        val timeOfDayMinutes = timeOfDayMillis.toInt() / 1000 / 60
-
-        val cal = DateTimeUtils.createCalendarTime(System.currentTimeMillis())
-
-        cal.minute = timeOfDayMinutes % 60
-        cal.hourOfDay = timeOfDayMinutes / 60
+        val cal = DateTimeUtils.createCalendarTime(System.currentTimeMillis(), hr, min)
 
         val time = DateUtils.formatDateTime(ctx, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
 
@@ -248,12 +229,13 @@ class AddEventActivity : AppCompatActivity() {
         currentTime = currentTime - (currentTime % 1000)
 
         from = DateTimeUtils.createCalendarTime(currentTime)
-        from.addHours(4)
+        from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)
         from.minute = 0
         from.second = 0
 
         to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-        to.addHours(1)
+        // FIXME: configure default event duration in the settings
+        to.addMinutes(Consts.NEW_EVENT_DEFAULT_EVENT_DURATION_MINUTES)
 
         DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
@@ -549,8 +531,12 @@ class AddEventActivity : AppCompatActivity() {
 
         val wrapper = reminders.find { it.view == v }
 
-        if (wrapper != null)
-            showAddReminderListDialog(wrapper.reminder, wrapper.view)
+        if (wrapper != null) {
+            if (wrapper.isForAllDay)
+                showAddReminderListAllDayDialog(wrapper.reminder, wrapper.view)
+            else
+                showAddReminderListDialog(wrapper.reminder, wrapper.view)
+        }
     }
 
     fun showAddReminderCustomDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
@@ -655,11 +641,14 @@ class AddEventActivity : AppCompatActivity() {
 
         numberPicker.minValue = 0
         numberPicker.maxValue = 28
-        numberPicker.value = 1
+        numberPicker.value = currentReminder.allDayDaysBefore
 
         timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
-        timePicker.hourCompat = 18
-        timePicker.minuteCompat = 0
+
+        val (hr, min) = currentReminder.allDayHourOfDayAndMinute
+
+        timePicker.hourCompat = hr
+        timePicker.minuteCompat = min
 
 
         val builder = AlertDialog.Builder(this)

@@ -129,4 +129,7 @@ object Consts {
 
     const val DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
     const val DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before
+    const val NEW_EVENT_DEFAULT_ADD_HOURS: Int = 4
+    // FIXME: move const below into the setting
+    const val NEW_EVENT_DEFAULT_EVENT_DURATION_MINUTES: Int = 15
 }

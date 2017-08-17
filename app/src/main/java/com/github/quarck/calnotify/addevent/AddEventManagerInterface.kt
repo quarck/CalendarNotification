@@ -17,23 +17,18 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.addevent
 
-import android.database.sqlite.SQLiteDatabase
+import android.content.Context
+import com.github.quarck.calnotify.addevent.storage.NewEventRecord
 
-interface NewEventsStorageImplInterface {
-    fun createDb(db: SQLiteDatabase)
+interface AddEventManagerInterface {
 
-    fun addEventImpl(db: SQLiteDatabase, event: NewEventRecord)
-
-    fun deleteEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun deleteEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
-
-    fun updateEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun updateEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
-
-    fun getEventsImpl(db: SQLiteDatabase): List<NewEventRecord>
-
-    fun dropAll(db: SQLiteDatabase)
-
+    /**
+     * Returns true on usccess, and 'event' is updated with the eventId of newly created
+     * event
+     * @param [context] - Android context
+     * @param [event] - new event struct to create
+     */
+    fun createEvent(context: Context, event: NewEventRecord): Boolean
 }

@@ -86,6 +86,14 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     DevLog.error(this, LOG_TAG, "Exception while rescannning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
                 }
             }
+
+            // Always rescan AddEventMonitor
+            try {
+                ApplicationController.AddEventMonitorInstance.onRescanFromService(this, intent)
+            }
+            catch (ex: Exception) {
+                DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+            }
         }
     }
 

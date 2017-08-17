@@ -21,6 +21,7 @@ import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.addevent.AddEventManager
 import com.github.quarck.calnotify.addevent.AddEventPersistentState
 import com.github.quarck.calnotify.addevent.storage.NewEventRecord
 import com.github.quarck.calnotify.addevent.storage.NewEventReminder
@@ -35,8 +36,6 @@ import java.util.*
 
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
-// FIXME: main activity - remove 'refresh' button and increase timeout to show text abour calendar reload
-
 // FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
 
 // FIXME: correct UI icons
@@ -48,6 +47,9 @@ import java.util.*
 // FIXME: handle timezones
 
 // FIXME: needs custom nice layout for account selection
+
+// FIXME: configure default event duration in the settings
+
 
 fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -228,7 +230,6 @@ class AddEventActivity : AppCompatActivity() {
         from.second = 0
 
         to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-        // FIXME: configure default event duration in the settings
         to.addMinutes(Consts.NEW_EVENT_DEFAULT_EVENT_DURATION_MINUTES)
 
         DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
@@ -362,19 +363,11 @@ class AddEventActivity : AppCompatActivity() {
                 reminders =  remindersToAdd
         )
 
-        val storage = NewEventsStorage(this)
+        val added = AddEventManager(CalendarProvider).createEvent(this, newEvent)
+        if (added) {
+            DevLog.debug(this, LOG_TAG, "Event created: id=${newEvent.eventId}")
 
-        storage.use { it.addEvent(newEvent) }
-
-        val id = CalendarProvider.createEvent(this, newEvent)
-
-        if (id > 0) {
-            DevLog.debug(this, LOG_TAG, "Event created: id=$id")
-
-            newEvent.eventId = id
-            storage.use { it.updateEvent(newEvent) }
-
-            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
+            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, newEvent.eventId);
             val intent = Intent(Intent.ACTION_VIEW).setData(uri)
 
             intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
@@ -385,8 +378,12 @@ class AddEventActivity : AppCompatActivity() {
 
         } else {
             DevLog.error(this, LOG_TAG, "Failed to create event")
-        }
 
+            AlertDialog.Builder(this)
+                    .setMessage(R.string.new_event_failed_to_create_event)
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .show()
+        }
     }
 
     fun onSwitchAllDayClick(v: View) {

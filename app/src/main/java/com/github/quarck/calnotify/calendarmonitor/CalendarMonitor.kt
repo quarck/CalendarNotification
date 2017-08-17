@@ -234,14 +234,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onRescanFromService(context: Context, intent: Intent?) {
 
-        if (!Settings(context).enableCalendarRescan) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService - manual scan disabled")
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
-        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")
+        // Always schedule it regardless of..
+        schedulePeriodicRescanAlarm(context)
+
+        if (!Settings(context).enableCalendarRescan) {
+            DevLog.error(context, LOG_TAG, "onRescanFromService - manual scan disabled")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
@@ -253,8 +256,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         try {
 
             val scanStart = System.currentTimeMillis()
-
-            schedulePeriodicRescanAlarm(context)
 
             val state = CalendarMonitorState(context)
 

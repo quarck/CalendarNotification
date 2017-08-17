@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.calendar
 import android.content.ContentResolver
 import android.content.Context
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.addevent.storage.NewEventRecord
 
 interface CalendarProviderInterface {
 
@@ -52,4 +53,6 @@ interface CalendarProviderInterface {
     fun isRepeatingEvent(context: Context, eventId: Long): Boolean?
 
     fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long>
+
+    fun createEvent(context: Context, event: NewEventRecord): Long
 }

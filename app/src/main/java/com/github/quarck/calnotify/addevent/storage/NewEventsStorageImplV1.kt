@@ -88,10 +88,12 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         val values = eventRecordToContentValues(event)
 
         try {
-            db.insertOrThrow(TABLE_NAME, // table
+            val id = db.insertOrThrow(TABLE_NAME, // table
                     null, // nullColumnHack
                     values) // key/value -> keys = column names/ values = column
             // values
+
+            event.id = id
         }
         catch (ex: SQLiteConstraintException) {
 //            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB!")
@@ -106,6 +108,22 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
 
     }
 
+    override fun deleteEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>) {
+
+        try {
+            db.beginTransaction()
+
+            for (event in events) {
+                deleteEventImpl(db, event)
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+    }
+
     override fun updateEventImpl(db: SQLiteDatabase, entry: NewEventRecord) {
         val values = eventRecordToContentValues(entry)
 
@@ -115,6 +133,20 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
                 arrayOf(entry.id.toString()))
     }
 
+    override fun updateEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>) {
+        try {
+            db.beginTransaction()
+
+            for (event in events) {
+                updateEventImpl(db, event)
+            }
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+    }
 
     override fun getEventsImpl(db: SQLiteDatabase): List<NewEventRecord> {
 

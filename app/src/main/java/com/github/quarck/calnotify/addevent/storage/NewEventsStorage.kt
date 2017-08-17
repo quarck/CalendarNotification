@@ -90,8 +90,15 @@ class NewEventsStorage(val context: Context)
     override fun deleteEvent(event: NewEventRecord)
             = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
 
+    override fun deleteEvents(events: List<NewEventRecord>)
+            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
+
     override fun updateEvent(event: NewEventRecord)
             = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, event) } }
+
+    override fun updateEvents(events: List<NewEventRecord>)
+            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
+
 
     override val events: List<NewEventRecord>
         get() = synchronized(NewEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }

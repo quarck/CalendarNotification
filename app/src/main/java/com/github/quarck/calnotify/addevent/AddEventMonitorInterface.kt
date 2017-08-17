@@ -17,23 +17,11 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.addevent
 
-import android.database.sqlite.SQLiteDatabase
+import android.content.Context
+import android.content.Intent
 
-interface NewEventsStorageImplInterface {
-    fun createDb(db: SQLiteDatabase)
-
-    fun addEventImpl(db: SQLiteDatabase, event: NewEventRecord)
-
-    fun deleteEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun deleteEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
-
-    fun updateEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun updateEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
-
-    fun getEventsImpl(db: SQLiteDatabase): List<NewEventRecord>
-
-    fun dropAll(db: SQLiteDatabase)
-
+interface AddEventMonitorInterface {
+    fun onRescanFromService(context: Context, intent: Intent)
 }

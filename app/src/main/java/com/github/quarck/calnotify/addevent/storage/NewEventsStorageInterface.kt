@@ -25,8 +25,10 @@ interface NewEventsStorageInterface {
     fun addEvent(event: NewEventRecord)
 
     fun deleteEvent(event: NewEventRecord)
+    fun deleteEvents(events: List<NewEventRecord>)
 
     fun updateEvent(event: NewEventRecord)
+    fun updateEvents(events: List<NewEventRecord>)
 
     val events: List<NewEventRecord> get
 }

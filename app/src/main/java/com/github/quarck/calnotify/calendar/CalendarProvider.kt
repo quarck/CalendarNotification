@@ -721,7 +721,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
-    fun createEvent(context: Context, event: NewEventRecord): Long {
+    override fun createEvent(context: Context, event: NewEventRecord): Long {
 
         var eventId = -1L;
 

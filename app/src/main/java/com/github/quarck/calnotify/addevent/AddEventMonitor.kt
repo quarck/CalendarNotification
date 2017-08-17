@@ -26,12 +26,18 @@ import com.github.quarck.calnotify.addevent.storage.NewEventRecord
 import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class AddEventMonitor: AddEventMonitorInterface {
 
     override fun onRescanFromService(context: Context, intent: Intent) {
 
         DevLog.debug(LOG_TAG, "onRescanFromService")
+
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")
+            return
+        }
 
         val provider = CalendarProvider
 
@@ -43,6 +49,7 @@ class AddEventMonitor: AddEventMonitorInterface {
 
             val eventsToDelete = mutableListOf<NewEventRecord>()
             val eventsToReCreate = mutableListOf<NewEventRecord>()
+            val eventsToUpdate = mutableListOf<NewEventRecord>()
 
             for (event in db.events) {
 
@@ -67,18 +74,26 @@ class AddEventMonitor: AddEventMonitorInterface {
 
                 // another event with the same ID!
                 if (calendarEvent.title != event.title) {
-                    eventsToDelete.add(event)
+                    eventsToReCreate.add(event)
                     DevLog.info(context, LOG_TAG, "Scheduling event ${event.eventId} for re-creation: title didn't match")
                     continue
                 }
+
+                DevLog.info(context, LOG_TAG, "All checks passed for event ${event.eventId}, internal id ${event.id}")
             }
 
-            for (event in eventsToReCreate) {
-                event.eventId = provider.createEvent(context, event)
+            if (eventsToReCreate.isNotEmpty()) {
+                for (event in eventsToReCreate) {
+                    event.eventId = provider.createEvent(context, event)
+                }
+                db.updateEvents(eventsToReCreate)
             }
-            db.updateEvents(eventsToReCreate)
 
-            db.deleteEvents(eventsToDelete)
+            if (eventsToDelete.isNotEmpty())
+                db.deleteEvents(eventsToDelete)
+
+            if (eventsToUpdate.isNotEmpty())
+                db.updateEvents(eventsToUpdate)
         }
     }
 

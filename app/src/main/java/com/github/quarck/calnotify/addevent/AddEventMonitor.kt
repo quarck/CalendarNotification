@@ -24,6 +24,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
 import com.github.quarck.calnotify.addevent.storage.EventCreationRequestsStorage
+import com.github.quarck.calnotify.addevent.storage.EventCreationStatus
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -61,6 +62,7 @@ class AddEventMonitor: AddEventMonitorInterface {
 
                 if (event.eventId == -1L) {
                     eventsToReCreate.add(event)
+                    event.onValidated(false)
                     DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for re-creation: id is -1L")
                     continue
                 }
@@ -68,19 +70,27 @@ class AddEventMonitor: AddEventMonitorInterface {
                 val calendarEvent = provider.getEvent(context, event.eventId)
                 if (calendarEvent == null) {
                     eventsToReCreate.add(event)
+                    event.onValidated(false)
                     DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for re-creation: cant find provider event")
                     continue
                 }
 
                 val isDirty = provider.getEventIsDirty(context, event.eventId)
                 DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
-                if (isDirty != null && isDirty == false) {
+                if (isDirty != null) {
 
-                    // FIXME: not that simple, check for a few times, so only remove if 3 conseq scans
-                    // would show it is not dirty
+                    val statusChanged = event.onValidated(!isDirty)
+                    if (statusChanged) {
+                        if (event.status == EventCreationStatus.FULLY_CONFIRMED) {
+                            DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for removal: it is fully synced now")
+                            eventsToDelete.add(event)
+                        }
+                        else {
+                            DevLog.info(context, LOG_TAG, "Event creation request ${event.eventId}: new status ${event.status}")
+                            eventsToUpdate.add(event)
+                        }
+                    }
 
-                    //eventsToDelete.add(event)
-                    DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for removal: it is fully synced now")
                 }
             }
 

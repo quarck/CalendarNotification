@@ -63,6 +63,14 @@ fun List<EventCreationRequestReminder>.serialize()
 fun String.deserializeNewEventReminders()
         = this.split(";").map { EventCreationRequestReminder.deserialize(it) }.toList()
 
+object EventCreationStatus {
+    const val DIRTY = 0
+    const val CONFIRMED_ONE = 1
+    const val CONFIRMED_TWO = 2
+    const val CONFIRMED_THREE = 3
+    const val FULLY_CONFIRMED = 4
+}
+
 data class EventCreationRequest(
         var id: Long,
         var eventId: Long,
@@ -75,6 +83,49 @@ data class EventCreationRequest(
         val endTime: Long,
         val isAllDay: Boolean,
         val repeatingRule: String, // empty if not repeating
+        val repeatingRDate: String, // empty if not repeating
+        val repeatingExRule: String, // empty if not repeating
+        val repeatingExRDate: String, // empty if not repeating
         val colour: Int,
-        val reminders: List<EventCreationRequestReminder>
-)
+        val reminders: List<EventCreationRequestReminder>,
+        var status: Int = EventCreationStatus.DIRTY,
+        var lastStatusUpdate: Long = 0
+) {
+    fun onValidated(success: Boolean, time: Long = 0L): Boolean {
+
+        val timeValidated = if (time != 0L) time else System.currentTimeMillis()
+
+        if (!success) {
+            status = EventCreationStatus.DIRTY
+            lastStatusUpdate = timeValidated
+            return true
+        }
+
+        if (time - lastStatusUpdate < Consts.NEW_EVENT_MIN_STATUS_STEP_MILLIS) {
+            return false
+        }
+
+        status =
+            when (status) {
+                EventCreationStatus.DIRTY ->
+                    EventCreationStatus.CONFIRMED_ONE
+
+                EventCreationStatus.CONFIRMED_ONE ->
+                    EventCreationStatus.CONFIRMED_TWO
+
+                EventCreationStatus.CONFIRMED_TWO ->
+                    EventCreationStatus.CONFIRMED_THREE
+
+                EventCreationStatus.CONFIRMED_THREE ->
+                    EventCreationStatus.FULLY_CONFIRMED
+
+                else ->
+                    EventCreationStatus.DIRTY
+            }
+
+        lastStatusUpdate = timeValidated
+
+        return true
+    }
+}
+

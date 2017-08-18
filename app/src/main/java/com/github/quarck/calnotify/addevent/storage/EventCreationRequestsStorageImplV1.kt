@@ -38,7 +38,12 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                         "$KEY_ID INTEGER, " +
                         "$KEY_CALENDAR_ID INTEGER, " +
                         "$KEY_EVENTID INTEGER, " +
+                        "$KEY_STATUS INTEGER, " +
+                        "$KEY_STATUS_TIMESTAMP INTEGER, " +
                         "$KEY_REPEATING_RULE TEXT, " +
+                        "$KEY_REPEATING_DATE TEXT, " +
+                        "$KEY_EXT_REPEATING_RULE TEXT, " +
+                        "$KEY_EXT_REPEATING_DATE TEXT, " +
                         "$KEY_ALL_DAY INTEGER, " +
                         "$KEY_TITLE TEXT, " +
                         "$KEY_DESC TEXT, " +
@@ -180,8 +185,13 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         if (event.id > 0)
             values.put(KEY_ID, event.id)
         values.put(KEY_EVENTID, event.eventId);
+        values.put(KEY_STATUS, event.status)
+        values.put(KEY_STATUS_TIMESTAMP, event.lastStatusUpdate)
         values.put(KEY_CALENDAR_ID, event.calendarId);
         values.put(KEY_REPEATING_RULE, event.repeatingRule);
+        values.put(KEY_REPEATING_DATE, event.repeatingRDate)
+        values.put(KEY_EXT_REPEATING_RULE, event.repeatingExRule);
+        values.put(KEY_EXT_REPEATING_DATE, event.repeatingExRDate)
         values.put(KEY_ALL_DAY, event.isAllDay);
         values.put(KEY_TITLE, event.title);
         values.put(KEY_DESC, event.desc);
@@ -218,6 +228,8 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         val event = EventCreationRequest(
                 id = cursor.getLong(PROJECTION_KEY_ID),
                 calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
+                status = cursor.getInt(PROJECTION_KEY_STATUS),
+                lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 title = cursor.getString(PROJECTION_KEY_TITLE),
                 desc = cursor.getString(PROJECTION_KEY_DESC),
@@ -226,6 +238,9 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                 location = cursor.getString(PROJECTION_KEY_LOCATION),
                 colour = cursor.getInt(PROJECTION_KEY_COLOR),
                 repeatingRule = cursor.getString(PROJECTION_KEY_REPEATING_RULE),
+                repeatingRDate = cursor.getString(PROJECTION_KEY_REPEATING_DATE),
+                repeatingExRule = cursor.getString(PROJECTION_KEY_EXT_REPEATING_RULE),
+                repeatingExRDate = cursor.getString(PROJECTION_KEY_EXT_REPEATING_DATE),
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 timezone = cursor.getString(PROJECTION_KEY_TIMEZONE),
 
@@ -245,10 +260,18 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
 
         private const val KEY_ID = "id"
 
+        private const val KEY_STATUS = "s"
+        private const val KEY_STATUS_TIMESTAMP = "sTm"
+
         private const val KEY_CALENDAR_ID = "calendarId"
         private const val KEY_EVENTID = "eventId"
 
-        private const val KEY_REPEATING_RULE = "repeatingRule"
+        private const val KEY_REPEATING_RULE = "rRule"
+        private const val KEY_REPEATING_DATE = "rDate"
+
+        private const val KEY_EXT_REPEATING_RULE = "rExtRule"
+        private const val KEY_EXT_REPEATING_DATE = "rExtDate"
+
         private const val KEY_ALL_DAY = "allDay"
 
         private const val KEY_TITLE = "title"
@@ -281,6 +304,10 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                 KEY_ID,
                 KEY_CALENDAR_ID,
                 KEY_EVENTID,
+
+                KEY_STATUS,
+                KEY_STATUS_TIMESTAMP,
+
                 KEY_REPEATING_RULE,
                 KEY_ALL_DAY,
                 KEY_TITLE,
@@ -296,16 +323,21 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         const val PROJECTION_KEY_ID = 0
         const val PROJECTION_KEY_CALENDAR_ID = 1
         const val PROJECTION_KEY_EVENTID = 2
-        const val PROJECTION_KEY_REPEATING_RULE = 3
-        const val PROJECTION_KEY_ALL_DAY = 4
-        const val PROJECTION_KEY_TITLE = 5
-        const val PROJECTION_KEY_DESC = 6
-        const val PROJECTION_KEY_START = 7
-        const val PROJECTION_KEY_END = 8
-        const val PROJECTION_KEY_LOCATION = 9
-        const val PROJECTION_KEY_TIMEZONE = 10
-        const val PROJECTION_KEY_COLOR = 11
-        const val PROJECTION_KEY_REMINDERS = 12
+        const val PROJECTION_KEY_STATUS = 3
+        const val PROJECTION_KEY_STATUS_TIMESTAMP = 4
+        const val PROJECTION_KEY_REPEATING_RULE = 5
+        const val PROJECTION_KEY_REPEATING_DATE = 6
+        const val PROJECTION_KEY_EXT_REPEATING_RULE = 7
+        const val PROJECTION_KEY_EXT_REPEATING_DATE = 8
+        const val PROJECTION_KEY_ALL_DAY = 9
+        const val PROJECTION_KEY_TITLE = 10
+        const val PROJECTION_KEY_DESC = 11
+        const val PROJECTION_KEY_START = 12
+        const val PROJECTION_KEY_END = 13
+        const val PROJECTION_KEY_LOCATION = 14
+        const val PROJECTION_KEY_TIMEZONE = 15
+        const val PROJECTION_KEY_COLOR = 16
+        const val PROJECTION_KEY_REMINDERS = 17
     }
 
 }

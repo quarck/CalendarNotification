@@ -38,6 +38,8 @@ interface CalendarProviderInterface {
 
     fun getEvent(context: Context, eventId: Long): EventRecord?
 
+    fun getEventIsDirty(context: Context, eventId: Long): Boolean?
+
     fun dismissNativeEventAlert(context: Context, eventId: Long)
 
     fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long

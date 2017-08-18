@@ -55,31 +55,33 @@ class AddEventMonitor: AddEventMonitorInterface {
 
                 if (event.startTime < cleanupEventsTo && event.endTime < cleanupEventsTo) {
                     eventsToDelete.add(event)
-                    DevLog.info(context, LOG_TAG, "Scheduling event ${event.eventId} for removal from DB")
+                    DevLog.info(context, LOG_TAG, "Scheduling event creation request for ${event.eventId} for removal from DB")
                     continue
                 }
 
                 if (event.eventId == -1L) {
                     eventsToReCreate.add(event)
-                    DevLog.info(context, LOG_TAG, "Scheduling event ${event.eventId} for re-creation: id is -1L")
+                    DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for re-creation: id is -1L")
                     continue
                 }
 
                 val calendarEvent = provider.getEvent(context, event.eventId)
                 if (calendarEvent == null) {
                     eventsToReCreate.add(event)
-                    DevLog.info(context, LOG_TAG, "Scheduling event ${event.eventId} for re-creation: cant find provider event")
+                    DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for re-creation: cant find provider event")
                     continue
                 }
 
-                // another event with the same ID!
-                if (calendarEvent.title != event.title) {
-                    eventsToReCreate.add(event)
-                    DevLog.info(context, LOG_TAG, "Scheduling event ${event.eventId} for re-creation: title didn't match")
-                    continue
-                }
+                val isDirty = provider.getEventIsDirty(context, event.eventId)
+                DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
+                if (isDirty != null && isDirty == false) {
 
-                DevLog.info(context, LOG_TAG, "All checks passed for event ${event.eventId}, internal id ${event.id}")
+                    // FIXME: not that simple, check for a few times, so only remove if 3 conseq scans
+                    // would show it is not dirty
+
+                    //eventsToDelete.add(event)
+                    DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} for removal: it is fully synced now")
+                }
             }
 
             if (eventsToReCreate.isNotEmpty()) {

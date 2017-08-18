@@ -450,6 +450,42 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
+    override fun getEventIsDirty(context: Context, eventId: Long): Boolean? {
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "getEvent: has no permissions");
+            return null;
+        }
+
+        var ret: Boolean? = null
+
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+
+        val fields = arrayOf( "dirty") //  CalendarContracts.SyncColumns is a private class
+
+        val cursor: Cursor? =
+                context.contentResolver.query(
+                        uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
+                        fields,
+                        null, //selection,
+                        null, //arrayOf(eventId.toString()),
+                        null
+                );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            val isDirty: Int? = cursor.getInt(0)
+            if (isDirty != null)
+                ret = isDirty != 0
+        }
+        else {
+            DevLog.error(context, LOG_TAG, "Event $eventId not found")
+        }
+
+        cursor?.close()
+
+        return ret
+    }
+
 
     override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
@@ -745,6 +781,8 @@ object CalendarProvider : CalendarProviderInterface {
         values.put(CalendarContract.Events.DTEND, event.endTime);
 
         values.put(CalendarContract.Events.EVENT_LOCATION, event.location);
+
+        values.put(CalendarContract.Events.IS_ORGANIZER, "1");
 
         //
 

@@ -200,9 +200,6 @@ class AddEventActivity : AppCompatActivity() {
         }
 
         // Initialize default values
-
-        eventTitleText.text = "" // empty by default
-
         accountName.text = calendar.name
         eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 

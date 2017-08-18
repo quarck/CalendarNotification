@@ -397,7 +397,7 @@
     <string name="save_button">Save button</string>
     <string name="add_location">Add location</string>
     <string name="add_note">Add note</string>
-    <string name="add_notification">Add another notification</string>
+    <string name="add_notification">Add notification</string>
     <string name="all_day">All day</string>
     <string name="end_time_before_start_time">End time before start time!</string>
     <string name="notification_as_email">As Email</string>

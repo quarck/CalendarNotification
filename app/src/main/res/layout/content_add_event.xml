@@ -27,9 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/snooze_view_title_height"
             android:id="@+id/add_event_title"
-            android:text="@string/empty"
+            android:text="Test event title"
             android:hint="@string/add_event_event_title_hint"
-            android:textAppearance="?android:textAppearanceLarge"
+            android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/event_title_color"
             android:textColorHint="@color/event_title_hint_color"
 

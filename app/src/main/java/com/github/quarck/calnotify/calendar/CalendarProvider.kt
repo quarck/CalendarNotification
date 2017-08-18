@@ -381,7 +381,8 @@ object CalendarProvider : CalendarProviderInterface {
                         CalendarContract.Events.EVENT_LOCATION,
                         CalendarContract.Events.DISPLAY_COLOR,
                         CalendarContract.Events.STATUS,
-                        CalendarContract.Events.SELF_ATTENDEE_STATUS
+                        CalendarContract.Events.SELF_ATTENDEE_STATUS,
+                        CalendarContract.Events.LAST_SYNCED
                 )
 
         val cursor: Cursor? =
@@ -397,7 +398,7 @@ object CalendarProvider : CalendarProviderInterface {
 
             val calendarId: Long? = cursor.getLong(0)
             val title: String? = cursor.getString(1)
-            var start: Long? = cursor.getLong(2)
+            val start: Long? = cursor.getLong(2)
             var end: Long? = cursor.getLong(3)
             var allDay: Int? = cursor.getInt(4)
             val location: String? = cursor.getString(5)
@@ -448,6 +449,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         return ret
     }
+
 
     override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 

@@ -101,7 +101,7 @@ data class EventCreationRequest(
             return true
         }
 
-        if (time - lastStatusUpdate < Consts.NEW_EVENT_MIN_STATUS_STEP_MILLIS) {
+        if (timeValidated - lastStatusUpdate < Consts.NEW_EVENT_MIN_STATUS_STEP_MILLIS) {
             return false
         }
 

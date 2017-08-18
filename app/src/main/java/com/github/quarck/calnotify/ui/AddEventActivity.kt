@@ -364,6 +364,9 @@ class AddEventActivity : AppCompatActivity() {
                 endTime = endTime,
                 isAllDay = isAllDay,
                 repeatingRule = "",
+                repeatingRDate = "",
+                repeatingExRule = "",
+                repeatingExRDate = "",
                 colour = 0, // Not specified
                 reminders =  remindersToAdd
         )

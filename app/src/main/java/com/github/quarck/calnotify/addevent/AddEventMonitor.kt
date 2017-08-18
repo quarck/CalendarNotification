@@ -90,7 +90,6 @@ class AddEventMonitor: AddEventMonitorInterface {
                             eventsToUpdate.add(event)
                         }
                     }
-
                 }
             }
 

@@ -22,8 +22,8 @@ package com.github.quarck.calnotify.addevent
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
-import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequestsStorage
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -44,12 +44,12 @@ class AddEventMonitor: AddEventMonitorInterface {
         val currentTime = System.currentTimeMillis()
         val cleanupEventsTo = currentTime - Consts.NEW_EVENT_MONITOR_KEEP_DAYS * Consts.DAY_IN_MILLISECONDS
 
-        NewEventsStorage(context).use {
+        EventCreationRequestsStorage(context).use {
             db ->
 
-            val eventsToDelete = mutableListOf<NewEventRecord>()
-            val eventsToReCreate = mutableListOf<NewEventRecord>()
-            val eventsToUpdate = mutableListOf<NewEventRecord>()
+            val eventsToDelete = mutableListOf<EventCreationRequest>()
+            val eventsToReCreate = mutableListOf<EventCreationRequest>()
+            val eventsToUpdate = mutableListOf<EventCreationRequest>()
 
             for (event in db.events) {
 

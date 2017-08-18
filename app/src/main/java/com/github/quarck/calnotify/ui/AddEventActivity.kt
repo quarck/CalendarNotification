@@ -23,9 +23,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.addevent.AddEventManager
 import com.github.quarck.calnotify.addevent.AddEventPersistentState
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
-import com.github.quarck.calnotify.addevent.storage.NewEventReminder
-import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequestReminder
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
@@ -33,6 +32,10 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
+
+// FIXME: check history / back behavior
+
+// FIXME: stop opening calendar, just show toast
 
 // FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
@@ -51,7 +54,7 @@ import java.util.*
 // FIXME: configure default event duration in the settings
 
 
-fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
+fun EventCreationRequestReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
     val ret = StringBuilder()
 
@@ -96,7 +99,7 @@ fun NewEventReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String 
 
 class AddEventActivity : AppCompatActivity() {
 
-    data class ReminderWrapper(val view: TextView, var reminder: NewEventReminder, val isForAllDay: Boolean)
+    data class ReminderWrapper(val view: TextView, var reminder: EventCreationRequestReminder, val isForAllDay: Boolean)
 
     private lateinit var eventTitleText: EditText
 
@@ -236,8 +239,8 @@ class AddEventActivity : AppCompatActivity() {
 
         updateDateTimeUI();
 
-        addReminder(NewEventReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), false)
-        addReminder(NewEventReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), true)
+        addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), false)
+        addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), true)
 
         updateReminders()
     }
@@ -349,7 +352,7 @@ class AddEventActivity : AppCompatActivity() {
 
         val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
 
-        val newEvent = NewEventRecord(
+        val newEvent = EventCreationRequest(
                 id = -1L,
                 eventId = -1L,
                 calendarId = calendar.calendarId,
@@ -536,7 +539,7 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
-    fun showAddReminderCustomDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+    fun showAddReminderCustomDialog(currentReminder: EventCreationRequestReminder, existingReminderView: View?) {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
 
@@ -562,9 +565,9 @@ class AddEventActivity : AppCompatActivity() {
             }
 
             if (existingReminderView != null)
-                modifyReminder(existingReminderView, NewEventReminder(intervalMilliseconds, isEmail))
+                modifyReminder(existingReminderView, EventCreationRequestReminder(intervalMilliseconds, isEmail))
             else
-                addReminder(NewEventReminder(intervalMilliseconds, isEmail), isForAllDay = false)
+                addReminder(EventCreationRequestReminder(intervalMilliseconds, isEmail), isForAllDay = false)
         }
 
         if (existingReminderView != null) {
@@ -582,7 +585,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.create().show()
     }
 
-    fun showAddReminderListDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+    fun showAddReminderListDialog(currentReminder: EventCreationRequestReminder, existingReminderView: View?) {
 
         if (currentReminder.isEmail)
             return showAddReminderCustomDialog(currentReminder, existingReminderView)
@@ -610,9 +613,9 @@ class AddEventActivity : AppCompatActivity() {
                 val intervalMillis = intervalValues[which].toLong()
                 if (intervalMillis != -1L) {
                     if (existingReminderView != null)
-                        modifyReminder(existingReminderView, NewEventReminder(intervalMillis, false))
+                        modifyReminder(existingReminderView, EventCreationRequestReminder(intervalMillis, false))
                     else
-                        addReminder(NewEventReminder(intervalMillis, false), isForAllDay = false)
+                        addReminder(EventCreationRequestReminder(intervalMillis, false), isForAllDay = false)
                 } else {
                     showAddReminderCustomDialog(currentReminder, existingReminderView)
                 }
@@ -634,7 +637,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.show()
     }
 
-    fun showAddReminderCustomAllDayDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+    fun showAddReminderCustomAllDayDialog(currentReminder: EventCreationRequestReminder, existingReminderView: View?) {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_allday_notification, null);
 
@@ -675,9 +678,9 @@ class AddEventActivity : AppCompatActivity() {
             val isEmail = isEmailCb.isChecked
 
             if (existingReminderView != null)
-                modifyReminder(existingReminderView, NewEventReminder(reminderTimeMilliseconds, isEmail))
+                modifyReminder(existingReminderView, EventCreationRequestReminder(reminderTimeMilliseconds, isEmail))
             else
-                addReminder(NewEventReminder(reminderTimeMilliseconds, isEmail), isForAllDay = true)
+                addReminder(EventCreationRequestReminder(reminderTimeMilliseconds, isEmail), isForAllDay = true)
         }
 
         if (existingReminderView != null) {
@@ -695,7 +698,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.create().show()
     }
 
-    fun showAddReminderListAllDayDialog(currentReminder: NewEventReminder, existingReminderView: View?) {
+    fun showAddReminderListAllDayDialog(currentReminder: EventCreationRequestReminder, existingReminderView: View?) {
 
         if (currentReminder.isEmail)
             return showAddReminderCustomAllDayDialog(currentReminder, existingReminderView)
@@ -728,9 +731,9 @@ class AddEventActivity : AppCompatActivity() {
                     val reminderTimeMillis = reminderSeconds.toLong() * 1000L
 
                     if (existingReminderView != null)
-                        modifyReminder(existingReminderView, NewEventReminder(reminderTimeMillis, false))
+                        modifyReminder(existingReminderView, EventCreationRequestReminder(reminderTimeMillis, false))
                     else
-                        addReminder(NewEventReminder(reminderTimeMillis, false), isForAllDay = true)
+                        addReminder(EventCreationRequestReminder(reminderTimeMillis, false), isForAllDay = true)
                 } else {
                     showAddReminderCustomAllDayDialog(currentReminder, existingReminderView)
                 }
@@ -755,10 +758,10 @@ class AddEventActivity : AppCompatActivity() {
 
     fun onAddNotificationClick(v: View) {
         if (!isAllDay) {
-            showAddReminderListDialog(NewEventReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), null)
+            showAddReminderListDialog(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), null)
         }
         else {
-            showAddReminderListAllDayDialog(NewEventReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), null)
+            showAddReminderListAllDayDialog(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), null)
         }
     }
 
@@ -771,7 +774,7 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
-    private fun modifyReminder(existingReminderView: View, newReminder: NewEventReminder) {
+    private fun modifyReminder(existingReminderView: View, newReminder: EventCreationRequestReminder) {
 
         if (reminders.find { it.reminder == newReminder && it.view != existingReminderView} != null) {
             // we have another reminder with the same params in the list -- remove this one (cruel!!)
@@ -786,7 +789,7 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
-    private fun addReminder(reminder: NewEventReminder, isForAllDay: Boolean) {
+    private fun addReminder(reminder: EventCreationRequestReminder, isForAllDay: Boolean) {
 
         if (reminders.find { it.reminder == reminder} != null) {
             DevLog.warn(this, LOG_TAG, "Not adding reminder: already in the list")

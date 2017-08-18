@@ -29,8 +29,7 @@ import android.provider.CalendarContract
 import android.text.format.Time
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
-import com.github.quarck.calnotify.addevent.storage.NewEventReminder
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -452,6 +451,8 @@ object CalendarProvider : CalendarProviderInterface {
 
     override fun getEventIsDirty(context: Context, eventId: Long): Boolean? {
 
+        val SYNC_IS_DIRTY = "dirty"
+
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(context, LOG_TAG, "getEvent: has no permissions");
             return null;
@@ -461,27 +462,31 @@ object CalendarProvider : CalendarProviderInterface {
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
 
-        val fields = arrayOf( "dirty") //  CalendarContracts.SyncColumns is a private class
+        val fields = arrayOf( SYNC_IS_DIRTY ) //  CalendarContracts.SyncColumns is a private class
 
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
-                        fields,
-                        null, //selection,
-                        null, //arrayOf(eventId.toString()),
-                        null
-                );
+        try {
+            val cursor: Cursor? =
+                    context.contentResolver.query(
+                            uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
+                            fields,
+                            null, //selection,
+                            null, //arrayOf(eventId.toString()),
+                            null
+                    );
 
-        if (cursor != null && cursor.moveToFirst()) {
-            val isDirty: Int? = cursor.getInt(0)
-            if (isDirty != null)
-                ret = isDirty != 0
+            if (cursor != null && cursor.moveToFirst()) {
+                val isDirty: Int? = cursor.getInt(0)
+                if (isDirty != null)
+                    ret = isDirty != 0
+            } else {
+                DevLog.error(context, LOG_TAG, "Event $eventId not found")
+            }
+
+            cursor?.close()
         }
-        else {
-            DevLog.error(context, LOG_TAG, "Event $eventId not found")
+        catch (ex: Exception) {
+            ret = null
         }
-
-        cursor?.close()
 
         return ret
     }
@@ -759,7 +764,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
-    override fun createEvent(context: Context, event: NewEventRecord): Long {
+    override fun createEvent(context: Context, event: EventCreationRequest): Long {
 
         var eventId = -1L;
 
@@ -781,8 +786,6 @@ object CalendarProvider : CalendarProviderInterface {
         values.put(CalendarContract.Events.DTEND, event.endTime);
 
         values.put(CalendarContract.Events.EVENT_LOCATION, event.location);
-
-        values.put(CalendarContract.Events.IS_ORGANIZER, "1");
 
         //
 

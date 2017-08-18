@@ -19,21 +19,16 @@
 
 package com.github.quarck.calnotify.addevent.storage
 
-import android.database.sqlite.SQLiteDatabase
 
-interface NewEventsStorageImplInterface {
-    fun createDb(db: SQLiteDatabase)
+interface EventCreationRequestsStorageInterface {
 
-    fun addEventImpl(db: SQLiteDatabase, event: NewEventRecord)
+    fun addEvent(event: EventCreationRequest)
 
-    fun deleteEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun deleteEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
+    fun deleteEvent(event: EventCreationRequest)
+    fun deleteEvents(events: List<EventCreationRequest>)
 
-    fun updateEventImpl(db: SQLiteDatabase, entry: NewEventRecord)
-    fun updateEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>)
+    fun updateEvent(event: EventCreationRequest)
+    fun updateEvents(events: List<EventCreationRequest>)
 
-    fun getEventsImpl(db: SQLiteDatabase): List<NewEventRecord>
-
-    fun dropAll(db: SQLiteDatabase)
-
+    val events: List<EventCreationRequest> get
 }

@@ -20,7 +20,7 @@
 package com.github.quarck.calnotify.addevent
 
 import android.content.Context
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
 
 interface AddEventManagerInterface {
 
@@ -30,5 +30,5 @@ interface AddEventManagerInterface {
      * @param [context] - Android context
      * @param [event] - new event struct to create
      */
-    fun createEvent(context: Context, event: NewEventRecord): Boolean
+    fun createEvent(context: Context, event: EventCreationRequest): Boolean
 }

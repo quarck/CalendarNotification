@@ -21,14 +21,14 @@ package com.github.quarck.calnotify.addevent.storage
 
 import com.github.quarck.calnotify.Consts
 
-data class NewEventReminder(val time: Long, val isEmail: Boolean) {
+data class EventCreationRequestReminder(val time: Long, val isEmail: Boolean) {
 
     fun serialize() = "$time,${if(isEmail) 1 else 0}"
 
     companion object {
-        fun deserialize(str: String): NewEventReminder {
+        fun deserialize(str: String): EventCreationRequestReminder {
             val (time, isEmail) = str.split(',')
-            return NewEventReminder(
+            return EventCreationRequestReminder(
                     time = time.toLong(),
                     isEmail = isEmail.toInt() != 0
             )
@@ -57,14 +57,13 @@ data class NewEventReminder(val time: Long, val isEmail: Boolean) {
         }
 }
 
-fun List<NewEventReminder>.serialize()
+fun List<EventCreationRequestReminder>.serialize()
         = this.map { it.serialize() }.joinToString(separator = ";")
 
 fun String.deserializeNewEventReminders()
-        = this.split(";").map { NewEventReminder.deserialize(it) }.toList()
+        = this.split(";").map { EventCreationRequestReminder.deserialize(it) }.toList()
 
-
-data class NewEventRecord(
+data class EventCreationRequest(
         var id: Long,
         var eventId: Long,
         val calendarId: Long,
@@ -77,5 +76,5 @@ data class NewEventRecord(
         val isAllDay: Boolean,
         val repeatingRule: String, // empty if not repeating
         val colour: Int,
-        val reminders: List<NewEventReminder>
+        val reminders: List<EventCreationRequestReminder>
 )

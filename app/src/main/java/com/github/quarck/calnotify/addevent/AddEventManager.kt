@@ -20,16 +20,16 @@
 package com.github.quarck.calnotify.addevent
 
 import android.content.Context
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
-import com.github.quarck.calnotify.addevent.storage.NewEventsStorage
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequestsStorage
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 
 class AddEventManager(val provider: CalendarProviderInterface): AddEventManagerInterface {
 
-    override fun createEvent(context: Context, event: NewEventRecord): Boolean {
+    override fun createEvent(context: Context, event: EventCreationRequest): Boolean {
 
         val ret =
-            NewEventsStorage(context).use {
+            EventCreationRequestsStorage(context).use {
                 db ->
 
                 db.addEvent(event)

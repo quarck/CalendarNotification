@@ -25,15 +25,15 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.logs.DevLog
 import java.io.Closeable
 
-class NewEventsStorage(val context: Context)
+class EventCreationRequestsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION)
         , Closeable
-        , NewEventsStorageInterface {
+        , EventCreationRequestsStorageInterface {
 
-    private var impl: NewEventsStorageImplInterface
+    private var impl: EventCreationRequestsStorageImplInterface
 
     init {
-        impl = NewEventsStorageImplV1();
+        impl = EventCreationRequestsStorageImplV1();
     }
 
     override fun onCreate(db: SQLiteDatabase)
@@ -84,33 +84,33 @@ class NewEventsStorage(val context: Context)
 //        }
     }
 
-    override fun addEvent(event: NewEventRecord)
-            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
+    override fun addEvent(event: EventCreationRequest)
+            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
 
-    override fun deleteEvent(event: NewEventRecord)
-            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
+    override fun deleteEvent(event: EventCreationRequest)
+            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
 
-    override fun deleteEvents(events: List<NewEventRecord>)
-            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
+    override fun deleteEvents(events: List<EventCreationRequest>)
+            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
 
-    override fun updateEvent(event: NewEventRecord)
-            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, event) } }
+    override fun updateEvent(event: EventCreationRequest)
+            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, event) } }
 
-    override fun updateEvents(events: List<NewEventRecord>)
-            = synchronized(NewEventsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
+    override fun updateEvents(events: List<EventCreationRequest>)
+            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
 
 
-    override val events: List<NewEventRecord>
-        get() = synchronized(NewEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
+    override val events: List<EventCreationRequest>
+        get() = synchronized(EventCreationRequestsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
 
     override fun close() = super.close()
 
     companion object {
-        private val LOG_TAG = "NewEventsStorage"
+        private val LOG_TAG = "EventCreationRequestsStorage"
 
         private const val DATABASE_VERSION_V1 = 1
         private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V1
 
-        private const val DATABASE_NAME = "NewEvents"
+        private const val DATABASE_NAME = "EventCreationRequests"
     }
 }

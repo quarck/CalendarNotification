@@ -26,7 +26,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
 
-class NewEventsStorageImplV1: NewEventsStorageImplInterface {
+class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -83,7 +83,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
     }
 
 
-    override fun addEventImpl(db: SQLiteDatabase, event: NewEventRecord) {
+    override fun addEventImpl(db: SQLiteDatabase, event: EventCreationRequest) {
 
         val values = eventRecordToContentValues(event)
 
@@ -100,7 +100,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         }
     }
 
-    override fun deleteEventImpl(db: SQLiteDatabase, entry: NewEventRecord) {
+    override fun deleteEventImpl(db: SQLiteDatabase, entry: EventCreationRequest) {
         db.delete(
                 TABLE_NAME,
                 " $KEY_ID = ?",
@@ -108,7 +108,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
 
     }
 
-    override fun deleteEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>) {
+    override fun deleteEventsImpl(db: SQLiteDatabase, events: List<EventCreationRequest>) {
 
         try {
             db.beginTransaction()
@@ -124,7 +124,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         }
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, entry: NewEventRecord) {
+    override fun updateEventImpl(db: SQLiteDatabase, entry: EventCreationRequest) {
         val values = eventRecordToContentValues(entry)
 
         db.update(TABLE_NAME, // table
@@ -133,7 +133,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
                 arrayOf(entry.id.toString()))
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<NewEventRecord>) {
+    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventCreationRequest>) {
         try {
             db.beginTransaction()
 
@@ -148,9 +148,9 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         }
     }
 
-    override fun getEventsImpl(db: SQLiteDatabase): List<NewEventRecord> {
+    override fun getEventsImpl(db: SQLiteDatabase): List<EventCreationRequest> {
 
-        val ret = LinkedList<NewEventRecord>()
+        val ret = LinkedList<EventCreationRequest>()
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
@@ -174,7 +174,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         return ret
     }
 
-    private fun eventRecordToContentValues(event: NewEventRecord): ContentValues {
+    private fun eventRecordToContentValues(event: EventCreationRequest): ContentValues {
         val values = ContentValues();
 
         if (event.id > 0)
@@ -211,11 +211,11 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
         return values;
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): NewEventRecord {
+    private fun cursorToEventRecord(cursor: Cursor): EventCreationRequest {
 
         val reminders = cursor.getString(PROJECTION_KEY_REMINDERS).deserializeNewEventReminders()
 
-        val event = NewEventRecord(
+        val event = EventCreationRequest(
                 id = cursor.getLong(PROJECTION_KEY_ID),
                 calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
@@ -237,7 +237,7 @@ class NewEventsStorageImplV1: NewEventsStorageImplInterface {
 
     companion object {
 
-        private const val LOG_TAG = "NewEventsStorageImplV1"
+        private const val LOG_TAG = "EventCreationRequestsStorageImplV1"
 
         private const val TABLE_NAME = "newEventsV1"
         private const val INDEX_NAME = "newEventsIdxV1"

@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.calendar
 import android.content.ContentResolver
 import android.content.Context
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.storage.NewEventRecord
+import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
 
 interface CalendarProviderInterface {
 
@@ -56,5 +56,5 @@ interface CalendarProviderInterface {
 
     fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long>
 
-    fun createEvent(context: Context, event: NewEventRecord): Long
+    fun createEvent(context: Context, event: EventCreationRequest): Long
 }

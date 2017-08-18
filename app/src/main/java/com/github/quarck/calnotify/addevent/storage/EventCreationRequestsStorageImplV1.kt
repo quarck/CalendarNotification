@@ -309,6 +309,10 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                 KEY_STATUS_TIMESTAMP,
 
                 KEY_REPEATING_RULE,
+                KEY_REPEATING_DATE,
+                KEY_EXT_REPEATING_RULE,
+                KEY_EXT_REPEATING_DATE,
+
                 KEY_ALL_DAY,
                 KEY_TITLE,
                 KEY_DESC,

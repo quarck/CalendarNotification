@@ -55,6 +55,6 @@ interface CalendarMonitorInterface {
             delayed: Int = 0,
             reloadCalendar: Boolean =  false,
             rescanMonitor: Boolean = true,
-            launchRescanService: Long = 0
+            userActionUntil: Long = 0
     )
 }

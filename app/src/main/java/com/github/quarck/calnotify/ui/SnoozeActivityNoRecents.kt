@@ -627,7 +627,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         builder.setCancelable(true)
 
         builder.setAdapter(adapter) {
-            dialog, which ->
+            _, which ->
             if (which in 0..intervalValues.size-1) {
 
                 val intervalSeconds = intervalValues[which].toLong()

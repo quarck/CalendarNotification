@@ -41,6 +41,9 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifierService
+import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
+import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+
 
 object ApplicationController : EventMovedHandler {
 
@@ -64,6 +67,8 @@ object ApplicationController : EventMovedHandler {
     private val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
 
     private val calendarProvider: CalendarProviderInterface = CalendarProvider
+
+    private val calendarChangeManager: CalendarChangeManagerInterface by lazy { CalendarChangeManager(calendarProvider)}
 
     private val calendarMonitorInternal: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
 
@@ -610,7 +615,7 @@ object ApplicationController : EventMovedHandler {
 
                 // onlySnoozeVisible
 
-                var snoozeThisEvent  = false
+                var snoozeThisEvent: Boolean
 
                 if (!onlySnoozeVisible) {
                     snoozeThisEvent = isChange || event.snoozedUntil == 0L || event.snoozedUntil < newSnoozeUntil
@@ -723,8 +728,7 @@ object ApplicationController : EventMovedHandler {
 
         if (dismissType.shouldKeep && Settings(context).keepHistory) {
             DismissedEventsStorage(context).use {
-                db ->
-                db.addEvents(dismissType, events)
+                it.addEvents(dismissType, events)
             }
         }
 
@@ -783,8 +787,7 @@ object ApplicationController : EventMovedHandler {
 
         if (dismissType.shouldKeep && Settings(context).keepHistory && event.isNotSpecial) {
             DismissedEventsStorage(context).use {
-                db ->
-                db.addEvent(dismissType, event)
+                it.addEvent(dismissType, event)
             }
         }
 
@@ -857,7 +860,7 @@ object ApplicationController : EventMovedHandler {
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 
-        val moved = calendarProvider.moveEvent(context, event, addTime)
+        val moved = calendarChangeManager.moveEvent(context, event, addTime)
 
         if (moved) {
             DevLog.info(context, LOG_TAG, "moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")

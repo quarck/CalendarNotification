@@ -61,7 +61,7 @@ fun List<EventCreationRequestReminder>.serialize()
         = this.map { it.serialize() }.joinToString(separator = ";")
 
 fun String.deserializeNewEventReminders()
-        = this.split(";").map { EventCreationRequestReminder.deserialize(it) }.toList()
+        = this.split(";").filter { it != "" }.map { EventCreationRequestReminder.deserialize(it) }.toList()
 
 enum class EventChangeStatus(val code: Int) {
     Dirty(0),
@@ -98,12 +98,14 @@ data class CalendarChangeRequest(
         val startTime: Long,
         val endTime: Long,
         val isAllDay: Boolean,
-        val repeatingRule: String, // empty if not repeating
-        val repeatingRDate: String, // empty if not repeating
-        val repeatingExRule: String, // empty if not repeating
-        val repeatingExRDate: String, // empty if not repeating
-        val colour: Int,
         val reminders: List<EventCreationRequestReminder>,
+
+        val repeatingRule: String = "", // empty if not repeating
+        val repeatingRDate: String = "", // empty if not repeating
+        val repeatingExRule: String = "", // empty if not repeating
+        val repeatingExRDate: String = "", // empty if not repeating
+
+        val colour: Int = 0,
         var status: EventChangeStatus = EventChangeStatus.Dirty,
         var lastStatusUpdate: Long = 0
 ) {

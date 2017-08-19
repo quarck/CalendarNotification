@@ -89,7 +89,7 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
     }
 
 
-    override fun addEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
+    override fun addImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
 
         val values = reqRecordToContentValues(req)
 
@@ -106,7 +106,7 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         }
     }
 
-    override fun deleteEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
+    override fun deleteImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
         db.delete(
                 TABLE_NAME,
                 " $KEY_ID = ?",
@@ -114,13 +114,20 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
 
     }
 
-    override fun deleteEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
+    override fun deleteForEventIdImpl(db: SQLiteDatabase, eventId: Long) {
+        db.delete(
+                TABLE_NAME,
+                " $KEY_EVENTID = ?",
+                arrayOf(eventId.toString()))
+    }
+
+    override fun deleteManyImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
 
         try {
             db.beginTransaction()
 
             for (req in requests) {
-                deleteEventImpl(db, req)
+                deleteImpl(db, req)
             }
 
             db.setTransactionSuccessful()
@@ -130,7 +137,7 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         }
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
+    override fun updateImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
         val values = reqRecordToContentValues(req)
 
         db.update(TABLE_NAME, // table
@@ -139,12 +146,12 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
                 arrayOf(req.id.toString()))
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
+    override fun updateManyImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
         try {
             db.beginTransaction()
 
             for (req in requests) {
-                updateEventImpl(db, req)
+                updateImpl(db, req)
             }
 
             db.setTransactionSuccessful()
@@ -154,7 +161,7 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         }
     }
 
-    override fun getEventsImpl(db: SQLiteDatabase): List<CalendarChangeRequest> {
+    override fun getImpl(db: SQLiteDatabase): List<CalendarChangeRequest> {
 
         val ret = LinkedList<CalendarChangeRequest>()
 

@@ -31,7 +31,6 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import java.util.*
 
@@ -594,7 +593,7 @@ object CalendarProvider : CalendarProviderInterface {
 
                     values = ContentValues()
 
-                    val title: String = (cursor.getString(1) as String?) ?: throw Exception("Title must not be null")
+                    val title: String = (cursor.getString(1)) ?: throw Exception("Title must not be null")
                     val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null");
                     val timeZone: String? = cursor.getString(3)
                     val description: String? = cursor.getString(4)
@@ -697,8 +696,6 @@ object CalendarProvider : CalendarProviderInterface {
 
     fun createTestEvent(context: Context, calendarId: Long, title: String, startTime: Long, endTime: Long, reminder: Long): Long {
 
-        // http://www.grokkingandroid.com/androids-calendarcontract-provider/
-
         var ret = -1L;
 
         DevLog.debug(LOG_TAG, "Request to create Test Event, title: $title, startTime: $startTime, endTime: $endTime, reminder: $reminder");
@@ -712,7 +709,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, Time.getCurrentTimezone()); // Irish summer time
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID()); // Irish summer time
         values.put(CalendarContract.Events.DESCRIPTION, "Test event created by the app");
 
         values.put(CalendarContract.Events.DTSTART, startTime);
@@ -864,8 +861,8 @@ object CalendarProvider : CalendarProviderInterface {
         try {
             if (cursor != null && cursor.moveToFirst()) {
 
-                val rRule = (cursor.getString(1) as String?) ?: "";
-                val rDate = (cursor.getString(2) as String?) ?: "";
+                val rRule = cursor.getString(1) ?: "";
+                val rDate = cursor.getString(2) ?: "";
 
                 ret = rRule.isNotEmpty() || rDate.isNotEmpty()
             }
@@ -907,64 +904,64 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
-    override fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
-
-        var ret = false;
-
-        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
-
-        if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
-            return false;
-        }
-
-        try {
-            val values = ContentValues();
-
-            val currentTime = System.currentTimeMillis()
-
-            val newStartTime: Long
-            val newEndTime: Long
-
-            val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
-
-            if (numSecondsInThePast > 0) {
-                val addUnits = numSecondsInThePast / addTime + 1
-
-                newStartTime = event.startTime + addTime * addUnits
-                newEndTime = event.endTime + addTime * addUnits
-
-                if (addUnits != 1L)
-                    DevLog.error(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTime * addUnits}")
-
-                values.put(CalendarContract.Events.DTSTART, newStartTime);
-                values.put(CalendarContract.Events.DTEND, newEndTime);
-            }
-            else {
-                newStartTime = event.startTime + addTime
-                newEndTime = event.endTime + addTime
-
-                values.put(CalendarContract.Events.DTSTART, newStartTime);
-                values.put(CalendarContract.Events.DTEND, newEndTime);
-            }
-
-            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
-            val updated = context.contentResolver.update(updateUri, values, null, null);
-
-            ret = updated > 0
-
-            if (ret) {
-                event.startTime = newStartTime
-                event.endTime = newEndTime
-            }
-
-        }
-        catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
-        }
-
-        return ret;
-    }
+//    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
+//
+//        var ret = false;
+//
+//        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
+//
+//        if (!PermissionsManager.hasAllPermissions(context)) {
+//            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
+//            return false;
+//        }
+//
+//        try {
+//            val values = ContentValues();
+//
+//            val currentTime = System.currentTimeMillis()
+//
+//            val newStartTime: Long
+//            val newEndTime: Long
+//
+//            val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
+//
+//            if (numSecondsInThePast > 0) {
+//                val addUnits = numSecondsInThePast / addTime + 1
+//
+//                newStartTime = event.startTime + addTime * addUnits
+//                newEndTime = event.endTime + addTime * addUnits
+//
+//                if (addUnits != 1L)
+//                    DevLog.error(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTime * addUnits}")
+//
+//                values.put(CalendarContract.Events.DTSTART, newStartTime);
+//                values.put(CalendarContract.Events.DTEND, newEndTime);
+//            }
+//            else {
+//                newStartTime = event.startTime + addTime
+//                newEndTime = event.endTime + addTime
+//
+//                values.put(CalendarContract.Events.DTSTART, newStartTime);
+//                values.put(CalendarContract.Events.DTEND, newEndTime);
+//            }
+//
+//            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
+//            val updated = context.contentResolver.update(updateUri, values, null, null);
+//
+//            ret = updated > 0
+//
+//            if (ret) {
+//                event.startTime = newStartTime
+//                event.endTime = newEndTime
+//            }
+//
+//        }
+//        catch (ex: Exception) {
+//            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+//        }
+//
+//        return ret;
+//    }
 
     override fun getCalendars(context: Context): List<CalendarRecord> {
 
@@ -1043,7 +1040,7 @@ object CalendarProvider : CalendarProviderInterface {
                         isReadOnly = !isEditable,
                         isVisible = (visible ?: 0) != 0,
                         isSynced = (syncEvents ?: 0) != 0,
-                        timeZone = timeZone ?: Time.getCurrentTimezone()
+                        timeZone = timeZone ?: TimeZone.getDefault().getID()
                 ))
             }
 
@@ -1103,6 +1100,7 @@ object CalendarProvider : CalendarProviderInterface {
             val isAllDay: Long
     )
 
+    @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
     override fun getEventAlertsForInstancesInRange(
             context: Context,
             instanceFrom: Long,

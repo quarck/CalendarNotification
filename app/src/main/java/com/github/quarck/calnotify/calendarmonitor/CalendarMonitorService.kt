@@ -38,7 +38,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
             return
         }
 
-        var startDelay = intent?.getIntExtra(START_DELAY, 0)
+        var startDelay = intent.getIntExtra(START_DELAY, 0)
 
         val shouldReloadCalendar = intent.getBooleanExtra(RELOAD_CALENDAR, false)
         val shouldRescanMonitor = intent.getBooleanExtra(RESCAN_MONITOR, true)
@@ -74,7 +74,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     ApplicationController.onCalendarReloadFromService(this, userActionUntil)
                 }
                 catch (ex: Exception) {
-                    DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                    DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
                 }
             }
 
@@ -83,7 +83,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     ApplicationController.CalendarMonitor.onRescanFromService(this, intent)
                 }
                 catch (ex: Exception) {
-                    DevLog.error(this, LOG_TAG, "Exception while rescannning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                    DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
                 }
             }
 
@@ -92,7 +92,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                 ApplicationController.AddEventMonitorInstance.onRescanFromService(this, intent)
             }
             catch (ex: Exception) {
-                DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): $ex, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
             }
         }
     }

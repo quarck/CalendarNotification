@@ -32,12 +32,11 @@ enum class EventOrigin(val code: Int) {
 
     override fun toString(): String
             = when (this) {
-        ProviderBroadcast -> "PB"
-        ProviderManual -> "PM"
-        ProviderBroadcastFollowingManual -> "pbPM"
-        FullManual -> "FM"
-        else -> "UND"
-    }
+                ProviderBroadcast -> "PB"
+                ProviderManual -> "PM"
+                ProviderBroadcastFollowingManual -> "pbPM"
+                FullManual -> "FM"
+            }
 
     companion object {
         @JvmStatic

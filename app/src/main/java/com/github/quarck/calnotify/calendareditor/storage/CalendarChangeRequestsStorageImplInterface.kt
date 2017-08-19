@@ -24,16 +24,18 @@ import android.database.sqlite.SQLiteDatabase
 interface CalendarChangeRequestsStorageImplInterface {
     fun createDb(db: SQLiteDatabase)
 
-    fun addEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+    fun addImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
 
-    fun deleteEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
-    fun deleteEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
+    fun deleteImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+    fun deleteManyImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
 
-    fun updateEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
-    fun updateEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
+    fun updateImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+    fun updateManyImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
 
-    fun getEventsImpl(db: SQLiteDatabase): List<CalendarChangeRequest>
+    fun getImpl(db: SQLiteDatabase): List<CalendarChangeRequest>
 
     fun dropAll(db: SQLiteDatabase)
+
+    fun deleteForEventIdImpl(db: SQLiteDatabase, eventId: Long)
 
 }

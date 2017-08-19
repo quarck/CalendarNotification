@@ -63,62 +63,75 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
             for (event in db.requests) {
 
-                val validation =
-                        when (event.type) {
-                            EventChangeRequestType.AddNewEvent ->
-                                validateCreationRequest(
-                                        context,
-                                        provider,
-                                        event,
-                                        cleanupEventsTo)
-                            else ->
-                                validateMoveRequest(
-                                        context,
-                                        provider,
-                                        event,
-                                        cleanupEventsTo)
-                        }
+                try {
+                    val validation =
+                            when (event.type) {
+                                EventChangeRequestType.AddNewEvent ->
+                                    validateCreationRequest(
+                                            context,
+                                            provider,
+                                            event,
+                                            cleanupEventsTo)
+                                else ->
+                                    validateMoveRequest(
+                                            context,
+                                            provider,
+                                            event,
+                                            cleanupEventsTo)
+                            }
 
-                when (validation) {
-                    ValidationResultCommand.DeleteRequest ->
-                            eventsToDelete.add(event)
+                    when (validation) {
+                        ValidationResultCommand.DeleteRequest ->
+                                eventsToDelete.add(event)
 
-                    ValidationResultCommand.UpdateRequest ->
-                            eventsToUpdate.add(event)
+                        ValidationResultCommand.UpdateRequest ->
+                                eventsToUpdate.add(event)
 
-                    ValidationResultCommand.ReApplyRequest ->
-                            eventsToReApply.add(event)
+                        ValidationResultCommand.ReApplyRequest ->
+                                eventsToReApply.add(event)
 
-                    ValidationResultCommand.JustSkipRequest ->
-                            Unit
+                        ValidationResultCommand.JustSkipRequest ->
+                                Unit
+                    }
                 }
+                catch (ex: Exception) {
+                    DevLog.error(context, LOG_TAG, "Failed to validate ${event.eventId}, type ${event.type}, ${ex}, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
+                }
+
             }
 
             if (eventsToReApply.isNotEmpty()) {
                 for (event in eventsToReApply) {
                     reApplyRequest(context, provider, event)
                 }
-                db.updateEvents(eventsToReApply)
+                db.updateMany(eventsToReApply)
             }
 
             if (eventsToDelete.isNotEmpty())
-                db.deleteEvents(eventsToDelete)
+                db.deleteMany(eventsToDelete)
 
             if (eventsToUpdate.isNotEmpty())
-                db.updateEvents(eventsToUpdate)
+                db.updateMany(eventsToUpdate)
         }
     }
 
     private fun reApplyRequest(context: Context, provider: CalendarProvider, event: CalendarChangeRequest) {
 
-        when (event.type) {
-            EventChangeRequestType.AddNewEvent ->
-                event.eventId = provider.createEvent(context, event)
+        DevLog.info(context, LOG_TAG, "Re-Applying req, event id ${event.eventId}, type ${event.type}")
 
-            EventChangeRequestType.MoveExistingEvent -> {
-                provider.moveEvent(context, event.eventId, event.startTime, event.endTime)
-                event.status = EventChangeStatus.Dirty
+        try {
+            when (event.type) {
+                EventChangeRequestType.AddNewEvent ->
+                    event.eventId = provider.createEvent(context, event)
+
+                EventChangeRequestType.MoveExistingEvent -> {
+                    provider.moveEvent(context, event.eventId, event.startTime, event.endTime)
+                    event.status = EventChangeStatus.Dirty
+                }
             }
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Failed: ${ex}, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
         }
     }
 

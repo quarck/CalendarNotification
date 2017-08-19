@@ -58,18 +58,18 @@ class CalendarChangeRequestsStorage(val context: Context)
 //        try {
 //            impl.createDb(db)
 //
-//            val requests = implOld.getEventsImpl(db)
+//            val requests = implOld.getImpl(db)
 //
 //            DevLog.info(context, LOG_TAG, "${requests.size} requests to convert")
 //
 //            for ((event, time, type) in requests) {
-//                impl.addEventImpl(db, type, time, event)
-//                implOld.deleteEventImpl(db, event)
+//                impl.addImpl(db, type, time, event)
+//                implOld.deleteImpl(db, event)
 //
 //                DevLog.debug(LOG_TAG, "Done event ${event.eventId}, inst ${event.instanceStartTime}")
 //            }
 //
-//            if (implOld.getEventsImpl(db).isEmpty()) {
+//            if (implOld.getImpl(db).isEmpty()) {
 //                DevLog.info(context, LOG_TAG, "Finally - dropping old tables")
 //                implOld.dropAll(db)
 //            }
@@ -84,24 +84,27 @@ class CalendarChangeRequestsStorage(val context: Context)
 //        }
     }
 
-    override fun addEvent(req: CalendarChangeRequest)
-            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, req) } }
+    override fun add(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.addImpl(it, req) } }
 
-    override fun deleteEvent(req: CalendarChangeRequest)
-            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, req) } }
+    override fun deleteForEventId(eventId: Long)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteForEventIdImpl(it, eventId) } }
 
-    override fun deleteEvents(requests: List<CalendarChangeRequest>)
-            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, requests) } }
+    override fun delete(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteImpl(it, req) } }
 
-    override fun updateEvent(req: CalendarChangeRequest)
-            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, req) } }
+    override fun deleteMany(requests: List<CalendarChangeRequest>)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteManyImpl(it, requests) } }
 
-    override fun updateEvents(requests: List<CalendarChangeRequest>)
-            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, requests) } }
+    override fun update(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateImpl(it, req) } }
+
+    override fun updateMany(requests: List<CalendarChangeRequest>)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateManyImpl(it, requests) } }
 
 
     override val requests: List<CalendarChangeRequest>
-        get() = synchronized(CalendarChangeRequestsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
+        get() = synchronized(CalendarChangeRequestsStorage::class.java) { readableDatabase.use { impl.getImpl(it) } }
 
     override fun close() = super.close()
 

@@ -22,13 +22,15 @@ package com.github.quarck.calnotify.calendareditor.storage
 
 interface CalendarChangeRequestsStorageInterface {
 
-    fun addEvent(req: CalendarChangeRequest)
+    fun add(req: CalendarChangeRequest)
 
-    fun deleteEvent(req: CalendarChangeRequest)
-    fun deleteEvents(requests: List<CalendarChangeRequest>)
+    fun delete(req: CalendarChangeRequest)
+    fun deleteMany(requests: List<CalendarChangeRequest>)
 
-    fun updateEvent(req: CalendarChangeRequest)
-    fun updateEvents(requests: List<CalendarChangeRequest>)
+    fun update(req: CalendarChangeRequest)
+    fun updateMany(requests: List<CalendarChangeRequest>)
 
     val requests: List<CalendarChangeRequest> get
+
+    fun deleteForEventId(eventId: Long)
 }

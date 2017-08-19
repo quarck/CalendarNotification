@@ -188,11 +188,18 @@ class AddEventActivity : AppCompatActivity() {
 
 
         // Default calendar
-        calendars = calendarProvider.getCalendars(this).filter { !it.isReadOnly }
+        calendars = calendarProvider.getCalendars(this).filter { !it.isReadOnly && it.isVisible }
 
         if (calendars.isEmpty()) {
-            DevLog.error(this, LOG_TAG, "You have no calendars")
-            finish()
+            DevLog.error(this, LOG_TAG, "You have no enabled calendars")
+
+            AlertDialog.Builder(this)
+                    .setMessage(R.string.no_active_calendars)
+                    .setPositiveButton(android.R.string.ok) {
+                        _, _ ->
+                        finish()
+                    }
+                    .show()
         }
 
         val lastCalendar = persistentState.lastCalendar
@@ -306,10 +313,12 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onButtonCancelClick(v: View) {
         onBackPressed()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onAccountClick(v: View) {
 
         val builder = AlertDialog.Builder(this)
@@ -324,7 +333,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.setCancelable(true)
 
         builder.setAdapter(adapter) {
-            dialog, which ->
+            _, which ->
             if (which in 0..calendars.size-1) {
 
                 calendar = calendars.get(which)
@@ -341,6 +350,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onButtonSaveClick(v: View) {
 
         var startTime = from.timeInMillis
@@ -396,6 +406,7 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onSwitchAllDayClick(v: View) {
         isAllDay = switchAllDay.isChecked
 
@@ -412,6 +423,7 @@ class AddEventActivity : AppCompatActivity() {
         updateReminders()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onDateFromClick(v: View) {
 
         val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
@@ -419,7 +431,7 @@ class AddEventActivity : AppCompatActivity() {
         val dialog = DatePickerDialog(
                 this,
                 {
-                    picker, year, month, day ->
+                    _, year, month, day ->
 
                     from.year = year
                     from.month = month
@@ -445,6 +457,7 @@ class AddEventActivity : AppCompatActivity() {
         //builder.setIcon(R.drawable.ic_launcher)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onTimeFromClick(v: View) {
 
         val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
@@ -452,7 +465,7 @@ class AddEventActivity : AppCompatActivity() {
         val dialog = TimePickerDialog(
                 this,
                 {
-                    picker, hour, min ->
+                    _, hour, min ->
 
                     from.hourOfDay = hour
                     from.minute = min
@@ -470,6 +483,7 @@ class AddEventActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onDateToClick(v: View) {
 
         val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
@@ -477,7 +491,7 @@ class AddEventActivity : AppCompatActivity() {
         val dialog = DatePickerDialog(
                 this,
                 {
-                    picker, year, month, day ->
+                    _, year, month, day ->
 
                     to.year = year
                     to.month = month
@@ -504,6 +518,7 @@ class AddEventActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onTimeToClick(v: View) {
 
         val durationMinutes = (to.timeInMillis - from.timeInMillis) / Consts.MINUTE_IN_MILLISECONDS
@@ -511,7 +526,7 @@ class AddEventActivity : AppCompatActivity() {
         val dialog = TimePickerDialog(
                 this,
                 {
-                    picker, hour, min ->
+                    _, hour, min ->
 
                     to.hourOfDay = hour
                     to.minute = min
@@ -532,6 +547,7 @@ class AddEventActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onNotificationClick(v: View) {
 
         val wrapper = reminders.find { it.view == v }
@@ -612,7 +628,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.setCancelable(true)
 
         builder.setAdapter(adapter) {
-            dialog, which ->
+            _, which ->
             if (which in 0..intervalValues.size-1) {
 
                 val intervalMillis = intervalValues[which].toLong()
@@ -673,11 +689,11 @@ class AddEventActivity : AppCompatActivity() {
             timePicker.clearFocus()
 
             val daysBefore = numberPicker.value
-            val hr = timePicker.hourCompat
-            val min = timePicker.minuteCompat
+            val pickerHr = timePicker.hourCompat
+            val pickerMin = timePicker.minuteCompat
 
             val daysInMilliseconds = daysBefore * Consts.DAY_IN_MILLISECONDS
-            val hrMinInMilliseconds = hr * Consts.HOUR_IN_MILLISECONDS + min * Consts.MINUTE_IN_MILLISECONDS
+            val hrMinInMilliseconds = pickerHr * Consts.HOUR_IN_MILLISECONDS + pickerMin * Consts.MINUTE_IN_MILLISECONDS
             val reminderTimeMilliseconds = daysInMilliseconds - hrMinInMilliseconds
 
             val isEmail = isEmailCb.isChecked
@@ -727,7 +743,7 @@ class AddEventActivity : AppCompatActivity() {
         builder.setCancelable(true)
 
         builder.setAdapter(adapter) {
-            dialog, which ->
+            _, which ->
             if (which in 0..reminderValues.size-1) {
 
                 val reminderSeconds = reminderValues[which]
@@ -761,6 +777,7 @@ class AddEventActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("UNUSED_PARAMETER")
     fun onAddNotificationClick(v: View) {
         if (!isAllDay) {
             showAddReminderListDialog(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), null)
@@ -810,6 +827,7 @@ class AddEventActivity : AppCompatActivity() {
             textView.setTextAppearance(android.R.style.TextAppearance_Medium)
         }
         else {
+            @Suppress("DEPRECATION")
             textView.setTextAppearance(this, android.R.style.TextAppearance_Medium)
         }
 

@@ -46,7 +46,7 @@ interface CalendarProviderInterface {
 
     fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean
 
-    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean
+//    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean
 
     fun getCalendars(context: Context): List<CalendarRecord>
 

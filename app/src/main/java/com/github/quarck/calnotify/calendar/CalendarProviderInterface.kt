@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.calendar
 import android.content.ContentResolver
 import android.content.Context
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 
 interface CalendarProviderInterface {
 
@@ -44,6 +44,8 @@ interface CalendarProviderInterface {
 
     fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long
 
+    fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean
+
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean
 
     fun getCalendars(context: Context): List<CalendarRecord>
@@ -56,5 +58,5 @@ interface CalendarProviderInterface {
 
     fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long>
 
-    fun createEvent(context: Context, event: EventCreationRequest): Long
+    fun createEvent(context: Context, event: CalendarChangeRequest): Long
 }

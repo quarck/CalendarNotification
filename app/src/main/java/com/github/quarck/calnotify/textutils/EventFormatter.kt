@@ -158,9 +158,9 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
 
         val ret: Pair<String, String>
 
-        // A bit of a hack here: full day events are pointing to the millisecond after
+        // A bit of a hack here: full day requests are pointing to the millisecond after
         // the time period, and it is already +1 day, so substract 1s to make formatting work correct
-        // also all-day events ignoring timezone, so should be printed as UTC
+        // also all-day requests ignoring timezone, so should be printed as UTC
         val startTime = event.displayedStartTime
         var endTime = event.displayedEndTime
         if (endTime != 0L)
@@ -256,9 +256,9 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
 
     private fun formatDateTimeOneLineAllDay(event: EventAlertRecord, showWeekDay: Boolean = false): String {
 
-        // A bit of a hack here: full day events are pointing to the millisecond after
+        // A bit of a hack here: full day requests are pointing to the millisecond after
         // the time period, and it is already +1 day, so substract 1s to make formatting work correct
-        // also all-day events ignoring timezone, so should be printed as UTC
+        // also all-day requests ignoring timezone, so should be printed as UTC
         val startTime = event.displayedStartTime
         var endTime = event.displayedEndTime
         if (endTime != 0L)

@@ -172,7 +172,7 @@ class DismissedEventsStorageImplV2()
         }
         cursor.close()
 
-        DevLog.debug(LOG_TAG, "eventsImpl, returning ${ret.size} events")
+        DevLog.debug(LOG_TAG, "eventsImpl, returning ${ret.size} requests")
 
         return ret
     }

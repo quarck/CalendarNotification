@@ -517,7 +517,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     .setPositiveButton(android.R.string.yes) {
                         _, _ ->
 
-                        DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all events, snoozeDelay=${snoozeDelay / 1000L}")
+                        DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all requests, snoozeDelay=${snoozeDelay / 1000L}")
 
                         val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange, false);
                         if (result != null) {

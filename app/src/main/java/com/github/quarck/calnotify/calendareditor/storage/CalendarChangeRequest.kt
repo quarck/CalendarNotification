@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.calendareditor.storage
 
 import com.github.quarck.calnotify.Consts
 
@@ -63,16 +63,32 @@ fun List<EventCreationRequestReminder>.serialize()
 fun String.deserializeNewEventReminders()
         = this.split(";").map { EventCreationRequestReminder.deserialize(it) }.toList()
 
-object EventCreationStatus {
-    const val DIRTY = 0
-    const val CONFIRMED_ONE = 1
-    const val CONFIRMED_TWO = 2
-    const val CONFIRMED_THREE = 3
-    const val FULLY_CONFIRMED = 4
+enum class EventChangeStatus(val code: Int) {
+    Dirty(0),
+    ConfirmedInitially(1),
+    ConfirmedSecond(2),
+    ConfirmedFully(3);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
 }
 
-data class EventCreationRequest(
+enum class EventChangeRequestType(val code: Int) {
+    AddNewEvent(0),
+    MoveExistingEvent(1);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
+
+
+data class CalendarChangeRequest(
         var id: Long,
+        var type: EventChangeRequestType,
         var eventId: Long,
         val calendarId: Long,
         val title: String,
@@ -88,7 +104,7 @@ data class EventCreationRequest(
         val repeatingExRDate: String, // empty if not repeating
         val colour: Int,
         val reminders: List<EventCreationRequestReminder>,
-        var status: Int = EventCreationStatus.DIRTY,
+        var status: EventChangeStatus = EventChangeStatus.Dirty,
         var lastStatusUpdate: Long = 0
 ) {
     fun onValidated(success: Boolean, time: Long = 0L): Boolean {
@@ -96,7 +112,7 @@ data class EventCreationRequest(
         val timeValidated = if (time != 0L) time else System.currentTimeMillis()
 
         if (!success) {
-            status = EventCreationStatus.DIRTY
+            status = EventChangeStatus.Dirty
             lastStatusUpdate = timeValidated
             return true
         }
@@ -106,22 +122,19 @@ data class EventCreationRequest(
         }
 
         status =
-            when (status) {
-                EventCreationStatus.DIRTY ->
-                    EventCreationStatus.CONFIRMED_ONE
+                when (status) {
+                    EventChangeStatus.Dirty ->
+                        EventChangeStatus.ConfirmedInitially
 
-                EventCreationStatus.CONFIRMED_ONE ->
-                    EventCreationStatus.CONFIRMED_TWO
+                    EventChangeStatus.ConfirmedInitially ->
+                        EventChangeStatus.ConfirmedSecond
 
-                EventCreationStatus.CONFIRMED_TWO ->
-                    EventCreationStatus.CONFIRMED_THREE
+                    EventChangeStatus.ConfirmedSecond ->
+                        EventChangeStatus.ConfirmedFully
 
-                EventCreationStatus.CONFIRMED_THREE ->
-                    EventCreationStatus.FULLY_CONFIRMED
-
-                else ->
-                    EventCreationStatus.DIRTY
-            }
+                    EventChangeStatus.ConfirmedFully ->
+                        EventChangeStatus.ConfirmedFully
+                }
 
         lastStatusUpdate = timeValidated
 

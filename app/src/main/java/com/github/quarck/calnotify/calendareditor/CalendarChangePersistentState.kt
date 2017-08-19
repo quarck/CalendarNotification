@@ -16,12 +16,17 @@
 //   along with this program; if not, write to the Free Software Foundation,
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
-
-package com.github.quarck.calnotify.addevent
+package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
-import android.content.Intent
+import com.github.quarck.calnotify.utils.PersistentStorageBase
 
-interface AddEventMonitorInterface {
-    fun onRescanFromService(context: Context, intent: Intent)
+
+class CalendarChangePersistentState(val ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
+
+    var lastCalendar by LongProperty(-1, "A") // give a short name to simplify XML parsing
+
+    companion object {
+        const val PREFS_NAME: String = "add_event_state"
+    }
 }

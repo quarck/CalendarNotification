@@ -17,18 +17,18 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.calendareditor
 
+import android.content.Context
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 
-interface EventCreationRequestsStorageInterface {
+interface CalendarChangeManagerInterface {
 
-    fun addEvent(event: EventCreationRequest)
-
-    fun deleteEvent(event: EventCreationRequest)
-    fun deleteEvents(events: List<EventCreationRequest>)
-
-    fun updateEvent(event: EventCreationRequest)
-    fun updateEvents(events: List<EventCreationRequest>)
-
-    val events: List<EventCreationRequest> get
+    /**
+     * Returns true on usccess, and 'event' is updated with the eventId of newly created
+     * event
+     * @param [context] - Android context
+     * @param [event] - new event struct to create
+     */
+    fun createEvent(context: Context, event: CalendarChangeRequest): Boolean
 }

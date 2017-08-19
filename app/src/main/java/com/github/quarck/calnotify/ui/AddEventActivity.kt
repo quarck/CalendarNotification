@@ -21,10 +21,11 @@ import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.AddEventManager
-import com.github.quarck.calnotify.addevent.AddEventPersistentState
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequestReminder
+import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
+import com.github.quarck.calnotify.calendareditor.storage.EventCreationRequestReminder
+import com.github.quarck.calnotify.calendareditor.storage.EventChangeRequestType
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
@@ -45,7 +46,7 @@ import java.util.*
 
 // FIXME: only show handled calendars
 
-// FIXME: handle repeating events
+// FIXME: handle repeating requests
 
 // FIXME: handle timezones
 
@@ -133,7 +134,7 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var to: Calendar
     private var isAllDay: Boolean = false
 
-    private lateinit var persistentState: AddEventPersistentState
+    private lateinit var persistentState: CalendarChangePersistentState
 
     var calendarProvider: CalendarProviderInterface = CalendarProvider
 
@@ -153,7 +154,7 @@ class AddEventActivity : AppCompatActivity() {
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
-        persistentState = AddEventPersistentState(this)
+        persistentState = CalendarChangePersistentState(this)
 
         // get all the objects first
         eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
@@ -352,8 +353,9 @@ class AddEventActivity : AppCompatActivity() {
 
         val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
 
-        val newEvent = EventCreationRequest(
+        val newEvent = CalendarChangeRequest(
                 id = -1L,
+                type = EventChangeRequestType.AddNewEvent,
                 eventId = -1L,
                 calendarId = calendar.calendarId,
                 title = eventTitleText.text.toString(),
@@ -371,7 +373,7 @@ class AddEventActivity : AppCompatActivity() {
                 reminders =  remindersToAdd
         )
 
-        val added = AddEventManager(CalendarProvider).createEvent(this, newEvent)
+        val added = CalendarChangeManager(CalendarProvider).createEvent(this, newEvent)
         if (added) {
             DevLog.debug(this, LOG_TAG, "Event created: id=${newEvent.eventId}")
 

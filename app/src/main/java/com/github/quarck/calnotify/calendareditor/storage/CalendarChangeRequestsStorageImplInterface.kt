@@ -17,18 +17,23 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent
+package com.github.quarck.calnotify.calendareditor.storage
 
-import android.content.Context
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import android.database.sqlite.SQLiteDatabase
 
-interface AddEventManagerInterface {
+interface CalendarChangeRequestsStorageImplInterface {
+    fun createDb(db: SQLiteDatabase)
 
-    /**
-     * Returns true on usccess, and 'event' is updated with the eventId of newly created
-     * event
-     * @param [context] - Android context
-     * @param [event] - new event struct to create
-     */
-    fun createEvent(context: Context, event: EventCreationRequest): Boolean
+    fun addEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+
+    fun deleteEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+    fun deleteEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
+
+    fun updateEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest)
+    fun updateEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>)
+
+    fun getEventsImpl(db: SQLiteDatabase): List<CalendarChangeRequest>
+
+    fun dropAll(db: SQLiteDatabase)
+
 }

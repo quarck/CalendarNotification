@@ -17,19 +17,19 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent
+package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequestsStorage
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequestsStorage
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 
-class AddEventManager(val provider: CalendarProviderInterface): AddEventManagerInterface {
+class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarChangeManagerInterface {
 
-    override fun createEvent(context: Context, event: EventCreationRequest): Boolean {
+    override fun createEvent(context: Context, event: CalendarChangeRequest): Boolean {
 
         val ret =
-            EventCreationRequestsStorage(context).use {
+            CalendarChangeRequestsStorage(context).use {
                 db ->
 
                 db.addEvent(event)

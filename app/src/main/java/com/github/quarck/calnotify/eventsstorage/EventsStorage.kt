@@ -63,7 +63,7 @@ class EventsStorage(val context: Context)
 
             val events = implOld.getEventsImpl(db)
 
-            DevLog.info(context, LOG_TAG, "${events.size} events to convert")
+            DevLog.info(context, LOG_TAG, "${events.size} requests to convert")
 
             for (event in events) {
                 if (impl.addEventImpl(db, event)) {
@@ -78,7 +78,7 @@ class EventsStorage(val context: Context)
                 implOld.dropAll(db)
             }
             else {
-                throw Exception("DB Upgrade failed: some events are still in the old version of DB")
+                throw Exception("DB Upgrade failed: some requests are still in the old version of DB")
             }
 
         }

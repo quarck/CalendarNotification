@@ -81,7 +81,7 @@ class CalendarMonitorProvider(
     }
 
 
-    // should return true if we have fired at new events, so UI should reload if it is open
+    // should return true if we have fired at new requests, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, state: CalendarMonitorState, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
@@ -133,7 +133,7 @@ class CalendarMonitorProvider(
                 }
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Exception occured while posting notifications / firing events: $ex, ${ex.stackTrace}")
+                DevLog.error(context, LOG_TAG, "Exception occured while posting notifications / firing requests: $ex, ${ex.stackTrace}")
             }
         }
 
@@ -174,7 +174,7 @@ class CalendarMonitorProvider(
             nextAlert = calendarProvider.findNextAlarmTime(context.contentResolver, nextAlert + 1L) ?: Long.MAX_VALUE
         }
 
-        // Now - scan for the next alert since currentTime, so we can see any newly added events, if any
+        // Now - scan for the next alert since currentTime, so we can see any newly added requests, if any
         val nextAlertSinceCurrent = calendarProvider.findNextAlarmTime(context.contentResolver, processEventsTo)
                 ?: Long.MAX_VALUE
 

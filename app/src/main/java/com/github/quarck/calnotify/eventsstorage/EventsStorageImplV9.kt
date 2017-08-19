@@ -219,7 +219,7 @@ class EventsStorageImplV9(val context: Context)
     }
 
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
-        //DevLog.debug(LOG_TAG, "Updating ${events.size} events");
+        //DevLog.debug(LOG_TAG, "Updating ${requests.size} requests");
 
         var ret = true
 
@@ -348,7 +348,7 @@ class EventsStorageImplV9(val context: Context)
         }
         cursor.close()
 
-        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} requests")
 
         return ret
     }
@@ -372,7 +372,7 @@ class EventsStorageImplV9(val context: Context)
         }
         cursor.close()
 
-        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} requests")
 
         return ret
     }

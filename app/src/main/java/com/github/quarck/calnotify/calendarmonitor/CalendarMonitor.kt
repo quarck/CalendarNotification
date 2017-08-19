@@ -69,7 +69,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(context)
     }
 
-    // should return true if we have fired at new events, so UI should reload if it is open
+    // should return true if we have fired at new requests, so UI should reload if it is open
     override fun onAppResumed(context: Context, monitorSettingsChanged: Boolean) {
 
         DevLog.info(context, LOG_TAG, "onAppResumed")
@@ -139,7 +139,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     // proper broadcast from the Calendar Provider. Normally this is a proper
-    // way of receiving information about ongoing events. Apparently not always
+    // way of receiving information about ongoing requests. Apparently not always
     // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
@@ -219,7 +219,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         )
     }
 
-    // should return true if we have fired at new events, so UI should reload if it is open
+    // should return true if we have fired at new requests, so UI should reload if it is open
     override fun launchRescanService(
             context: Context,
             delayed: Int,

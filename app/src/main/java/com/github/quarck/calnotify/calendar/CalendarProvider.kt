@@ -29,7 +29,7 @@ import android.provider.CalendarContract
 import android.text.format.Time
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.storage.EventCreationRequest
+import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -158,7 +158,7 @@ object CalendarProvider : CalendarProviderInterface {
             } while (cursor.moveToNext())
         }
         else {
-            DevLog.error(context, LOG_TAG, "No events at $alertTime")
+            DevLog.error(context, LOG_TAG, "No requests at $alertTime")
         }
 
         cursor?.close()
@@ -570,7 +570,7 @@ object CalendarProvider : CalendarProviderInterface {
         )
 
         //
-        // First - retrieve full set of events we are looking for
+        // First - retrieve full set of requests we are looking for
         //
         var values: ContentValues? = null // values for the new event
 
@@ -764,7 +764,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret;
     }
 
-    override fun createEvent(context: Context, event: EventCreationRequest): Long {
+    override fun createEvent(context: Context, event: CalendarChangeRequest): Long {
 
         var eventId = -1L;
 
@@ -875,6 +875,34 @@ object CalendarProvider : CalendarProviderInterface {
         }
 
         cursor?.close()
+
+        return ret;
+    }
+
+    override fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean {
+        var ret = false;
+
+        DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime");
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
+            return false;
+        }
+
+        try {
+            val values = ContentValues();
+
+            values.put(CalendarContract.Events.DTSTART, newStartTime);
+            values.put(CalendarContract.Events.DTEND, newEndTime);
+
+            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+            val updated = context.contentResolver.update(updateUri, values, null, null);
+
+            ret = updated > 0
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+        }
 
         return ret;
     }
@@ -1242,10 +1270,10 @@ object CalendarProvider : CalendarProviderInterface {
 
                     var shouldAddManualReminder = false
 
-                    // has no reminders and we should notify about such events
+                    // has no reminders and we should notify about such requests
                     if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
 
-                        // it also has no remote (email) reminders or we were configured to notify on such events
+                        // it also has no remote (email) reminders or we were configured to notify on such requests
                         if (!hasNonLocalReminders || notifyOnEmailOnlyEvents) {
                             shouldAddManualReminder = true
                         }

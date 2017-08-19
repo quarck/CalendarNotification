@@ -60,13 +60,13 @@ class CalendarMonitorManual(
             if (state.prevEventFireFromScan < lastFiredAlert)
                 state.prevEventFireFromScan = lastFiredAlert
 
-            DevLog.info(context, LOG_TAG, "${firedAlerts.size} events were marked in DB as handled, prevEventFireFromScan was set to $lastFiredAlert")
+            DevLog.info(context, LOG_TAG, "${firedAlerts.size} requests were marked in DB as handled, prevEventFireFromScan was set to $lastFiredAlert")
         }
 
         return fired
     }
 
-    // should return true if we have fired at new events, so UI should reload if it is open
+    // should return true if we have fired at new requests, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
@@ -226,9 +226,9 @@ class CalendarMonitorManual(
                 .sortedBy { it.alertTime }
 
         DevLog.info(context, LOG_TAG, "scanNextEvent: scan range: $scanFrom, $scanTo (${Date(scanFrom)} - ${Date(scanTo)})," +
-                " got ${alerts.size} events off the provider, merged count: ${alertsMerged.size}")
+                " got ${alerts.size} requests off the provider, merged count: ${alertsMerged.size}")
 
-        // now we only need to simply fire at all missed events,
+        // now we only need to simply fire at all missed requests,
         // and pick the nearest future event,
         // don't forget to update state
 
@@ -238,7 +238,7 @@ class CalendarMonitorManual(
 
         if (firstScanEver) {
             state.firstScanEver = false
-            DevLog.info(context, LOG_TAG, "This is a first deep scan ever, not posting 'due' events")
+            DevLog.info(context, LOG_TAG, "This is a first deep scan ever, not posting 'due' requests")
             markAlertsAsHandledInDB(context, dueAlerts)
 
         }
@@ -275,8 +275,8 @@ class CalendarMonitorManual(
 
         DevLog.info(context, LOG_TAG, "scanNextEvent: next alert $nextAlertTime");
 
-        // Very finally - delete events that we are no longer interested in:
-        // * events that were handled already
+        // Very finally - delete requests that we are no longer interested in:
+        // * requests that were handled already
         // * and old enough (before this iteration's 'scanFrom'
         MonitorStorage(context).use {
             it.deleteAlertsMatching {

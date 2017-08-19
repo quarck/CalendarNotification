@@ -16,18 +16,19 @@
 //   along with this program; if not, write to the Free Software Foundation,
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
-package com.github.quarck.calnotify.addevent
 
-import android.content.Context
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.utils.PersistentStorageBase
+package com.github.quarck.calnotify.calendareditor.storage
 
 
-class AddEventPersistentState(val ctx: Context): PersistentStorageBase(ctx, PREFS_NAME) {
+interface CalendarChangeRequestsStorageInterface {
 
-    var lastCalendar by LongProperty(-1, "A") // give a short name to simplify XML parsing
+    fun addEvent(req: CalendarChangeRequest)
 
-    companion object {
-        const val PREFS_NAME: String = "add_event_state"
-    }
+    fun deleteEvent(req: CalendarChangeRequest)
+    fun deleteEvents(requests: List<CalendarChangeRequest>)
+
+    fun updateEvent(req: CalendarChangeRequest)
+    fun updateEvents(requests: List<CalendarChangeRequest>)
+
+    val requests: List<CalendarChangeRequest> get
 }

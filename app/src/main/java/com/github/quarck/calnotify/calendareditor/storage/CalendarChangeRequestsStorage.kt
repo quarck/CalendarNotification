@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.calendareditor.storage
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -25,15 +25,15 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.logs.DevLog
 import java.io.Closeable
 
-class EventCreationRequestsStorage(val context: Context)
+class CalendarChangeRequestsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION)
         , Closeable
-        , EventCreationRequestsStorageInterface {
+        , CalendarChangeRequestsStorageInterface {
 
-    private var impl: EventCreationRequestsStorageImplInterface
+    private var impl: CalendarChangeRequestsStorageImplInterface
 
     init {
-        impl = EventCreationRequestsStorageImplV1();
+        impl = CalendarChangeRequestsStorageImplV1();
     }
 
     override fun onCreate(db: SQLiteDatabase)
@@ -58,11 +58,11 @@ class EventCreationRequestsStorage(val context: Context)
 //        try {
 //            impl.createDb(db)
 //
-//            val events = implOld.getEventsImpl(db)
+//            val requests = implOld.getEventsImpl(db)
 //
-//            DevLog.info(context, LOG_TAG, "${events.size} events to convert")
+//            DevLog.info(context, LOG_TAG, "${requests.size} requests to convert")
 //
-//            for ((event, time, type) in events) {
+//            for ((event, time, type) in requests) {
 //                impl.addEventImpl(db, type, time, event)
 //                implOld.deleteEventImpl(db, event)
 //
@@ -74,7 +74,7 @@ class EventCreationRequestsStorage(val context: Context)
 //                implOld.dropAll(db)
 //            }
 //            else {
-//                throw Exception("DB Upgrade failed: some events are still in the old version of DB")
+//                throw Exception("DB Upgrade failed: some requests are still in the old version of DB")
 //            }
 //
 //        }
@@ -84,33 +84,33 @@ class EventCreationRequestsStorage(val context: Context)
 //        }
     }
 
-    override fun addEvent(event: EventCreationRequest)
-            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, event) } }
+    override fun addEvent(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, req) } }
 
-    override fun deleteEvent(event: EventCreationRequest)
-            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
+    override fun deleteEvent(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, req) } }
 
-    override fun deleteEvents(events: List<EventCreationRequest>)
-            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
+    override fun deleteEvents(requests: List<CalendarChangeRequest>)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, requests) } }
 
-    override fun updateEvent(event: EventCreationRequest)
-            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, event) } }
+    override fun updateEvent(req: CalendarChangeRequest)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateEventImpl(it, req) } }
 
-    override fun updateEvents(events: List<EventCreationRequest>)
-            = synchronized(EventCreationRequestsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, events) } }
+    override fun updateEvents(requests: List<CalendarChangeRequest>)
+            = synchronized(CalendarChangeRequestsStorage::class.java) { writableDatabase.use { impl.updateEventsImpl(it, requests) } }
 
 
-    override val events: List<EventCreationRequest>
-        get() = synchronized(EventCreationRequestsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
+    override val requests: List<CalendarChangeRequest>
+        get() = synchronized(CalendarChangeRequestsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
 
     override fun close() = super.close()
 
     companion object {
-        private val LOG_TAG = "EventCreationRequestsStorage"
+        private val LOG_TAG = "CalendarChangeRequestsStorage"
 
         private const val DATABASE_VERSION_V1 = 1
         private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V1
 
-        private const val DATABASE_NAME = "EventCreationRequests"
+        private const val DATABASE_NAME = "calChReqs"
     }
 }

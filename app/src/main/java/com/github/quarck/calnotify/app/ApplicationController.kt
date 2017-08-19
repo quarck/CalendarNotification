@@ -22,8 +22,8 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.addevent.AddEventMonitor
-import com.github.quarck.calnotify.addevent.AddEventMonitorInterface
+import com.github.quarck.calnotify.calendareditor.CalendarChangeRequestMonitor
+import com.github.quarck.calnotify.calendareditor.CalendarChangeRequestMonitorInterface
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorInterface
@@ -67,12 +67,12 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarMonitorInternal: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
 
-    private val addEventMonitor: AddEventMonitorInterface by lazy { AddEventMonitor() }
+    private val addEventMonitor: CalendarChangeRequestMonitorInterface by lazy { CalendarChangeRequestMonitor() }
 
     val CalendarMonitor: CalendarMonitorInterface
         get() = calendarMonitorInternal
 
-    val AddEventMonitorInstance: AddEventMonitorInterface
+    val AddEventMonitorInstance: CalendarChangeRequestMonitorInterface
         get() = addEventMonitor
 
     fun hasActiveEvents(context: Context) =
@@ -99,7 +99,7 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(context, LOG_TAG, "Application updated")
 
-        // this will post event notifications for existing known events
+        // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -115,7 +115,7 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(context, LOG_TAG, "OS boot is complete")
 
-        // this will post event notifications for existing known events
+        // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
@@ -263,7 +263,7 @@ object ApplicationController : EventMovedHandler {
                 // non-repeating event - make sure we don't create two records with the same eventId
                 val oldEvents = db.getEventInstances(event.eventId)
 
-                DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+                DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
 
                 try {
                     // delete old instances for the same event id (should be only one, but who knows)
@@ -273,7 +273,7 @@ object ApplicationController : EventMovedHandler {
                     }
                 }
                 catch (ex: Exception) {
-                    DevLog.error(context, LOG_TAG, "exception while removing old events: ${ex.message}");
+                    DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.message}");
                 }
 
                 // add newly fired event
@@ -349,14 +349,14 @@ object ApplicationController : EventMovedHandler {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents = db.getEventInstances(event.eventId)
 
-                    DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old events with same event id ${event.eventId}, removing old")
+                    DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
 
                     try {
                         // delete old instances for the same event id (should be only one, but who knows)
                         eventsToDismiss.addAll(oldEvents)
                     }
                     catch (ex: Exception) {
-                        DevLog.error(context, LOG_TAG, "exception while removing old events: ${ex.message}");
+                        DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.message}");
                     }
 
                     // add newly fired event
@@ -431,7 +431,7 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (pairs.size != validPairs.size)
-            DevLog.warn(context, LOG_TAG, "registerNewEvents: Added ${validPairs.size} events out of ${pairs.size}")
+            DevLog.warn(context, LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
 
         return validPairs
 
@@ -598,7 +598,7 @@ object ApplicationController : EventMovedHandler {
             db ->
             val events = db.events.filter { it.isNotSpecial }
 
-            // Don't allow events to have exactly the same "snoozedUntil", so to have
+            // Don't allow requests to have exactly the same "snoozedUntil", so to have
             // predicted sorting order, so add a tiny (0.001s per event) adjust to each
             // snoozed time
 
@@ -719,7 +719,7 @@ object ApplicationController : EventMovedHandler {
             dismissType: EventDismissType,
             notifyActivity: Boolean) {
 
-        DevLog.info(context, LOG_TAG, "Dismissing ${events.size}  events")
+        DevLog.info(context, LOG_TAG, "Dismissing ${events.size}  requests")
 
         if (dismissType.shouldKeep && Settings(context).keepHistory) {
             DismissedEventsStorage(context).use {

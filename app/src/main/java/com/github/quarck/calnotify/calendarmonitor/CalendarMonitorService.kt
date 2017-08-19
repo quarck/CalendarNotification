@@ -87,7 +87,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                 }
             }
 
-            // Always rescan AddEventMonitor
+            // Always rescan CalendarChangeRequestMonitor
             try {
                 ApplicationController.AddEventMonitorInstance.onRescanFromService(this, intent)
             }

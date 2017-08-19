@@ -160,7 +160,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             calendar: CalendarProviderInterface,
             movedHandler: EventMovedHandler?
     ): Boolean {
-        // don't rescan manually created events - we won't find most of them
+        // don't rescan manually created requests - we won't find most of them
         val events = db.events.filter { event -> event.origin != EventOrigin.FullManual && event.isNotSpecial }
         return reloadCalendarInternal(context, db, events, calendar, movedHandler)
     }
@@ -249,8 +249,8 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             movedHandler: EventMovedHandler?
     ): ReloadCalendarResult {
 
-        // Quick short-cut for non-repeating events: quickly check if instance time is different now
-        // - can't use the same for repeating events
+        // Quick short-cut for non-repeating requests: quickly check if instance time is different now
+        // - can't use the same for repeating requests
         if (settings.notificationAutoDismissOnReschedule &&
                 movedHandler != null &&
                 !event.isRepeating) {
@@ -320,7 +320,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         }
         else {
             if (event.updateFrom(newEventAlert)) {
-                // ignore updated instance times for repeating events - they are unpredictable
+                // ignore updated instance times for repeating requests - they are unpredictable
                 DevLog.info(context, LOG_TAG, "Repeating event ${event.eventId} / ${event.instanceStartTime} was updated");
 
                 return ReloadCalendarResult(

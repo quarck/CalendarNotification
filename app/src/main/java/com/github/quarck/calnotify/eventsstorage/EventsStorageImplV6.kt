@@ -146,7 +146,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
 
     override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
 
-        DevLog.debug(LOG_TAG, "Updating ${events.size} events");
+        DevLog.debug(LOG_TAG, "Updating ${events.size} requests");
 
         for (event in events) {
             val values = eventRecordToContentValues(event)
@@ -231,7 +231,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
         }
         cursor.close()
 
-        DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} events")
+        DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} requests")
 
         return ret
     }
@@ -318,7 +318,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
     companion object {
         private const val LOG_TAG = "EventsStorageImplV6"
 
-        private const val TABLE_NAME = "events"
+        private const val TABLE_NAME = "requests"
         private const val INDEX_NAME = "eventsIdx"
 
         private const val KEY_CALENDAR_ID = "i1"

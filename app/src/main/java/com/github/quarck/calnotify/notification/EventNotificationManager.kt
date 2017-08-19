@@ -123,7 +123,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
 
         if (events.size >= Consts.MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING) {
-            // short-cut to avoid heavy memory load on dealing with lots of events...
+            // short-cut to avoid heavy memory load on dealing with lots of requests...
             return Pair(listOf<EventAlertRecord>(), events)
         }
 
@@ -153,8 +153,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             settings: Settings
     ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
 
-        // events with snoozedUntil == 0 are currently visible ones
-        // events with experied snoozedUntil are the ones to beep about
+        // requests with snoozedUntil == 0 are currently visible ones
+        // requests with experied snoozedUntil are the ones to beep about
         // everything else should be hidden and waiting for the next alarm
 
         val events =
@@ -633,7 +633,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 // - this is a new event -- we have to display it, it would have displayStatus == hidden
                 // - this is an old event returning from "collapsed" state
                 // - this is currently potentially displayed event but we are doing "force re-post" to
-                //   ensure all events are displayed (like at boot or after app upgrade
+                //   ensure all requests are displayed (like at boot or after app upgrade
 
                 var wasCollapsed = false
 
@@ -651,7 +651,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     }
                     else if (event.displayStatus == EventDisplayStatus.DisplayedCollapsed) {
                         // This event was already visible as "collapsed", user just removed some other notification
-                        // and so we automatically expanding some of the events, this one was lucky.
+                        // and so we automatically expanding some of the requests, this one was lucky.
                         // No sound / vibration should be played here
                         DevLog.info(context, LOG_TAG, "event ${event.eventId}: notification was collapsed, not playing sound")
                         shouldBeQuiet = true
@@ -1334,7 +1334,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             events: List<EventAlertRecord>,
             isQuietPeriodActive: Boolean
     ) {
-        DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} events")
+        DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} requests")
 
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, intent, 0)
@@ -1431,7 +1431,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 context,
                 Consts.NOTIFICATION_ID_DEBUG0_AUTO_DISMISS,
                 "DEBUG: Events dismissed",
-                "DEBUG: Some events were auto-dismissed due to calendar move"
+                "DEBUG: Some requests were auto-dismissed due to calendar move"
         )
 
         PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events auto-dismissed", false)

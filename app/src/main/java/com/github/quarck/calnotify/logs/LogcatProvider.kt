@@ -41,7 +41,7 @@ object LogcatProvider {
                     "-v", "threadtime",
                     "-d",
                     "-b", "main",
-                    "-b", "events",
+                    "-b", "requests",
                     "-b", "system",
                     "*:V")
 

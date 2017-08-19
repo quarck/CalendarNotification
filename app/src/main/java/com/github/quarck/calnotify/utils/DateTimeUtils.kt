@@ -66,7 +66,7 @@ object DateTimeUtils {
     fun calendarDayUTCEquals(timeMillisLeft: Long, timeMillisRight: Long) =
             calendarDayEquals(createUTCCalendarTime(timeMillisLeft), createUTCCalendarTime(timeMillisRight))
 
-    // very special case required for calendar full-day events, such events
+    // very special case required for calendar full-day requests, such requests
     // are stored in UTC format, so to check if event is today we have to
     // convert current date in local time zone into year / day of year and compare
     // it with event time in UTC converted to year / day of year

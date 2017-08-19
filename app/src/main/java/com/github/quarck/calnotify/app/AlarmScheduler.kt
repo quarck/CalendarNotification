@@ -112,7 +112,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                     if (quietUntil != 0L) {
                         DevLog.info(context, LOG_TAG, "Reminder alarm moved: $reminderAlarmNextFire -> ${quietUntil + Consts.ALARM_THRESHOLD}, reason: quiet hours");
-                        // give a little extra delay, so if events would fire precisely at the
+                        // give a little extra delay, so if requests would fire precisely at the
                         // quietUntil, reminders would wait a bit longer
                         reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
                     }
@@ -122,7 +122,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                 }
                 else {  // if (hasActiveNotifications)
-                    DevLog.info(context, LOG_TAG, "no active events")
+                    DevLog.info(context, LOG_TAG, "no active requests")
                 }
             }
             else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {

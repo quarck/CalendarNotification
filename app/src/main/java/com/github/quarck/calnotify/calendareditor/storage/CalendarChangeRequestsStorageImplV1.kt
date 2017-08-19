@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.addevent.storage
+package com.github.quarck.calnotify.calendareditor.storage
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -26,7 +26,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
 
-class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInterface {
+class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -36,6 +36,7 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                         "TABLE $TABLE_NAME " +
                         "( " +
                         "$KEY_ID INTEGER, " +
+                        "$KEY_TYPE INTEGER, " +
                         "$KEY_CALENDAR_ID INTEGER, " +
                         "$KEY_EVENTID INTEGER, " +
                         "$KEY_STATUS INTEGER, " +
@@ -88,9 +89,9 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
     }
 
 
-    override fun addEventImpl(db: SQLiteDatabase, event: EventCreationRequest) {
+    override fun addEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
 
-        val values = eventRecordToContentValues(event)
+        val values = reqRecordToContentValues(req)
 
         try {
             val id = db.insertOrThrow(TABLE_NAME, // table
@@ -98,28 +99,28 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                     values) // key/value -> keys = column names/ values = column
             // values
 
-            event.id = id
+            req.id = id
         }
         catch (ex: SQLiteConstraintException) {
-//            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB!")
+//            DevLog.debug(LOG_TAG, "This entry (${req.eventId}) is already in the DB!")
         }
     }
 
-    override fun deleteEventImpl(db: SQLiteDatabase, entry: EventCreationRequest) {
+    override fun deleteEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
         db.delete(
                 TABLE_NAME,
                 " $KEY_ID = ?",
-                arrayOf(entry.id.toString()))
+                arrayOf(req.id.toString()))
 
     }
 
-    override fun deleteEventsImpl(db: SQLiteDatabase, events: List<EventCreationRequest>) {
+    override fun deleteEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
 
         try {
             db.beginTransaction()
 
-            for (event in events) {
-                deleteEventImpl(db, event)
+            for (req in requests) {
+                deleteEventImpl(db, req)
             }
 
             db.setTransactionSuccessful()
@@ -129,21 +130,21 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         }
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, entry: EventCreationRequest) {
-        val values = eventRecordToContentValues(entry)
+    override fun updateEventImpl(db: SQLiteDatabase, req: CalendarChangeRequest) {
+        val values = reqRecordToContentValues(req)
 
         db.update(TABLE_NAME, // table
                 values, // column/value
                 "$KEY_ID = ?",
-                arrayOf(entry.id.toString()))
+                arrayOf(req.id.toString()))
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventCreationRequest>) {
+    override fun updateEventsImpl(db: SQLiteDatabase, requests: List<CalendarChangeRequest>) {
         try {
             db.beginTransaction()
 
-            for (event in events) {
-                updateEventImpl(db, event)
+            for (req in requests) {
+                updateEventImpl(db, req)
             }
 
             db.setTransactionSuccessful()
@@ -153,9 +154,9 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         }
     }
 
-    override fun getEventsImpl(db: SQLiteDatabase): List<EventCreationRequest> {
+    override fun getEventsImpl(db: SQLiteDatabase): List<CalendarChangeRequest> {
 
-        val ret = LinkedList<EventCreationRequest>()
+        val ret = LinkedList<CalendarChangeRequest>()
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
@@ -174,33 +175,34 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         }
         cursor.close()
 
-        DevLog.debug(LOG_TAG, "eventsImpl, returning ${ret.size} events")
+        DevLog.debug(LOG_TAG, "eventsImpl, returning ${ret.size} requests")
 
         return ret
     }
 
-    private fun eventRecordToContentValues(event: EventCreationRequest): ContentValues {
+    private fun reqRecordToContentValues(req: CalendarChangeRequest): ContentValues {
         val values = ContentValues();
 
-        if (event.id > 0)
-            values.put(KEY_ID, event.id)
-        values.put(KEY_EVENTID, event.eventId);
-        values.put(KEY_STATUS, event.status)
-        values.put(KEY_STATUS_TIMESTAMP, event.lastStatusUpdate)
-        values.put(KEY_CALENDAR_ID, event.calendarId);
-        values.put(KEY_REPEATING_RULE, event.repeatingRule);
-        values.put(KEY_REPEATING_DATE, event.repeatingRDate)
-        values.put(KEY_EXT_REPEATING_RULE, event.repeatingExRule);
-        values.put(KEY_EXT_REPEATING_DATE, event.repeatingExRDate)
-        values.put(KEY_ALL_DAY, event.isAllDay);
-        values.put(KEY_TITLE, event.title);
-        values.put(KEY_DESC, event.desc);
-        values.put(KEY_START, event.startTime);
-        values.put(KEY_END, event.endTime);
-        values.put(KEY_LOCATION, event.location);
-        values.put(KEY_TIMEZONE, event.timezone);
-        values.put(KEY_COLOR, event.colour);
-        values.put(KEY_REMINDERS, event.reminders.serialize());
+        if (req.id > 0)
+            values.put(KEY_ID, req.id)
+        values.put(KEY_TYPE, req.type.code)
+        values.put(KEY_EVENTID, req.eventId);
+        values.put(KEY_STATUS, req.status.code)
+        values.put(KEY_STATUS_TIMESTAMP, req.lastStatusUpdate)
+        values.put(KEY_CALENDAR_ID, req.calendarId);
+        values.put(KEY_REPEATING_RULE, req.repeatingRule);
+        values.put(KEY_REPEATING_DATE, req.repeatingRDate)
+        values.put(KEY_EXT_REPEATING_RULE, req.repeatingExRule);
+        values.put(KEY_EXT_REPEATING_DATE, req.repeatingExRDate)
+        values.put(KEY_ALL_DAY, req.isAllDay);
+        values.put(KEY_TITLE, req.title);
+        values.put(KEY_DESC, req.desc);
+        values.put(KEY_START, req.startTime);
+        values.put(KEY_END, req.endTime);
+        values.put(KEY_LOCATION, req.location);
+        values.put(KEY_TIMEZONE, req.timezone);
+        values.put(KEY_COLOR, req.colour);
+        values.put(KEY_REMINDERS, req.reminders.serialize());
 
 
         // Fill reserved keys with some placeholders
@@ -221,14 +223,15 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         return values;
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): EventCreationRequest {
+    private fun cursorToEventRecord(cursor: Cursor): CalendarChangeRequest {
 
         val reminders = cursor.getString(PROJECTION_KEY_REMINDERS).deserializeNewEventReminders()
 
-        val event = EventCreationRequest(
+        val req = CalendarChangeRequest(
                 id = cursor.getLong(PROJECTION_KEY_ID),
+                type = EventChangeRequestType.fromInt(cursor.getInt(PROJECTION_KEY_TYPE)),
                 calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
-                status = cursor.getInt(PROJECTION_KEY_STATUS),
+                status = EventChangeStatus.fromInt(cursor.getInt(PROJECTION_KEY_STATUS)),
                 lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 title = cursor.getString(PROJECTION_KEY_TITLE),
@@ -247,18 +250,20 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
                 reminders = reminders
         )
 
-        return event
+        return req
     }
 
     companion object {
 
-        private const val LOG_TAG = "EventCreationRequestsStorageImplV1"
+        private const val LOG_TAG = "CalendarChangeRequestsStorageImplV1"
 
         private const val TABLE_NAME = "newEventsV1"
         private const val INDEX_NAME = "newEventsIdxV1"
 
 
         private const val KEY_ID = "id"
+
+        private const val KEY_TYPE = "t"
 
         private const val KEY_STATUS = "s"
         private const val KEY_STATUS_TIMESTAMP = "sTm"
@@ -302,6 +307,9 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
 
         private val SELECT_COLUMNS = arrayOf<String>(
                 KEY_ID,
+
+                KEY_TYPE,
+
                 KEY_CALENDAR_ID,
                 KEY_EVENTID,
 
@@ -325,23 +333,24 @@ class EventCreationRequestsStorageImplV1 : EventCreationRequestsStorageImplInter
         )
 
         const val PROJECTION_KEY_ID = 0
-        const val PROJECTION_KEY_CALENDAR_ID = 1
-        const val PROJECTION_KEY_EVENTID = 2
-        const val PROJECTION_KEY_STATUS = 3
-        const val PROJECTION_KEY_STATUS_TIMESTAMP = 4
-        const val PROJECTION_KEY_REPEATING_RULE = 5
-        const val PROJECTION_KEY_REPEATING_DATE = 6
-        const val PROJECTION_KEY_EXT_REPEATING_RULE = 7
-        const val PROJECTION_KEY_EXT_REPEATING_DATE = 8
-        const val PROJECTION_KEY_ALL_DAY = 9
-        const val PROJECTION_KEY_TITLE = 10
-        const val PROJECTION_KEY_DESC = 11
-        const val PROJECTION_KEY_START = 12
-        const val PROJECTION_KEY_END = 13
-        const val PROJECTION_KEY_LOCATION = 14
-        const val PROJECTION_KEY_TIMEZONE = 15
-        const val PROJECTION_KEY_COLOR = 16
-        const val PROJECTION_KEY_REMINDERS = 17
+        const val PROJECTION_KEY_TYPE = 1
+        const val PROJECTION_KEY_CALENDAR_ID = 2
+        const val PROJECTION_KEY_EVENTID = 3
+        const val PROJECTION_KEY_STATUS = 4
+        const val PROJECTION_KEY_STATUS_TIMESTAMP = 5
+        const val PROJECTION_KEY_REPEATING_RULE = 6
+        const val PROJECTION_KEY_REPEATING_DATE = 7
+        const val PROJECTION_KEY_EXT_REPEATING_RULE = 8
+        const val PROJECTION_KEY_EXT_REPEATING_DATE = 9
+        const val PROJECTION_KEY_ALL_DAY = 10
+        const val PROJECTION_KEY_TITLE = 11
+        const val PROJECTION_KEY_DESC = 12
+        const val PROJECTION_KEY_START = 13
+        const val PROJECTION_KEY_END = 14
+        const val PROJECTION_KEY_LOCATION = 15
+        const val PROJECTION_KEY_TIMEZONE = 16
+        const val PROJECTION_KEY_COLOR = 17
+        const val PROJECTION_KEY_REMINDERS = 18
     }
 
 }

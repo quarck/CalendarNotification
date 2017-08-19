@@ -281,7 +281,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        //DevLog.debug(LOG_TAG, "getAlertsAt($time), returning ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlertsAt($time), returning ${ret.size} requests")
 
         return ret
     }
@@ -314,7 +314,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} requests")
 
         return ret
     }
@@ -350,7 +350,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} requests")
 
         return ret
     }
@@ -386,7 +386,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             cursor?.close()
         }
 
-        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} events")
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} requests")
 
         return ret
     }

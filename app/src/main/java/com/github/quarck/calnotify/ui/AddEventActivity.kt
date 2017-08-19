@@ -34,11 +34,11 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: TODO: FIX EXEPTION PRINTING
+
 // FIXME: check history / back behavior
 
 // FIXME: stop opening calendar, just show toast
-
-// FIXME: it worth nothing until intergrated with other parts of the app and until we track event creation
 
 // FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
 
@@ -188,7 +188,13 @@ class AddEventActivity : AppCompatActivity() {
 
 
         // Default calendar
-        calendars = calendarProvider.getCalendars(this).filter { !it.isReadOnly && it.isVisible }
+        calendars = calendarProvider
+                .getCalendars(this)
+                .filter {
+                    !it.isReadOnly &&
+                            it.isVisible &&
+                            settings.getCalendarIsHandled(it.calendarId)
+                }
 
         if (calendars.isEmpty()) {
             DevLog.error(this, LOG_TAG, "You have no enabled calendars")
@@ -200,6 +206,8 @@ class AddEventActivity : AppCompatActivity() {
                         finish()
                     }
                     .show()
+
+            return
         }
 
         val lastCalendar = persistentState.lastCalendar
@@ -233,7 +241,7 @@ class AddEventActivity : AppCompatActivity() {
         // Set default date and time
 
         var currentTime = System.currentTimeMillis()
-        currentTime = currentTime - (currentTime % 1000)
+        currentTime -= (currentTime % 1000)  // Drop millis
 
         from = DateTimeUtils.createCalendarTime(currentTime)
         from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)

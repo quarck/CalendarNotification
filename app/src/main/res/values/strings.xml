@@ -463,7 +463,7 @@
     <string name="add_event_event_title_hint">Title</string>
     <string name="calendar_was_changed_pull_down_to_refresh">Calendar has changed, pull down to refresh</string>
     <string name="new_event_failed_to_create_event">Failed to create event!</string>
-    <string name="no_active_calendars">No active calendars</string>
+    <string name="no_active_calendars">No active / handled calendars</string>
 
 </resources>
 

@@ -21,7 +21,6 @@ package com.github.quarck.calnotify
 
 object Consts {
 
-
     const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
 
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008

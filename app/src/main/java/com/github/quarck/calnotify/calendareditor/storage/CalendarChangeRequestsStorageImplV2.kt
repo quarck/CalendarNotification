@@ -27,7 +27,7 @@ import com.github.quarck.calnotify.calendareditor.*
 import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
 
-class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInterface {
+class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -55,6 +55,9 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
                         "$KEY_TIMEZONE TEXT, " +
                         "$KEY_COLOR INTEGER, " +
                         "$KEY_REMINDERS TEXT, " +
+
+                        "$KEY_OLD_START INTEGER, " +
+                        "$KEY_OLD_END INTEGER, " +
 
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
@@ -212,6 +215,9 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_COLOR, req.colour);
         values.put(KEY_REMINDERS, req.reminders.serialize());
 
+        values.put(KEY_OLD_START, req.oldStartTime)
+        values.put(KEY_OLD_END, req.oldEndTime)
+
 
         // Fill reserved keys with some placeholders
         values.put(KEY_RESERVED_INT1, 0L)
@@ -254,6 +260,8 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
                 repeatingExRDate = cursor.getString(PROJECTION_KEY_EXT_REPEATING_DATE),
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 timezone = cursor.getString(PROJECTION_KEY_TIMEZONE),
+                oldStartTime = cursor.getLong(PROJECTION_KEY_OLD_START),
+                oldEndTime =  cursor.getLong(PROJECTION_KEY_OLD_END),
 
                 reminders = reminders
         )
@@ -263,11 +271,10 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
 
     companion object {
 
-        private const val LOG_TAG = "CalendarChangeRequestsStorageImplV1"
+        private const val LOG_TAG = "CalendarChangeRequestsStorageImplV2"
 
-        private const val TABLE_NAME = "newEventsV1"
-        private const val INDEX_NAME = "newEventsIdxV1"
-
+        private const val TABLE_NAME = "newEventsV2"
+        private const val INDEX_NAME = "newEventsIdxV2"
 
         private const val KEY_ID = "id"
 
@@ -298,6 +305,9 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         private const val KEY_COLOR = "color"
 
         private const val KEY_REMINDERS = "reminders"
+
+        private const val KEY_OLD_START = "oldStart"
+        private const val KEY_OLD_END = "oldEnd"
 
         private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
@@ -337,7 +347,9 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
                 KEY_LOCATION,
                 KEY_TIMEZONE,
                 KEY_COLOR,
-                KEY_REMINDERS
+                KEY_REMINDERS,
+                KEY_OLD_START,
+                KEY_OLD_END
         )
 
         const val PROJECTION_KEY_ID = 0
@@ -359,6 +371,8 @@ class CalendarChangeRequestsStorageImplV1 : CalendarChangeRequestsStorageImplInt
         const val PROJECTION_KEY_TIMEZONE = 16
         const val PROJECTION_KEY_COLOR = 17
         const val PROJECTION_KEY_REMINDERS = 18
+        const val PROJECTION_KEY_OLD_START = 19
+        const val PROJECTION_KEY_OLD_END = 20
     }
 
 }

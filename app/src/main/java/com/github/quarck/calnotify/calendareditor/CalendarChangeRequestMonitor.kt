@@ -197,7 +197,8 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             return ValidationResultCommand.DeleteRequest
         }
 
-        if (event.startTime != calendarEvent.startTime || event.endTime != calendarEvent.endTime) {
+        if (event.oldStartTime == calendarEvent.startTime
+                || event.oldEndTime == calendarEvent.endTime) {
             DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
             event.onValidated(false)
             return ValidationResultCommand.ReApplyRequest

@@ -105,7 +105,9 @@ data class CalendarChangeRequest(
 
         val colour: Int = 0,
         var status: EventChangeStatus = EventChangeStatus.Dirty,
-        var lastStatusUpdate: Long = 0
+        var lastStatusUpdate: Long = 0,
+        val oldStartTime: Long = 0,
+        val oldEndTime: Long = 0
 ) {
     fun onValidated(success: Boolean) {
 

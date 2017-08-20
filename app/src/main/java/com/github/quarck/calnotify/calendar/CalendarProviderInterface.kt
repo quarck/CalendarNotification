@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.calendar
 import android.content.ContentResolver
 import android.content.Context
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
+import com.github.quarck.calnotify.calendareditor.CalendarChangeRequest
 
 interface CalendarProviderInterface {
 

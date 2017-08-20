@@ -21,9 +21,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
-import com.github.quarck.calnotify.calendareditor.storage.*
+import com.github.quarck.calnotify.calendareditor.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
@@ -495,7 +493,7 @@ class AddEventActivity : AppCompatActivity() {
                 repeatingExRule = "",
                 repeatingExRDate = "",
                 colour = 0, // Not specified
-                reminders =  remindersToAdd
+                reminders = remindersToAdd
         )
 
         val added = CalendarChangeManager(CalendarProvider).createEvent(this, newEvent)

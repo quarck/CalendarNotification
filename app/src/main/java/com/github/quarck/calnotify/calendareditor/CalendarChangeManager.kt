@@ -123,7 +123,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                             location = event.location,
                             timezone = "",
                             isAllDay = event.isAllDay,
-                            reminders = listOf< EventCreationRequestReminder>())
+                            reminders = listOf<EventCreationRequestReminder>())
             )
         }
 

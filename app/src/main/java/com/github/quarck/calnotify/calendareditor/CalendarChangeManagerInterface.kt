@@ -21,7 +21,6 @@ package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 
 interface CalendarChangeManagerInterface {
 

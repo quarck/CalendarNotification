@@ -19,6 +19,8 @@
 
 package com.github.quarck.calnotify.calendareditor.storage
 
+import com.github.quarck.calnotify.calendareditor.CalendarChangeRequest
+
 
 interface CalendarChangeRequestsStorageInterface {
 

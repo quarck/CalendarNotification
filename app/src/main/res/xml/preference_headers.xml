@@ -59,4 +59,10 @@
         android:title="@string/misc_settings"
         android:summary="" />
 
+    <!-- ExperimentalFeaturesFragment -->
+    <header
+        android:fragment="com.github.quarck.calnotify.prefs.fragments.ExperimentalFeaturesFragment"
+        android:title="@string/experimental_features"
+        android:summary="" />
+
 </preference-headers>

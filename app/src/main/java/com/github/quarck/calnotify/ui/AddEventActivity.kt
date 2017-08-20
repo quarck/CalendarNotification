@@ -249,7 +249,7 @@ class AddEventActivity : AppCompatActivity() {
         from.second = 0
 
         to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-        to.addMinutes(Consts.NEW_EVENT_DEFAULT_EVENT_DURATION_MINUTES)
+        to.addMinutes(settings.defaultNewEventDurationMinutes)
 
         DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 

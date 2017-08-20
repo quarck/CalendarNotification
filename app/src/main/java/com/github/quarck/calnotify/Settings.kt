@@ -54,6 +54,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(DEVELOPER_MODE_KEY, false)
         set(value) = setBoolean(DEVELOPER_MODE_KEY, value)
 
+    val enableAddEvent: Boolean
+        get() = getBoolean(ENABLE_ADD_EVENT_KEY, false)
+
+    val defaultNewEventDurationMinutes: Int
+        get() = getInt(ADD_EVENT_DEFAULT_DURATION_KEY, 1000*1800)
+
     val showDismissButtonDepricated: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)
 
@@ -456,6 +462,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val SEPARATE_REMINDER_NOTIFICATION_KEY = "separate_reminder_notification"
 
         private const val DEVELOPER_MODE_KEY = "dev"
+
+        private const val ENABLE_ADD_EVENT_KEY = "enable_add_event"
+        private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

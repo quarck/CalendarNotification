@@ -156,11 +156,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         floatingAddEvent = find<FloatingActionButton>(R.id.action_btn_add_event)
 
-        if (settings.devModeEnabled) {
-            floatingAddEvent.visibility = View.VISIBLE
-            floatingAddEvent.setOnClickListener {
-                startActivity(Intent(this, AddEventActivity::class.java))
-            }
+        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
+
+        floatingAddEvent.setOnClickListener {
+            startActivity(Intent(this, AddEventActivity::class.java))
         }
 
         if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {
@@ -220,6 +219,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             finish()
             startActivity(intent)
         }
+
+        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
         DevLog.refreshIsEnabled(context = this);
         if (!settings.shouldKeepLogs) {
@@ -406,9 +407,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_test_page ->
                 startActivity(Intent(this, TestActivity::class.java))
-
-//            R.id.action_add_event ->
-//                startActivity(Intent(this, AddEventActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)

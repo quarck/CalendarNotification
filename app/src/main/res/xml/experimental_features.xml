@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        android:key="enable_add_event"
+        android:title="@string/enable_add_event"
+        android:summary="@string/enable_add_event_summary"
+        android:defaultValue="false" />
+
+    <EditTextPreference
+        android:key="default_new_event_duration"
+        android:title="@string/default_duration"
+        android:summary="@string/default_duration_summary"
+        android:dependency="enable_add_event"
+        android:numeric="integer"
+        android:defaultValue="30"
+        />
+
+</PreferenceScreen>

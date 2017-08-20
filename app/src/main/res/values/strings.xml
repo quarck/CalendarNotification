@@ -464,6 +464,11 @@
     <string name="calendar_was_changed_pull_down_to_refresh">Calendar has changed, pull down to refresh</string>
     <string name="new_event_failed_to_create_event">Failed to create event!</string>
     <string name="no_active_calendars">No active / handled calendars</string>
+    <string name="experimental_features">Experimental features</string>
+    <string name="enable_add_event">Enable \'Add Event\' floating button</string>
+    <string name="enable_add_event_summary">Would allow creating events without leaving the app. Currently only non-repeating events are supported and only limited amount of fields are editable. This application would monitor newly created event to make sure it would not disappear on sync</string>
+    <string name="default_duration">Default duration</string>
+    <string name="default_duration_summary">Default duration for new events, in minutes</string>
 
 </resources>
 

@@ -88,6 +88,9 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
     }
 
     override fun dropAll(db: SQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_V1);
+        db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME_V1);
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
     }
@@ -272,6 +275,9 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
     companion object {
 
         private const val LOG_TAG = "CalendarChangeRequestsStorageImplV2"
+
+        private const val TABLE_NAME_V1 = "newEventsV1"
+        private const val INDEX_NAME_V1 = "newEventsIdxV1"
 
         private const val TABLE_NAME = "newEventsV2"
         private const val INDEX_NAME = "newEventsIdxV2"

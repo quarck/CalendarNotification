@@ -50,41 +50,8 @@ class CalendarChangeRequestsStorage(val context: Context)
         if (newVersion != DATABASE_VERSION_V2)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
-
-
-//        val implOld =
-//                when (oldVersion) {
-//                    DATABASE_VERSION_V0 -> NewEventsStorageImplV0()
-//                    else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
-//                }
-//
-//        try {
-//            impl.createDb(db)
-//
-//            val requests = implOld.getImpl(db)
-//
-//            DevLog.info(context, LOG_TAG, "${requests.size} requests to convert")
-//
-//            for ((event, time, type) in requests) {
-//                impl.addImpl(db, type, time, event)
-//                implOld.deleteImpl(db, event)
-//
-//                DevLog.debug(LOG_TAG, "Done event ${event.eventId}, inst ${event.instanceStartTime}")
-//            }
-//
-//            if (implOld.getImpl(db).isEmpty()) {
-//                DevLog.info(context, LOG_TAG, "Finally - dropping old tables")
-//                implOld.dropAll(db)
-//            }
-//            else {
-//                throw Exception("DB Upgrade failed: some requests are still in the old version of DB")
-//            }
-//
-//        }
-//        catch (ex: Exception) {
-//            DevLog.error(context, LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.detailed}")
-//            throw ex
-//        }
+        impl.dropAll(db)
+        impl.createDb(db)
     }
 
     override fun add(req: CalendarChangeRequest)

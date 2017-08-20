@@ -65,9 +65,7 @@ fun String.deserializeNewEventReminders()
 
 enum class EventChangeStatus(val code: Int) {
     Dirty(0),
-    ConfirmedInitially(1),
-    ConfirmedSecond(2),
-    ConfirmedFully(3);
+    Synced(1);
 
     companion object {
         @JvmStatic
@@ -109,38 +107,11 @@ data class CalendarChangeRequest(
         var status: EventChangeStatus = EventChangeStatus.Dirty,
         var lastStatusUpdate: Long = 0
 ) {
-    fun onValidated(success: Boolean, time: Long = 0L): Boolean {
+    fun onValidated(success: Boolean) {
 
-        val timeValidated = if (time != 0L) time else System.currentTimeMillis()
+        lastStatusUpdate = System.currentTimeMillis()
 
-        if (!success) {
-            status = EventChangeStatus.Dirty
-            lastStatusUpdate = timeValidated
-            return true
-        }
-
-        if (timeValidated - lastStatusUpdate < Consts.NEW_EVENT_MIN_STATUS_STEP_MILLIS) {
-            return false
-        }
-
-        status =
-                when (status) {
-                    EventChangeStatus.Dirty ->
-                        EventChangeStatus.ConfirmedInitially
-
-                    EventChangeStatus.ConfirmedInitially ->
-                        EventChangeStatus.ConfirmedSecond
-
-                    EventChangeStatus.ConfirmedSecond ->
-                        EventChangeStatus.ConfirmedFully
-
-                    EventChangeStatus.ConfirmedFully ->
-                        EventChangeStatus.ConfirmedFully
-                }
-
-        lastStatusUpdate = timeValidated
-
-        return true
+        status = if (success) EventChangeStatus.Synced else EventChangeStatus.Dirty
     }
 }
 

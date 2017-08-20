@@ -164,17 +164,15 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
         if (isDirty != null) {
 
-            val statusChanged = event.onValidated(!isDirty)
+            event.onValidated(!isDirty)
 
-            if (statusChanged) {
-                if (event.status == EventChangeStatus.ConfirmedSecond) {
-                    DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId}  ${event.type} for removal: it is fully synced now")
-                    ret = ValidationResultCommand.DeleteRequest
-                }
-                else {
-                    DevLog.info(context, LOG_TAG, "Event creation request ${event.eventId}  ${event.type}: new status ${event.status}")
-                    ret = ValidationResultCommand.UpdateRequest
-                }
+            if (event.status == EventChangeStatus.Synced) {
+                DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId}  ${event.type} for removal: it is fully synced now")
+                ret = ValidationResultCommand.DeleteRequest
+            }
+            else {
+                DevLog.info(context, LOG_TAG, "Event creation request ${event.eventId}  ${event.type}: new status ${event.status}")
+                ret = ValidationResultCommand.UpdateRequest
             }
         }
 
@@ -211,17 +209,15 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
         if (isDirty != null) {
 
-            val statusChanged = event.onValidated(!isDirty)
+            event.onValidated(!isDirty)
 
-            if (statusChanged) {
-                if (event.status == EventChangeStatus.ConfirmedSecond) {
-                    DevLog.info(context, LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
-                    ret = ValidationResultCommand.DeleteRequest
-                }
-                else {
-                    DevLog.info(context, LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
-                    ret = ValidationResultCommand.UpdateRequest
-                }
+            if (event.status == EventChangeStatus.Synced) {
+                DevLog.info(context, LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
+                ret = ValidationResultCommand.DeleteRequest
+            }
+            else {
+                DevLog.info(context, LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
+                ret = ValidationResultCommand.UpdateRequest
             }
         }
 

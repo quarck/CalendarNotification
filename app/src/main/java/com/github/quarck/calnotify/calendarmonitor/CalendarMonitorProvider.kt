@@ -29,6 +29,7 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventOrigin
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.utils.detailed
 
 class CalendarMonitorProvider(
         val calendarProvider: CalendarProviderInterface,
@@ -71,7 +72,7 @@ class CalendarMonitorProvider(
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.detailed}")
         }
         finally {
             state.prevEventFireFromProvider = alertTime
@@ -133,7 +134,7 @@ class CalendarMonitorProvider(
                 }
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Exception occured while posting notifications / firing requests: $ex, ${ex.stackTrace}")
+                DevLog.error(context, LOG_TAG, "Exception occured while posting notifications / firing requests: ${ex.detailed}")
             }
         }
 

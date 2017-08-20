@@ -27,6 +27,8 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.detailed
+
 //import com.github.quarck.calnotify.logs.Logger
 
 class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
@@ -86,7 +88,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             updateAlert(db, entry)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "addAlert($entry): exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "addAlert($entry): exception ${ex.detailed}")
         }
     }
 
@@ -116,7 +118,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
                     arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()))
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "deleteAlert($eventId, $alertTime): exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "deleteAlert($eventId, $alertTime): exception ${ex.detailed}")
         }
     }
 
@@ -150,7 +152,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             db.setTransactionSuccessful()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "deleteAlertsMatching: exception $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "deleteAlertsMatching: exception ${ex.detailed}")
         }
         finally {
             db.endTransaction()
@@ -214,7 +216,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlert: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlert: exception $ex, stack: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -242,7 +244,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getNextAlert: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getNextAlert: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -275,7 +277,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -308,7 +310,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -344,7 +346,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -380,7 +382,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception $ex, stack: ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()

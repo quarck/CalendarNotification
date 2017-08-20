@@ -37,6 +37,7 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
+import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*

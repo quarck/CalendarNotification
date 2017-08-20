@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.utils.detailed
 import java.util.*
 
 
@@ -49,7 +50,7 @@ class CalendarMonitorManual(
                 ApplicationController.postEventNotifications(context, firedAlerts.map { it.second })
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Got exception while posting notifications: $ex, ${ex.stackTrace}")
+                DevLog.error(context, LOG_TAG, "Got exception while posting notifications: ${ex.detailed}")
             }
 
             markAlertsAsHandledInDB(context, firedAlerts.map { it.first })

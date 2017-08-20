@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
@@ -106,7 +107,7 @@ class EventsStorageImplV9(val context: Context)
             ret = true
         }
         catch (ex: SQLException) {
-            DevLog.error(context, LOG_TAG, "dropAll: $ex")
+            DevLog.error(context, LOG_TAG, "dropAll: ${ex.detailed}")
         }
 
 //        if (!ret) {
@@ -297,7 +298,7 @@ class EventsStorageImplV9(val context: Context)
         }
         catch (ex: SQLiteConstraintException) {
             // Ignore -- it is already there
-            DevLog.error(context, LOG_TAG, "updateEventsAndInstanceTimesImpl: hit SQLiteConstraintException: ${ex.message}")
+            DevLog.error(context, LOG_TAG, "updateEventsAndInstanceTimesImpl: hit SQLiteConstraintException: ${ex.detailed}")
         }
         finally {
             db.endTransaction()

@@ -43,6 +43,7 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifierService
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+import com.github.quarck.calnotify.utils.detailed
 
 
 object ApplicationController : EventMovedHandler {
@@ -278,7 +279,7 @@ object ApplicationController : EventMovedHandler {
                     }
                 }
                 catch (ex: Exception) {
-                    DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.message}");
+                    DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.detailed}");
                 }
 
                 // add newly fired event
@@ -361,7 +362,7 @@ object ApplicationController : EventMovedHandler {
                         eventsToDismiss.addAll(oldEvents)
                     }
                     catch (ex: Exception) {
-                        DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.message}");
+                        DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.detailed}");
                     }
 
                     // add newly fired event

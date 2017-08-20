@@ -904,8 +904,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(ctx, LOG_TAG, "Exception: $ex, reminder notification stack:")
-            ex.printStackTrace()
+            DevLog.error(ctx, LOG_TAG, "Exception: ${ex.detailed}")
         }
 
         if (notificationSettings.forwardReminderToPebble) {
@@ -993,7 +992,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(ctx, LOG_TAG, "Exception: $ex")
+            DevLog.error(ctx, LOG_TAG, "Exception: ${ex.detailed}")
         }
     }
 
@@ -1243,8 +1242,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(ctx, LOG_TAG, "Exception: $ex, notificationId=${event.notificationId}, stack:")
-            ex.printStackTrace()
+            DevLog.error(ctx, LOG_TAG, "Exception on notificationId=${event.notificationId}: ${ex.detailed}")
         }
 
         if ((!isReminder && notificationSettings.forwardEventToPebble) ||
@@ -1420,8 +1418,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationManager.notify(notificationId, notification)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception: $ex, stack:")
-            ex.printStackTrace()
+            DevLog.error(context, LOG_TAG, "Exception: ${ex.detailed}")
         }
     }
 

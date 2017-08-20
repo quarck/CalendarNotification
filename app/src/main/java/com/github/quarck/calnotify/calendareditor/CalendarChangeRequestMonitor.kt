@@ -30,6 +30,7 @@ import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.utils.detailed
 
 class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
@@ -95,7 +96,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                     }
                 }
                 catch (ex: Exception) {
-                    DevLog.error(context, LOG_TAG, "Failed to validate ${event.eventId}, type ${event.type}, ${ex}, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
+                    DevLog.error(context, LOG_TAG, "Failed to validate ${event.eventId}, type ${event.type}, ${ex.detailed}")
                 }
 
             }
@@ -131,7 +132,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Failed: ${ex}, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
+            DevLog.error(context, LOG_TAG, "Failed: ${ex.detailed}")
         }
     }
 

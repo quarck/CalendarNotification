@@ -210,3 +210,8 @@ var TimePicker.minuteCompat: Int
         else
             this.currentMinute = value
     }
+
+val Exception.detailed: String
+    get() {
+        return "${this}: ${this.message}, stack: ${this.stackTrace.joinToString("\n")}"
+    }

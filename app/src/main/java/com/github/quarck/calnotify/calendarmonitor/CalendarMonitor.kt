@@ -36,6 +36,7 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
+import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
@@ -133,7 +134,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             )
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
         }
 
     }
@@ -188,7 +189,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.detailed}")
         }
 
         try {
@@ -207,7 +208,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while posting notifications: $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while posting notifications: ${ex.detailed}")
         }
 
         ApplicationController.afterCalendarEventFired(context)
@@ -279,10 +280,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             firedAnything = firedEventsProvider || firedEventsManual
         }
         catch (ex: java.lang.SecurityException) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService: SecurityException, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "onRescanFromService: SecurityException, ${ex.detailed}")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService: exception, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "onRescanFromService: exception, ${ex.detailed}")
         }
 
         if (firedAnything)

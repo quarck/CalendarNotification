@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.utils.detailed
 import java.util.*
 
 object CalendarProvider : CalendarProviderInterface {
@@ -301,7 +302,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading event $eventId reminders: $ex, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception while reading event $eventId reminders: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -442,7 +443,7 @@ object CalendarProvider : CalendarProviderInterface {
                 ret.reminders = getEventReminders(context, eventId)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while trying to read reminders for $eventId: ${ex.message}")
+            DevLog.error(context, LOG_TAG, "Exception while trying to read reminders for $eventId: ${ex.detailed}")
         }
 
         return ret
@@ -520,7 +521,7 @@ object CalendarProvider : CalendarProviderInterface {
             DevLog.debug(LOG_TAG, "dismissNativeEventReminder: eventId $eventId");
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "dismissNativeReminder failed")
+            DevLog.error(context, LOG_TAG, "dismissNativeReminder failed: ${ex.detailed}")
         }
     }
 
@@ -658,7 +659,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
         }
         finally {
             cursor?.close()
@@ -672,7 +673,7 @@ object CalendarProvider : CalendarProviderInterface {
                 ret = uri.lastPathSegment.toLong()
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
             }
         }
         else {
@@ -743,7 +744,7 @@ object CalendarProvider : CalendarProviderInterface {
             ret = uri.lastPathSegment.toLong()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
         }
 
         if (ret != -1L) {
@@ -808,7 +809,7 @@ object CalendarProvider : CalendarProviderInterface {
             eventId = uri.lastPathSegment.toLong()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
         }
 
         if (eventId != -1L) {
@@ -898,7 +899,7 @@ object CalendarProvider : CalendarProviderInterface {
             ret = updated > 0
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
         }
 
         return ret;
@@ -957,7 +958,7 @@ object CalendarProvider : CalendarProviderInterface {
 //
 //        }
 //        catch (ex: Exception) {
-//            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+//            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
 //        }
 //
 //        return ret;
@@ -1048,7 +1049,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.message}, ${ex.cause}, ${ex.stackTrace}");
+            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}");
         }
 
         return ret
@@ -1313,7 +1314,7 @@ object CalendarProvider : CalendarProviderInterface {
             DevLog.info(context, LOG_TAG, "getEventAlertsForInstancesInRange: found ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.message}, ${ex}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
         }
 
         return ret

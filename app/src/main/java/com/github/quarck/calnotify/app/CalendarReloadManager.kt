@@ -26,6 +26,7 @@ import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventWithNewInstanceTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.detailed
 
 object CalendarReloadManager : CalendarReloadManagerInterface {
 
@@ -93,7 +94,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Got exception while trying to re-load event data for ${event.eventId}: ${ex.message}, ${ex.stackTrace}");
+                DevLog.error(context, LOG_TAG, "Got exception while trying to re-load event data for ${event.eventId}: ${ex.detailed}");
             }
         }
 

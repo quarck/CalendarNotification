@@ -35,6 +35,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.logs.LogcatProvider
+import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isKitkatOrAbove
@@ -146,7 +147,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             startActivity(email);
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "cannot open email client: $ex, ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(this, LOG_TAG, "cannot open email client: ${ex.detailed}")
         }
     }
 

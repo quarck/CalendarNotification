@@ -22,6 +22,7 @@
 package com.github.quarck.calnotify.logs
 
 import android.content.Context
+import com.github.quarck.calnotify.utils.detailed
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -57,8 +58,7 @@ object LogcatProvider {
 
         }
         catch (e: IOException) {
-
-            DevLog.error(context, "LogcatProvider", "Error reading logs, $e, ${e.message}")
+            DevLog.error(context, "LogcatProvider", "Error reading logs, ${e.detailed}")
         }
 
         return ret

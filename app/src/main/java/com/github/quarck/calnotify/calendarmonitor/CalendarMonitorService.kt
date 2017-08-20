@@ -26,6 +26,7 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.wakeLocked
 
@@ -61,7 +62,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     ApplicationController.onCalendarRescanForRescheduledFromService(this, userActionUntil)
                 }
                 catch (ex: Exception) {
-                    DevLog.error(this, LOG_TAG, "Exception while reloading calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                    DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
                 }
             }
 
@@ -74,7 +75,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     ApplicationController.onCalendarReloadFromService(this, userActionUntil)
                 }
                 catch (ex: Exception) {
-                    DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                    DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
                 }
             }
 
@@ -83,7 +84,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                     ApplicationController.CalendarMonitor.onRescanFromService(this, intent)
                 }
                 catch (ex: Exception) {
-                    DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: $ex, ${ex.message}, ${ex.stackTrace}")
+                    DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
                 }
             }
 
@@ -92,7 +93,7 @@ class CalendarMonitorService : IntentService("CalendarMonitor") {
                 ApplicationController.AddEventMonitorInstance.onRescanFromService(this, intent)
             }
             catch (ex: Exception) {
-                DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): $ex, ${ex.message}, ${ex.stackTrace.joinToString(",")}")
+                DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
             }
         }
     }

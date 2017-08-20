@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
@@ -79,7 +80,7 @@ class DismissedEventsStorage(val context: Context)
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(context, LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.detailed}")
             throw ex
         }
     }

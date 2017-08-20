@@ -3,14 +3,11 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
@@ -21,14 +18,12 @@ import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
-import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequest
-import com.github.quarck.calnotify.calendareditor.storage.EventCreationRequestReminder
-import com.github.quarck.calnotify.calendareditor.storage.EventChangeRequestType
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.CalendarRecord
+import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
+import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
@@ -87,6 +82,71 @@ fun EventCreationRequestReminder.toLocalizedString(ctx: Context, isAllDay: Boole
 
     return ret.toString()
 }
+
+data class AddEventActivityState(
+        var title: String,
+        var location: String,
+        var note: String,
+        var from: Calendar,
+        var to: Calendar,
+        var isAllDay: Boolean,
+        var reminders: List<EventCreationRequestReminder>,
+        var allDayReminders: List<EventCreationRequestReminder>,
+        var selectedCalendar: Long
+) {
+    fun toBundle(bundle: Bundle) {
+        bundle.putString(KEY_TITLE, title)
+        bundle.putString(KEY_LOCATION, location)
+        bundle.putString(KEY_NOTE, note)
+        bundle.putLong(KEY_FROM, from.timeInMillis)
+        bundle.putLong(KEY_TO, to.timeInMillis)
+        bundle.putBoolean(KEY_IS_ALL_DAY, isAllDay)
+        bundle.putString(KEY_REMINDERS, reminders.serialize())
+        bundle.putString(KEY_ALL_DAY_REMINDERS, allDayReminders.serialize())
+        bundle.putLong(KEY_SELECTED_CALENDAR, selectedCalendar)
+    }
+
+    companion object {
+        fun fromBundle(bundle: Bundle): AddEventActivityState {
+
+            val title = bundle.getString(KEY_TITLE, "")
+            val loc = bundle.getString(KEY_LOCATION, "")
+            val note = bundle.getString(KEY_NOTE, "")
+
+            val from = bundle.getLong(KEY_FROM)
+            val to = bundle.getLong(KEY_TO)
+
+            val isAllDay = bundle.getBoolean(KEY_IS_ALL_DAY, false)
+            val reminders = bundle.getString(KEY_REMINDERS, "").deserializeNewEventReminders()
+            val allDayReminders = bundle.getString(KEY_ALL_DAY_REMINDERS, "").deserializeNewEventReminders()
+            val selectedCalendar = bundle.getLong(KEY_SELECTED_CALENDAR)
+
+            return AddEventActivityState(
+                    title,
+                    loc,
+                    note,
+                    DateTimeUtils.createCalendarTime(from),
+                    DateTimeUtils.createCalendarTime(to),
+                    isAllDay,
+                    reminders,
+                    allDayReminders,
+                    selectedCalendar
+                    )
+        }
+
+        const val KEY_TITLE = "title"
+        const val KEY_LOCATION = "loc"
+        const val KEY_NOTE = "note"
+        const val KEY_FROM = "from"
+        const val KEY_TO = "to"
+        const val KEY_IS_ALL_DAY = "aday"
+        const val KEY_REMINDERS = "reminders"
+        const val KEY_ALL_DAY_REMINDERS = "adayreminders"
+        const val KEY_SELECTED_CALENDAR = "cal"
+
+    }
+}
+
 
 class AddEventActivity : AppCompatActivity() {
 
@@ -172,10 +232,8 @@ class AddEventActivity : AppCompatActivity() {
 
         notificationPrototype.visibility = View.GONE
 
-
         // settings
         settings = Settings(this)
-
 
         // Default calendar
         calendars = calendarProvider
@@ -193,8 +251,7 @@ class AddEventActivity : AppCompatActivity() {
 
             AlertDialog.Builder(this)
                     .setMessage(R.string.no_active_calendars)
-                    .setPositiveButton(android.R.string.ok) {
-                        _, _ ->
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         finish()
                     }
                     .show()
@@ -205,57 +262,115 @@ class AddEventActivity : AppCompatActivity() {
         val lastCalendar = persistentState.lastCalendar
         if (lastCalendar != -1L) {
             calendar = calendars.filter { it.calendarId == lastCalendar }.firstOrNull() ?: calendars[0]
-        }
-        else {
+        } else {
             calendar = calendars.filter { it.isPrimary }.firstOrNull() ?: calendars[0]
         }
 
-        // Initialize default values
-        accountName.text = calendar.name
-        eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
-
         // Set onClickListener-s
-        buttonSave.setOnClickListener (this::onButtonSaveClick)
-        buttonCancel.setOnClickListener (this::onButtonCancelClick)
+        buttonSave.setOnClickListener(this::onButtonSaveClick)
+        buttonCancel.setOnClickListener(this::onButtonCancelClick)
 
-        accountName.setOnClickListener (this::onAccountClick)
+        accountName.setOnClickListener(this::onAccountClick)
 
-        switchAllDay.setOnClickListener (this::onSwitchAllDayClick)
+        switchAllDay.setOnClickListener(this::onSwitchAllDayClick)
 
-        dateFrom.setOnClickListener (this::onDateFromClick)
-        timeFrom.setOnClickListener (this::onTimeFromClick)
+        dateFrom.setOnClickListener(this::onDateFromClick)
+        timeFrom.setOnClickListener(this::onTimeFromClick)
 
-        dateTo.setOnClickListener (this::onDateToClick)
-        timeTo.setOnClickListener (this::onTimeToClick)
+        dateTo.setOnClickListener(this::onDateToClick)
+        timeTo.setOnClickListener(this::onTimeToClick)
 
-        addNotification.setOnClickListener (this::onAddNotificationClick)
+        addNotification.setOnClickListener(this::onAddNotificationClick)
 
-        // Set default date and time
 
-        var currentTime = System.currentTimeMillis()
-        currentTime -= (currentTime % 1000)  // Drop millis
+        // Set-up fields
 
-        from = DateTimeUtils.createCalendarTime(currentTime)
-        from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)
-        from.minute = 0
-        from.second = 0
+        if (savedInstanceState == null) {
+            // Initialize default values
+            accountName.text = calendar.name
+            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
-        to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-        to.addMinutes(settings.defaultNewEventDurationMinutes)
+            // Set default date and time
+            var currentTime = System.currentTimeMillis()
+            currentTime -= (currentTime % 1000)  // Drop millis
 
-        DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
+            from = DateTimeUtils.createCalendarTime(currentTime)
+            from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)
+            from.minute = 0
+            from.second = 0
 
-        updateDateTimeUI();
+            to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+            to.addMinutes(settings.defaultNewEventDurationMinutes)
 
-        addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), false)
-        addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), true)
+            DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
-        updateReminders()
+            updateDateTimeUI();
+
+            addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, false), false)
+            addReminder(EventCreationRequestReminder(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, false), true)
+
+            updateReminders()
+        } else {
+            val state = AddEventActivityState.fromBundle(savedInstanceState)
+
+            calendar = calendars.find { it.calendarId == state.selectedCalendar } ?: calendars[0]
+
+            accountName.text = calendar.name
+            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            from = state.from
+            to = state.to
+            eventTitleText.setText(state.title)
+            note.setText(state.note)
+            eventLocation.setText(state.location)
+            switchAllDay.isChecked = state.isAllDay
+            isAllDay = state.isAllDay
+
+            for (reminder in state.reminders) {
+                addReminder(reminder, false)
+            }
+
+            for (reminder in state.allDayReminders) {
+                addReminder(reminder, true)
+            }
+
+            updateDateTimeUI();
+            updateReminders()
+        }
+    }
+
+    public override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        val regularReminders = reminders.filter { it.isForAllDay == false }.map { it.reminder }.toList();
+        val allDayReminders = reminders.filter { it.isForAllDay == true }.map { it.reminder }.toList()
+
+        val state =
+                AddEventActivityState(
+                        eventTitleText.text.toString(),
+                        eventLocation.text.toString(),
+                        note.text.toString(),
+                        from,
+                        to,
+                        isAllDay,
+                        regularReminders,
+                        allDayReminders,
+                        calendar.calendarId
+                )
+
+        state.toBundle(outState)
     }
 
     fun updateDateTimeUI() {
 
-//        val is24hr = android.text.format.DateFormat.is24HourFormat(this)
+        if (isAllDay) {
+            timeTo.visibility = View.GONE
+            timeFrom.visibility = View.GONE
+        }
+        else {
+            timeTo.visibility = View.VISIBLE
+            timeFrom.visibility = View.VISIBLE
+        }
 
         val dateFormat =
                 DateUtils.FORMAT_SHOW_DATE or
@@ -411,16 +526,6 @@ class AddEventActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onSwitchAllDayClick(v: View) {
         isAllDay = switchAllDay.isChecked
-
-        if (isAllDay) {
-            timeTo.visibility = View.GONE
-            timeFrom.visibility = View.GONE
-        }
-        else {
-            timeTo.visibility = View.VISIBLE
-            timeFrom.visibility = View.VISIBLE
-        }
-
         updateDateTimeUI()
         updateReminders()
     }

@@ -34,25 +34,15 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
-// FIXME: TODO: FIX EXEPTION PRINTING
-
 // FIXME: check history / back behavior
-
-// FIXME: stop opening calendar, just show toast
 
 // FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
 
 // FIXME: correct UI icons
 
-// FIXME: only show handled calendars
-
 // FIXME: handle repeating requests
 
 // FIXME: handle timezones
-
-// FIXME: needs custom nice layout for account selection
-
-// FIXME: configure default event duration in the settings
 
 
 fun EventCreationRequestReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
@@ -198,6 +188,8 @@ class AddEventActivity : AppCompatActivity() {
 
         if (calendars.isEmpty()) {
             DevLog.error(this, LOG_TAG, "You have no enabled calendars")
+
+            accountName.text = "" // remove debug mess
 
             AlertDialog.Builder(this)
                     .setMessage(R.string.no_active_calendars)
@@ -395,13 +387,15 @@ class AddEventActivity : AppCompatActivity() {
         if (added) {
             DevLog.debug(this, LOG_TAG, "Event created: id=${newEvent.eventId}")
 
-            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, newEvent.eventId);
-            val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+//            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, newEvent.eventId);
+//            val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+//
+//            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
+//            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
+//
+//            startActivity(intent)
 
-            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
-            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
-
-            startActivity(intent)
+            Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
             finish()
 
         } else {

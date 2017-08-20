@@ -15,7 +15,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/material_red"
+        android:background="@color/material_blue"
         android:id="@+id/snooze_view_event_details_layout"
         android:visibility="visible"
         android:elevation="@dimen/toolbar_elevation"

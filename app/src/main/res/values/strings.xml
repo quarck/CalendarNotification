@@ -469,6 +469,7 @@
     <string name="enable_add_event_summary">Would allow creating events without leaving the app. Currently only non-repeating events are supported and only limited amount of fields are editable. This application would monitor newly created event to make sure it would not disappear on sync</string>
     <string name="default_duration">Default duration</string>
     <string name="default_duration_summary">Default duration for new events, in minutes</string>
+    <string name="event_was_created">Event was created</string>
 
 </resources>
 

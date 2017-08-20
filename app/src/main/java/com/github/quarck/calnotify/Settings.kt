@@ -58,7 +58,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(ENABLE_ADD_EVENT_KEY, false)
 
     val defaultNewEventDurationMinutes: Int
-        get() = getInt(ADD_EVENT_DEFAULT_DURATION_KEY, 1000*1800)
+        get() = getString(ADD_EVENT_DEFAULT_DURATION_KEY, "").toIntOrNull() ?: 30
 
     val showDismissButtonDepricated: Boolean
         get() = getBoolean(DISMISS_ENABLED_KEY, true)

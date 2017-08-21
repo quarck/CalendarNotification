@@ -123,7 +123,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                     event.eventId = provider.createEvent(context, event)
 
                 EventChangeRequestType.MoveExistingEvent -> {
-                    provider.moveEvent(context, event.eventId, event.startTime, event.endTime)
+                    provider.moveEvent(context, event.eventId, event.details.startTime, event.details.endTime)
                     event.status = EventChangeStatus.Dirty
                 }
             }
@@ -140,7 +140,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             cleanupEventsTo: Long
     ): ValidationResultCommand {
 
-        if (event.startTime < cleanupEventsTo && event.endTime < cleanupEventsTo) {
+        if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
             DevLog.info(context, LOG_TAG, "Scheduling event creation request for ${event.eventId} ${event.type} for removal from DB")
             return ValidationResultCommand.DeleteRequest
         }
@@ -186,7 +186,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             cleanupEventsTo: Long
     ): ValidationResultCommand {
 
-        if (event.startTime < cleanupEventsTo && event.endTime < cleanupEventsTo) {
+        if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
             DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
             return ValidationResultCommand.DeleteRequest
         }
@@ -197,8 +197,8 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             return ValidationResultCommand.DeleteRequest
         }
 
-        if (event.oldStartTime == calendarEvent.startTime
-                || event.oldEndTime == calendarEvent.endTime) {
+        if (event.oldDetails.startTime == calendarEvent.startTime
+                || event.oldDetails.endTime == calendarEvent.endTime) {
             DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
             event.onValidated(false)
             return ValidationResultCommand.ReApplyRequest

@@ -84,6 +84,6 @@ class CalendarChangeRequestsStorage(val context: Context)
         private const val DATABASE_VERSION_V2 = 2
         private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V2
 
-        private const val DATABASE_NAME = "calChReqs"
+        private const val DATABASE_NAME = "calEditReqs"
     }
 }

@@ -75,7 +75,8 @@ enum class EventChangeStatus(val code: Int) {
 
 enum class EventChangeRequestType(val code: Int) {
     AddNewEvent(0),
-    MoveExistingEvent(1);
+    MoveExistingEvent(1),
+    EditExistingEvent(2);
 
     companion object {
         @JvmStatic
@@ -83,19 +84,18 @@ enum class EventChangeRequestType(val code: Int) {
     }
 }
 
-
-data class CalendarChangeRequest(
-        var id: Long,
-        var type: EventChangeRequestType,
-        var eventId: Long,
-        val calendarId: Long,
+data class CalendarEventDetails(
         val title: String,
         val desc: String,
         val location: String,
+
         val timezone: String,
+
         val startTime: Long,
         val endTime: Long,
+
         val isAllDay: Boolean,
+
         val reminders: List<EventCreationRequestReminder>,
 
         val repeatingRule: String = "", // empty if not repeating
@@ -103,11 +103,34 @@ data class CalendarChangeRequest(
         val repeatingExRule: String = "", // empty if not repeating
         val repeatingExRDate: String = "", // empty if not repeating
 
-        val colour: Int = 0,
+        val colour: Int = 0
+        ) {
+
+    companion object {
+        fun createEmpty() = CalendarEventDetails(
+                title = "",
+                desc = "",
+                location = "",
+                timezone = "",
+                startTime = 0,
+                endTime = 0,
+                isAllDay = false,
+                reminders = listOf<EventCreationRequestReminder>()
+        )
+    }
+}
+
+data class CalendarChangeRequest(
+        var id: Long,
+        var type: EventChangeRequestType,
+        var eventId: Long,
+        val calendarId: Long,
+
+        val details: CalendarEventDetails,
+        val oldDetails: CalendarEventDetails,
+
         var status: EventChangeStatus = EventChangeStatus.Dirty,
-        var lastStatusUpdate: Long = 0,
-        val oldStartTime: Long = 0,
-        val oldEndTime: Long = 0
+        var lastStatusUpdate: Long = 0
 ) {
     fun onValidated(success: Boolean) {
 

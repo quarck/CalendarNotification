@@ -29,14 +29,11 @@ import java.util.*
 
 // FIXME: check history / back behavior
 
-// FIXME: test 'notification' button layout on 4.2.x devices - my little samsung was doing shite
-
-// FIXME: correct UI icons
-
 // FIXME: handle repeating requests
 
 // FIXME: handle timezones
 
+// FIXME: Also handle colors
 
 fun EventCreationRequestReminder.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -481,19 +478,22 @@ class AddEventActivity : AppCompatActivity() {
                 type = EventChangeRequestType.AddNewEvent,
                 eventId = -1L,
                 calendarId = calendar.calendarId,
-                title = eventTitleText.text.toString(),
-                desc = note.text.toString(),
-                location = eventLocation.text.toString(),
-                timezone = calendar.timeZone,
-                startTime = startTime,
-                endTime = endTime,
-                isAllDay = isAllDay,
-                repeatingRule = "",
-                repeatingRDate = "",
-                repeatingExRule = "",
-                repeatingExRDate = "",
-                colour = 0, // Not specified
-                reminders = remindersToAdd
+
+                details = CalendarEventDetails(
+                        title = eventTitleText.text.toString(),
+                        desc = note.text.toString(),
+                        location = eventLocation.text.toString(),
+                        timezone = calendar.timeZone,
+                        startTime = startTime,
+                        endTime = endTime,
+                        isAllDay = isAllDay,
+                        repeatingRule = "",
+                        repeatingRDate = "",
+                        repeatingExRule = "",
+                        repeatingExRDate = "",
+                        colour = 0, // Not specified
+                        reminders = remindersToAdd),
+                oldDetails = CalendarEventDetails.createEmpty()
         )
 
         val added = CalendarChangeManager(CalendarProvider).createEvent(this, newEvent)

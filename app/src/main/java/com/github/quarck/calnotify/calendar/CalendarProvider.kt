@@ -765,7 +765,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         var eventId = -1L;
 
-        DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${event.startTime}, endTime: ${event.endTime}, reminder: ${event.reminders}");
+        DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${event.details.startTime}, endTime: ${event.details.endTime}, reminder: ${event.details.reminders}");
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "createEvent: no permissions");
@@ -774,29 +774,37 @@ object CalendarProvider : CalendarProviderInterface {
 
         val values = ContentValues()
 
-        values.put(CalendarContract.Events.TITLE, event.title);
+        values.put(CalendarContract.Events.TITLE, event.details.title);
         values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, event.timezone); // Irish summer time
-        values.put(CalendarContract.Events.DESCRIPTION, event.desc);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, event.details.timezone); // Irish summer time
+        values.put(CalendarContract.Events.DESCRIPTION, event.details.desc);
 
-        values.put(CalendarContract.Events.DTSTART, event.startTime);
-        values.put(CalendarContract.Events.DTEND, event.endTime);
+        values.put(CalendarContract.Events.DTSTART, event.details.startTime);
+        values.put(CalendarContract.Events.DTEND, event.details.endTime);
 
-        values.put(CalendarContract.Events.EVENT_LOCATION, event.location);
+        values.put(CalendarContract.Events.EVENT_LOCATION, event.details.location);
 
         //
 
-        if (event.colour != 0)
-            values.put(CalendarContract.Events.EVENT_COLOR, event.colour); // just something
+        if (event.details.colour != 0)
+            values.put(CalendarContract.Events.EVENT_COLOR, event.details.colour); // just something
 
         values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT);
         values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
 
         values.put(CalendarContract.Events.HAS_ALARM, 1);
-        values.put(CalendarContract.Events.ALL_DAY, if (event.isAllDay) 1 else 0);
+        values.put(CalendarContract.Events.ALL_DAY, if (event.details.isAllDay) 1 else 0);
 
-        if (event.repeatingRule != "")
-            values.put(CalendarContract.Events.RRULE, event.repeatingRule)
+        if (event.details.repeatingRule != "")
+            values.put(CalendarContract.Events.RRULE, event.details.repeatingRule)
+        if (event.details.repeatingRDate != "")
+            values.put(CalendarContract.Events.RDATE, event.details.repeatingRDate)
+
+        if (event.details.repeatingExRule != "")
+            values.put(CalendarContract.Events.EXRULE, event.details.repeatingExRule)
+        if (event.details.repeatingExRDate != "")
+            values.put(CalendarContract.Events.EXDATE, event.details.repeatingExRDate)
+
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
         values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
@@ -813,7 +821,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         if (eventId != -1L) {
             // Now add reminders
-            for (reminder in event.reminders) {
+            for (reminder in event.details.reminders) {
                 val reminderValues = ContentValues()
                 reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.time / Consts.MINUTE_IN_MILLISECONDS).toInt())
 

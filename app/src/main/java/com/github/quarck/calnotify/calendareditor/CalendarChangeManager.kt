@@ -77,6 +77,9 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
             db.deleteForEventId(event.eventId)
 
+            val oldStartTime = event.startTime
+            val oldEndTime = event.endTime
+
             val newStartTime: Long
             val newEndTime: Long
 
@@ -114,16 +117,32 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                             type = EventChangeRequestType.MoveExistingEvent,
                             eventId = event.eventId,
                             calendarId = event.calendarId,
-                            title = event.title,
-                            desc = "", // TBD
-                            startTime = newStartTime,
-                            endTime = newEndTime,
                             status = EventChangeStatus.Dirty,
-                            colour = event.color,
-                            location = event.location,
-                            timezone = "",
-                            isAllDay = event.isAllDay,
-                            reminders = listOf<EventCreationRequestReminder>())
+                            details = CalendarEventDetails(
+                                    title = event.title,
+                                    desc = "", // TBD
+                                    startTime = newStartTime,
+                                    endTime = newEndTime,
+
+                                    colour = event.color,
+                                    location = event.location,
+                                    timezone = "",
+                                    isAllDay = event.isAllDay,
+                                    reminders = listOf<EventCreationRequestReminder>()
+                            ),
+                            oldDetails = CalendarEventDetails(
+                                    title = event.title,
+                                    desc = "", // TBD
+                                    startTime = oldStartTime,
+                                    endTime = oldEndTime,
+
+                                    colour = event.color,
+                                    location = event.location,
+                                    timezone = "",
+                                    isAllDay = event.isAllDay,
+                                    reminders = listOf<EventCreationRequestReminder>()
+                            )
+                    )
             )
         }
 

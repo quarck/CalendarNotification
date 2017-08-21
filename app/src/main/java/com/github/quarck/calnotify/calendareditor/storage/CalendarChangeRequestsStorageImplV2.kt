@@ -42,6 +42,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                         "$KEY_EVENTID INTEGER, " +
                         "$KEY_STATUS INTEGER, " +
                         "$KEY_STATUS_TIMESTAMP INTEGER, " +
+
                         "$KEY_REPEATING_RULE TEXT, " +
                         "$KEY_REPEATING_DATE TEXT, " +
                         "$KEY_EXT_REPEATING_RULE TEXT, " +
@@ -56,8 +57,19 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                         "$KEY_COLOR INTEGER, " +
                         "$KEY_REMINDERS TEXT, " +
 
+                        "$KEY_OLD_REPEATING_RULE TEXT, " +
+                        "$KEY_OLD_REPEATING_DATE TEXT, " +
+                        "$KEY_OLD_EXT_REPEATING_RULE TEXT, " +
+                        "$KEY_OLD_EXT_REPEATING_DATE TEXT, " +
+                        "$KEY_OLD_ALL_DAY INTEGER, " +
+                        "$KEY_OLD_TITLE TEXT, " +
+                        "$KEY_OLD_DESC TEXT, " +
                         "$KEY_OLD_START INTEGER, " +
                         "$KEY_OLD_END INTEGER, " +
+                        "$KEY_OLD_LOCATION TEXT, " +
+                        "$KEY_OLD_TIMEZONE TEXT, " +
+                        "$KEY_OLD_COLOR INTEGER, " +
+                        "$KEY_OLD_REMINDERS TEXT, " +
 
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
@@ -204,23 +216,34 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_STATUS, req.status.code)
         values.put(KEY_STATUS_TIMESTAMP, req.lastStatusUpdate)
         values.put(KEY_CALENDAR_ID, req.calendarId);
-        values.put(KEY_REPEATING_RULE, req.repeatingRule);
-        values.put(KEY_REPEATING_DATE, req.repeatingRDate)
-        values.put(KEY_EXT_REPEATING_RULE, req.repeatingExRule);
-        values.put(KEY_EXT_REPEATING_DATE, req.repeatingExRDate)
-        values.put(KEY_ALL_DAY, req.isAllDay);
-        values.put(KEY_TITLE, req.title);
-        values.put(KEY_DESC, req.desc);
-        values.put(KEY_START, req.startTime);
-        values.put(KEY_END, req.endTime);
-        values.put(KEY_LOCATION, req.location);
-        values.put(KEY_TIMEZONE, req.timezone);
-        values.put(KEY_COLOR, req.colour);
-        values.put(KEY_REMINDERS, req.reminders.serialize());
 
-        values.put(KEY_OLD_START, req.oldStartTime)
-        values.put(KEY_OLD_END, req.oldEndTime)
+        values.put(KEY_REPEATING_RULE, req.details.repeatingRule);
+        values.put(KEY_REPEATING_DATE, req.details.repeatingRDate)
+        values.put(KEY_EXT_REPEATING_RULE, req.details.repeatingExRule);
+        values.put(KEY_EXT_REPEATING_DATE, req.details.repeatingExRDate)
+        values.put(KEY_ALL_DAY, req.details.isAllDay);
+        values.put(KEY_TITLE, req.details.title);
+        values.put(KEY_DESC, req.details.desc);
+        values.put(KEY_START, req.details.startTime);
+        values.put(KEY_END, req.details.endTime);
+        values.put(KEY_LOCATION, req.details.location);
+        values.put(KEY_TIMEZONE, req.details.timezone);
+        values.put(KEY_COLOR, req.details.colour);
+        values.put(KEY_REMINDERS, req.details.reminders.serialize());
 
+        values.put(KEY_OLD_REPEATING_RULE, req.oldDetails.repeatingRule);
+        values.put(KEY_OLD_REPEATING_DATE, req.oldDetails.repeatingRDate)
+        values.put(KEY_OLD_EXT_REPEATING_RULE, req.oldDetails.repeatingExRule);
+        values.put(KEY_OLD_EXT_REPEATING_DATE, req.oldDetails.repeatingExRDate)
+        values.put(KEY_OLD_ALL_DAY, req.oldDetails.isAllDay);
+        values.put(KEY_OLD_TITLE, req.oldDetails.title);
+        values.put(KEY_OLD_DESC, req.oldDetails.desc);
+        values.put(KEY_OLD_START, req.oldDetails.startTime);
+        values.put(KEY_OLD_END, req.oldDetails.endTime);
+        values.put(KEY_OLD_LOCATION, req.oldDetails.location);
+        values.put(KEY_OLD_TIMEZONE, req.oldDetails.timezone);
+        values.put(KEY_OLD_COLOR, req.oldDetails.colour);
+        values.put(KEY_OLD_REMINDERS, req.oldDetails.reminders.serialize());
 
         // Fill reserved keys with some placeholders
         values.put(KEY_RESERVED_INT1, 0L)
@@ -244,13 +267,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
 
         val reminders = cursor.getString(PROJECTION_KEY_REMINDERS).deserializeNewEventReminders()
 
-        val req = CalendarChangeRequest(
-                id = cursor.getLong(PROJECTION_KEY_ID),
-                type = EventChangeRequestType.fromInt(cursor.getInt(PROJECTION_KEY_TYPE)),
-                calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
-                status = EventChangeStatus.fromInt(cursor.getInt(PROJECTION_KEY_STATUS)),
-                lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
-                eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
+        val details = CalendarEventDetails (
                 title = cursor.getString(PROJECTION_KEY_TITLE),
                 desc = cursor.getString(PROJECTION_KEY_DESC),
                 startTime = cursor.getLong(PROJECTION_KEY_START),
@@ -263,10 +280,36 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 repeatingExRDate = cursor.getString(PROJECTION_KEY_EXT_REPEATING_DATE),
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 timezone = cursor.getString(PROJECTION_KEY_TIMEZONE),
-                oldStartTime = cursor.getLong(PROJECTION_KEY_OLD_START),
-                oldEndTime =  cursor.getLong(PROJECTION_KEY_OLD_END),
-
                 reminders = reminders
+        )
+
+        val oldReminders = cursor.getString(PROJECTION_KEY_OLD_REMINDERS).deserializeNewEventReminders()
+
+        val oldDetails = CalendarEventDetails (
+                title = cursor.getString(PROJECTION_KEY_OLD_TITLE),
+                desc = cursor.getString(PROJECTION_KEY_OLD_DESC),
+                startTime = cursor.getLong(PROJECTION_KEY_OLD_START),
+                endTime = cursor.getLong(PROJECTION_KEY_OLD_END),
+                location = cursor.getString(PROJECTION_KEY_OLD_LOCATION),
+                colour = cursor.getInt(PROJECTION_KEY_OLD_COLOR),
+                repeatingRule = cursor.getString(PROJECTION_KEY_OLD_REPEATING_RULE),
+                repeatingRDate = cursor.getString(PROJECTION_KEY_OLD_REPEATING_DATE),
+                repeatingExRule = cursor.getString(PROJECTION_KEY_OLD_EXT_REPEATING_RULE),
+                repeatingExRDate = cursor.getString(PROJECTION_KEY_OLD_EXT_REPEATING_DATE),
+                isAllDay = cursor.getInt(PROJECTION_KEY_OLD_ALL_DAY) != 0,
+                timezone = cursor.getString(PROJECTION_KEY_OLD_TIMEZONE),
+                reminders = oldReminders
+        )
+
+        val req = CalendarChangeRequest(
+                id = cursor.getLong(PROJECTION_KEY_ID),
+                type = EventChangeRequestType.fromInt(cursor.getInt(PROJECTION_KEY_TYPE)),
+                calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
+                status = EventChangeStatus.fromInt(cursor.getInt(PROJECTION_KEY_STATUS)),
+                lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
+                eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
+                details = details,
+                oldDetails = oldDetails
         )
 
         return req
@@ -283,9 +326,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         private const val INDEX_NAME = "newEventsIdxV2"
 
         private const val KEY_ID = "id"
-
         private const val KEY_TYPE = "t"
-
         private const val KEY_STATUS = "s"
         private const val KEY_STATUS_TIMESTAMP = "sTm"
 
@@ -294,26 +335,31 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
 
         private const val KEY_REPEATING_RULE = "rRule"
         private const val KEY_REPEATING_DATE = "rDate"
-
         private const val KEY_EXT_REPEATING_RULE = "rExtRule"
         private const val KEY_EXT_REPEATING_DATE = "rExtDate"
-
         private const val KEY_ALL_DAY = "allDay"
-
         private const val KEY_TITLE = "title"
         private const val KEY_DESC = "desc"
         private const val KEY_START = "eventStart"
         private const val KEY_END = "eventEnd"
         private const val KEY_LOCATION = "location"
-
         private const val KEY_TIMEZONE = "tz"
-
         private const val KEY_COLOR = "color"
-
         private const val KEY_REMINDERS = "reminders"
 
-        private const val KEY_OLD_START = "oldStart"
-        private const val KEY_OLD_END = "oldEnd"
+        private const val KEY_OLD_REPEATING_RULE = "oldRRule"
+        private const val KEY_OLD_REPEATING_DATE = "oldRDate"
+        private const val KEY_OLD_EXT_REPEATING_RULE = "oldRExtRule"
+        private const val KEY_OLD_EXT_REPEATING_DATE = "oldRExtDate"
+        private const val KEY_OLD_ALL_DAY = "oldAllDay"
+        private const val KEY_OLD_TITLE = "oldTitle"
+        private const val KEY_OLD_DESC = "oldDesc"
+        private const val KEY_OLD_START = "oldEventStart"
+        private const val KEY_OLD_END = "oldEventEnd"
+        private const val KEY_OLD_LOCATION = "oldLocation"
+        private const val KEY_OLD_TIMEZONE = "oldTz"
+        private const val KEY_OLD_COLOR = "oldColor"
+        private const val KEY_OLD_REMINDERS = "oldReminders"
 
         private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
@@ -344,7 +390,6 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 KEY_REPEATING_DATE,
                 KEY_EXT_REPEATING_RULE,
                 KEY_EXT_REPEATING_DATE,
-
                 KEY_ALL_DAY,
                 KEY_TITLE,
                 KEY_DESC,
@@ -354,8 +399,20 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 KEY_TIMEZONE,
                 KEY_COLOR,
                 KEY_REMINDERS,
+
+                KEY_OLD_REPEATING_RULE,
+                KEY_OLD_REPEATING_DATE,
+                KEY_OLD_EXT_REPEATING_RULE,
+                KEY_OLD_EXT_REPEATING_DATE,
+                KEY_OLD_ALL_DAY,
+                KEY_OLD_TITLE,
+                KEY_OLD_DESC,
                 KEY_OLD_START,
-                KEY_OLD_END
+                KEY_OLD_END,
+                KEY_OLD_LOCATION,
+                KEY_OLD_TIMEZONE,
+                KEY_OLD_COLOR,
+                KEY_OLD_REMINDERS
         )
 
         const val PROJECTION_KEY_ID = 0
@@ -377,8 +434,20 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         const val PROJECTION_KEY_TIMEZONE = 16
         const val PROJECTION_KEY_COLOR = 17
         const val PROJECTION_KEY_REMINDERS = 18
-        const val PROJECTION_KEY_OLD_START = 19
-        const val PROJECTION_KEY_OLD_END = 20
+
+        const val PROJECTION_KEY_OLD_REPEATING_RULE = 19
+        const val PROJECTION_KEY_OLD_REPEATING_DATE = 20
+        const val PROJECTION_KEY_OLD_EXT_REPEATING_RULE = 21
+        const val PROJECTION_KEY_OLD_EXT_REPEATING_DATE = 22
+        const val PROJECTION_KEY_OLD_ALL_DAY = 23
+        const val PROJECTION_KEY_OLD_TITLE = 24
+        const val PROJECTION_KEY_OLD_DESC = 25
+        const val PROJECTION_KEY_OLD_START = 26
+        const val PROJECTION_KEY_OLD_END = 27
+        const val PROJECTION_KEY_OLD_LOCATION = 28
+        const val PROJECTION_KEY_OLD_TIMEZONE = 29
+        const val PROJECTION_KEY_OLD_COLOR = 30
+        const val PROJECTION_KEY_OLD_REMINDERS = 31
     }
 
 }

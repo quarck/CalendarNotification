@@ -119,6 +119,23 @@ fun Int.adjustCalendarColor(darker: Boolean): Int {
     return RGB(r, g, b).toInt()
 }
 
+fun Int.btnAdjustCalendarColor(darker: Boolean): Int {
+
+    var (r, g, b) = RGB(this)
+
+    if (darker) {
+        r = (r / CALENDAR_COLOR_FADE_MED).toInt()
+        g = (g / CALENDAR_COLOR_FADE_MED).toInt()
+        b = (b / CALENDAR_COLOR_FADE_MED).toInt()
+    }
+    else {
+        r = (r / CALENDAR_COLOR_FADE_MIN).toInt()
+        g = (g / CALENDAR_COLOR_FADE_MIN).toInt()
+        b = (b / CALENDAR_COLOR_FADE_MIN).toInt()
+    }
+    return RGB(r, g, b).toInt()
+}
+
 
 fun Int.scaleColor(value: Float): Int {
 

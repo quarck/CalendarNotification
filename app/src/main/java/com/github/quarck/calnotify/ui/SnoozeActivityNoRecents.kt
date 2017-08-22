@@ -328,20 +328,16 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     finish()
                 }
 
-                val colorDrawable = ColorDrawable(ev.color.adjustCalendarColor(false))
-                //fab.backgroundTintList = colorDrawable
-
                 val states = arrayOf(intArrayOf(android.R.attr.state_enabled), // enabled
-                        intArrayOf(-android.R.attr.state_enabled), // disabled
-                        intArrayOf(-android.R.attr.state_checked), // unchecked
                         intArrayOf(android.R.attr.state_pressed)  // pressed
                 )
 
-                val colors = intArrayOf(Color.BLACK, Color.RED, Color.GREEN, Color.BLUE)
+                val colors = intArrayOf(
+                        ev.color.btnAdjustCalendarColor(false),
+                        ev.color.btnAdjustCalendarColor(true)
+                )
 
                 fab.backgroundTintList = ColorStateList(states, colors)
-
-                //fab.contentBackground = colorDrawable
             }
             else {
                 fab.visibility = View.GONE

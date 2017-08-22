@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,16 +11,6 @@
     tools:showIn="@layout/activity_snooze"
     android:background="@color/background">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/snooze_view_event_details_layout"
-        >
+    <include layout="@layout/content_snooze_main"/>
 
-        <include layout="@layout/content_snooze_main"/>
-
-    </ScrollView>
-
-</RelativeLayout>
+</ScrollView>

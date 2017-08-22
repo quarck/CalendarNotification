@@ -45,6 +45,8 @@ import java.util.*
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 
 
 enum class SnoozeActivityStateCode(val code: Int) {
@@ -328,6 +330,16 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                 val colorDrawable = ColorDrawable(ev.color.adjustCalendarColor(false))
                 //fab.backgroundTintList = colorDrawable
+
+                val states = arrayOf(intArrayOf(android.R.attr.state_enabled), // enabled
+                        intArrayOf(-android.R.attr.state_enabled), // disabled
+                        intArrayOf(-android.R.attr.state_checked), // unchecked
+                        intArrayOf(android.R.attr.state_pressed)  // pressed
+                )
+
+                val colors = intArrayOf(Color.BLACK, Color.RED, Color.GREEN, Color.BLUE)
+
+                fab.backgroundTintList = ColorStateList(states, colors)
 
                 //fab.contentBackground = colorDrawable
             }

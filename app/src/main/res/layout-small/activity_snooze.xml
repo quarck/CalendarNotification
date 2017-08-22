@@ -37,22 +37,15 @@
             android:layout_height="wrap_content"
             android:background="@color/material_red"
             android:id="@+id/snooze_view_event_details_layout"
-            android:visibility="visible"
-            android:elevation="@dimen/toolbar_elevation"
-            tools:targetApi="m">
-
-            <View
-                android:id="@+id/menu_anker"
-                android:layout_width="match_parent"
-                android:layout_height="0dp" />
+            >
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/snooze_view_title_height"
                 android:id="@+id/snooze_view_title"
                 android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textSize="24.0sp"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textSize="20.0sp"
                 android:textColor="@color/event_title_color"
                 android:paddingBottom="@dimen/snooze_view_header_padding_bottom"
                 android:paddingTop="@dimen/snooze_view_header_padding_top"
@@ -102,7 +95,9 @@
                 android:background="?android:attr/selectableItemBackground"
                 />
 
+
         </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,10 +105,13 @@
             android:orientation="vertical"
             android:layout_below="@id/snooze_view_event_details_layout"
             android:padding="0dp">
+
             <include layout="@layout/content_snooze"/>
+
         </LinearLayout>
 
     </RelativeLayout>
+
 
 
 

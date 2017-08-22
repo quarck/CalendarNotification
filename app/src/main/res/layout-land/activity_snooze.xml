@@ -41,14 +41,9 @@
             android:elevation="@dimen/toolbar_elevation"
             tools:targetApi="m">
 
-            <View
-                android:id="@+id/menu_anker"
-                android:layout_width="match_parent"
-                android:layout_height="0dp" />
-
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/snooze_view_title_height"
+                android:layout_height="wrap_content"
                 android:id="@+id/snooze_view_title"
                 android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
                 android:textAppearance="?android:textAppearanceLarge"
@@ -65,7 +60,7 @@
                 android:maxHeight="@dimen/snooze_view_event_title_max_height"
                 android:gravity="left|bottom"
                 android:ellipsize="end"
-                android:maxLines="3"
+                android:maxLines="1"
                 android:scrollbars = "vertical"
                 tools:ignore="HardcodedText" />
 
@@ -114,8 +109,6 @@
         </LinearLayout>
 
     </RelativeLayout>
-
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_edit_button"

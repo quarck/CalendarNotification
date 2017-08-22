@@ -72,8 +72,6 @@
                 android:paddingBottom="@dimen/snooze_view_img_padding_start"
                 android:paddingStart="@dimen/snooze_view_img_padding_start"
                 android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                android:paddingRight="@dimen/snooze_view_img_padding_end"
-                android:paddingLeft="@dimen/snooze_view_img_padding_start"
                 android:onClick="onButtonCancelClick"
                 android:background="?android:attr/selectableItemBackground"
                 />
@@ -118,10 +116,11 @@
         android:id="@+id/floating_edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:layout_anchor="@id/snooze_view_title"
+        android:layout_margin="8dp"
+        app:layout_anchor="@id/snooze_view_event_details_layout"
         app:layout_anchorGravity="bottom|start"
         app:srcCompat="@android:drawable/ic_menu_edit"
+        app:fabSize="mini"
         />
 
 </android.support.design.widget.CoordinatorLayout>

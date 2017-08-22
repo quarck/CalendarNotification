@@ -58,8 +58,6 @@
                 android:paddingTop="@dimen/snooze_view_header_padding_top"
                 android:paddingStart="@dimen/snooze_view_padding_start"
                 android:paddingEnd="@dimen/snooze_view_padding_end"
-                android:paddingRight="@dimen/snooze_view_padding_end"
-                android:paddingLeft="@dimen/snooze_view_padding_start"
                 android:clickable="true"
                 android:onClick="OnButtonEventDetailsClick"
                 android:maxHeight="@dimen/snooze_view_event_title_max_height"
@@ -116,15 +114,14 @@
     </RelativeLayout>
 
 
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:layout_anchor="@id/snooze_view_title"
+        android:layout_margin="@dimen/fab_layout_margin"
+        app:fabSize="mini"
+        app:layout_anchor="@id/snooze_view_event_details_layout"
         app:layout_anchorGravity="bottom|start"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        />
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 
 </android.support.design.widget.CoordinatorLayout>

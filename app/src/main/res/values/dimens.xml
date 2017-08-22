@@ -24,7 +24,7 @@
 
     <dimen name="snooze_view_header_spacing">22dp</dimen>
 
-    <dimen name="snooze_view_action_padding_top">8dp</dimen>
+    <dimen name="snooze_view_action_padding_top">16dp</dimen>
     <dimen name="snooze_view_action_padding_bottom">8dp</dimen>
 
     <dimen name="snooze_view_spacing">14dp</dimen>
@@ -103,6 +103,7 @@
     <dimen name="add_event_view_padding_end">20dp</dimen>
     <dimen name="add_event_view_img_padding_start">16dp</dimen>
     <dimen name="add_event_view_img_padding_end">16dp</dimen>
+    <dimen name="fab_layout_margin">16dp</dimen>
 
 
 </resources>

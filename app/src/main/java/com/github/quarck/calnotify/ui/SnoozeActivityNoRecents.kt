@@ -22,8 +22,10 @@ package com.github.quarck.calnotify.ui
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
@@ -310,6 +312,27 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                     nextReminderText.text = format.format(formatter.formatTimePoint(nextReminder))
                 }
+            }
+
+
+            val fab = find<FloatingActionButton>(R.id.floating_edit_button)
+
+            if (!ev.isRepeating) {
+                fab.setOnClickListener {
+                    _ ->
+                    val intent = Intent(this, EditEventActivity::class.java)
+                    intent.putExtra(EditEventActivity.EVENT_ID, ev.eventId)
+                    startActivity(intent)
+                    finish()
+                }
+
+                val colorDrawable = ColorDrawable(ev.color.adjustCalendarColor(false))
+                //fab.backgroundTintList = colorDrawable
+
+                //fab.contentBackground = colorDrawable
+            }
+            else {
+                fab.visibility = View.GONE
             }
 
         }

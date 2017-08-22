@@ -21,46 +21,56 @@ package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.calendar.CalendarEventDetails
 import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventReminderRecord
 import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarChangeManagerInterface {
 
-    override fun createEvent(context: Context, event: CalendarChangeRequest): Boolean {
+
+    override fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long {
+
+        var eventId = -1L
 
         DevLog.info(context, LOG_TAG, "Request to create an event")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "createEvent: no permissions");
-            return false;
+            return -1L;
         }
 
-        val ret =
-            CalendarChangeRequestsStorage(context).use {
-                db ->
+        val event = CalendarChangeRequest(
+                id = -1L,
+                type = EventChangeRequestType.AddNewEvent,
+                eventId = -1L,
+                calendarId = calendarId,
+                details = details,
+                oldDetails = CalendarEventDetails.createEmpty()
+        )
 
-                db.add(event)
+        CalendarChangeRequestsStorage(context).use {
+            db ->
 
-                val eventId = provider.createEvent(context, event)
+            db.add(event)
 
-                if (eventId != -1L) {
-                    DevLog.info(context, LOG_TAG, "Created new event, id $eventId")
+            eventId = provider.createEvent(context, event.calendarId, event.details)
 
-                    event.eventId = eventId
-                    db.update(event)
-                    true
-                }
-                else {
-                    DevLog.info(context, LOG_TAG, "Failed to create a new event, will retry later")
+            if (eventId != -1L) {
+                DevLog.info(context, LOG_TAG, "Created new event, id $eventId")
 
-                    false
-                }
+                event.eventId = eventId
+                db.update(event)
             }
+            else {
+                DevLog.info(context, LOG_TAG, "Failed to create a new event, will retry later")
+            }
+        }
 
-        return ret
+        return eventId
     }
 
     override fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean {
@@ -111,6 +121,23 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
             DevLog.info(context, LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
 
+            // Get full event details from the provider, if failed - construct a failback version
+            val oldDetails =
+                    provider.getEvent(context, event.eventId)?.details
+                            ?: CalendarEventDetails(
+                                    title = event.title,
+                                    desc = "",
+                                    location = event.location,
+                                    timezone = "",
+                                    startTime = oldStartTime,
+                                    endTime = oldEndTime,
+                                    isAllDay = event.isAllDay,
+                                    reminders = listOf<EventReminderRecord>(EventReminderRecord.minutes(15)),
+                                    color = event.color
+                            )
+
+            val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
+
             db.add(
                     CalendarChangeRequest(
                             id = -1L,
@@ -118,30 +145,8 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                             eventId = event.eventId,
                             calendarId = event.calendarId,
                             status = EventChangeStatus.Dirty,
-                            details = CalendarEventDetails(
-                                    title = event.title,
-                                    desc = "", // TBD
-                                    startTime = newStartTime,
-                                    endTime = newEndTime,
-
-                                    colour = event.color,
-                                    location = event.location,
-                                    timezone = "",
-                                    isAllDay = event.isAllDay,
-                                    reminders = listOf<EventCreationRequestReminder>()
-                            ),
-                            oldDetails = CalendarEventDetails(
-                                    title = event.title,
-                                    desc = "", // TBD
-                                    startTime = oldStartTime,
-                                    endTime = oldEndTime,
-
-                                    colour = event.color,
-                                    location = event.location,
-                                    timezone = "",
-                                    isAllDay = event.isAllDay,
-                                    reminders = listOf<EventCreationRequestReminder>()
-                            )
+                            details = newDetails,
+                            oldDetails = oldDetails
                     )
             )
         }

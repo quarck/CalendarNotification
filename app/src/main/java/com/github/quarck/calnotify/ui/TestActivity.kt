@@ -227,7 +227,7 @@ class TestActivity : Activity() {
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonAddProvierEventClick(v: View) {
 
-        startActivity(Intent(this, AddEventActivity::class.java))
+        startActivity(Intent(this, EditEventActivity::class.java))
 
 //        val currentTime = System.currentTimeMillis()
 //

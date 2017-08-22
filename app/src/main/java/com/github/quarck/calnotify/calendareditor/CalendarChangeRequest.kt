@@ -19,49 +19,8 @@
 
 package com.github.quarck.calnotify.calendareditor
 
-import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.calendar.CalendarEventDetails
 
-data class EventCreationRequestReminder(val time: Long, val isEmail: Boolean) {
-
-    fun serialize() = "$time,${if(isEmail) 1 else 0}"
-
-    companion object {
-        fun deserialize(str: String): EventCreationRequestReminder {
-            val (time, isEmail) = str.split(',')
-            return EventCreationRequestReminder(
-                    time = time.toLong(),
-                    isEmail = isEmail.toInt() != 0
-            )
-        }
-    }
-
-    val allDayDaysBefore: Int
-        get() = ((this.time + Consts.DAY_IN_MILLISECONDS) / Consts.DAY_IN_MILLISECONDS).toInt()
-
-    val allDayHourOfDayAndMinute: Pair<Int, Int>
-        get() {
-            val timeOfDayMillis =
-                    if (this.time >= 0L) { // on the day of event
-                        Consts.DAY_IN_MILLISECONDS - this.time % Consts.DAY_IN_MILLISECONDS
-                    }
-                    else  {
-                        -this.time
-                    }
-
-            val timeOfDayMinutes = timeOfDayMillis.toInt() / 1000 / 60
-
-            val minute = timeOfDayMinutes % 60
-            val hourOfDay = timeOfDayMinutes / 60
-
-            return Pair(hourOfDay, minute)
-        }
-}
-
-fun List<EventCreationRequestReminder>.serialize()
-        = this.map { it.serialize() }.joinToString(separator = ";")
-
-fun String.deserializeNewEventReminders()
-        = this.split(";").filter { it != "" }.map { EventCreationRequestReminder.deserialize(it) }.toList()
 
 enum class EventChangeStatus(val code: Int) {
     Dirty(0),
@@ -81,42 +40,6 @@ enum class EventChangeRequestType(val code: Int) {
     companion object {
         @JvmStatic
         fun fromInt(v: Int) = values()[v]
-    }
-}
-
-data class CalendarEventDetails(
-        val title: String,
-        val desc: String,
-        val location: String,
-
-        val timezone: String,
-
-        val startTime: Long,
-        val endTime: Long,
-
-        val isAllDay: Boolean,
-
-        val reminders: List<EventCreationRequestReminder>,
-
-        val repeatingRule: String = "", // empty if not repeating
-        val repeatingRDate: String = "", // empty if not repeating
-        val repeatingExRule: String = "", // empty if not repeating
-        val repeatingExRDate: String = "", // empty if not repeating
-
-        val colour: Int = 0
-        ) {
-
-    companion object {
-        fun createEmpty() = CalendarEventDetails(
-                title = "",
-                desc = "",
-                location = "",
-                timezone = "",
-                startTime = 0,
-                endTime = 0,
-                isAllDay = false,
-                reminders = listOf<EventCreationRequestReminder>()
-        )
     }
 }
 

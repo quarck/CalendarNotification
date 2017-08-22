@@ -20,17 +20,19 @@
 package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
+import com.github.quarck.calnotify.calendar.CalendarEventDetails
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 interface CalendarChangeManagerInterface {
 
     /**
-     * Returns true on success, and 'event' is updated with the eventId of newly created
+     * Returns event Id on success, -1L on failure
      * event
      * @param [context] - Android context
-     * @param [event] - new event struct to create
+     * @param [calendarId] - Calendar ID to use
+     * @param [details] - details of the new event to create
      */
-    fun createEvent(context: Context, event: CalendarChangeRequest): Boolean
+    fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long
 
     /**
      * Moves calendar event by given time, returns true on success.

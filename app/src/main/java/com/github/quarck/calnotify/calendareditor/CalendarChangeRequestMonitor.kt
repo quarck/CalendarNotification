@@ -70,12 +70,16 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                                             provider,
                                             event,
                                             cleanupEventsTo)
-                                else ->
+
+                                EventChangeRequestType.MoveExistingEvent ->
                                     validateMoveRequest(
                                             context,
                                             provider,
                                             event,
                                             cleanupEventsTo)
+
+                                EventChangeRequestType.EditExistingEvent ->
+                                    TODO()
                             }
 
                     when (validation) {
@@ -120,11 +124,14 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         try {
             when (event.type) {
                 EventChangeRequestType.AddNewEvent ->
-                    event.eventId = provider.createEvent(context, event)
+                    event.eventId = provider.createEvent(context, event.calendarId, event.details)
 
                 EventChangeRequestType.MoveExistingEvent -> {
                     provider.moveEvent(context, event.eventId, event.details.startTime, event.details.endTime)
                     event.status = EventChangeStatus.Dirty
+                }
+                EventChangeRequestType.EditExistingEvent -> {
+                    TODO()
                 }
             }
         }

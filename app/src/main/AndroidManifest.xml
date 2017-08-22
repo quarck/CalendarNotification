@@ -96,7 +96,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.AddEventActivity"
+            android:name=".ui.EditEventActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".ui.MainActivity"
             android:label="@string/empty"

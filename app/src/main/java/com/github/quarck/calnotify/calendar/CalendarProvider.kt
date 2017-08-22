@@ -28,7 +28,6 @@ import android.os.Build
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendareditor.CalendarChangeRequest
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
@@ -90,7 +89,7 @@ object CalendarProvider : CalendarProviderInterface {
         val attendance: Int? = cursor.getInt(PROJECTION_INDEX_ATTENDANCE_STATUS)
 
         if (eventId == null || state == null || title == null || startTime == null)
-            return Pair(null, null);
+            return Pair(null, null)
 
         val event =
                 EventAlertRecord(
@@ -112,7 +111,7 @@ object CalendarProvider : CalendarProviderInterface {
                         eventStatus = EventStatus.fromInt(status),
                         attendanceStatus = AttendanceStatus.fromInt(attendance)
 
-                );
+                )
 
         return Pair(state, event)
     }
@@ -120,13 +119,13 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getAlertByTime: has no permissions");
-            return listOf();
+            DevLog.error(context, LOG_TAG, "getAlertByTime: has no permissions")
+            return listOf()
         }
 
         val ret = arrayListOf<EventAlertRecord>()
 
-        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?"
 
         val cursor: Cursor? =
                 context.contentResolver.query(
@@ -135,11 +134,11 @@ object CalendarProvider : CalendarProviderInterface {
                         selection,
                         arrayOf(alertTime.toString()),
                         null
-                );
+                )
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                val (state, event) = cursorToAlertRecord(cursor, alertTime.toLong());
+                val (state, event) = cursorToAlertRecord(cursor, alertTime)
 
                 if (state != null && event != null) {
                     if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
@@ -173,13 +172,13 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getAlertByEventIdAndTime: has no permissions");
-            return null;
+            DevLog.error(context, LOG_TAG, "getAlertByEventIdAndTime: has no permissions")
+            return null
         }
 
         var ret: EventAlertRecord? = null
 
-        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?"
 
         val cursor: Cursor? =
                 context.contentResolver.query(
@@ -188,15 +187,15 @@ object CalendarProvider : CalendarProviderInterface {
                         selection,
                         arrayOf(alertTime.toString()),
                         null
-                );
+                )
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 val (_, event) = cursorToAlertRecord(cursor, alertTime)
 
                 if (event != null && event.eventId == eventId) {
-                    ret = event;
-                    break;
+                    ret = event
+                    break
                 }
 
             } while (cursor.moveToNext())
@@ -285,7 +284,7 @@ object CalendarProvider : CalendarProviderInterface {
                     fields,
                     selection,
                     selectionArgs,
-                    null);
+                    null)
 
             while (cursor != null && cursor.moveToNext()) {
                 //
@@ -327,7 +326,7 @@ object CalendarProvider : CalendarProviderInterface {
                 fields,
                 selection,
                 selectionArgs,
-                null);
+                null)
 
         while (cursor != null && cursor.moveToNext()) {
             //
@@ -361,20 +360,29 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEvent: has no permissions");
-            return null;
+            DevLog.error(context, LOG_TAG, "getEvent: has no permissions")
+            return null
         }
 
         var ret: EventRecord? = null
 
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
 
         val fields =
                 arrayOf(
                         CalendarContract.Events.CALENDAR_ID,
                         CalendarContract.Events.TITLE,
+                        CalendarContract.Events.DESCRIPTION,
+                        CalendarContract.Events.EVENT_TIMEZONE,
+
                         CalendarContract.Events.DTSTART,
                         CalendarContract.Events.DTEND,
+
+                        CalendarContract.Events.RRULE,
+                        CalendarContract.Events.RDATE,
+                        CalendarContract.Events.EXRULE,
+                        CalendarContract.Events.EXDATE,
+
                         CalendarContract.Events.ALL_DAY,
                         CalendarContract.Events.EVENT_LOCATION,
                         CalendarContract.Events.DISPLAY_COLOR,
@@ -390,19 +398,27 @@ object CalendarProvider : CalendarProviderInterface {
                         null, //selection,
                         null, //arrayOf(eventId.toString()),
                         null
-                );
+                )
 
         if (cursor != null && cursor.moveToFirst()) {
 
             val calendarId: Long? = cursor.getLong(0)
             val title: String? = cursor.getString(1)
-            val start: Long? = cursor.getLong(2)
-            var end: Long? = cursor.getLong(3)
-            var allDay: Int? = cursor.getInt(4)
-            val location: String? = cursor.getString(5)
-            val color: Int? = cursor.getInt(6)
-            val status: Int? = cursor.getInt(7)
-            val attendance: Int? = cursor.getInt(8)
+            val desc: String? = cursor.getString(2)
+            val timeZone: String? = cursor.getString(3)
+            val start: Long? = cursor.getLong(4)
+            var end: Long? = cursor.getLong(5)
+
+            val rRule: String? = cursor.getString(6)
+            val rDate: String? = cursor.getString(7)
+            val exRRule: String? = cursor.getString(8)
+            val exRDate: String? = cursor.getString(9)
+
+            var allDay: Int? = cursor.getInt(10)
+            val location: String? = cursor.getString(11)
+            val color: Int? = cursor.getInt(12)
+            val status: Int? = cursor.getInt(13)
+            val attendance: Int? = cursor.getInt(14)
 
             if (title != null && start != null) {
 
@@ -419,16 +435,23 @@ object CalendarProvider : CalendarProviderInterface {
                         EventRecord(
                                 calendarId = calendarId ?: -1L,
                                 eventId = eventId,
-                                title = title,
-                                startTime = start,
-                                endTime = end,
-                                isAllDay = allDay != 0,
-                                location = location ?: "",
-                                color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                                reminders = listOf<EventReminderRecord>(), // stub for now
+                                details = CalendarEventDetails(
+                                        desc = desc ?: "",
+                                        location = location ?: "",
+                                        timezone = timeZone ?: "",
+                                        startTime = start,
+                                        endTime = end,
+                                        isAllDay = allDay != 0,
+                                        reminders = listOf<EventReminderRecord>(),
+                                        repeatingRule = rRule ?: "",
+                                        repeatingRDate = rDate ?: "",
+                                        repeatingExRule = exRRule ?: "",
+                                        repeatingExRDate = exRDate ?: "",
+                                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR, title = title // stub for now
+                                ),
                                 eventStatus = EventStatus.fromInt(status),
                                 attendanceStatus = AttendanceStatus.fromInt(attendance)
-                        );
+                        )
             }
         }
         else {
@@ -453,13 +476,13 @@ object CalendarProvider : CalendarProviderInterface {
         val SYNC_IS_DIRTY = "dirty"
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEvent: has no permissions");
-            return null;
+            DevLog.error(context, LOG_TAG, "getEvent: has no permissions")
+            return null
         }
 
         var ret: Boolean? = null
 
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
 
         val fields = arrayOf( SYNC_IS_DIRTY ) //  CalendarContracts.SyncColumns is a private class
 
@@ -471,7 +494,7 @@ object CalendarProvider : CalendarProviderInterface {
                             null, //selection,
                             null, //arrayOf(eventId.toString()),
                             null
-                    );
+                    )
 
             if (cursor != null && cursor.moveToFirst()) {
                 val isDirty: Int? = cursor.getInt(0)
@@ -494,12 +517,12 @@ object CalendarProvider : CalendarProviderInterface {
     override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
         if (!PermissionsManager.hasWriteCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "dismissNativeEventAlert: has no permissions");
-            return;
+            DevLog.error(context, LOG_TAG, "dismissNativeEventAlert: has no permissions")
+            return
         }
 
         try {
-            val uri = CalendarContract.CalendarAlerts.CONTENT_URI;
+            val uri = CalendarContract.CalendarAlerts.CONTENT_URI
 
             val selection =
                     "(" +
@@ -507,17 +530,17 @@ object CalendarProvider : CalendarProviderInterface {
                             " OR " +
                             "${CalendarContract.CalendarAlerts.STATE}=${CalendarContract.CalendarAlerts.STATE_SCHEDULED}" +
                             ")" +
-                            " AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId";
+                            " AND ${CalendarContract.CalendarAlerts.EVENT_ID}=$eventId"
 
-            val dismissValues = ContentValues();
+            val dismissValues = ContentValues()
             dismissValues.put(
                     CalendarContract.CalendarAlerts.STATE,
                     CalendarContract.CalendarAlerts.STATE_DISMISSED
-            );
+            )
 
-            context.contentResolver.update(uri, dismissValues, selection, null);
+            context.contentResolver.update(uri, dismissValues, selection, null)
 
-            DevLog.debug(LOG_TAG, "dismissNativeEventReminder: eventId $eventId");
+            DevLog.debug(LOG_TAG, "dismissNativeEventReminder: eventId $eventId")
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "dismissNativeReminder failed: ${ex.detailed}")
@@ -532,18 +555,18 @@ object CalendarProvider : CalendarProviderInterface {
     //
     override fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long {
 
-        var ret = -1L;
+        var ret = -1L
 
-        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
+        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: no permissions");
-            return -1;
+            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: no permissions")
+            return -1
         }
 
         if (event.alertTime == 0L) {
-            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: alert time is zero");
-            return -1;
+            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: alert time is zero")
+            return -1
         }
 
         val fields = arrayOf(
@@ -573,7 +596,7 @@ object CalendarProvider : CalendarProviderInterface {
         //
         var values: ContentValues? = null // values for the new event
 
-        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?";
+        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?"
 
         val cursor: Cursor? =
                 context.contentResolver.query(
@@ -582,19 +605,19 @@ object CalendarProvider : CalendarProviderInterface {
                         selection,
                         arrayOf(event.alertTime.toString()),
                         null
-                );
+                )
 
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     val eventId = cursor.getLong(0)
                     if (eventId != event.eventId)
-                        continue;
+                        continue
 
                     values = ContentValues()
 
                     val title: String = (cursor.getString(1)) ?: throw Exception("Title must not be null")
-                    val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null");
+                    val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null")
                     val timeZone: String? = cursor.getString(3)
                     val description: String? = cursor.getString(4)
                     val dtStart = (cursor.getLong(5) as Long?) ?: throw Exception("dtStart must not be null")
@@ -613,44 +636,44 @@ object CalendarProvider : CalendarProviderInterface {
                     val customAppPackage: String? = cursor.getString(17) // CalendarContract.Events.CUSTOM_APP_PACKAGE
                     val appUri: String? = cursor.getString(18) // CalendarContract.Events.CUSTOM_APP_URI
 
-                    values.put(CalendarContract.Events.TITLE, title);
-                    values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-                    values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone);
-                    values.put(CalendarContract.Events.DESCRIPTION, description ?: "");
+                    values.put(CalendarContract.Events.TITLE, title)
+                    values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+                    values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone)
+                    values.put(CalendarContract.Events.DESCRIPTION, description ?: "")
 
-                    values.put(CalendarContract.Events.DTSTART, dtStart + addTime);
-                    values.put(CalendarContract.Events.DTEND, dtEnd + addTime);
+                    values.put(CalendarContract.Events.DTSTART, dtStart + addTime)
+                    values.put(CalendarContract.Events.DTEND, dtEnd + addTime)
 
                     if (location != null)
-                        values.put(CalendarContract.Events.EVENT_LOCATION, location);
+                        values.put(CalendarContract.Events.EVENT_LOCATION, location)
                     if (color != null)
-                        values.put(CalendarContract.Events.EVENT_COLOR, color);
+                        values.put(CalendarContract.Events.EVENT_COLOR, color)
                     if (accessLevel != null)
-                        values.put(CalendarContract.Events.ACCESS_LEVEL, accessLevel);
+                        values.put(CalendarContract.Events.ACCESS_LEVEL, accessLevel)
                     if (availability != null)
-                        values.put(CalendarContract.Events.AVAILABILITY, availability);
+                        values.put(CalendarContract.Events.AVAILABILITY, availability)
                     if (hasAlarm != null)
-                        values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
+                        values.put(CalendarContract.Events.HAS_ALARM, hasAlarm)
                     if (allDay != null)
-                        values.put(CalendarContract.Events.ALL_DAY, allDay);
+                        values.put(CalendarContract.Events.ALL_DAY, allDay)
                     if (duration != null)
-                        values.put(CalendarContract.Events.DURATION, duration);
+                        values.put(CalendarContract.Events.DURATION, duration)
                     if (eventEndTimeZone != null)
-                        values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone);
+                        values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone)
                     if (hasExtProp != null)
-                        values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp);
+                        values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp)
                     if (organizer != null)
-                        values.put(CalendarContract.Events.ORGANIZER, organizer);
+                        values.put(CalendarContract.Events.ORGANIZER, organizer)
                     if (customAppPackage != null)
-                        values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage);
+                        values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage)
                     if (appUri != null)
-                        values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri);
+                        values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri)
 
                     values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
                     values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
                     DevLog.info(context, LOG_TAG, "Event details for calendarId: $calendarId / eventId: $eventId captured")
-                    break;
+                    break
 
                 } while (cursor.moveToNext())
             }
@@ -658,7 +681,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -666,17 +689,17 @@ object CalendarProvider : CalendarProviderInterface {
 
         if (values != null) {
             try {
-                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
 
                 // get the event ID that is the last element in the Uri
                 ret = uri.lastPathSegment.toLong()
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
+                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}")
             }
         }
         else {
-            DevLog.error(context, LOG_TAG, "Calendar event wasn't found");
+            DevLog.error(context, LOG_TAG, "Calendar event wasn't found")
         }
 
         if (ret != -1L) {
@@ -691,146 +714,80 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
 
-        return ret;
+        return ret
     }
 
-    fun createTestEvent(context: Context, calendarId: Long, title: String, startTime: Long, endTime: Long, reminder: Long): Long {
+    override fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long {
 
-        var ret = -1L;
+        var eventId = -1L
 
-        DevLog.debug(LOG_TAG, "Request to create Test Event, title: $title, startTime: $startTime, endTime: $endTime, reminder: $reminder");
+        DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${details.startTime}, endTime: ${details.endTime}, reminder: ${details.reminders}")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "createTestEvent: no permissions");
-            return -1;
+            DevLog.error(context, LOG_TAG, "createEvent: no permissions")
+            return -1
         }
 
         val values = ContentValues()
 
-        values.put(CalendarContract.Events.TITLE, title);
-        values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID()); // Irish summer time
-        values.put(CalendarContract.Events.DESCRIPTION, "Test event created by the app");
+        values.put(CalendarContract.Events.TITLE, details.title)
+        values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, details.timezone) // Irish summer time
+        values.put(CalendarContract.Events.DESCRIPTION, details.desc)
 
-        values.put(CalendarContract.Events.DTSTART, startTime);
-        values.put(CalendarContract.Events.DTEND, endTime);
+        values.put(CalendarContract.Events.DTSTART, details.startTime)
+        values.put(CalendarContract.Events.DTEND, details.endTime)
 
-        values.put(CalendarContract.Events.EVENT_LOCATION, "");
-
-        //
-
-        //values.put(CalendarContract.Events.EVENT_COLOR, 0x7fff0000); // just something
-
-        values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT);
-        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
-
-        values.put(CalendarContract.Events.HAS_ALARM, 1);
-        //values.put(CalendarContract.Events.ALL_DAY, 0);
-        //values.put(CalendarContract.Events.DURATION, duration);
-        //values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone);
-        //values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp);
-        //values.put(CalendarContract.Events.ORGANIZER, organizer);
-        //values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage);
-        //values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri);
-
-        values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
-        values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
-
-        try {
-            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
-
-            // get the event ID that is the last element in the Uri
-            ret = uri.lastPathSegment.toLong()
-        }
-        catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
-        }
-
-        if (ret != -1L) {
-            // Now copy reminders
-            val reminderValues = ContentValues()
-            reminderValues.put(CalendarContract.Reminders.MINUTES, 15)
-            reminderValues.put(CalendarContract.Reminders.EVENT_ID, ret)
-            reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
-            context.contentResolver.insert(
-                    CalendarContract.Reminders.CONTENT_URI,
-                    reminderValues
-            )
-        }
-
-        return ret;
-    }
-
-    override fun createEvent(context: Context, event: CalendarChangeRequest): Long {
-
-        var eventId = -1L;
-
-        DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${event.details.startTime}, endTime: ${event.details.endTime}, reminder: ${event.details.reminders}");
-
-        if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "createEvent: no permissions");
-            return -1;
-        }
-
-        val values = ContentValues()
-
-        values.put(CalendarContract.Events.TITLE, event.details.title);
-        values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, event.details.timezone); // Irish summer time
-        values.put(CalendarContract.Events.DESCRIPTION, event.details.desc);
-
-        values.put(CalendarContract.Events.DTSTART, event.details.startTime);
-        values.put(CalendarContract.Events.DTEND, event.details.endTime);
-
-        values.put(CalendarContract.Events.EVENT_LOCATION, event.details.location);
+        values.put(CalendarContract.Events.EVENT_LOCATION, details.location)
 
         //
 
-        if (event.details.colour != 0)
-            values.put(CalendarContract.Events.EVENT_COLOR, event.details.colour); // just something
+        if (details.color != 0)
+            values.put(CalendarContract.Events.EVENT_COLOR, details.color) // just something
 
-        values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT);
-        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+        values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT)
+        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
 
-        values.put(CalendarContract.Events.HAS_ALARM, 1);
-        values.put(CalendarContract.Events.ALL_DAY, if (event.details.isAllDay) 1 else 0);
+        values.put(CalendarContract.Events.HAS_ALARM, 1)
+        values.put(CalendarContract.Events.ALL_DAY, if (details.isAllDay) 1 else 0)
 
-        if (event.details.repeatingRule != "")
-            values.put(CalendarContract.Events.RRULE, event.details.repeatingRule)
-        if (event.details.repeatingRDate != "")
-            values.put(CalendarContract.Events.RDATE, event.details.repeatingRDate)
+        if (details.repeatingRule != "")
+            values.put(CalendarContract.Events.RRULE, details.repeatingRule)
+        if (details.repeatingRDate != "")
+            values.put(CalendarContract.Events.RDATE, details.repeatingRDate)
 
-        if (event.details.repeatingExRule != "")
-            values.put(CalendarContract.Events.EXRULE, event.details.repeatingExRule)
-        if (event.details.repeatingExRDate != "")
-            values.put(CalendarContract.Events.EXDATE, event.details.repeatingExRDate)
+        if (details.repeatingExRule != "")
+            values.put(CalendarContract.Events.EXRULE, details.repeatingExRule)
+        if (details.repeatingExRDate != "")
+            values.put(CalendarContract.Events.EXDATE, details.repeatingExRDate)
 
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
         values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
         try {
-            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
 
             // get the event ID that is the last element in the Uri
             eventId = uri.lastPathSegment.toLong()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}");
+            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}")
         }
 
         if (eventId != -1L) {
             // Now add reminders
-            for (reminder in event.details.reminders) {
+            for (reminder in details.reminders) {
                 val reminderValues = ContentValues()
-                reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.time / Consts.MINUTE_IN_MILLISECONDS).toInt())
+                reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.millisecondsBefore / Consts.MINUTE_IN_MILLISECONDS).toInt())
 
                 reminderValues.put(CalendarContract.Reminders.EVENT_ID, eventId)
 
-                if (reminder.isEmail)
-                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_EMAIL)
-                else
-                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
+                reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
+//                if (reminder.isEmail)
+//                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_EMAIL)
+//                else
+//                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
 
                 context.contentResolver.insert(
                         CalendarContract.Reminders.CONTENT_URI,
@@ -839,7 +796,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
 
-        return eventId;
+        return eventId
     }
 
 
@@ -856,7 +813,7 @@ object CalendarProvider : CalendarProviderInterface {
                 CalendarContract.Events.RDATE
         )
 
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
 
         val cursor: Cursor? =
                 context.contentResolver.query(
@@ -865,12 +822,12 @@ object CalendarProvider : CalendarProviderInterface {
                         null,
                         null,
                         null
-                );
+                )
         try {
             if (cursor != null && cursor.moveToFirst()) {
 
-                val rRule = cursor.getString(1) ?: "";
-                val rDate = cursor.getString(2) ?: "";
+                val rRule = cursor.getString(1) ?: ""
+                val rDate = cursor.getString(2) ?: ""
 
                 ret = rRule.isNotEmpty() || rDate.isNotEmpty()
             }
@@ -881,35 +838,35 @@ object CalendarProvider : CalendarProviderInterface {
 
         cursor?.close()
 
-        return ret;
+        return ret
     }
 
     override fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean {
-        var ret = false;
+        var ret = false
 
-        DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime");
+        DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
-            return false;
+            DevLog.error(context, LOG_TAG, "moveEvent: no permissions")
+            return false
         }
 
         try {
-            val values = ContentValues();
+            val values = ContentValues()
 
-            values.put(CalendarContract.Events.DTSTART, newStartTime);
-            values.put(CalendarContract.Events.DTEND, newEndTime);
+            values.put(CalendarContract.Events.DTSTART, newStartTime)
+            values.put(CalendarContract.Events.DTEND, newEndTime)
 
-            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
-            val updated = context.contentResolver.update(updateUri, values, null, null);
+            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+            val updated = context.contentResolver.update(updateUri, values, null, null)
 
             ret = updated > 0
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
         }
 
-        return ret;
+        return ret
     }
 
 //    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
@@ -976,8 +933,8 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = mutableListOf<CalendarRecord>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getCalendars: no permissions");
-            return ret;
+            DevLog.error(context, LOG_TAG, "getCalendars: no permissions")
+            return ret
         }
 
         try {
@@ -1004,7 +961,7 @@ object CalendarProvider : CalendarProviderInterface {
             val uri = CalendarContract.Calendars.CONTENT_URI
 
             val cursor = context.contentResolver.query(
-                    uri, fields.toTypedArray(), null, null, null);
+                    uri, fields.toTypedArray(), null, null, null)
 
             while (cursor != null && cursor.moveToNext()) {
 
@@ -1056,7 +1013,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}");
+            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
         }
 
         return ret
@@ -1069,8 +1026,8 @@ object CalendarProvider : CalendarProviderInterface {
         val alarmTimeColumn = CalendarContract.CalendarAlerts.ALARM_TIME
 
         val projection = arrayOf(alarmTimeColumn)
-        val selection = alarmTimeColumn + ">=?";
-        val sortOrder = alarmTimeColumn + " ASC";
+        val selection = alarmTimeColumn + ">=?"
+        val sortOrder = alarmTimeColumn + " ASC"
 
         val cursor = cr.query(
                 CalendarContract.CalendarAlerts.CONTENT_URI,
@@ -1117,8 +1074,8 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: no permissions");
-            return ret;
+            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
+            return ret
         }
 
         val settings = Settings(context)
@@ -1181,7 +1138,7 @@ object CalendarProvider : CalendarProviderInterface {
 
                     if (instanceStart == null || eventId == null || calendarId == null) {
                         DevLog.info(context, LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
-                        continue;
+                        continue
                     }
 
                     if (!handledCalendars.contains(calendarId) || calendarId == -1L) {

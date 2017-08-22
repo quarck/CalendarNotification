@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
         floatingAddEvent.setOnClickListener {
-            startActivity(Intent(this, AddEventActivity::class.java))
+            startActivity(Intent(this, EditEventActivity::class.java))
         }
 
         if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {

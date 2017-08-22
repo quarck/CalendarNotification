@@ -23,6 +23,9 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
+import com.github.quarck.calnotify.calendar.CalendarEventDetails
+import com.github.quarck.calnotify.calendar.deserializeCalendarEventReminders
+import com.github.quarck.calnotify.calendar.serialize
 import com.github.quarck.calnotify.calendareditor.*
 import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
@@ -228,7 +231,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_END, req.details.endTime);
         values.put(KEY_LOCATION, req.details.location);
         values.put(KEY_TIMEZONE, req.details.timezone);
-        values.put(KEY_COLOR, req.details.colour);
+        values.put(KEY_COLOR, req.details.color);
         values.put(KEY_REMINDERS, req.details.reminders.serialize());
 
         values.put(KEY_OLD_REPEATING_RULE, req.oldDetails.repeatingRule);
@@ -242,7 +245,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_OLD_END, req.oldDetails.endTime);
         values.put(KEY_OLD_LOCATION, req.oldDetails.location);
         values.put(KEY_OLD_TIMEZONE, req.oldDetails.timezone);
-        values.put(KEY_OLD_COLOR, req.oldDetails.colour);
+        values.put(KEY_OLD_COLOR, req.oldDetails.color);
         values.put(KEY_OLD_REMINDERS, req.oldDetails.reminders.serialize());
 
         // Fill reserved keys with some placeholders
@@ -265,7 +268,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
 
     private fun cursorToEventRecord(cursor: Cursor): CalendarChangeRequest {
 
-        val reminders = cursor.getString(PROJECTION_KEY_REMINDERS).deserializeNewEventReminders()
+        val reminders = cursor.getString(PROJECTION_KEY_REMINDERS).deserializeCalendarEventReminders()
 
         val details = CalendarEventDetails (
                 title = cursor.getString(PROJECTION_KEY_TITLE),
@@ -273,7 +276,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 startTime = cursor.getLong(PROJECTION_KEY_START),
                 endTime = cursor.getLong(PROJECTION_KEY_END),
                 location = cursor.getString(PROJECTION_KEY_LOCATION),
-                colour = cursor.getInt(PROJECTION_KEY_COLOR),
+                color = cursor.getInt(PROJECTION_KEY_COLOR),
                 repeatingRule = cursor.getString(PROJECTION_KEY_REPEATING_RULE),
                 repeatingRDate = cursor.getString(PROJECTION_KEY_REPEATING_DATE),
                 repeatingExRule = cursor.getString(PROJECTION_KEY_EXT_REPEATING_RULE),
@@ -283,7 +286,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 reminders = reminders
         )
 
-        val oldReminders = cursor.getString(PROJECTION_KEY_OLD_REMINDERS).deserializeNewEventReminders()
+        val oldReminders = cursor.getString(PROJECTION_KEY_OLD_REMINDERS).deserializeCalendarEventReminders()
 
         val oldDetails = CalendarEventDetails (
                 title = cursor.getString(PROJECTION_KEY_OLD_TITLE),
@@ -291,7 +294,7 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 startTime = cursor.getLong(PROJECTION_KEY_OLD_START),
                 endTime = cursor.getLong(PROJECTION_KEY_OLD_END),
                 location = cursor.getString(PROJECTION_KEY_OLD_LOCATION),
-                colour = cursor.getInt(PROJECTION_KEY_OLD_COLOR),
+                color = cursor.getInt(PROJECTION_KEY_OLD_COLOR),
                 repeatingRule = cursor.getString(PROJECTION_KEY_OLD_REPEATING_RULE),
                 repeatingRDate = cursor.getString(PROJECTION_KEY_OLD_REPEATING_DATE),
                 repeatingExRule = cursor.getString(PROJECTION_KEY_OLD_EXT_REPEATING_RULE),

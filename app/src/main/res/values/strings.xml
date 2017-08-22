@@ -404,6 +404,8 @@
 
     <string name="add_event_fmt_before" formatted="false">%s before</string>
     <string name="add_event_as_email_suffix">as email</string>
+    <string name="add_event_as_sms_suffix">as sms</string>
+    <string name="add_event_as_alarm_suffix">as alarm</string>
     <string name="add_event_n_days_before" formatted="false">%s days before at %s</string>
     <string name="add_event_one_day_before" formatted="false">Day before at %s</string>
     <string name="add_event_zero_days_before" formatted="false">On the day at %s</string>

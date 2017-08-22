@@ -94,8 +94,8 @@
         android:layout_below="@id/snooze_view_event_details_layout"
         >
 
-    </ScrollView>
+        <include layout="@layout/content_snooze_main"/>
 
-    <include layout="@layout/content_snooze_main"/>
+    </ScrollView>
 
 </RelativeLayout>

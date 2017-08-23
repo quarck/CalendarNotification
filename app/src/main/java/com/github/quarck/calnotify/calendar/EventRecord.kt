@@ -70,6 +70,7 @@ fun String.deserializeCalendarEventReminders()
         = this.split(";").filter { it != "" }.map { EventReminderRecord.deserialize(it) }.toList()
 
 data class CalendarEventDetails(
+        val title: String,
         val desc: String,
         val location: String,
 
@@ -87,7 +88,7 @@ data class CalendarEventDetails(
         val repeatingExRule: String = "", // empty if not repeating
         val repeatingExRDate: String = "", // empty if not repeating
 
-        val color: Int = 0, val title: String
+        val color: Int = 0
 ) {
     companion object {
         fun createEmpty() = CalendarEventDetails(

@@ -472,6 +472,8 @@
     <string name="default_duration">Default duration</string>
     <string name="default_duration_summary">Default duration for new events, in minutes</string>
     <string name="event_was_created">Event was created</string>
+    <string name="event_not_found">Event not found</string>
+    <string name="calendar_not_found">Calendar not found</string>
 
 </resources>
 

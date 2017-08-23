@@ -88,6 +88,7 @@ fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): Stri
 }
 
 data class EditEventActivityState(
+        var eventId: Long,
         var title: String,
         var location: String,
         var note: String,
@@ -99,6 +100,7 @@ data class EditEventActivityState(
         var selectedCalendar: Long
 ) {
     fun toBundle(bundle: Bundle) {
+        bundle.putLong(KEY_EVENT_ID, eventId)
         bundle.putString(KEY_TITLE, title)
         bundle.putString(KEY_LOCATION, location)
         bundle.putString(KEY_NOTE, note)
@@ -113,6 +115,7 @@ data class EditEventActivityState(
     companion object {
         fun fromBundle(bundle: Bundle): EditEventActivityState {
 
+            val id = bundle.getLong(KEY_EVENT_ID, -1L)
             val title = bundle.getString(KEY_TITLE, "")
             val loc = bundle.getString(KEY_LOCATION, "")
             val note = bundle.getString(KEY_NOTE, "")
@@ -126,6 +129,7 @@ data class EditEventActivityState(
             val selectedCalendar = bundle.getLong(KEY_SELECTED_CALENDAR)
 
             return EditEventActivityState(
+                    id,
                     title,
                     loc,
                     note,
@@ -138,6 +142,7 @@ data class EditEventActivityState(
                     )
         }
 
+        const val KEY_EVENT_ID = "eventId"
         const val KEY_TITLE = "title"
         const val KEY_LOCATION = "loc"
         const val KEY_NOTE = "note"
@@ -155,8 +160,6 @@ data class EditEventActivityState(
 class EditEventActivity : AppCompatActivity() {
 
     data class ReminderWrapper(val view: TextView, var reminder: EventReminderRecord, val isForAllDay: Boolean)
-
-    private var isEdit: Boolean = false
 
     private lateinit var eventTitleText: EditText
 
@@ -196,11 +199,62 @@ class EditEventActivity : AppCompatActivity() {
 
     val reminders = mutableListOf<ReminderWrapper>()
 
+    var originalEvent: EventRecord? = null
+
     val anyChanges: Boolean
         get() {
-            return eventTitleText.text.isNotEmpty() ||
-                    eventLocation.text.isNotEmpty() ||
-                    note.text.isNotEmpty()
+            val details = originalEvent?.details
+
+            if (details == null) {
+
+                return eventTitleText.text.isNotEmpty() ||
+                        eventLocation.text.isNotEmpty() ||
+                        note.text.isNotEmpty()
+            }
+
+            if (eventTitleText.text.toString() != details.title ||
+                    note.text.toString() != details.desc ||
+                    eventLocation.text.toString() != details.location
+                    ) {
+                return true
+            }
+
+//            if (eventTimeZone.text.toString() != details.timezone)
+//                return true
+
+            if (isAllDay != details.isAllDay)
+                return true
+
+            var currentStartTime = from.timeInMillis
+            var currentEndTime = to.timeInMillis
+
+            if (isAllDay) {
+                currentStartTime = DateTimeUtils.createUTCCalendarDate(from.year, from.month, from.dayOfMonth).timeInMillis
+                currentEndTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
+            }
+
+            if (currentStartTime != details.startTime || currentEndTime != details.endTime)
+                return true
+
+            val currentReminders = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }
+            val eventReminders = details.reminders
+
+            if (currentReminders.size != details.reminders.size)
+                return true
+
+            if (!details.reminders.containsAll(currentReminders))
+                return true
+
+//            if (colorView.text.value != details.color)
+//                return true
+
+/*
+        val repeatingRule: String = "", // empty if not repeating
+        val repeatingRDate: String = "", // empty if not repeating
+        val repeatingExRule: String = "", // empty if not repeating
+        val repeatingExRDate: String = "", // empty if not repeating
+*/
+            return false;
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,9 +269,13 @@ class EditEventActivity : AppCompatActivity() {
 
         val eventId = intent.getLongExtra(EVENT_ID, -1)
         if (eventId != -1L) {
-            isEdit = true;
+            originalEvent = CalendarProvider.getEvent(this, eventId)
 
-            val event = CalendarProvider.getEvent(this, eventId)
+            if (originalEvent == null) {
+                Toast.makeText(this, R.string.event_not_found, Toast.LENGTH_LONG).show()
+                finish()
+                return
+            }
         }
 
         // get all the objects first
@@ -299,6 +357,8 @@ class EditEventActivity : AppCompatActivity() {
 
         // Set-up fields
 
+        val eventToEdit = originalEvent
+
         if (savedInstanceState == null) {
             // Initialize default values
             accountName.text = calendar.name
@@ -324,13 +384,65 @@ class EditEventActivity : AppCompatActivity() {
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
 
             updateReminders()
-        } else {
+        }
+        else if (eventToEdit != null) {
+
+            val details = eventToEdit.details
+
+            val cal = calendars.find { it.calendarId == eventToEdit.calendarId }
+            if (cal == null) {
+                Toast.makeText(this, R.string.calendar_not_found, Toast.LENGTH_LONG).show()
+                finish()
+                return
+            }
+            calendar = cal
+
+            isAllDay = eventToEdit.isAllDay
+            switchAllDay.isChecked = isAllDay
+            switchAllDay.isEnabled = false
+
+            accountName.text = calendar.name
+            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            eventTitleText.setText(eventToEdit.title)
+            note.setText(eventToEdit.desc)
+            eventLocation.setText(eventToEdit.location)
+
+//            eventTimeSonze.setText(eventToEdit.timezone)
+
+            if (!eventToEdit.isAllDay) {
+                from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
+                to = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
+            }
+            else {
+                from = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
+                to = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
+            }
+
+            updateDateTimeUI()
+
+            for (reminder in eventToEdit.reminders) {
+                addReminder(reminder, isAllDay)
+            }
+
+            updateReminders()
+
+        }
+        else {
             val state = EditEventActivityState.fromBundle(savedInstanceState)
+
+            originalEvent =
+                    if (state.eventId != -1L)
+                        calendarProvider.getEvent(this, state.eventId)
+                    else
+                        null
 
             calendar = calendars.find { it.calendarId == state.selectedCalendar } ?: calendars[0]
 
             accountName.text = calendar.name
-            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            val color = originalEvent?.color ?: calendar.color
+            eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
 
             from = state.from
             to = state.to
@@ -361,6 +473,7 @@ class EditEventActivity : AppCompatActivity() {
 
         val state =
                 EditEventActivityState(
+                        originalEvent?.eventId ?: -1L,
                         eventTitleText.text.toString(),
                         eventLocation.text.toString(),
                         note.text.toString(),
@@ -496,20 +609,24 @@ class EditEventActivity : AppCompatActivity() {
                         title = eventTitleText.text.toString(),
                         desc = note.text.toString(),
                         location = eventLocation.text.toString(),
-                        timezone = calendar.timeZone,
+                        timezone = originalEvent?.timezone ?: calendar.timeZone,
                         startTime = startTime,
                         endTime = endTime,
                         isAllDay = isAllDay,
-                        repeatingRule = "",
-                        repeatingRDate = "",
-                        repeatingExRule = "",
-                        repeatingExRDate = "",
-                        color = 0, // Not specified
-                        reminders = remindersToAdd)
+                        repeatingRule = originalEvent?.repeatingRule ?: "",
+                        repeatingRDate = originalEvent?.repeatingRDate ?: "",
+                        repeatingExRule = originalEvent?.repeatingExRule ?: "",
+                        repeatingExRDate = originalEvent?.repeatingExRDate ?: "",
+                        color = originalEvent?.color ?: 0,
+                        reminders = remindersToAdd
+        )
 
-        val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, details)
-        if (eventId != -1L) {
-            DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
+        val eventToEdit = originalEvent
+
+        if (eventToEdit == null) {
+            val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, details)
+            if (eventId != -1L) {
+                DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
 
 //            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, newEvent.eventId);
 //            val intent = Intent(Intent.ACTION_VIEW).setData(uri)
@@ -519,16 +636,23 @@ class EditEventActivity : AppCompatActivity() {
 //
 //            startActivity(intent)
 
-            Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
+                finish()
+
+            } else {
+                DevLog.error(this, LOG_TAG, "Failed to create event")
+
+                AlertDialog.Builder(this)
+                        .setMessage(R.string.new_event_failed_to_create_event)
+                        .setPositiveButton(android.R.string.ok) { _, _ -> }
+                        .show()
+            }
+        }
+        else {
+            CalendarChangeManager(CalendarProvider).upateEvent(this, eventToEdit, details)
+
+            Toast.makeText(this, "Event editing is not fully supported yet", Toast.LENGTH_LONG).show()
             finish()
-
-        } else {
-            DevLog.error(this, LOG_TAG, "Failed to create event")
-
-            AlertDialog.Builder(this)
-                    .setMessage(R.string.new_event_failed_to_create_event)
-                    .setPositiveButton(android.R.string.ok) { _, _ -> }
-                    .show()
         }
     }
 

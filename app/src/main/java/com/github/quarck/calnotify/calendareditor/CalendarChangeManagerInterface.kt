@@ -22,6 +22,7 @@ package com.github.quarck.calnotify.calendareditor
 import android.content.Context
 import com.github.quarck.calnotify.calendar.CalendarEventDetails
 import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.EventRecord
 
 interface CalendarChangeManagerInterface {
 
@@ -42,4 +43,13 @@ interface CalendarChangeManagerInterface {
      * @param [addTimeMillis] - amount of time to add
      */
     fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean
+
+    /**
+     * Updates calendar event with the new details passed by the caller
+     * @param [context] - Android context
+     * @param [eventToEdit]] - Original event to be edited
+     * @param [details] - new details to be updated
+     * @returns true on success
+     */
+    fun upateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean
 }

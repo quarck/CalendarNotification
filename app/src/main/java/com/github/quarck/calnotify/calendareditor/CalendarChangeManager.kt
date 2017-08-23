@@ -21,16 +21,12 @@ package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.calendar.CalendarEventDetails
-import com.github.quarck.calnotify.calendar.CalendarProviderInterface
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventReminderRecord
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarChangeManagerInterface {
-
 
     override fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long {
 
@@ -152,6 +148,12 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         }
 
         return ret
+    }
+
+    override fun upateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
+
+        // FIXME: not really implemented yet
+
     }
 
     companion object {

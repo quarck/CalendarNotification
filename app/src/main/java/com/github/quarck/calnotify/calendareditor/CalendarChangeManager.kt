@@ -154,6 +154,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
         // FIXME: not really implemented yet
 
+        return true
     }
 
     companion object {

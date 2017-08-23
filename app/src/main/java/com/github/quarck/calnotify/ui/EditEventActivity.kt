@@ -649,10 +649,15 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            CalendarChangeManager(CalendarProvider).upateEvent(this, eventToEdit, details)
+            val success = CalendarChangeManager(CalendarProvider).upateEvent(this, eventToEdit, details)
 
-            Toast.makeText(this, "Event editing is not fully supported yet", Toast.LENGTH_LONG).show()
-            finish()
+            if (success) {
+                Toast.makeText(this, "Event editing is not fully supported yet", Toast.LENGTH_LONG).show()
+                finish()
+            }
+            else {
+                Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
+            }
         }
     }
 

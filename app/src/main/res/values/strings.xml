@@ -474,6 +474,7 @@
     <string name="event_was_created">Event was created</string>
     <string name="event_not_found">Event not found</string>
     <string name="calendar_not_found">Calendar not found</string>
+    <string name="failed_to_update_event_details">Failed to update event details</string>
 
 </resources>
 

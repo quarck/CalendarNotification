@@ -419,13 +419,20 @@ class EditEventActivity : AppCompatActivity() {
 
 //            eventTimeSonze.setText(eventToEdit.timezone)
 
-            if (!eventToEdit.isAllDay) {
-                from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
-                to = DateTimeUtils.createCalendarTime(eventToEdit.endTime)
-            }
-            else {
-                from = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
-                to = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
+            from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
+            to = DateTimeUtils.createCalendarTime(eventToEdit.endTime)
+
+            if (eventToEdit.isAllDay) {
+                val fromUtc = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
+                val toUtc = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
+
+                from.year = fromUtc.year
+                from.month = fromUtc.month
+                from.dayOfMonth = fromUtc.dayOfMonth
+
+                to.year = toUtc.year
+                to.month = toUtc.month
+                to.dayOfMonth = toUtc.dayOfMonth
             }
 
             updateDateTimeUI()

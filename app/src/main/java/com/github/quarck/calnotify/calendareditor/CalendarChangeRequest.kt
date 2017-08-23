@@ -24,7 +24,8 @@ import com.github.quarck.calnotify.calendar.CalendarEventDetails
 
 enum class EventChangeStatus(val code: Int) {
     Dirty(0),
-    Synced(1);
+    Synced(1),
+    Failed(1000);
 
     companion object {
         @JvmStatic
@@ -53,7 +54,9 @@ data class CalendarChangeRequest(
         val oldDetails: CalendarEventDetails,
 
         var status: EventChangeStatus = EventChangeStatus.Dirty,
-        var lastStatusUpdate: Long = 0
+        var lastStatusUpdate: Long = 0,
+        var numRetries: Int = 0,
+        var lastRetryTime: Long = 0
 ) {
     fun onValidated(success: Boolean) {
 

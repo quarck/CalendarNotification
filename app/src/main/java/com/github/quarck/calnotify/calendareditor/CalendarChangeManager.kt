@@ -52,6 +52,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             db ->
 
             db.add(event)
+            DevLog.info(context, LOG_TAG, "Event creation request logged")
 
             eventId = provider.createEvent(context, event.calendarId, event.details)
 
@@ -83,8 +84,20 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
             db.deleteForEventId(event.eventId)
 
-            val oldStartTime = event.startTime
-            val oldEndTime = event.endTime
+            // Get full event details from the provider, if failed - construct a failback version
+            val oldDetails =
+                    provider.getEvent(context, event.eventId)?.details
+                            ?: CalendarEventDetails(
+                            title = event.title,
+                            desc = "",
+                            location = event.location,
+                            timezone = "",
+                            startTime = event.startTime,
+                            endTime = event.endTime,
+                            isAllDay = event.isAllDay,
+                            reminders = listOf<EventReminderRecord>(EventReminderRecord.minutes(15)),
+                            color = event.color
+                    )
 
             val newStartTime: Long
             val newEndTime: Long
@@ -99,40 +112,24 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                 newStartTime = event.startTime + addTimeMillis * addUnits
                 newEndTime = event.endTime + addTimeMillis * addUnits
 
-                if (addUnits != 1L)
-                    DevLog.error(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
-
-                ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
-                event.startTime = newStartTime
-                event.endTime = newEndTime
+                DevLog.warn(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
             }
             else {
                 newStartTime = event.startTime + addTimeMillis
                 newEndTime = event.endTime + addTimeMillis
-
-                ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
-                event.startTime = newStartTime
-                event.endTime = newEndTime
             }
+
+            DevLog.info(context, LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
+
+            ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
+            event.startTime = newStartTime
+            event.endTime = newEndTime
 
             DevLog.info(context, LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
 
-            // Get full event details from the provider, if failed - construct a failback version
-            val oldDetails =
-                    provider.getEvent(context, event.eventId)?.details
-                            ?: CalendarEventDetails(
-                                    title = event.title,
-                                    desc = "",
-                                    location = event.location,
-                                    timezone = "",
-                                    startTime = oldStartTime,
-                                    endTime = oldEndTime,
-                                    isAllDay = event.isAllDay,
-                                    reminders = listOf<EventReminderRecord>(EventReminderRecord.minutes(15)),
-                                    color = event.color
-                            )
-
             val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
+
+            DevLog.info(context, LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
 
             db.add(
                     CalendarChangeRequest(

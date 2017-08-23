@@ -34,7 +34,7 @@ class CalendarChangeRequestsStorage(val context: Context)
     private var impl: CalendarChangeRequestsStorageImplInterface
 
     init {
-        impl = CalendarChangeRequestsStorageImplV2();
+        impl = CalendarChangeRequestsStorageImplV3();
     }
 
     override fun onCreate(db: SQLiteDatabase)
@@ -47,7 +47,7 @@ class CalendarChangeRequestsStorage(val context: Context)
         if (oldVersion == newVersion)
             return
 
-        if (newVersion != DATABASE_VERSION_V2)
+        if (newVersion != DATABASE_VERSION_V3)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
         impl.dropAll(db)
@@ -81,8 +81,8 @@ class CalendarChangeRequestsStorage(val context: Context)
     companion object {
         private val LOG_TAG = "CalendarChangeRequestsStorage"
 
-        private const val DATABASE_VERSION_V2 = 2
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V2
+        private const val DATABASE_VERSION_V3 = 3
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V3
 
         private const val DATABASE_NAME = "calEditReqs"
     }

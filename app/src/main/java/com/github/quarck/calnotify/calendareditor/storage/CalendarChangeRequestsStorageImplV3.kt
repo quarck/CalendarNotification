@@ -30,7 +30,7 @@ import com.github.quarck.calnotify.calendareditor.*
 import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
 
-class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInterface {
+class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
     override fun createDb(db: SQLiteDatabase) {
@@ -45,6 +45,9 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                         "$KEY_EVENTID INTEGER, " +
                         "$KEY_STATUS INTEGER, " +
                         "$KEY_STATUS_TIMESTAMP INTEGER, " +
+
+                        "$KEY_NUM_RETRIES INTEGER, " +
+                        "$KEY_LAST_RETRY_TIME INTEGER, " +
 
                         "$KEY_REPEATING_RULE TEXT, " +
                         "$KEY_REPEATING_DATE TEXT, " +
@@ -105,6 +108,9 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
     override fun dropAll(db: SQLiteDatabase) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_V1);
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME_V1);
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_V2);
+        db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME_V2);
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
@@ -219,6 +225,8 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_STATUS, req.status.code)
         values.put(KEY_STATUS_TIMESTAMP, req.lastStatusUpdate)
         values.put(KEY_CALENDAR_ID, req.calendarId);
+        values.put(KEY_NUM_RETRIES, req.numRetries)
+        values.put(KEY_LAST_RETRY_TIME, req.lastRetryTime)
 
         values.put(KEY_REPEATING_RULE, req.details.repeatingRule);
         values.put(KEY_REPEATING_DATE, req.details.repeatingRDate)
@@ -311,6 +319,8 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
                 status = EventChangeStatus.fromInt(cursor.getInt(PROJECTION_KEY_STATUS)),
                 lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
+                numRetries = cursor.getInt(PROJECTION_KEY_NUM_RETRIES),
+                lastRetryTime = cursor.getLong(PROJECTION_KEY_LAST_RETRY_TIME),
                 details = details,
                 oldDetails = oldDetails
         )
@@ -320,18 +330,23 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
 
     companion object {
 
-        private const val LOG_TAG = "CalendarChangeRequestsStorageImplV2"
+        private const val LOG_TAG = "CalendarChangeRequestsStorageImplV3"
 
         private const val TABLE_NAME_V1 = "newEventsV1"
         private const val INDEX_NAME_V1 = "newEventsIdxV1"
 
-        private const val TABLE_NAME = "newEventsV2"
-        private const val INDEX_NAME = "newEventsIdxV2"
+        private const val TABLE_NAME_V2 = "newEventsV2"
+        private const val INDEX_NAME_V2 = "newEventsIdxV2"
+
+        private const val TABLE_NAME = "newEventsV3"
+        private const val INDEX_NAME = "newEventsIdxV3"
 
         private const val KEY_ID = "id"
         private const val KEY_TYPE = "t"
         private const val KEY_STATUS = "s"
         private const val KEY_STATUS_TIMESTAMP = "sTm"
+        private const val KEY_NUM_RETRIES = "retries"
+        private const val KEY_LAST_RETRY_TIME = "retryTime"
 
         private const val KEY_CALENDAR_ID = "calendarId"
         private const val KEY_EVENTID = "eventId"
@@ -388,6 +403,8 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
 
                 KEY_STATUS,
                 KEY_STATUS_TIMESTAMP,
+                KEY_NUM_RETRIES,
+                KEY_LAST_RETRY_TIME,
 
                 KEY_REPEATING_RULE,
                 KEY_REPEATING_DATE,
@@ -424,33 +441,37 @@ class CalendarChangeRequestsStorageImplV2 : CalendarChangeRequestsStorageImplInt
         const val PROJECTION_KEY_EVENTID = 3
         const val PROJECTION_KEY_STATUS = 4
         const val PROJECTION_KEY_STATUS_TIMESTAMP = 5
-        const val PROJECTION_KEY_REPEATING_RULE = 6
-        const val PROJECTION_KEY_REPEATING_DATE = 7
-        const val PROJECTION_KEY_EXT_REPEATING_RULE = 8
-        const val PROJECTION_KEY_EXT_REPEATING_DATE = 9
-        const val PROJECTION_KEY_ALL_DAY = 10
-        const val PROJECTION_KEY_TITLE = 11
-        const val PROJECTION_KEY_DESC = 12
-        const val PROJECTION_KEY_START = 13
-        const val PROJECTION_KEY_END = 14
-        const val PROJECTION_KEY_LOCATION = 15
-        const val PROJECTION_KEY_TIMEZONE = 16
-        const val PROJECTION_KEY_COLOR = 17
-        const val PROJECTION_KEY_REMINDERS = 18
+        const val PROJECTION_KEY_NUM_RETRIES = 6
+        const val PROJECTION_KEY_LAST_RETRY_TIME = 7
 
-        const val PROJECTION_KEY_OLD_REPEATING_RULE = 19
-        const val PROJECTION_KEY_OLD_REPEATING_DATE = 20
-        const val PROJECTION_KEY_OLD_EXT_REPEATING_RULE = 21
-        const val PROJECTION_KEY_OLD_EXT_REPEATING_DATE = 22
-        const val PROJECTION_KEY_OLD_ALL_DAY = 23
-        const val PROJECTION_KEY_OLD_TITLE = 24
-        const val PROJECTION_KEY_OLD_DESC = 25
-        const val PROJECTION_KEY_OLD_START = 26
-        const val PROJECTION_KEY_OLD_END = 27
-        const val PROJECTION_KEY_OLD_LOCATION = 28
-        const val PROJECTION_KEY_OLD_TIMEZONE = 29
-        const val PROJECTION_KEY_OLD_COLOR = 30
-        const val PROJECTION_KEY_OLD_REMINDERS = 31
+
+        const val PROJECTION_KEY_REPEATING_RULE = 8
+        const val PROJECTION_KEY_REPEATING_DATE = 9
+        const val PROJECTION_KEY_EXT_REPEATING_RULE = 10
+        const val PROJECTION_KEY_EXT_REPEATING_DATE = 11
+        const val PROJECTION_KEY_ALL_DAY = 12
+        const val PROJECTION_KEY_TITLE = 13
+        const val PROJECTION_KEY_DESC = 14
+        const val PROJECTION_KEY_START = 15
+        const val PROJECTION_KEY_END = 16
+        const val PROJECTION_KEY_LOCATION = 17
+        const val PROJECTION_KEY_TIMEZONE = 18
+        const val PROJECTION_KEY_COLOR = 19
+        const val PROJECTION_KEY_REMINDERS = 20
+
+        const val PROJECTION_KEY_OLD_REPEATING_RULE = 21
+        const val PROJECTION_KEY_OLD_REPEATING_DATE = 22
+        const val PROJECTION_KEY_OLD_EXT_REPEATING_RULE = 23
+        const val PROJECTION_KEY_OLD_EXT_REPEATING_DATE = 24
+        const val PROJECTION_KEY_OLD_ALL_DAY = 25
+        const val PROJECTION_KEY_OLD_TITLE = 26
+        const val PROJECTION_KEY_OLD_DESC = 27
+        const val PROJECTION_KEY_OLD_START = 28
+        const val PROJECTION_KEY_OLD_END = 29
+        const val PROJECTION_KEY_OLD_LOCATION = 30
+        const val PROJECTION_KEY_OLD_TIMEZONE = 31
+        const val PROJECTION_KEY_OLD_COLOR = 32
+        const val PROJECTION_KEY_OLD_REMINDERS = 33
     }
 
 }

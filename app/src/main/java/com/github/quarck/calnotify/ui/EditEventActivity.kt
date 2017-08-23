@@ -359,76 +359,7 @@ class EditEventActivity : AppCompatActivity() {
 
         val eventToEdit = originalEvent
 
-        if (savedInstanceState == null) {
-            // Initialize default values
-            accountName.text = calendar.name
-            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
-
-            // Set default date and time
-            var currentTime = System.currentTimeMillis()
-            currentTime -= (currentTime % 1000)  // Drop millis
-
-            from = DateTimeUtils.createCalendarTime(currentTime)
-            from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)
-            from.minute = 0
-            from.second = 0
-
-            to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-            to.addMinutes(settings.defaultNewEventDurationMinutes)
-
-            DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
-
-            updateDateTimeUI();
-
-            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
-            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
-
-            updateReminders()
-        }
-        else if (eventToEdit != null) {
-
-            val details = eventToEdit.details
-
-            val cal = calendars.find { it.calendarId == eventToEdit.calendarId }
-            if (cal == null) {
-                Toast.makeText(this, R.string.calendar_not_found, Toast.LENGTH_LONG).show()
-                finish()
-                return
-            }
-            calendar = cal
-
-            isAllDay = eventToEdit.isAllDay
-            switchAllDay.isChecked = isAllDay
-            switchAllDay.isEnabled = false
-
-            accountName.text = calendar.name
-            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
-
-            eventTitleText.setText(eventToEdit.title)
-            note.setText(eventToEdit.desc)
-            eventLocation.setText(eventToEdit.location)
-
-//            eventTimeSonze.setText(eventToEdit.timezone)
-
-            if (!eventToEdit.isAllDay) {
-                from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
-                to = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
-            }
-            else {
-                from = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
-                to = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
-            }
-
-            updateDateTimeUI()
-
-            for (reminder in eventToEdit.reminders) {
-                addReminder(reminder, isAllDay)
-            }
-
-            updateReminders()
-
-        }
-        else {
+        if (savedInstanceState != null) {
             val state = EditEventActivityState.fromBundle(savedInstanceState)
 
             originalEvent =
@@ -461,6 +392,75 @@ class EditEventActivity : AppCompatActivity() {
             }
 
             updateDateTimeUI();
+            updateReminders()
+        }
+        else if (eventToEdit != null) {
+
+            val details = eventToEdit.details
+
+            val cal = calendars.find { it.calendarId == eventToEdit.calendarId }
+            if (cal == null) {
+                Toast.makeText(this, R.string.calendar_not_found, Toast.LENGTH_LONG).show()
+                finish()
+                return
+            }
+            calendar = cal
+
+            isAllDay = eventToEdit.isAllDay
+            switchAllDay.isChecked = isAllDay
+            switchAllDay.isEnabled = false
+
+            accountName.text = calendar.name
+            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            eventTitleText.setText(eventToEdit.title)
+            note.setText(eventToEdit.desc)
+            eventLocation.setText(eventToEdit.location)
+
+//            eventTimeSonze.setText(eventToEdit.timezone)
+
+            if (!eventToEdit.isAllDay) {
+                from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
+                to = DateTimeUtils.createCalendarTime(eventToEdit.endTime)
+            }
+            else {
+                from = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
+                to = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
+            }
+
+            updateDateTimeUI()
+
+            for (reminder in eventToEdit.reminders) {
+                addReminder(reminder, isAllDay)
+            }
+
+            updateReminders()
+
+        }
+        else {
+            // Initialize default values
+            accountName.text = calendar.name
+            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            // Set default date and time
+            var currentTime = System.currentTimeMillis()
+            currentTime -= (currentTime % 1000)  // Drop millis
+
+            from = DateTimeUtils.createCalendarTime(currentTime)
+            from.addHours(Consts.NEW_EVENT_DEFAULT_ADD_HOURS)
+            from.minute = 0
+            from.second = 0
+
+            to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+            to.addMinutes(settings.defaultNewEventDurationMinutes)
+
+            DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
+
+            updateDateTimeUI();
+
+            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
+            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
+
             updateReminders()
         }
     }

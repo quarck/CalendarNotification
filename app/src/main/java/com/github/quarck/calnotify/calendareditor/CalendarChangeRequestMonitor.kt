@@ -22,9 +22,10 @@ package com.github.quarck.calnotify.calendareditor
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendareditor.storage.CalendarChangeRequestsStorage
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.calendar.CalendarProviderInterface
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
@@ -114,12 +115,34 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
             if (eventsToUpdate.isNotEmpty())
                 db.updateMany(eventsToUpdate)
+
+            for (req in eventsToReApply) {
+                if (req.status == EventChangeStatus.Failed) {
+                    if (onRequestFailed(context, req)) {
+                        db.delete(req)
+                    }
+                }
+            }
         }
     }
 
     private fun reApplyRequest(context: Context, provider: CalendarProvider, event: CalendarChangeRequest) {
 
         DevLog.info(context, LOG_TAG, "Re-Applying req, event id ${event.eventId}, type ${event.type}")
+
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - event.lastRetryTime < Consts.NEW_EVENT_MIN_MONITOR_RETRY_MILLISECONDS) {
+            return
+        }
+
+        if (event.numRetries > Consts.NEW_EVENT_MONITOR_MAX_RETRIES) {
+            event.status = EventChangeStatus.Failed
+            return
+        }
+
+        event.numRetries += 1
+        event.lastRetryTime = currentTime
 
         try {
             when (event.type) {
@@ -206,7 +229,9 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
         if (event.oldDetails.startTime == calendarEvent.startTime
                 || event.oldDetails.endTime == calendarEvent.endTime) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
+
+            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply: ${event.oldDetails.startTime} == ${calendarEvent.startTime} || ${event.oldDetails.endTime} == ${calendarEvent.endTime}")
+
             event.onValidated(false)
             return ValidationResultCommand.ReApplyRequest
         }
@@ -231,6 +256,89 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
         return ret
     }
+
+    private fun onRequestFailed(context: Context, req: CalendarChangeRequest): Boolean {
+        return when (req.type) {
+            EventChangeRequestType.AddNewEvent ->
+                onAddNewRequestFailed(context, req)
+            EventChangeRequestType.MoveExistingEvent ->
+                onMoveRequestFailed(context, req)
+            EventChangeRequestType.EditExistingEvent ->
+                onEditEventRequestFailed(context, req)
+        }
+    }
+
+    private fun onAddNewRequestFailed(context: Context, req: CalendarChangeRequest): Boolean {
+        val currentTime = System.currentTimeMillis()
+
+        val title = context.getString(R.string.failed_to_add_event) + req.details.title
+
+        val event = EventAlertRecord(
+                calendarId = req.calendarId,
+                eventId = req.eventId,
+                isAllDay = req.details.isAllDay,
+                isRepeating = req.details.repeatingRule.isNotEmpty(),
+                alertTime = currentTime,
+                notificationId = 0,
+                title = title,
+                startTime = req.oldDetails.startTime,
+                endTime = req.oldDetails.endTime,
+                instanceStartTime = req.oldDetails.startTime,
+                instanceEndTime = req.oldDetails.endTime,
+                location = req.details.location,
+                lastStatusChangeTime = currentTime,
+                snoozedUntil = 0L,
+                displayStatus = EventDisplayStatus.Hidden,
+                color = req.details.color,
+                origin = EventOrigin.ProviderBroadcast,
+                timeFirstSeen = currentTime
+        )
+
+        ApplicationController.registerNewEvent(context, event)
+        ApplicationController.postEventNotifications(context, listOf(event))
+        ApplicationController.afterCalendarEventFired(context)
+
+        return true
+    }
+
+    private fun onMoveRequestFailed(context: Context, req: CalendarChangeRequest): Boolean {
+
+        val currentTime = System.currentTimeMillis()
+
+        val title = context.getString(R.string.failed_to_move_event) + req.details.title
+
+        val event = EventAlertRecord(
+                calendarId = req.calendarId,
+                eventId = req.eventId,
+                isAllDay = req.details.isAllDay,
+                isRepeating = req.details.repeatingRule.isNotEmpty(),
+                alertTime = currentTime,
+                notificationId = 0,
+                title = title,
+                startTime = req.oldDetails.startTime,
+                endTime = req.oldDetails.endTime,
+                instanceStartTime = req.oldDetails.startTime,
+                instanceEndTime = req.oldDetails.endTime,
+                location = req.details.location,
+                lastStatusChangeTime = currentTime,
+                snoozedUntil = 0L,
+                displayStatus = EventDisplayStatus.Hidden,
+                color = req.details.color,
+                origin = EventOrigin.ProviderBroadcast,
+                timeFirstSeen = currentTime
+        )
+
+        ApplicationController.registerNewEvent(context, event)
+        ApplicationController.postEventNotifications(context, listOf(event))
+        ApplicationController.afterCalendarEventFired(context)
+
+        return true
+    }
+
+    private fun onEditEventRequestFailed(context: Context, req: CalendarChangeRequest): Boolean = false
+
+
+
 
     companion object {
         private const val LOG_TAG = "CalendarChangeRequestMonitor"

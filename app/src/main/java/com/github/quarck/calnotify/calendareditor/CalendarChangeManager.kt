@@ -150,8 +150,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
     override fun upateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
         // FIXME: not really implemented yet
-
-        return true
+        return provider.updateEvent(context, eventToEdit, details)
     }
 
     companion object {

@@ -869,6 +869,135 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
+    override fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean {
+
+        var ret = false
+
+        DevLog.debug(LOG_TAG, "Request to update event ${event.eventId}")
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "updateEvent: no permissions")
+            return false
+        }
+
+        if (event.details == newDetails) {
+            DevLog.error(context, LOG_TAG, "No changes requested")
+            return false
+        }
+
+        if (event.details.isAllDay != newDetails.isAllDay) {
+            DevLog.error(context, LOG_TAG, "Cannot change 'is all day'")
+            return false
+        }
+
+        try {
+            val values = ContentValues()
+
+            val oldDetails = event.details
+
+            if (oldDetails.title != newDetails.title)
+                values.put(CalendarContract.Events.TITLE, newDetails.title)
+
+            if (oldDetails.desc != newDetails.desc)
+                values.put(CalendarContract.Events.DESCRIPTION, newDetails.desc)
+
+            if (oldDetails.location != newDetails.location)
+                values.put(CalendarContract.Events.EVENT_LOCATION, newDetails.location)
+
+            if (oldDetails.timezone != newDetails.timezone)
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, newDetails.timezone)
+
+            if (oldDetails.startTime != newDetails.startTime)
+                values.put(CalendarContract.Events.DTSTART, newDetails.startTime)
+
+            if (oldDetails.endTime != newDetails.endTime)
+                values.put(CalendarContract.Events.DTEND, newDetails.endTime)
+
+            if (oldDetails.color != newDetails.color)
+                values.put(CalendarContract.Events.EVENT_COLOR, newDetails.color)
+
+            if (oldDetails.repeatingRule != newDetails.repeatingRule)
+                values.put(CalendarContract.Events.RRULE, newDetails.repeatingRule)
+
+            if (oldDetails.repeatingRDate != newDetails.repeatingRDate)
+                values.put(CalendarContract.Events.RDATE, newDetails.repeatingRDate)
+
+            if (oldDetails.repeatingExRule != newDetails.repeatingExRule)
+                values.put(CalendarContract.Events.EXRULE, newDetails.repeatingExRule)
+
+            if (oldDetails.repeatingExRDate != newDetails.repeatingExRDate)
+                values.put(CalendarContract.Events.EXDATE, newDetails.repeatingExRDate)
+
+            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId)
+            val updated = context.contentResolver.update(updateUri, values, null, null)
+
+            ret = updated > 0
+
+            if (ret && oldDetails.reminders != newDetails.reminders)
+            {
+                // Now - update reminders also
+
+                val remindersProjection = arrayOf(
+                        CalendarContract.Reminders._ID,
+                        CalendarContract.Reminders.METHOD,
+                        CalendarContract.Reminders.MINUTES
+                )
+
+                val newReminders = newDetails.reminders.toMutableSet()
+                val remindersToRemove = mutableListOf<Long>()
+
+                val cursor = CalendarContract.Reminders.query(
+                        context.contentResolver,
+                        event.eventId,
+                        remindersProjection
+                )
+
+                while (cursor.moveToNext()) {
+                    val reminderId = cursor.getLong(0)
+                    val method = cursor.getInt(1)
+                    val minutes = cursor.getInt(2)
+
+                    val reminder = EventReminderRecord(minutes * Consts.MINUTE_IN_MILLISECONDS, method)
+
+                    if (reminder in newReminders) {
+                        // we still have this one - don't need to add
+                        newReminders.remove(reminder)
+                    }
+                    else {
+                        // This one one got disappeared
+                        remindersToRemove.add(reminderId)
+                    }
+                }
+                cursor.close()
+
+                for (reminderId in remindersToRemove) {
+                    val reminderUri = ContentUris.withAppendedId(
+                            CalendarContract.Reminders.CONTENT_URI, reminderId)
+                    val rows = context.contentResolver.delete(reminderUri, null, null)
+                }
+
+                for (reminder in newReminders) {
+                    val reminderValues = ContentValues()
+                    reminderValues.put(CalendarContract.Reminders.EVENT_ID, event.eventId)
+                    reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.millisecondsBefore / Consts.MINUTE_IN_MILLISECONDS).toInt())
+                    reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
+
+                    context.contentResolver.insert(
+                            CalendarContract.Reminders.CONTENT_URI,
+                            reminderValues
+                    )
+                }
+
+            }
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
+        }
+
+        return ret
+
+    }
+
 //    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 //
 //        var ret = false;

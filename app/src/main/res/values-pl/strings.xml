@@ -57,7 +57,8 @@
 
     <string name="location">Lokalizacja:</string>
     <string name="today">dzisiaj</string>
-    <string name="tomorrow">jutra</string>
+    <string name="tomorrow">jutro</string>
+
     <string name="yesterday">wczoraj</string>
    <string name="change_event_time">Zmień czas wydarzenia</string>
     <string name="one_hour_from_now">Przenieś na następną godzinę</string>
@@ -82,7 +83,7 @@
 
     <string name="error_cannot_parse_preset">Przepraszam, nie można przetworzyć definicji</string>
     <string name="snooze_presets_title">Definicje odłożeń</string>
-    <string name="snooze_presets_summary">Tutaj zmienisz domyślne czasy odkładania.</string>
+    <string name="snooze_presets_summary">Tutaj zmienisz domyślne czasy odłożeń.</string>
 
     <string name="error_too_many_presets">Dopuszczalne jest użycie maksymalnie 6 definicji, wszystkie kolejne są ignorowane.</string>
 
@@ -104,7 +105,7 @@
     <string name="abort_broadcast_summary">Włącz jeśli równocześnie pojawiają się powiadomienia z kalendarza Android i z tej aplikacji.</string>
 
     <string name="enable_reminders">Włącz przypomnienia</string>
-    <string name="enable_reminders_summary">Jeżeli włączone, aplikacja będzie wielokrotnie przypominała o aktywnych powiadomieniach</string>
+    <string name="enable_reminders_summary">Jeżeli włączone, aplikacja będzie wielokrotnie przypominała o aktywnych powiadomieniach.</string>
 	
     <string name="remind_interval">Czas między przypomnieniami</string>
     <string name="invalid_reminder_interval">Interwał przypomnień nie może wynosić 0, przywrócono wartość 1 minuty</string>
@@ -148,8 +149,8 @@
 
 	<!-- English text has changed: -->
 	
-    <string name="for_a_custom_time">Na niestandardowy okres</string>
-    <string name="until_specific_time">Na konkretną datę i godzinę</string>
+    <string name="for_a_custom_time">Niestandardowy okres</string>
+    <string name="until_specific_time">Konkretna data i godzina</string>
     <string name="snooze_for">Odłóż na:</string>
     <string name="selected_time_is_in_the_past"><b>Nie można odłożyć powiadomienia do przeszłości</b></string>
     <string name="snooze_until_string">Odłóż do daty / godziny:</string>
@@ -288,7 +289,7 @@
     <string name="title_activity_privacy_policy">Polityka Prywatności</string>
     <string name="context_policy">Aplikacja, ze względu na swój charakter, odbiera i przechowuje informacje o wydarzeniach uruchamianych przez kalendarz Androida\n\nŻadna z tych informacji nigdy nie jest przekazywana poza aplikację:\n\n* nie jest nigdzie transmitowana\n\n* ani z nikim dzielona\n\n* lub dostarczana osobom trzecim\n\nWszystkie dane wydarzeń są usuwane w momencie ich odrzucenia\n\nW przypadku używania opcji przechowywania odrzuconych wydarzeń w Koszu takie dane zostają usunięte w momencie czyszczenia kosza według ustalonego harmonogramu lub w momencie czyszczenia na żądanie</string>
     <string name="privacy_policy">Polityka Prywatności</string>
-    <string name="notification_swipe_does_snooze">Przesuń, aby odłożyć </string>
+    <string name="notification_swipe_does_snooze">Przesuń, aby odłożyć</string>
     <string name="notification_swipe_does_snooze_summary">Przesuń powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
 
     <string name="full_dismiss">Full Dismiss</string>
@@ -301,7 +302,7 @@
     <string name="notfication_opens_snooze_summary">Włącz jeśli chcesz bezpośrednio, z poziomu powiadomienia, otwierać okno wyboru czasu odłożenia. Kliknij na tytule wydarzenia w powiadomieniu, aby do niego przejść.</string>
 
     <string name="notification_auto_dismiss_on_reschedule">Odrzuć po zmianie terminu</string>
-    <string name="notification_auto_dismiss_on_reschedule_summary">Odrzuć powiadomienie w przypadku zmiany terminu wydarzenia w kalendarzu Android o min. 15 minut.Wydarzenie musi mieć aktywne powiadomienia w przyszłości.\n\nUWAGA: funkcja jest zależna od działania kalendarza i może być aktywowana z opóźnieniem do 60 sekund.</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Odrzuć powiadomienie w przypadku zmiany terminu wydarzenia w kalendarzu Android o min. 15 minut. Wydarzenie musi mieć aktywne powiadomienia w przyszłości.\n\nUWAGA: funkcja zależna od działania kalendarza - może być aktywowana z opóźnieniem do 60 sekund.</string>
     <string name="attach_applicatoin_log">Dołącz logi aplikacji</string>
     <string name="attach_applicatoin_log_perm">Logi dotyczą tylko samej aplikacji\n\nNie jest w nich zawarta żadna tekstowa informacja o wydarzeniach (np. tytuł wydarzenia, lokalizacja itp.) \n\nŻadne pliki wysłane mailem nie zostaną przekazane osobom trzecim!</string>
     <string name="use_set_alarm_clock_title">setAlarmClock dla powiadomień</string>
@@ -322,7 +323,7 @@
     <string name="dismiss_all_events">Odrzuć wydarzenia</string>
     <string name="dismiss_all_events_confirmation">Odrzucić WSZYSTKIE wydarzenia?\n\nTEJ OPERACJI NIE MOŻNA COFNĄĆ!\n\nOdłożone wydarzenia nie zostaną usunięte</string>
     <string name="handle_events_with_no_reminders">Wydarzenia bez przypomnień</string>
-    <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustalonych przypomnień.</string>
+    <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustawionych przypomnień.</string>
     <string name="default_reminder_time">Domyślny czas przypomnienia</string>
     <string name="default_reminder_time_summary">Ustaw czas przypomnienia dla wydarzeń bez ustawionych przypomnień.</string>
     <string name="default_reminder_time_summary_short">Czas przypomnienia dla wydarzeń bez przypomnień.</string>
@@ -351,7 +352,7 @@
 
     <string name="on_the_day_before">Dzień przed</string>
     <string name="on_the_day_of_event">W dniu wydarzenia</string>
-    <string name="before_the_event">Przed wydarzeniem</string>
+    <string name="before_the_event">przed wydarzeniem</string>
     <string name="ignore_all_day_events">Ignoruj wydarzenia całodzienne</string>
     <string name="ignore_all_day_events_summary">Nie przypominaj o wydarzeniach całodziennych.</string>
 

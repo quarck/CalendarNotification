@@ -388,7 +388,7 @@
     <string name="special_thanks_line1">my wife Daria</string>
     <string name="special_thanks_line2">for giving me time to work on this project</string>
 
-    <string name="save_button_title">SAVE</string>
+    <string name="save_button_title">save</string>
     <string name="add_event">Add event</string>
 
     <string name="discard_new_event">Discard?</string>

@@ -683,7 +683,7 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            val success = CalendarChangeManager(CalendarProvider).upateEvent(this, eventToEdit, details)
+            val success = CalendarChangeManager(CalendarProvider).updateEvent(this, eventToEdit, details)
 
             if (success) {
                 Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()

@@ -51,5 +51,5 @@ interface CalendarChangeManagerInterface {
      * @param [details] - new details to be updated
      * @returns true on success
      */
-    fun upateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean
+    fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean
 }

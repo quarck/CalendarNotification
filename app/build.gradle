@@ -9,8 +9,8 @@ android {
         applicationId "com.github.quarck.calnotify"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4293
-        versionName "1.4.11-alpha2"
+        versionCode 4300
+        versionName "1.4.11"
 
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
     }

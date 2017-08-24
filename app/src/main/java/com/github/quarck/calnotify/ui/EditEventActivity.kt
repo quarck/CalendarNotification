@@ -3,8 +3,10 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +28,9 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+
+// FIXME: reload calendar event immediately after edit and dismiss notification if necessary
+
 // FIXME: check history / back behavior
 
 // FIXME: handle repeating requests
@@ -33,6 +38,7 @@ import java.util.*
 // FIXME: handle timezones
 
 // FIXME: Also handle colors
+
 
 fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
@@ -680,7 +686,16 @@ class EditEventActivity : AppCompatActivity() {
             val success = CalendarChangeManager(CalendarProvider).upateEvent(this, eventToEdit, details)
 
             if (success) {
-                Toast.makeText(this, "Event editing is not fully supported yet", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
+
+                val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventToEdit.eventId);
+                val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+
+                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
+                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
+
+                startActivity(intent)
+
                 finish()
             }
             else {

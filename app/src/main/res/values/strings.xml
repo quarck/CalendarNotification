@@ -477,6 +477,7 @@
     <string name="failed_to_update_event_details">Failed to update event details</string>
     <string name="failed_to_move_event">Failed to move event: </string>
     <string name="failed_to_add_event">Failed to add event: </string>
+    <string name="event_was_updated">Event was updated</string>
 
 </resources>
 

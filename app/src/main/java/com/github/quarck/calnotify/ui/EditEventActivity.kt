@@ -26,6 +26,10 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: titlebar color - should be same as on snooze activity
+
+// FIXME: when editing event - clear focus off the title
+
 // FIXME: check history / back behavior
 
 // FIXME: handle repeating requests
@@ -569,6 +573,9 @@ class EditEventActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onAccountClick(v: View) {
+
+        if (originalEvent != null)
+            return // not editable anymore
 
         val builder = AlertDialog.Builder(this)
 

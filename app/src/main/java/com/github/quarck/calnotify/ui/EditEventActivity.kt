@@ -26,10 +26,6 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
-// FIXME: titlebar color - should be same as on snooze activity
-
-// FIXME: when editing event - clear focus off the title
-
 // FIXME: check history / back behavior
 
 // FIXME: handle repeating requests
@@ -379,6 +375,10 @@ class EditEventActivity : AppCompatActivity() {
             val color = originalEvent?.color ?: calendar.color
             eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
 
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = color.scaleColor(0.7f)
+            }
+
             from = state.from
             to = state.to
             eventTitleText.setText(state.title)
@@ -417,6 +417,10 @@ class EditEventActivity : AppCompatActivity() {
             accountName.text = calendar.name
             eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
 
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
+            }
+
             eventTitleText.setText(eventToEdit.title)
             note.setText(eventToEdit.desc)
             eventLocation.setText(eventToEdit.location)
@@ -439,6 +443,8 @@ class EditEventActivity : AppCompatActivity() {
                 to.dayOfMonth = toUtc.dayOfMonth
             }
 
+            eventTitleText.clearFocus()
+
             updateDateTimeUI()
 
             for (reminder in eventToEdit.reminders) {
@@ -452,6 +458,10 @@ class EditEventActivity : AppCompatActivity() {
             // Initialize default values
             accountName.text = calendar.name
             eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = calendar.color.scaleColor(0.7f)
+            }
 
             // Set default date and time
             var currentTime = System.currentTimeMillis()
@@ -599,6 +609,10 @@ class EditEventActivity : AppCompatActivity() {
                 accountName.text = calendar.name
                 eventTitleText.background = ColorDrawable(
                         calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    window.statusBarColor = calendar.color.scaleColor(0.7f)
+                }
 
                 eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
             }

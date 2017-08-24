@@ -688,13 +688,13 @@ class EditEventActivity : AppCompatActivity() {
             if (success) {
                 Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
 
-                val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventToEdit.eventId);
-                val intent = Intent(Intent.ACTION_VIEW).setData(uri)
-
-                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
-                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
-
-                startActivity(intent)
+//                val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventToEdit.eventId);
+//                val intent = Intent(Intent.ACTION_VIEW).setData(uri)
+//
+//                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
+//                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
+//
+//                startActivity(intent)
 
                 finish()
             }

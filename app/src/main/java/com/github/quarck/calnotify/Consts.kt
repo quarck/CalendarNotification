@@ -124,7 +124,7 @@ object Consts {
     const val FAILBACK_SHORT_SNOOZE = 60000L
     const val LOG_CLEANUP_INTERVAL: Long = 3600L * 24L * 3L * 1000L // every 3 days
 
-    const val MAX_USER_ACTION_DELAY: Long = 1500L
+    const val MAX_USER_ACTION_DELAY: Long = 3500L
 
     const val NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
     const val NEW_EVENT_DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before

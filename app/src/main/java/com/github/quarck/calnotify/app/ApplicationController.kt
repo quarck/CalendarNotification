@@ -197,6 +197,42 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
+    fun onCalendarEventMovedWithinApp(context: Context, oldEvent: EventRecord, newEvent: EventRecord) {
+
+        val newAlertTime = newEvent.nextAlarmTime(System.currentTimeMillis())
+
+        val shouldAutoDismiss =
+                ApplicationController.checkShouldRemoveMovedEvent(
+                        context,
+                        oldEvent.eventId,
+                        oldEvent.startTime,
+                        newEvent.startTime,
+                        newAlertTime
+                )
+
+        if (shouldAutoDismiss) {
+
+            EventsStorage(context).use {
+                db ->
+
+                val alertRecord = db.getEvent(oldEvent.eventId, oldEvent.startTime)
+
+                if (alertRecord != null) {
+
+                    ApplicationController.dismissEvent(
+                            context,
+                            db,
+                            alertRecord,
+                            EventDismissType.EventMovedUsingApp,
+                            false
+                    )
+                }
+            }
+        }
+
+        UINotifierService.notifyUI(context, true);
+    }
+
     // some housekeeping that we have to do after firing calendar event
     fun afterCalendarEventFired(context: Context) {
 
@@ -489,24 +525,35 @@ object ApplicationController : EventMovedHandler {
             oldEvent: EventAlertRecord,
             newEvent: EventRecord,
             newAlertTime: Long
+    ): Boolean
+            = checkShouldRemoveMovedEvent(
+                    context,
+                    oldEvent.eventId,
+                    oldEvent.displayedStartTime,
+                    newEvent.startTime,
+                    newAlertTime
+            )
+
+    override fun checkShouldRemoveMovedEvent(
+            context: Context,
+            eventId: Long,
+            oldStartTime: Long,
+            newStartTime: Long,
+            newAlertTime: Long
     ): Boolean {
         var ret = false
 
         if (!getSettings(context).notificationAutoDismissOnReschedule)
             return false
 
-        val oldTime = oldEvent.displayedStartTime
-        val newTime = newEvent.startTime
-
-        if (newTime - oldTime > Consts.EVENT_MOVE_THRESHOLD) {
+        if (newStartTime - oldStartTime > Consts.EVENT_MOVE_THRESHOLD) {
             if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
 
-                DevLog.info(context, LOG_TAG, "Event ${oldEvent.eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
-
+                DevLog.info(context, LOG_TAG, "Event ${eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
                 ret = true
             }
             else {
-                DevLog.info(context, LOG_TAG, "Event ${oldEvent.eventId} moved by ${newTime - oldTime} ms - not enought to auto-dismiss")
+                DevLog.info(context, LOG_TAG, "Event ${eventId} moved by ${newStartTime - oldStartTime} ms - not enought to auto-dismiss")
             }
         }
 

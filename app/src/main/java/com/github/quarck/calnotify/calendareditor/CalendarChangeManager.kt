@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
@@ -150,7 +151,26 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
     override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
         // FIXME: not really implemented yet
-        return provider.updateEvent(context, eventToEdit, details)
+
+        val providerResult = provider.updateEvent(context, eventToEdit, details)
+
+        if (eventToEdit.startTime != details.startTime) {
+
+            DevLog.info(context, LOG_TAG, "Event ${eventToEdit.eventId} was moved, ${eventToEdit.startTime} != ${details.startTime}, checking for notification auto-dismissal")
+
+            val newEvent = provider.getEvent(context, eventToEdit.eventId)
+
+            if (newEvent != null) {
+                ApplicationController.onCalendarEventMovedWithinApp(
+                        context,
+                        eventToEdit,
+                        newEvent
+                )
+            }
+        }
+
+
+        return providerResult
     }
 
     companion object {

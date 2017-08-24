@@ -227,6 +227,13 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             return ValidationResultCommand.DeleteRequest
         }
 
+        if (event.oldDetails.startTime == event.details.startTime
+                && event.oldDetails.endTime == event.details.endTime) {
+            // Bug
+            DevLog.info(context, LOG_TAG, "Bug left from the past")
+            return ValidationResultCommand.DeleteRequest
+        }
+
         if (event.oldDetails.startTime == calendarEvent.startTime
                 || event.oldDetails.endTime == calendarEvent.endTime) {
 

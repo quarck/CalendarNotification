@@ -179,6 +179,8 @@ object ApplicationController : EventMovedHandler {
             db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
         }
 
+        DevLog.debug(LOG_TAG, "calendarReloadFromService: ${changes}")
+
         if (changes) {
             notificationManager.postEventNotifications(
                     context,

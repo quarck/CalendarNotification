@@ -50,6 +50,7 @@ class EventsStorageImplV9(val context: Context)
 
                         "$KEY_NOTIFICATIONID INTEGER, " +
                         "$KEY_TITLE TEXT, " +
+                        "$KEY_DESCRIPTION TEXT, " +
 
                         "$KEY_START INTEGER, " +
                         "$KEY_END INTEGER, " +
@@ -80,7 +81,6 @@ class EventsStorageImplV9(val context: Context)
                         "$KEY_RESERVED_INT7 INTEGER, " +
                         "$KEY_RESERVED_INT8 INTEGER, " +
 
-                        "$KEY_RESERVED_STR1 TEXT, " +
                         "$KEY_RESERVED_STR2 TEXT, " +
 
                         "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
@@ -102,8 +102,8 @@ class EventsStorageImplV9(val context: Context)
         var ret = false
 
         try {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-            db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+            db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME)
             ret = true
         }
         catch (ex: SQLException) {
@@ -114,7 +114,7 @@ class EventsStorageImplV9(val context: Context)
 //            DevLog.debug(LOG_TAG, "debug_me_here");
 //        }
 
-        return ret;
+        return ret
     }
 
     override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
@@ -123,7 +123,7 @@ class EventsStorageImplV9(val context: Context)
         var ret = false
 
         if (event.notificationId == 0)
-            event.notificationId = nextNotificationId(db);
+            event.notificationId = nextNotificationId(db)
 
         val values = eventRecordToContentValues(event, true)
 
@@ -179,7 +179,7 @@ class EventsStorageImplV9(val context: Context)
 
     private fun nextNotificationId(db: SQLiteDatabase): Int {
 
-        var ret = 0;
+        var ret = 0
 
         val query = "SELECT MAX($KEY_NOTIFICATIONID) FROM " + TABLE_NAME
 
@@ -190,14 +190,14 @@ class EventsStorageImplV9(val context: Context)
                 ret = cursor.getString(0).toInt() + 1
             }
             catch (ex: Exception) {
-                ret = 0;
+                ret = 0
             }
         }
 
         cursor?.close()
 
         if (ret == 0)
-            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
+            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM
 
         // DevLog.debug(LOG_TAG, "nextNotificationId, returning $ret")
 
@@ -414,27 +414,28 @@ class EventsStorageImplV9(val context: Context)
     }
 
     private fun eventRecordToContentValues(event: EventAlertRecord, includeKeyValues: Boolean = false): ContentValues {
-        val values = ContentValues();
+        val values = ContentValues()
 
         values.put(KEY_CALENDAR_ID, event.calendarId)
 
         if (includeKeyValues)
-            values.put(KEY_EVENTID, event.eventId);
+            values.put(KEY_EVENTID, event.eventId)
 
         values.put(KEY_ALERT_TIME, event.alertTime)
-        values.put(KEY_NOTIFICATIONID, event.notificationId);
-        values.put(KEY_TITLE, event.title);
-        values.put(KEY_START, event.startTime);
-        values.put(KEY_END, event.endTime);
+        values.put(KEY_NOTIFICATIONID, event.notificationId)
+        values.put(KEY_TITLE, event.title)
+        values.put(KEY_DESCRIPTION, event.desc)
+        values.put(KEY_START, event.startTime)
+        values.put(KEY_END, event.endTime)
 
         if (includeKeyValues)
-            values.put(KEY_INSTANCE_START, event.instanceStartTime);
+            values.put(KEY_INSTANCE_START, event.instanceStartTime)
 
-        values.put(KEY_INSTANCE_END, event.instanceEndTime);
-        values.put(KEY_LOCATION, event.location);
-        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime);
-        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code);
+        values.put(KEY_INSTANCE_END, event.instanceEndTime)
+        values.put(KEY_LOCATION, event.location)
+        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil)
+        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime)
+        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code)
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
         values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
@@ -454,10 +455,9 @@ class EventsStorageImplV9(val context: Context)
         values.put(KEY_RESERVED_INT7, 0)
         values.put(KEY_RESERVED_INT8, 0)
 
-        values.put(KEY_RESERVED_STR1, "")
         values.put(KEY_RESERVED_STR2, "")
 
-        return values;
+        return values
     }
 
     private fun cursorToEventRecord(cursor: Cursor): EventAlertRecord {
@@ -468,6 +468,7 @@ class EventsStorageImplV9(val context: Context)
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 notificationId = cursor.getInt(PROJECTION_KEY_NOTIFICATIONID),
                 title = cursor.getString(PROJECTION_KEY_TITLE),
+                desc = cursor.getString(PROJECTION_KEY_DESCRIPTION),
                 startTime = cursor.getLong(PROJECTION_KEY_START),
                 endTime = cursor.getLong(PROJECTION_KEY_END),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
@@ -504,6 +505,7 @@ class EventsStorageImplV9(val context: Context)
 
         private const val KEY_NOTIFICATIONID = "nid"
         private const val KEY_TITLE = "ttl"
+        private const val KEY_DESCRIPTION = "s1"
         private const val KEY_START = "estart"
         private const val KEY_END = "eend"
         private const val KEY_INSTANCE_START = "istart"
@@ -530,7 +532,6 @@ class EventsStorageImplV9(val context: Context)
         private const val KEY_RESERVED_INT7 = "i7"
         private const val KEY_RESERVED_INT8 = "i8"
 
-        private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
 
         private val SELECT_COLUMNS = arrayOf<String>(
@@ -539,6 +540,7 @@ class EventsStorageImplV9(val context: Context)
                 KEY_ALERT_TIME,
                 KEY_NOTIFICATIONID,
                 KEY_TITLE,
+                KEY_DESCRIPTION,
                 KEY_START,
                 KEY_END,
                 KEY_INSTANCE_START,
@@ -556,25 +558,26 @@ class EventsStorageImplV9(val context: Context)
                 KEY_EVENT_ATTENDANCE_STATUS
         )
 
-        const val PROJECTION_KEY_CALENDAR_ID = 0;
-        const val PROJECTION_KEY_EVENTID = 1;
-        const val PROJECTION_KEY_ALERT_TIME = 2;
-        const val PROJECTION_KEY_NOTIFICATIONID = 3;
-        const val PROJECTION_KEY_TITLE = 4;
-        const val PROJECTION_KEY_START = 5;
-        const val PROJECTION_KEY_END = 6;
-        const val PROJECTION_KEY_INSTANCE_START = 7;
-        const val PROJECTION_KEY_INSTANCE_END = 8;
-        const val PROJECTION_KEY_LOCATION = 9;
-        const val PROJECTION_KEY_SNOOZED_UNTIL = 10;
-        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 11;
-        const val PROJECTION_KEY_DISPLAY_STATUS = 12;
-        const val PROJECTION_KEY_COLOR = 13;
-        const val PROJECTION_KEY_IS_REPEATING = 14;
-        const val PROJECTION_KEY_ALL_DAY = 15;
-        const val PROJECTION_KEY_EVENT_ORIGIN = 16;
-        const val PROJECTION_KEY_TIME_FIRST_SEEN = 17;
-        const val PROJECTION_KEY_EVENT_STATUS = 18
-        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 19
+        const val PROJECTION_KEY_CALENDAR_ID = 0
+        const val PROJECTION_KEY_EVENTID = 1
+        const val PROJECTION_KEY_ALERT_TIME = 2
+        const val PROJECTION_KEY_NOTIFICATIONID = 3
+        const val PROJECTION_KEY_TITLE = 4
+        const val PROJECTION_KEY_DESCRIPTION = 5
+        const val PROJECTION_KEY_START = 6
+        const val PROJECTION_KEY_END = 7
+        const val PROJECTION_KEY_INSTANCE_START = 8
+        const val PROJECTION_KEY_INSTANCE_END = 9
+        const val PROJECTION_KEY_LOCATION = 10
+        const val PROJECTION_KEY_SNOOZED_UNTIL = 11
+        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 12
+        const val PROJECTION_KEY_DISPLAY_STATUS = 13
+        const val PROJECTION_KEY_COLOR = 14
+        const val PROJECTION_KEY_IS_REPEATING = 15
+        const val PROJECTION_KEY_ALL_DAY = 16
+        const val PROJECTION_KEY_EVENT_ORIGIN = 17
+        const val PROJECTION_KEY_TIME_FIRST_SEEN = 18
+        const val PROJECTION_KEY_EVENT_STATUS = 19
+        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 20
     }
 }

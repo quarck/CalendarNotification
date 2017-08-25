@@ -300,6 +300,7 @@ class EventsStorageImplV6() : EventsStorageImplInterface {
                 eventId = cursor.getLong(1),
                 notificationId = cursor.getInt(2),
                 title = cursor.getString(3),
+                desc = "",
                 startTime = cursor.getLong(4),
                 endTime = cursor.getLong(5),
                 instanceStartTime = cursor.getLong(6),

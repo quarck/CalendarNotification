@@ -80,7 +80,11 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                                             cleanupEventsTo)
 
                                 EventChangeRequestType.EditExistingEvent ->
-                                    TODO()
+                                    validateEditRequest(
+                                            context,
+                                            provider,
+                                            event,
+                                            cleanupEventsTo)
                             }
 
                     when (validation) {
@@ -264,6 +268,52 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         return ret
     }
 
+    private fun validateEditRequest(
+            context: Context,
+            provider: CalendarProviderInterface,
+            event: CalendarChangeRequest,
+            cleanupEventsTo: Long
+    ): ValidationResultCommand {
+
+        if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
+            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
+            return ValidationResultCommand.DeleteRequest
+        }
+
+        val calendarEvent = provider.getEvent(context, event.eventId)
+        if (calendarEvent == null) {
+            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for removal from DB -- no longer in the provider")
+            return ValidationResultCommand.DeleteRequest
+        }
+
+        if (calendarEvent.details == event.oldDetails) {
+            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
+            event.onValidated(false)
+            return ValidationResultCommand.ReApplyRequest
+        }
+
+        var ret = ValidationResultCommand.JustSkipRequest
+
+        val isDirty = provider.getEventIsDirty(context, event.eventId)
+        DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
+        if (isDirty != null) {
+
+            event.onValidated(!isDirty)
+
+            if (event.status == EventChangeStatus.Synced) {
+                DevLog.info(context, LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
+                ret = ValidationResultCommand.DeleteRequest
+            }
+            else {
+                DevLog.info(context, LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
+                ret = ValidationResultCommand.UpdateRequest
+            }
+        }
+
+        return ret
+    }
+
+
     private fun onRequestFailed(context: Context, req: CalendarChangeRequest): Boolean {
         return when (req.type) {
             EventChangeRequestType.AddNewEvent ->
@@ -288,10 +338,11 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                 alertTime = currentTime,
                 notificationId = 0,
                 title = title,
-                startTime = req.oldDetails.startTime,
-                endTime = req.oldDetails.endTime,
-                instanceStartTime = req.oldDetails.startTime,
-                instanceEndTime = req.oldDetails.endTime,
+                desc = req.details.desc,
+                startTime = req.details.startTime,
+                endTime = req.details.endTime,
+                instanceStartTime = req.details.startTime,
+                instanceEndTime = req.details.endTime,
                 location = req.details.location,
                 lastStatusChangeTime = currentTime,
                 snoozedUntil = 0L,
@@ -322,6 +373,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                 alertTime = currentTime,
                 notificationId = 0,
                 title = title,
+                desc = req.details.desc,
                 startTime = req.oldDetails.startTime,
                 endTime = req.oldDetails.endTime,
                 instanceStartTime = req.oldDetails.startTime,
@@ -342,9 +394,68 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         return true
     }
 
-    private fun onEditEventRequestFailed(context: Context, req: CalendarChangeRequest): Boolean = false
+    private fun onEditEventRequestFailed(context: Context, req: CalendarChangeRequest) : Boolean {
 
+        val currentTime = System.currentTimeMillis()
 
+        val titleBuilder = StringBuilder(context.getString(R.string.failed_to_edit_event))
+
+        if (req.details.title != req.oldDetails.title) {
+            titleBuilder.append(req.oldDetails.title)
+            titleBuilder.append(context.resources.getString(R.string.arrow_to_right))
+            titleBuilder.append(req.details.title)
+        }
+        else {
+            titleBuilder.append(req.details.title)
+        }
+
+        val descBuilder = StringBuilder()
+        if (req.oldDetails.desc != req.details.desc) {
+            val hr = context.resources.getString(R.string.horizontal_line_with_new_line)
+            descBuilder.append(req.oldDetails.desc)
+            descBuilder.append(hr)
+            descBuilder.append(req.details.desc)
+            descBuilder.append(hr)
+        }
+        else {
+            descBuilder.append(req.details.desc)
+        }
+
+        if (req.oldDetails.location != req.details.location) {
+            descBuilder.append(context.getString(R.string.event_failed_location))
+            descBuilder.append(req.oldDetails.location)
+            titleBuilder.append(context.resources.getString(R.string.arrow_to_right))
+            descBuilder.append(req.details.location)
+        }
+
+        val event = EventAlertRecord(
+                calendarId = req.calendarId,
+                eventId = req.eventId,
+                isAllDay = req.details.isAllDay,
+                isRepeating = req.details.repeatingRule.isNotEmpty(),
+                alertTime = currentTime,
+                notificationId = 0,
+                title = titleBuilder.toString(),
+                desc = descBuilder.toString(),
+                startTime = req.oldDetails.startTime,
+                endTime = req.oldDetails.endTime,
+                instanceStartTime = req.oldDetails.startTime,
+                instanceEndTime = req.oldDetails.endTime,
+                location = req.details.location,
+                lastStatusChangeTime = currentTime,
+                snoozedUntil = 0L,
+                displayStatus = EventDisplayStatus.Hidden,
+                color = req.details.color,
+                origin = EventOrigin.ProviderBroadcast,
+                timeFirstSeen = currentTime
+        )
+
+        ApplicationController.registerNewEvent(context, event)
+        ApplicationController.postEventNotifications(context, listOf(event))
+        ApplicationController.afterCalendarEventFired(context)
+
+        return true
+    }
 
 
     companion object {

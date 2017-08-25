@@ -136,6 +136,7 @@ class CalendarMonitorManual(
                             alertTime = alert.alertTime,
                             notificationId = 0,
                             title = calEvent.title,
+                            desc = calEvent.desc,
                             startTime = calEvent.startTime,
                             endTime = calEvent.endTime,
                             instanceStartTime = alert.instanceStartTime,

@@ -474,6 +474,7 @@ class EventsStorageImplV8(val context: Context)
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 notificationId = cursor.getInt(PROJECTION_KEY_NOTIFICATIONID),
                 title = cursor.getString(PROJECTION_KEY_TITLE),
+                desc = "",
                 startTime = cursor.getLong(PROJECTION_KEY_START),
                 endTime = cursor.getLong(PROJECTION_KEY_END),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),

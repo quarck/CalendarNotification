@@ -42,6 +42,7 @@ object CalendarProvider : CalendarProviderInterface {
                     CalendarContract.CalendarAlerts.STATE,
                     CalendarContract.Events.CALENDAR_ID,
                     CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION,
                     CalendarContract.Events.DTSTART,
                     CalendarContract.Events.DTEND,
                     CalendarContract.Events.EVENT_LOCATION,
@@ -58,22 +59,24 @@ object CalendarProvider : CalendarProviderInterface {
     private val PROJECTION_INDEX_STATE = 1
     private val PROJECTION_INDEX_CALENDAR_ID = 2
     private val PROJECTION_INDEX_TITLE = 3
-    private val PROJECTION_INDEX_DTSTART = 4
-    private val PROJECTION_INDEX_DTEND = 5
-    private val PROJECTION_INDEX_LOCATION = 6
-    private val PROJECTION_INDEX_COLOR = 7
-    private val PROJECTION_INDEX_ALARM_TIME = 8
-    private val PROJECTION_INDEX_INSTANCE_BEGIN = 9
-    private val PROJECTION_INDEX_INSTANCE_END = 10
-    private val PROJECTION_INDEX_ALL_DAY = 11
-    private val PROJECTION_INDEX_STATUS = 12
-    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 13
+    private val PROJECTION_INDEX_DESCRIPTION = 4
+    private val PROJECTION_INDEX_DTSTART = 5
+    private val PROJECTION_INDEX_DTEND = 6
+    private val PROJECTION_INDEX_LOCATION = 7
+    private val PROJECTION_INDEX_COLOR = 8
+    private val PROJECTION_INDEX_ALARM_TIME = 9
+    private val PROJECTION_INDEX_INSTANCE_BEGIN = 10
+    private val PROJECTION_INDEX_INSTANCE_END = 11
+    private val PROJECTION_INDEX_ALL_DAY = 12
+    private val PROJECTION_INDEX_STATUS = 13
+    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 14
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
         val eventId: Long? = cursor.getLong(PROJECTION_INDEX_EVENT_ID)
         val state: Int? = cursor.getInt(PROJECTION_INDEX_STATE)
         val title: String? = cursor.getString(PROJECTION_INDEX_TITLE)
+        val desc: String? = cursor.getString(PROJECTION_INDEX_DESCRIPTION)
         val startTime: Long? = cursor.getLong(PROJECTION_INDEX_DTSTART)
         val endTime: Long? = cursor.getLong(PROJECTION_INDEX_DTEND)
         val location: String? = cursor.getString(PROJECTION_INDEX_LOCATION)
@@ -99,6 +102,7 @@ object CalendarProvider : CalendarProviderInterface {
                         notificationId = 0,
                         alertTime = alarmTime ?: newAlarmTime ?: 0,
                         title = title,
+                        desc = desc ?: "",
                         startTime = startTime,
                         endTime = endTime ?: 0L,
                         instanceStartTime = instanceStart ?: 0L,

@@ -48,6 +48,7 @@ class DismissedEventsStorageImplV2()
                         "$KEY_ALERT_TIME INTEGER, " +
 
                         "$KEY_TITLE TEXT, " +
+                        "$KEY_DESCRIPTION TEXT, " +
 
                         "$KEY_START INTEGER, " +
                         "$KEY_END INTEGER, " +
@@ -63,6 +64,7 @@ class DismissedEventsStorageImplV2()
                         "$KEY_IS_REPEATING INTEGER, " +
 
                         "$KEY_ALL_DAY INTEGER, " +
+
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
                         "$KEY_RESERVED_INT3 INTEGER, " +
@@ -73,7 +75,6 @@ class DismissedEventsStorageImplV2()
                         "$KEY_RESERVED_INT8 INTEGER, " +
                         "$KEY_RESERVED_INT9 INTEGER, " +
 
-                        "$KEY_RESERVED_STR1 TEXT, " +
                         "$KEY_RESERVED_STR2 TEXT, " +
                         "$KEY_RESERVED_STR3 TEXT, " +
 
@@ -186,6 +187,7 @@ class DismissedEventsStorageImplV2()
         values.put(KEY_DISMISS_TYPE, type.code)
         values.put(KEY_ALERT_TIME, event.alertTime)
         values.put(KEY_TITLE, event.title);
+        values.put(KEY_DESCRIPTION, event.desc)
         values.put(KEY_START, event.startTime);
         values.put(KEY_END, event.endTime);
         values.put(KEY_INSTANCE_START, event.instanceStartTime);
@@ -209,7 +211,6 @@ class DismissedEventsStorageImplV2()
         values.put(KEY_RESERVED_INT8, 0L)
         values.put(KEY_RESERVED_INT9, 0L)
 
-        values.put(KEY_RESERVED_STR1, "")
         values.put(KEY_RESERVED_STR2, "")
         values.put(KEY_RESERVED_STR3, "")
 
@@ -224,6 +225,7 @@ class DismissedEventsStorageImplV2()
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 notificationId = 0,
                 title = cursor.getString(PROJECTION_KEY_TITLE),
+                desc = cursor.getString(PROJECTION_KEY_DESCRIPTION),
                 startTime = cursor.getLong(PROJECTION_KEY_START),
                 endTime = cursor.getLong(PROJECTION_KEY_END),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
@@ -260,6 +262,8 @@ class DismissedEventsStorageImplV2()
         private const val KEY_ALL_DAY = "allDay"
 
         private const val KEY_TITLE = "title"
+        private const val KEY_DESCRIPTION = "s1"
+
         private const val KEY_START = "eventStart"
         private const val KEY_END = "eventEnd"
         private const val KEY_INSTANCE_START = "instanceStart"
@@ -271,7 +275,6 @@ class DismissedEventsStorageImplV2()
         private const val KEY_COLOR = "color"
         private const val KEY_ALERT_TIME = "alertTime"
 
-        private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
 
@@ -292,6 +295,7 @@ class DismissedEventsStorageImplV2()
                 KEY_DISMISS_TYPE,
                 KEY_ALERT_TIME,
                 KEY_TITLE,
+                KEY_DESCRIPTION,
                 KEY_START,
                 KEY_END,
                 KEY_INSTANCE_START,
@@ -311,16 +315,17 @@ class DismissedEventsStorageImplV2()
         const val PROJECTION_KEY_DISMISS_TYPE = 3;
         const val PROJECTION_KEY_ALERT_TIME = 4;
         const val PROJECTION_KEY_TITLE = 5;
-        const val PROJECTION_KEY_START = 6;
-        const val PROJECTION_KEY_END = 7;
-        const val PROJECTION_KEY_INSTANCE_START = 8;
-        const val PROJECTION_KEY_INSTANCE_END = 9;
-        const val PROJECTION_KEY_LOCATION = 10;
-        const val PROJECTION_KEY_SNOOZED_UNTIL = 11;
-        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 12;
-        const val PROJECTION_KEY_DISPLAY_STATUS = 13;
-        const val PROJECTION_KEY_COLOR = 14;
-        const val PROJECTION_KEY_IS_REPEATING = 15;
-        const val PROJECTION_KEY_ALL_DAY = 16;
+        const val PROJECTION_KEY_DESCRIPTION = 6
+        const val PROJECTION_KEY_START = 7
+        const val PROJECTION_KEY_END = 8
+        const val PROJECTION_KEY_INSTANCE_START = 9
+        const val PROJECTION_KEY_INSTANCE_END = 10
+        const val PROJECTION_KEY_LOCATION = 11;
+        const val PROJECTION_KEY_SNOOZED_UNTIL = 12;
+        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 13;
+        const val PROJECTION_KEY_DISPLAY_STATUS = 14;
+        const val PROJECTION_KEY_COLOR = 15;
+        const val PROJECTION_KEY_IS_REPEATING = 16;
+        const val PROJECTION_KEY_ALL_DAY = 17;
     }
 }

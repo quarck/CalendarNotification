@@ -150,11 +150,43 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
     override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
-        // FIXME: not really implemented yet
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "updateEvent: no permissions");
+            return false;
+        }
 
-        val providerResult = provider.updateEvent(context, eventToEdit, details)
+        var ret = false
 
-        if (eventToEdit.startTime != details.startTime) {
+        CalendarChangeRequestsStorage(context).use {
+            db ->
+
+            db.deleteForEventId(eventToEdit.eventId)
+
+            ret = provider.updateEvent(context, eventToEdit, details)
+
+            if (ret) {
+                DevLog.info(context, LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
+            }
+            else {
+                DevLog.error(context, LOG_TAG, "Failed to updated provider, event ${eventToEdit.eventId}")
+            }
+
+            DevLog.info(context, LOG_TAG, "Adding edit request into DB: ${eventToEdit.eventId} ")
+
+            db.add(
+                    CalendarChangeRequest(
+                            id = -1L,
+                            type = EventChangeRequestType.EditExistingEvent,
+                            eventId = eventToEdit.eventId,
+                            calendarId = eventToEdit.calendarId,
+                            status = EventChangeStatus.Dirty,
+                            details = details,
+                            oldDetails = eventToEdit.details
+                    )
+            )
+        }
+
+        if (ret && (eventToEdit.startTime != details.startTime)) {
 
             DevLog.info(context, LOG_TAG, "Event ${eventToEdit.eventId} was moved, ${eventToEdit.startTime} != ${details.startTime}, checking for notification auto-dismissal")
 
@@ -169,8 +201,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             }
         }
 
-
-        return providerResult
+        return ret
     }
 
     companion object {

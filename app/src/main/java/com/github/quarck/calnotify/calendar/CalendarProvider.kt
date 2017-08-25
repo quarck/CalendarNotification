@@ -873,31 +873,35 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean {
+    override fun updateEvent(
+            context: Context,
+            eventId: Long,
+            calendarId: Long,
+            oldDetails: CalendarEventDetails,
+            newDetails: CalendarEventDetails
+    ): Boolean {
 
         var ret = false
 
-        DevLog.debug(LOG_TAG, "Request to update event ${event.eventId}")
+        DevLog.debug(LOG_TAG, "Request to update event $eventId")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(context, LOG_TAG, "updateEvent: no permissions")
             return false
         }
 
-        if (event.details == newDetails) {
+        if (oldDetails == newDetails) {
             DevLog.error(context, LOG_TAG, "No changes requested")
             return false
         }
 
-        if (event.details.isAllDay != newDetails.isAllDay) {
+        if (oldDetails.isAllDay != newDetails.isAllDay) {
             DevLog.error(context, LOG_TAG, "Cannot change 'is all day'")
             return false
         }
 
         try {
             val values = ContentValues()
-
-            val oldDetails = event.details
 
             if (oldDetails.title != newDetails.title)
                 values.put(CalendarContract.Events.TITLE, newDetails.title)
@@ -932,7 +936,7 @@ object CalendarProvider : CalendarProviderInterface {
             if (oldDetails.repeatingExRDate != newDetails.repeatingExRDate)
                 values.put(CalendarContract.Events.EXDATE, newDetails.repeatingExRDate)
 
-            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId)
+            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
             val updated = context.contentResolver.update(updateUri, values, null, null)
 
             ret = updated > 0
@@ -952,7 +956,7 @@ object CalendarProvider : CalendarProviderInterface {
 
                 val cursor = CalendarContract.Reminders.query(
                         context.contentResolver,
-                        event.eventId,
+                        eventId,
                         remindersProjection
                 )
 
@@ -982,7 +986,7 @@ object CalendarProvider : CalendarProviderInterface {
 
                 for (reminder in newReminders) {
                     val reminderValues = ContentValues()
-                    reminderValues.put(CalendarContract.Reminders.EVENT_ID, event.eventId)
+                    reminderValues.put(CalendarContract.Reminders.EVENT_ID, eventId)
                     reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.millisecondsBefore / Consts.MINUTE_IN_MILLISECONDS).toInt())
                     reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
 
@@ -999,7 +1003,17 @@ object CalendarProvider : CalendarProviderInterface {
         }
 
         return ret
+    }
 
+
+    override fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean {
+
+        return updateEvent(
+                context,
+                event.eventId,
+                event.calendarId,
+                event.details,
+                newDetails)
     }
 
 //    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {

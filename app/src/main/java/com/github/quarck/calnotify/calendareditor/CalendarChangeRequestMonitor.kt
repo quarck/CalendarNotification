@@ -150,15 +150,33 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
         try {
             when (event.type) {
-                EventChangeRequestType.AddNewEvent ->
-                    event.eventId = provider.createEvent(context, event.calendarId, event.details)
+                EventChangeRequestType.AddNewEvent -> {
+                    event.eventId = provider.createEvent(
+                            context,
+                            event.calendarId,
+                            event.details
+                    )
+                    event.status = EventChangeStatus.Dirty
+                }
 
                 EventChangeRequestType.MoveExistingEvent -> {
-                    provider.moveEvent(context, event.eventId, event.details.startTime, event.details.endTime)
+                    provider.moveEvent(
+                            context,
+                            event.eventId,
+                            event.details.startTime,
+                            event.details.endTime
+                    )
                     event.status = EventChangeStatus.Dirty
                 }
                 EventChangeRequestType.EditExistingEvent -> {
-                    TODO()
+                    provider.updateEvent(
+                            context,
+                            event.eventId,
+                            event.calendarId,
+                            event.oldDetails,
+                            event.details
+                    )
+                    event.status = EventChangeStatus.Dirty
                 }
             }
         }

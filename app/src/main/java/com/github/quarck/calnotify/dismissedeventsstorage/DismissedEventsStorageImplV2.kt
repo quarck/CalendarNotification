@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-class DismissedEventsStorageImplV2()
+class DismissedEventsStorageImplV2
     : DismissedEventsStorageImplInterface {
 
     @Suppress("ConvertToStringTemplate")
@@ -93,8 +93,8 @@ class DismissedEventsStorageImplV2()
     }
 
     override fun dropAll(db: SQLiteDatabase) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+        db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME)
     }
 
     override fun addEventImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, event: EventAlertRecord) {
@@ -179,23 +179,23 @@ class DismissedEventsStorageImplV2()
     }
 
     private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventDismissType): ContentValues {
-        val values = ContentValues();
+        val values = ContentValues()
 
         values.put(KEY_CALENDAR_ID, event.calendarId)
-        values.put(KEY_EVENTID, event.eventId);
+        values.put(KEY_EVENTID, event.eventId)
         values.put(KEY_DISMISS_TIME, time)
         values.put(KEY_DISMISS_TYPE, type.code)
         values.put(KEY_ALERT_TIME, event.alertTime)
-        values.put(KEY_TITLE, event.title);
+        values.put(KEY_TITLE, event.title)
         values.put(KEY_DESCRIPTION, event.desc)
-        values.put(KEY_START, event.startTime);
-        values.put(KEY_END, event.endTime);
-        values.put(KEY_INSTANCE_START, event.instanceStartTime);
-        values.put(KEY_INSTANCE_END, event.instanceEndTime);
-        values.put(KEY_LOCATION, event.location);
-        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime);
-        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code);
+        values.put(KEY_START, event.startTime)
+        values.put(KEY_END, event.endTime)
+        values.put(KEY_INSTANCE_START, event.instanceStartTime)
+        values.put(KEY_INSTANCE_END, event.instanceEndTime)
+        values.put(KEY_LOCATION, event.location)
+        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil)
+        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime)
+        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code)
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
         values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
@@ -214,7 +214,7 @@ class DismissedEventsStorageImplV2()
         values.put(KEY_RESERVED_STR2, "")
         values.put(KEY_RESERVED_STR3, "")
 
-        return values;
+        return values
     }
 
     private fun cursorToEventRecord(cursor: Cursor): DismissedEventAlertRecord {
@@ -309,23 +309,23 @@ class DismissedEventsStorageImplV2()
                 KEY_ALL_DAY
         )
 
-        const val PROJECTION_KEY_CALENDAR_ID = 0;
-        const val PROJECTION_KEY_EVENTID = 1;
-        const val PROJECTION_KEY_DISMISS_TIME = 2;
-        const val PROJECTION_KEY_DISMISS_TYPE = 3;
-        const val PROJECTION_KEY_ALERT_TIME = 4;
-        const val PROJECTION_KEY_TITLE = 5;
+        const val PROJECTION_KEY_CALENDAR_ID = 0
+        const val PROJECTION_KEY_EVENTID = 1
+        const val PROJECTION_KEY_DISMISS_TIME = 2
+        const val PROJECTION_KEY_DISMISS_TYPE = 3
+        const val PROJECTION_KEY_ALERT_TIME = 4
+        const val PROJECTION_KEY_TITLE = 5
         const val PROJECTION_KEY_DESCRIPTION = 6
         const val PROJECTION_KEY_START = 7
         const val PROJECTION_KEY_END = 8
         const val PROJECTION_KEY_INSTANCE_START = 9
         const val PROJECTION_KEY_INSTANCE_END = 10
-        const val PROJECTION_KEY_LOCATION = 11;
-        const val PROJECTION_KEY_SNOOZED_UNTIL = 12;
-        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 13;
-        const val PROJECTION_KEY_DISPLAY_STATUS = 14;
-        const val PROJECTION_KEY_COLOR = 15;
-        const val PROJECTION_KEY_IS_REPEATING = 16;
-        const val PROJECTION_KEY_ALL_DAY = 17;
+        const val PROJECTION_KEY_LOCATION = 11
+        const val PROJECTION_KEY_SNOOZED_UNTIL = 12
+        const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 13
+        const val PROJECTION_KEY_DISPLAY_STATUS = 14
+        const val PROJECTION_KEY_COLOR = 15
+        const val PROJECTION_KEY_IS_REPEATING = 16
+        const val PROJECTION_KEY_ALL_DAY = 17
     }
 }

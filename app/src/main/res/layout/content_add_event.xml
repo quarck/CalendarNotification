@@ -72,7 +72,7 @@
             android:paddingStart="@dimen/snooze_view_img_padding_start"
             android:paddingTop="@dimen/snooze_view_img_padding_start"
             android:text="@string/save_button_title"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="normal"
             android:textColor="@color/icons"
             tools:ignore="RelativeOverlap"

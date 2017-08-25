@@ -283,6 +283,9 @@ class EditEventActivity : AppCompatActivity() {
                 return
             }
         }
+        else {
+            find<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+        }
 
         // get all the objects first
         eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")

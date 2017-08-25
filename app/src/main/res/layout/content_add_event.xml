@@ -21,6 +21,16 @@
         android:elevation="@dimen/toolbar_elevation"
         tools:targetApi="m">
 
+        <!-- To catch focus -->
+        <LinearLayout
+            android:id="@+id/layout_focus_catcher"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            tools:ignore="UselessLeaf" />
+
         <!--             android:textSize="18.0sp"
 -->
         <EditText

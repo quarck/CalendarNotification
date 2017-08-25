@@ -333,8 +333,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 )
 
                 val colors = intArrayOf(
-                        ev.color.btnAdjustCalendarColor(false),
-                        ev.color.btnAdjustCalendarColor(true)
+                        ev.color.adjustCalendarColor(false),
+                        ev.color.adjustCalendarColor(true)
                 )
 
                 fab.backgroundTintList = ColorStateList(states, colors)

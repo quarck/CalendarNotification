@@ -118,7 +118,8 @@
         app:fabSize="mini"
         app:layout_anchor="@id/snooze_view_event_details_layout"
         app:layout_anchorGravity="bottom|start"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        />
+        app:srcCompat="@drawable/ic_mode_edit_white_24dp"
+        android:elevation="@dimen/toolbar_elevation"
+        tools:targetApi="lollipop"/>
 
 </android.support.design.widget.CoordinatorLayout>

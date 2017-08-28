@@ -347,8 +347,8 @@
     <string name="use_alarm_stream_summary">Odtwarzaj dźwięk powiadomienia z głośnością ustawioną dla alarmów zamiast głośności przypisanej powiadomieniom.</string>
 
     <string name="restrict_swipe_to_dismiss">Ogranicz przesuwanie powiadomień</string>
-    <string name="snooze_on_swipe">Przesuń wydarzenie, aby je odłożyć</string>
-    <string name="snooze_on_swipe_summary">Przesuń wydarzenie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
+    <string name="snooze_on_swipe">Przesuń, aby odłożyć</string>
+    <string name="snooze_on_swipe_summary">Przesuń powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
 
     <string name="on_the_day_before">Dzień przed</string>
     <string name="on_the_day_of_event">W dniu wydarzenia</string>

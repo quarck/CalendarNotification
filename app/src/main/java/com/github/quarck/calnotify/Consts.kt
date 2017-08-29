@@ -25,21 +25,21 @@ object Consts {
     const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
 
     const val COMPACT_VIEW_DEFAULT_SINCE_VER = 1008
-
     const val NEW_NOTIFICATION_SWIPE_SETTINGS_VER = 4241
+    const val SUB_MINUTE_REMINDERS_SETTINGS_VER = 4301
 
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val DAY_IN_MINUTES: Int = 60*24
     const val HOUR_IN_SECONDS: Long = 3600L
     const val HOUR_IN_MILLISECONDS: Long = 3600L * 1000L
-    const val MINUTE_IN_SECONDS: Long = 60L;
-    const val MINUTE_IN_MILLISECONDS: Long = 60L * 1000L;
+    const val MINUTE_IN_SECONDS: Long = 60L
+    const val MINUTE_IN_MILLISECONDS: Long = 60L * 1000L
 
     const val DEFAULT_SNOOZE_TIME_IF_NONE = 15L * 60L * 1000L
 
-    const val NOTIFICATION_ID_COLLAPSED = 0;
-    const val NOTIFICATION_ID_DYNAMIC_FROM = 1;
+    const val NOTIFICATION_ID_COLLAPSED = 0
+    const val NOTIFICATION_ID_DYNAMIC_FROM = 1
     const val NOTIFICATION_ID_REMINDER = Int.MAX_VALUE - 1
     const val NOTIFICATION_ID_BUNDLED_GROUP = Int.MAX_VALUE - 2
     const val NOTIFICATION_ID_DEBUG0_AUTO_DISMISS = Int.MAX_VALUE - 10
@@ -47,8 +47,8 @@ object Consts {
     const val NOTIFICATION_ID_DEBUG2_SNOOZE_ALARM_DELAYS = Int.MAX_VALUE - 12
 
     //
-    const val INTENT_NOTIFICATION_ID_KEY = "notificationId";
-    const val INTENT_EVENT_ID_KEY = "eventId";
+    const val INTENT_NOTIFICATION_ID_KEY = "notificationId"
+    const val INTENT_EVENT_ID_KEY = "eventId"
     const val INTENT_INSTANCE_START_TIME_KEY = "instanceStartTime"
     const val INTENT_SNOOZE_ALL_IS_CHANGE = "snooze_all_is_change"
     const val INTENT_SNOOZE_FROM_MAIN_ACTIVITY = "snooze_by_main_activity"
@@ -61,12 +61,12 @@ object Consts {
     const val INTENT_TTS_TEXT = "text"
 
     // max number of notifications displayed on the screen at all the times
-    const val MAX_NOTIFICATIONS = 16;
+    const val MAX_NOTIFICATIONS = 16
 
-    const val DEFAULT_NOTIFICATIONS = 8;
+    const val DEFAULT_NOTIFICATIONS = 8
 
     //
-    private const val VIBRATION_DURATION: Long = 1200;
+    private const val VIBRATION_DURATION: Long = 1200
     val VIBRATION_PATTERNS by lazy {
         arrayOf(
                 longArrayOf(0, VIBRATION_DURATION), // Single long
@@ -79,20 +79,20 @@ object Consts {
 
     const val WAKE_SCREEN_DURATION = 100L
 
-    const val LED_DURATION_ON = 300;
-    const val LED_DURATION_OFF = 2000;
+    const val LED_DURATION_ON = 300
+    const val LED_DURATION_OFF = 2000
     const val DEFAULT_LED_PATTERN = "$LED_DURATION_ON,$LED_DURATION_OFF"
     const val LED_MIN_DURATION = 100
     const val LED_MAX_DURATION = 2500
     const val LED_DURATION_GRANULARITY = 100
 
-    const val DEFAULT_LED_COLOR = 0x7f0000ff;
+    const val DEFAULT_LED_COLOR = 0x7f0000ff
 
-    const val ALARM_THRESHOLD = 24 * 1000L; // multiple of both, 2 and 3
+    const val ALARM_THRESHOLD = 24 * 1000L // multiple of both, 2 and 3
 
     const val DISMISS_ALL_THRESHOLD = 3000L
 
-    val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000);
+    val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000)
 
     const val MAX_SUPPORTED_PRESETS = 6
 

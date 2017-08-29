@@ -34,7 +34,7 @@ import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
-    internal var timeValue = 0
+    internal var timeValueSeconds = 0
 
     internal lateinit var picker: TimeIntervalPickerController
 
@@ -48,8 +48,10 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        picker = TimeIntervalPickerController(view, R.string.empty)
-        picker.intervalMinutes = timeValue
+        val enableSubMinute = Settings(this.context).enableSubMinuteReminders
+
+        picker = TimeIntervalPickerController(view, R.string.empty, enableSubMinute)
+        picker.intervalSeconds = timeValueSeconds
     }
 
     override fun onClick() {
@@ -62,20 +64,20 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
         if (positiveResult) {
             picker.clearFocus()
 
-            timeValue = picker.intervalMinutes
+            timeValueSeconds = picker.intervalSeconds
 
-            if (timeValue == 0) {
-                timeValue = 1
+            if (timeValueSeconds == 0) {
+                timeValueSeconds = 60
                 val msg = context.resources.getString(R.string.invalid_reminder_interval)
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
 
-            persistInt(timeValue)
+            persistInt(timeValueSeconds)
 
             val settings = Settings(context)
 
             if (isMarshmallowOrAbove &&
-                    timeValue * Consts.MINUTE_IN_SECONDS * 1000L < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC &&
+                    timeValueSeconds * 1000L < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC &&
                     !settings.dontShowMarshmallowWarningInSettings) {
 
                 AlertDialog.Builder(context)
@@ -97,17 +99,18 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             // Restore existing state
-            timeValue = this.getPersistedInt(0)
+            timeValueSeconds = this.getPersistedInt(0)
         }
         else if (defaultValue != null && defaultValue is Int) {
             // Set default state from the XML attribute
-            timeValue = defaultValue
-            persistInt(timeValue)
+            timeValueSeconds = defaultValue
+            persistInt(timeValueSeconds)
         }
     }
 
+    @Suppress("UseExpressionBody")
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInteger(index, 10)
+        return a.getInteger(index, 600)
     }
 
     companion object {

@@ -48,8 +48,9 @@
             android:id="@+id/spinnerTimeIntervalUnit"
             android:layout_gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:entries="@array/time_units_plurals"
+
             />
+        <!-- android:entries="@array/time_units_plurals" -->
 
     </LinearLayout>
 

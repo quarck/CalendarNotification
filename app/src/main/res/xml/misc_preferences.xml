@@ -35,4 +35,17 @@
         android:defaultValue="false"
         />
 
+    <PreferenceCategory
+        android:key="misc_experimental"
+        android:title="@string/pref_category_experimental_features"
+        >
+
+        <CheckBoxPreference
+            android:key="sub_minute_reminder_intervals"
+            android:title="@string/sub_minute_reminders_title"
+            android:summary="@string/sub_minute_reminders_summary"
+            />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -46,6 +46,34 @@
             android:summary="@string/sub_minute_reminders_summary"
             />
 
+        <CheckBoxPreference
+            android:key="enable_add_event"
+            android:title="@string/enable_add_event"
+            android:summary="@string/enable_add_event_summary"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="enable_edit_event"
+            android:title="@string/enable_edit_event"
+            android:summary="@string/enable_edit_event_summary"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="auto_dismiss_events_when_edited_into_future"
+            android:title="@string/edit_auto_dismiss_title"
+            android:summary="@string/edit_auto_dismiss_summary"
+            android:defaultValue="false"
+            android:dependency="enable_edit_event"/>
+
+        <EditTextPreference
+            android:key="default_new_event_duration"
+            android:title="@string/default_duration"
+            android:summary="@string/default_duration_summary"
+            android:dependency="enable_add_event"
+            android:numeric="integer"
+            android:defaultValue="30"
+            />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -319,7 +319,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             val fab = find<FloatingActionButton>(R.id.floating_edit_button)
 
-            if (!ev.isRepeating) {
+            if (!ev.isRepeating && settings.enableEditEvent) {
                 fab.setOnClickListener {
                     _ ->
                     val intent = Intent(this, EditEventActivity::class.java)
@@ -345,6 +345,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         }
         else if (isSnoozeAll) {
+
+            find<FloatingActionButton>(R.id.floating_edit_button).visibility = View.GONE
 
             find<TextView>(R.id.snooze_snooze_for).text =
                     if (!snoozeAllIsChange)

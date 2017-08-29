@@ -28,6 +28,17 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: more detailed toasts
+
+// FIXME: when editing or adding and start is in the past - make sure to fire immediately
+
+// FIXME: when notification opens snooze - make sure to allow even title scrolling, and mb add another button to view the event
+
+// FIXME: all day events - substract 1 seconds from "to" time when displaying
+
+// FIXME: all day events - fix duration
+
+// FIXME: add 'dismiss and delete' experimental feature for non-repeating events
 
 // FIXME: Snooze all glitch - eidt event
 
@@ -251,7 +262,6 @@ class EditEventActivity : AppCompatActivity() {
                 return true
 
             val currentReminders = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }
-            val eventReminders = details.reminders
 
             if (currentReminders.size != details.reminders.size)
                 return true
@@ -547,11 +557,17 @@ class EditEventActivity : AppCompatActivity() {
         val timeFormat =
                 DateUtils.FORMAT_SHOW_TIME
 
-        dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, dateFormat)
-        timeFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, timeFormat)
+        if (!isAllDay) {
+            dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, dateFormat)
+            timeFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, timeFormat)
 
-        dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, dateFormat)
-        timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, timeFormat)
+            dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis, dateFormat)
+            timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, timeFormat)
+        }
+        else {
+            dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, dateFormat)
+            dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis-1000L, dateFormat)
+        }
     }
 
     fun updateReminders() {
@@ -673,14 +689,6 @@ class EditEventActivity : AppCompatActivity() {
             if (eventId != -1L) {
                 DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
 
-//            val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, newEvent.eventId);
-//            val intent = Intent(Intent.ACTION_VIEW).setData(uri)
-//
-//            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
-//            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
-//
-//            startActivity(intent)
-
                 Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
                 finish()
 
@@ -718,6 +726,16 @@ class EditEventActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onSwitchAllDayClick(v: View) {
         isAllDay = switchAllDay.isChecked
+
+        if (isAllDay) {
+            to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+            to.addDays(1)
+        }
+        else {
+            to = DateTimeUtils.createCalendarTime(from.timeInMillis)
+            to.addMinutes(settings.defaultNewEventDurationMinutes)
+        }
+
         updateDateTimeUI()
         updateReminders()
     }

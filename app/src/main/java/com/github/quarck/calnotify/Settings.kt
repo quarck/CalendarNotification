@@ -57,6 +57,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableAddEvent: Boolean
         get() = getBoolean(ENABLE_ADD_EVENT_KEY, false)
 
+    val enableEditEvent: Boolean
+        get() = getBoolean(ENABLE_EDIT_EVENT_KEY, false)
+
+    val autoDismissWhenEditedUsingApp: Boolean
+        get() = getBoolean(AUTO_DISMISS_WHEN_EDITED_USING_APP, false)
+
     val defaultNewEventDurationMinutes: Int
         get() = getString(ADD_EVENT_DEFAULT_DURATION_KEY, "").toIntOrNull() ?: 30
 
@@ -477,6 +483,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DEVELOPER_MODE_KEY = "dev"
 
         private const val ENABLE_ADD_EVENT_KEY = "enable_add_event"
+        private const val ENABLE_EDIT_EVENT_KEY = "enable_edit_event"
+        private const val AUTO_DISMISS_WHEN_EDITED_USING_APP = "auto_dismiss_events_when_edited_into_future"
+
         private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
 
 	private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"

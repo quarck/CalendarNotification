@@ -1,6 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- moved into misc
     <CheckBoxPreference
         android:key="enable_add_event"
         android:title="@string/enable_add_event"
@@ -16,4 +17,5 @@
         android:defaultValue="30"
         />
 
+-->
 </PreferenceScreen>

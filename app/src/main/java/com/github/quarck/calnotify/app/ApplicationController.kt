@@ -204,6 +204,7 @@ object ApplicationController : EventMovedHandler {
         val newAlertTime = newEvent.nextAlarmTime(System.currentTimeMillis())
 
         val shouldAutoDismiss =
+                getSettings(context).autoDismissWhenEditedUsingApp &&
                 ApplicationController.checkShouldRemoveMovedEvent(
                         context,
                         oldEvent.eventId,

@@ -473,9 +473,14 @@
     <string name="calendar_was_changed_pull_down_to_refresh">Calendar has changed, pull down to refresh</string>
     <string name="new_event_failed_to_create_event">Failed to create event!</string>
     <string name="no_active_calendars">No active / handled calendars</string>
-    <string name="experimental_features">Experimental features</string>
-    <string name="enable_add_event">Enable \'Add Event\' floating button</string>
+
+    <string name="enable_add_event">Enable \'Add Event\' button</string>
     <string name="enable_add_event_summary">Would allow creating events without leaving the app. Currently only non-repeating events are supported and only limited amount of fields are editable. This application would monitor newly created event to make sure it would not disappear on sync</string>
+
+    <string name="enable_edit_event">Enable \'Edit Event\' button</string>
+    <string name="enable_edit_event_summary">Would allow editing basic event details directly from the snooze view</string>
+
+
     <string name="default_duration">Default duration</string>
     <string name="default_duration_summary">Default duration for new events, in minutes</string>
     <string name="event_was_created">Event was created</string>
@@ -494,6 +499,8 @@
     <string name="pref_category_experimental_features">Experimental features</string>
     <string name="sub_minute_reminders_title">Sub-minute reminders</string>
     <string name="sub_minute_reminders_summary">Enable sub-minute reminder intervals. Make sure to enable \'use setAlarmClock for reminders\' (above) and disable all android power saving / optimisation for this app</string>
+    <string name="edit_auto_dismiss_title">Auto dismiss on edit</string>
+    <string name="edit_auto_dismiss_summary">Auto dismiss event notification when you edit it using this app and new event time is in the future</string>
 
 </resources>
 

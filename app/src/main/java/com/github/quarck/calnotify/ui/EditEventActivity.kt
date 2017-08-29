@@ -38,11 +38,7 @@ import java.util.*
 
 // FIXME: Show event description below the date (when notification opens snooze at least), or give an option
 
-// FIXME: move experimental features into 'misc' as a sub-category, and give another setting to 'auto dismiss on move'
-
 // FIXME: Bin - invalid 'moved to' after edit
-
-// FIXME: reload calendar event immediately after edit and dismiss notification if necessary
 
 // FIXME: check history / back behavior
 

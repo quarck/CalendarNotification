@@ -159,7 +159,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
         floatingAddEvent.setOnClickListener {
-            startActivity(Intent(this, EditEventActivity::class.java))
+            startActivity(
+                    Intent(this, EditEventActivity::class.java)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
         }
 
         if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {
@@ -395,27 +398,38 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 startActivity(
                         Intent(this, SnoozeActivity::class.java)
                                 .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
-                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_dismissed_events ->
-                startActivity(Intent(this, DismissedEventsActivity::class.java))
+                startActivity(
+                        Intent(this, DismissedEventsActivity::class.java)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_settings -> {
                 shouldForceRepost = true // so onResume would re-post everything
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(
+                        Intent(this, SettingsActivity::class.java)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
             R.id.action_feedback ->
-                startActivity(Intent(this, HelpAndFeedbackActivity::class.java))
+                startActivity(
+                        Intent(this, HelpAndFeedbackActivity::class.java)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_about ->
-                startActivity(Intent(this, AboutActivity::class.java))
+                startActivity(
+                        Intent(this, AboutActivity::class.java)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_dismiss_all ->
                 onDismissAll()
 
             R.id.action_test_page ->
-                startActivity(Intent(this, TestActivity::class.java))
+                startActivity(
+                        Intent(this, TestActivity::class.java)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
         return super.onOptionsItemSelected(item)
@@ -540,7 +554,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                                 .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
                                 .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
-                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             }
             else {
@@ -605,7 +620,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                             .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
                             .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
-                            .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true))
+                            .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }
 

@@ -144,7 +144,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             if (nextFireAt != 0L) {
                 context.alarmManager.setExactAndAlarm(
                         context,
-                        Settings(context).useSetAlarmClock,
+                        settings.useSetAlarmClock,
                         nextFireAt,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
@@ -154,11 +154,13 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (shouldFire)
-                fireReminder(context, currentTime, itIsAfterQuietHoursReminder)
+                fireReminder(context, currentTime, itIsAfterQuietHoursReminder,
+                        reminderInterval, settings.separateReminderNotification)
         }
     }
 
-    private fun fireReminder(context: Context, currentTime: Long, itIsAfterQuietHoursReminder: Boolean) {
+    private fun fireReminder(context: Context, currentTime: Long, itIsAfterQuietHoursReminder: Boolean,
+                             reminderInterval: Long, separateReminderNotification: Boolean) {
 
         DevLog.info(context, LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
 
@@ -166,16 +168,18 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         ReminderState(context).onReminderFired(currentTime)
 
-        // auto-remove reminder notification after 15 seconds. All we need it for is to
-        // play a sound
-        val delayInMilliseconds = 15000L
+        if (separateReminderNotification) {
+            // auto-remove reminder notification after 15 seconds. All we need it for is to
+            // play a sound
+            val delayInMilliseconds = Math.min(reminderInterval - 2000L, 15000L)
 
-        Handler().postDelayed(
-                {
-                    ApplicationController.cleanupEventReminder(context)
-                },
-                delayInMilliseconds
-        )
+            Handler().postDelayed(
+                    {
+                        ApplicationController.cleanupEventReminder(context)
+                    },
+                    delayInMilliseconds
+            )
+        }
     }
 
     companion object {

@@ -864,7 +864,7 @@ class EditEventActivity : AppCompatActivity() {
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_notification, null);
 
         val timeIntervalPicker = TimeIntervalPickerController(dialogView, null,
-                Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE)
+                Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE, false)
         timeIntervalPicker.intervalMilliseconds = currentReminder.millisecondsBefore
 
         val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)

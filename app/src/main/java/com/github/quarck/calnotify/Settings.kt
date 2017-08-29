@@ -67,6 +67,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, false)
         set(value) = setBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, value)
 
+    var reminderSettingsMigrated: Boolean
+        get() = getBoolean(REMINDER_SETTINGS_MIGRATED_KEY, false)
+        set(value) = setBoolean(REMINDER_SETTINGS_MIGRATED_KEY, value)
+
     var allowNotificationSwipe: Boolean
         get() = getBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, false)
         set(value) = setBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, value)
@@ -222,8 +226,15 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val separateReminderNotification: Boolean
         get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, false)
 
-    val remindersIntervalMillis: Long
-        get() = getInt(REMIND_INTERVAL_KEY, DEFAULT_REMINDER_INTERVAL) * 60L * 1000L;
+    val remindersIntervalMillisOld: Long
+        get() = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES) * 60L * 1000L;
+
+    var remindersIntervalMillis: Long
+        get() = getInt(REMIND_INTERVAL_SECONDS_KEY, DEFAULT_REMINDER_INTERVAL_SECONDS) * 1000L
+        set(value) = setInt(REMIND_INTERVAL_SECONDS_KEY, (value / 1000L).toInt())
+
+    val enableSubMinuteReminders: Boolean
+        get() = getBoolean(ENABLE_SUB_MINUTE_REMINDERS_KEY, false)
 
     val maxNumberOfReminders: Int
         get() = getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toIntOrNull() ?: 0
@@ -365,7 +376,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe"
 
         private const val NOTIFICATION_SETTINGS_MIGRATED_KEY = "notification_settings_migrated"
-
+        private const val REMINDER_SETTINGS_MIGRATED_KEY = "reminder_settings_migrated"
 
         private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
@@ -397,7 +408,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
 
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
-        private const val REMIND_INTERVAL_KEY = "remind_interval_key2"
+        private const val REMIND_INTERVAL_MINUTES_KEY = "remind_interval_key2"
+        private const val REMIND_INTERVAL_SECONDS_KEY = "remind_interval_key_seconds"
+
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 
         private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders"
@@ -466,9 +479,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_ADD_EVENT_KEY = "enable_add_event"
         private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
 
+	private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"
+
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
-        internal const val DEFAULT_REMINDER_INTERVAL = 10
+        internal const val DEFAULT_REMINDER_INTERVAL_MINUTES = 10
+        internal const val DEFAULT_REMINDER_INTERVAL_SECONDS = 600
         internal const val DEFAULT_MAX_REMINDERS = "0"
     }
 }

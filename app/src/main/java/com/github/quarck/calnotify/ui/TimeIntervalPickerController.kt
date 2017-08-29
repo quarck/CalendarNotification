@@ -24,11 +24,22 @@ import android.widget.AdapterView
 import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
-class TimeIntervalPickerController(val view: View, titleId: Int?, val maxIntervalMilliseconds: Long = 0L) : AdapterView.OnItemSelectedListener {
+class TimeIntervalPickerController(
+        val view: View,
+        titleId: Int?,
+        val maxIntervalMilliseconds: Long, // 0 by default
+        val allowSubMinuteIntervals: Boolean // false by default
+) : AdapterView.OnItemSelectedListener {
+
+    var SecondsIndex = -1
+    var MinutesIndex = 0
+    var HoursIndex = 1
+    var DaysIndex = 2
 
     var numberPicker: NumberPicker
     var timeUnitsSpinners: Spinner
@@ -37,13 +48,36 @@ class TimeIntervalPickerController(val view: View, titleId: Int?, val maxInterva
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
 
+        if (allowSubMinuteIntervals) {
+            timeUnitsSpinners.adapter =
+                    ArrayAdapter(
+                            view.context,
+                            android.R.layout.simple_list_item_1,
+                            view.context.resources.getStringArray(R.array.time_units_plurals_with_seconds)
+                    )
+            SecondsIndex += 1
+            MinutesIndex += 1
+            HoursIndex += 1
+            DaysIndex += 1
+        }
+        else {
+            timeUnitsSpinners.adapter =
+                    ArrayAdapter(
+                            view.context,
+                            android.R.layout.simple_list_item_1,
+                            view.context.resources.getStringArray(R.array.time_units_plurals)
+                    )
+        }
+
+        timeUnitsSpinners.onItemSelectedListener = this
+
         val label: TextView? = view.find<TextView>(R.id.textViewTimeIntervalTitle)
         if (titleId != null)
             label?.setText(titleId)
         else
             label?.visibility = View.GONE
 
-        timeUnitsSpinners.setSelection(MINUTES_ID)
+        timeUnitsSpinners.setSelection(MinutesIndex)
 
         timeUnitsSpinners.onItemSelectedListener = this
 
@@ -56,35 +90,43 @@ class TimeIntervalPickerController(val view: View, titleId: Int?, val maxInterva
         timeUnitsSpinners.clearFocus()
     }
 
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-    }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-        if (maxIntervalMilliseconds == 0L) // no cap - nothing to do
+        if (maxIntervalMilliseconds == 0L) {
+            if (position == SecondsIndex) {
+                numberPicker.minValue = 15
+                numberPicker.maxValue = 60
+            } else {
+                numberPicker.minValue = 1
+                numberPicker.maxValue = 100
+            }
             return
+        }
+
 
         val maxValue =
             when (timeUnitsSpinners.selectedItemPosition) {
-                MINUTES_ID ->
+                SecondsIndex ->
+                    maxIntervalMilliseconds / 1000L
+                MinutesIndex ->
                     maxIntervalMilliseconds / Consts.MINUTE_IN_MILLISECONDS
-                HOURS_ID ->
+                HoursIndex ->
                     maxIntervalMilliseconds / Consts.HOUR_IN_MILLISECONDS
-                DAYS_ID ->
+                DaysIndex ->
                     maxIntervalMilliseconds / Consts.DAY_IN_MILLISECONDS
                 else ->
                     throw Exception("Unknown time unit")
             }
 
-        numberPicker.maxValue =
-                if (maxValue < 100)
-                    maxValue.toInt()
-                else
-                    100
+        numberPicker.maxValue = Math.min(maxValue.toInt(), 100)
     }
 
+    override fun onNothingSelected(parent: AdapterView<*>) {
 
-    var intervalMinutes: Int
+    }
+
+    var intervalSeconds: Int
         get() {
             clearFocus()
 
@@ -92,12 +134,14 @@ class TimeIntervalPickerController(val view: View, titleId: Int?, val maxInterva
 
             val multiplier =
                     when (timeUnitsSpinners.selectedItemPosition) {
-                        MINUTES_ID ->
+                        SecondsIndex ->
                             1
-                        HOURS_ID ->
+                        MinutesIndex ->
                             60
-                        DAYS_ID ->
-                            24 * 60
+                        HoursIndex ->
+                            60 * 60
+                        DaysIndex ->
+                            24 * 60 * 60
                         else ->
                             throw Exception("Unknown time unit")
                     }
@@ -105,34 +149,58 @@ class TimeIntervalPickerController(val view: View, titleId: Int?, val maxInterva
             return (number * multiplier).toInt()
         }
         set(value) {
-            var number = value
-            var units = MINUTES_ID
 
-            if ((number % 60) == 0) {
-                units = HOURS_ID
-                number /= 60 // to hours
+            if (allowSubMinuteIntervals) {
+                var number = value
+                var units = SecondsIndex
+
+                if ((number % 60) == 0) {
+                    units = MinutesIndex
+                    number /= 60 // to minutes
+                }
+
+                if ((number % 60) == 0) {
+                    units = HoursIndex
+                    number /= 60 // to hours
+                }
+
+                if ((number % 24) == 0) {
+                    units = DaysIndex
+                    number /= 24 // to days
+                }
+
+                timeUnitsSpinners.setSelection(units)
+                numberPicker.value = number.toInt()
+
             }
+            else {
+                var number = value / 60 // convert to minutes
+                var units = MinutesIndex
 
-            if ((number % 24) == 0) {
-                units = DAYS_ID
-                number /= 24 // to days
+                if ((number % 60) == 0) {
+                    units = HoursIndex
+                    number /= 60 // to hours
+                }
+
+                if ((number % 24) == 0) {
+                    units = DaysIndex
+                    number /= 24 // to days
+                }
+
+                timeUnitsSpinners.setSelection(units)
+                numberPicker.value = number.toInt()
             }
-
-            timeUnitsSpinners.setSelection(units)
-            numberPicker.value = number.toInt()
-
         }
 
     var intervalMilliseconds: Long
-        get() = intervalMinutes * 60L * 1000L
+        get() = intervalSeconds * 1000L
         set(value) {
-            intervalMinutes = (value / Consts.MINUTE_IN_SECONDS / 1000L).toInt()
+            intervalSeconds = (value / 1000L).toInt()
         }
 
-    companion object {
-        const val MINUTES_ID = 0
-        const val HOURS_ID = 1
-        const val DAYS_ID = 2
-    }
-
+    var intervalMinutes: Int
+        get() = (intervalSeconds / Consts.MINUTE_IN_SECONDS).toInt()
+        set(value) {
+            intervalSeconds = (value * Consts.MINUTE_IN_SECONDS).toInt()
+        }
 }

@@ -43,7 +43,7 @@ class DefaultManualNotificationPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        picker = TimeIntervalPickerController(view, null)
+        picker = TimeIntervalPickerController(view, null, 0, false)
         picker.intervalMinutes = timeValue
     }
 

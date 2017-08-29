@@ -189,6 +189,15 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 settings.notificationSettingsMigrated = true;
             }
         }
+
+        if (settings.versionCodeFirstInstalled < Consts.SUB_MINUTE_REMINDERS_SETTINGS_VER) {
+
+            if (!settings.reminderSettingsMigrated) {
+                settings.remindersIntervalMillis = settings.remindersIntervalMillisOld
+                settings.reminderSettingsMigrated = true;
+            }
+
+        }
     }
 
     public override fun onStart() {

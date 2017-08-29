@@ -166,6 +166,13 @@
         <item>Days</item>
     </string-array>
 
+    <string-array name="time_units_plurals_with_seconds">
+        <item>Seconds</item>
+        <item>Minutes</item>
+        <item>Hours</item>
+        <item>Days</item>
+    </string-array>
+
     <string name="pebble_event_text_in_the_title">Event text in the title</string>
     <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
 
@@ -483,6 +490,10 @@
 
     <string name="horizontal_line_with_new_line" translatable="false">\n\n---------\n\n</string>
     <string name="arrow_to_right" translatable="false"> --&gt; </string>
+
+    <string name="pref_category_experimental_features">Experimental features</string>
+    <string name="sub_minute_reminders_title">Sub-minute reminders</string>
+    <string name="sub_minute_reminders_summary">Enable sub-minute reminder intervals. Make sure to enable \'use setAlarmClock for reminders\' (above) and disable all android power saving / optimisation for this app</string>
 
 </resources>
 

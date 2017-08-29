@@ -677,7 +677,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_interval_picker, null);
 
-        val timeIntervalPicker = TimeIntervalPickerController(dialogView, R.string.snooze_for)
+        val timeIntervalPicker = TimeIntervalPickerController(dialogView, R.string.snooze_for, 0, false)
         timeIntervalPicker.intervalMilliseconds = initialTimeValue
 
         state.state = SnoozeActivityStateCode.CustomSnoozeOpened

@@ -34,13 +34,7 @@ import java.util.*
 
 // FIXME: when notification opens snooze - make sure to allow even title scrolling, and mb add another button to view the event
 
-// FIXME: all day events - substract 1 seconds from "to" time when displaying
-
-// FIXME: all day events - fix duration
-
 // FIXME: add 'dismiss and delete' experimental feature for non-repeating events
-
-// FIXME: Snooze all glitch - eidt event
 
 // FIXME: Show event description below the date (when notification opens snooze at least), or give an option
 
@@ -565,8 +559,18 @@ class EditEventActivity : AppCompatActivity() {
             timeTo.text = DateUtils.formatDateTime(this, to.timeInMillis, timeFormat)
         }
         else {
-            dateFrom.text = DateUtils.formatDateTime(this, from.timeInMillis, dateFormat)
-            dateTo.text = DateUtils.formatDateTime(this, to.timeInMillis-1000L, dateFormat)
+            val fromClean = DateTimeUtils.createCalendarTime(from.timeInMillis)
+            fromClean.hourOfDay = 0
+            fromClean.minute = 0
+
+            val toClean = DateTimeUtils.createCalendarTime(to.timeInMillis)
+            toClean.hourOfDay = 0
+            toClean.minute = 0
+
+            dateFrom.text = DateUtils.formatDateTime(this, fromClean.timeInMillis, dateFormat)
+            dateTo.text = DateUtils.formatDateTime(this,
+                    Math.max(toClean.timeInMillis-1000L, fromClean.timeInMillis),
+                    dateFormat)
         }
     }
 

@@ -237,10 +237,18 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         DevLog.info(context, LOG_TAG, "onEventEditedByUs")
 
-        if (!Settings(context).enableCalendarRescan) {
+        val settings = Settings(context)
+
+        if (!settings.enableCalendarRescan) {
             DevLog.error(context, LOG_TAG, "onEventEditedByUs - manual scan disabled")
             return
         }
+
+        if (!settings.rescanCreatedEvent) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs - manual scan disabled[2]")
+            return
+        }
+
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(context, LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")

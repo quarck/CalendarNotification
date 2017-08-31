@@ -74,6 +74,13 @@
             android:defaultValue="30"
             />
 
+        <CheckBoxPreference
+            android:key="rescan_created_events"
+            android:title="Rescan created/edited event"
+            android:summary="-- THIS SHOULD BE REMOVED FROM FINAL VERSION -- ALWAYS RESCAN --"
+            android:defaultValue="true"
+            />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

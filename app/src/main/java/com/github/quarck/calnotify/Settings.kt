@@ -344,6 +344,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableCalendarRescan: Boolean
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
 
+    val rescanCreatedEvent: Boolean
+        get() = getBoolean(RESCAN_CREATED_EVENT, true)
+
     val notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
@@ -488,7 +491,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
 
-	private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"
+	    private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"
+
+        private const val RESCAN_CREATED_EVENT = "rescan_created_events"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

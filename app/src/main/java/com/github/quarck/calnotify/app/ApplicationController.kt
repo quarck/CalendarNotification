@@ -853,6 +853,13 @@ object ApplicationController : EventMovedHandler {
             if (notifyActivity)
                 UINotifierService.notifyUI(context, true);
         }
+        else {
+            DevLog.error(context, LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
+            DevLog.error(context, LOG_TAG, " -- known events / instances: ")
+            for (event in db.events) {
+                DevLog.error(context, LOG_TAG, " -- : ${event.eventId}, ${event.instanceStartTime}, ${event.alertTime}, ${event.snoozedUntil}")
+            }
+        }
     }
 
     fun dismissEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord) {
@@ -880,6 +887,11 @@ object ApplicationController : EventMovedHandler {
             }
             else {
                 DevLog.error(context, LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
+
+                DevLog.error(context, LOG_TAG, " -- known events / instances: ")
+                for (event in db.events) {
+                    DevLog.error(context, LOG_TAG, " -- : ${event.eventId}, ${event.instanceStartTime}, ${event.alertTime}, ${event.snoozedUntil}")
+                }
             }
         }
     }

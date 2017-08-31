@@ -187,6 +187,66 @@ class CalendarMonitorManual(
         }
     }
 
+    fun scanForSingleEvent(context: Context, event: EventRecord): Boolean {
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "scanForSingleEvent: no permissions");
+            return false
+        }
+
+        var hasFiredAnything = false
+
+        val currentTime = System.currentTimeMillis()
+
+        val alerts = calendarProvider.getEventAlertsForEvent(context, event).associateBy { it.key }
+
+        val alertsToVerify = mutableListOf<MonitorEventAlertEntry>()
+
+        var numUpdatedAlerts = 0
+        var numAddedAlerts = 0
+
+        MonitorStorage(context).use {
+            db ->
+            val knownAlerts = db.getInstanceAlerts(event.eventId, event.startTime).associateBy { it.key }
+
+            // Add new alerts into DB
+            for ((key, alert) in alerts) {
+
+                val knownAlert = knownAlerts.get(key)
+
+                if (knownAlert == null) {
+                    alertsToVerify.add(alert)
+                    db.addAlert(alert)
+                    ++numAddedAlerts
+                }
+                else if (knownAlert.detailsChanged(alert)) {
+                    alertsToVerify.add(alert)
+                    db.updateAlert(alert)
+                    ++numUpdatedAlerts
+                }
+                else if (!knownAlert.wasHandled) {
+                    alertsToVerify.add(knownAlert)
+                }
+            }
+        }
+
+        DevLog.info(context, LOG_TAG, "scanForSingleEvent: ${event.eventId}, num alerts: ${alerts.size}," +
+                " new alerts: $numAddedAlerts, updated alerts: $numUpdatedAlerts")
+
+        // Check what we should have already fired at
+
+        val fireAlertsUpTo = currentTime + Consts.ALARM_THRESHOLD
+
+        val dueAlerts = alertsToVerify.filter { !it.wasHandled && it.alertTime <= fireAlertsUpTo }
+
+        if (dueAlerts.isNotEmpty()) {
+            DevLog.warn(context, LOG_TAG, "scanForSingleEvent: ${dueAlerts.size} due alerts - nearly missed these")
+            hasFiredAnything = manualFireAlertList(context, dueAlerts)
+        }
+
+        return hasFiredAnything
+    }
+
     fun scanNextEvent(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
         if (!PermissionsManager.hasAllPermissions(context)) {

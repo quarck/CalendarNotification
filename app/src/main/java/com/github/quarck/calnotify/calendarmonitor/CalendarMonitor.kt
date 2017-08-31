@@ -233,6 +233,50 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, userActionUntil)
     }
 
+    override fun onEventEditedByUs(context: Context, eventId: Long) {
+
+        DevLog.info(context, LOG_TAG, "onEventEditedByUs")
+
+        if (!Settings(context).enableCalendarRescan) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs - manual scan disabled")
+            return
+        }
+
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
+            setOrCancelAlarm(context, Long.MAX_VALUE)
+            return
+        }
+
+        val event: EventRecord? = calendarProvider.getEvent(context, eventId)
+        if (event == null) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs - cannot find event $eventId")
+            return
+        }
+
+        var firedAnything = false
+
+        try {
+
+            val scanStart = System.currentTimeMillis()
+
+            firedAnything = manualScanner.scanForSingleEvent(context, event)
+
+            val scanEnd = System.currentTimeMillis()
+
+            DevLog.info(context, LOG_TAG, "scanForSingleEvent, perf: ${scanEnd - scanStart}")
+        }
+        catch (ex: java.lang.SecurityException) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs: SecurityException, ${ex.detailed}")
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "onEventEditedByUs: exception, ${ex.detailed}")
+        }
+
+        if (firedAnything)
+            ApplicationController.afterCalendarEventFired(context)
+    }
+
     override fun onRescanFromService(context: Context, intent: Intent?) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {

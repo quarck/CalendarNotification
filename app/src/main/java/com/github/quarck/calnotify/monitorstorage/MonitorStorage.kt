@@ -76,6 +76,9 @@ class MonitorStorage(val context: Context)
     override fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
             = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
 
+    override fun getInstanceAlerts(eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry>
+            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getInstanceAlerts(it, eventId, instanceStart) } }
+
     override fun getNextAlert(since: Long): Long?
             = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }
 

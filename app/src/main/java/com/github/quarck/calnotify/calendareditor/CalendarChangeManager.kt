@@ -68,6 +68,10 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             }
         }
 
+        if (eventId != -1L) {
+            ApplicationController.CalendarMonitor.onEventEditedByUs(context, eventId);
+        }
+
         return eventId
     }
 
@@ -145,6 +149,10 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             )
         }
 
+        if (event.eventId != -1L) {
+            ApplicationController.CalendarMonitor.onEventEditedByUs(context, event.eventId);
+        }
+
         return ret
     }
 
@@ -199,6 +207,10 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                         newEvent
                 )
             }
+        }
+
+        if (eventToEdit.eventId != -1L) {
+            ApplicationController.CalendarMonitor.onEventEditedByUs(context, eventToEdit.eventId);
         }
 
         return ret

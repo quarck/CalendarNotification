@@ -1212,6 +1212,128 @@ object CalendarProvider : CalendarProviderInterface {
             val isAllDay: Long
     )
 
+
+    @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
+    override fun getEventAlertsForEvent(
+            context: Context,
+            event: EventRecord
+    ): List<MonitorEventAlertEntry> {
+        val ret = arrayListOf<MonitorEventAlertEntry>()
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "getEventAlertsForEventId: no permissions")
+            return ret
+        }
+
+        val settings = Settings(context)
+
+        val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
+
+        val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
+
+        val defaultReminderTimeForEventWithNoReminder =
+                settings.defaultReminderTimeForEventWithNoReminder
+
+        val defaultReminderTimeForAllDayEventWithNoreminder =
+                settings.defaultReminderTimeForAllDayEventWithNoreminder
+
+        try {
+            val timezone = TimeZone.getDefault()
+
+            DevLog.info(context, LOG_TAG, "getEventAlertsForEventId(${event.eventId})")
+
+            val reminders =
+                    getEventReminders(context, event.eventId)
+                            .filter {
+                                it.method != CalendarContract.Reminders.METHOD_SMS
+                            }
+                            .map {
+                                Pair(
+                                        it.method != CalendarContract.Reminders.METHOD_EMAIL,
+                                        it.millisecondsBefore
+                                )
+                            }
+                            .toTypedArray()
+
+            var hasAnyReminders = false
+            var hasNonLocalReminders = false
+
+            for ((isLocal, reminderTime) in reminders) {
+
+                if (!isLocal) {
+                    hasNonLocalReminders = true
+                    continue
+                }
+
+                //DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
+
+                var utcOffset = 0
+
+                if (event.isAllDay) {
+                    utcOffset = timezone.getOffset(event.startTime)
+                    DevLog.debug(LOG_TAG, "Event id ${event.eventId}, UTC offset $utcOffset applied to ${event.startTime} - $reminderTime")
+                }
+
+                val alertTime = event.startTime - reminderTime - utcOffset
+
+                val entry = MonitorEventAlertEntry(
+                        event.eventId,
+                        event.isAllDay,
+                        alertTime,
+                        event.startTime,
+                        event.endTime,
+                        false,
+                        false
+                )
+
+                ret.add(entry)
+                hasAnyReminders = true
+            }
+
+            var shouldAddManualReminder = false
+
+            // has no reminders and we should notify about such requests
+            if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
+
+                // it also has no remote (email) reminders or we were configured to notify on such requests
+                if (!hasNonLocalReminders || notifyOnEmailOnlyEvents) {
+                    shouldAddManualReminder = true
+                }
+            }
+
+            if (shouldAddManualReminder) {
+
+                var alertTime = 0L
+
+                if (event.isAllDay) {
+                    alertTime = event.startTime - defaultReminderTimeForEventWithNoReminder
+                }
+                else {
+                    val utcOffset = timezone.getOffset(event.startTime)
+                    alertTime = event.startTime + defaultReminderTimeForAllDayEventWithNoreminder - utcOffset
+                    DevLog.debug(LOG_TAG, "Event id ${event.eventId}, UTC offset $utcOffset applied to ${event.startTime} - $defaultReminderTimeForAllDayEventWithNoreminder")
+                }
+
+                val entry = MonitorEventAlertEntry(
+                        event.eventId,
+                        event.isAllDay,
+                        alertTime,
+                        event.startTime,
+                        event.endTime,
+                        true,
+                        false
+                )
+
+                ret.add(entry)
+            }
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
+        }
+
+        return ret
+    }
+
     @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
     override fun getEventAlertsForInstancesInRange(
             context: Context,

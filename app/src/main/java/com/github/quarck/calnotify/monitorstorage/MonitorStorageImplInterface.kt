@@ -44,4 +44,5 @@ interface MonitorStorageImplInterface {
     fun getAlerts(db: SQLiteDatabase): List<MonitorEventAlertEntry>
     fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
     fun getAlertsForAlertRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
+    fun getInstanceAlerts(db: SQLiteDatabase, eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry>
 }

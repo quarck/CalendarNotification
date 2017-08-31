@@ -28,6 +28,8 @@ interface MonitorStorageInterface {
 
     fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
 
+    fun getInstanceAlerts(eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry>
+
     fun deleteAlert(entry: MonitorEventAlertEntry)
     fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)

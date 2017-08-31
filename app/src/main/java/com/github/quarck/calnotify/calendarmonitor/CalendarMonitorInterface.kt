@@ -38,6 +38,8 @@ interface CalendarMonitorInterface {
 
     fun onProviderReminderBroadcast(context: Context, intent: Intent)
 
+    fun onEventEditedByUs(context: Context, eventId: Long)
+
     fun onRescanFromService(context: Context, intent: Intent?)
 
     fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>

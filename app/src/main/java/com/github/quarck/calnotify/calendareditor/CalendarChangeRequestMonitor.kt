@@ -179,6 +179,10 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                     event.status = EventChangeStatus.Dirty
                 }
             }
+
+            if (event.eventId != -1L) {
+                ApplicationController.CalendarMonitor.onEventEditedByUs(context, event.eventId);
+            }
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "Failed: ${ex.detailed}")

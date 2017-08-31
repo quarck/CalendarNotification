@@ -38,4 +38,13 @@ data class MonitorEventAlertEntry(
 ) {
     val key: MonitorEventAlertEntryKey
         get() = MonitorEventAlertEntryKey(eventId, alertTime, instanceStartTime)
+
+    fun detailsChanged(other: MonitorEventAlertEntry): Boolean {
+
+        return (eventId != other.eventId) ||
+                (isAllDay != other.isAllDay) ||
+                (alertTime != other.alertTime) ||
+                (instanceStartTime != other.instanceStartTime) ||
+                (instanceEndTime != other.instanceEndTime)
+    }
 }

@@ -321,6 +321,43 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
+    override fun getInstanceAlerts(db: SQLiteDatabase, eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry> {
+
+        val ret = arrayListOf<MonitorEventAlertEntry>()
+
+        var cursor: Cursor? = null
+
+        val selection = "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
+        val selectionArgs = arrayOf(eventId.toString(), instanceStart.toString())
+
+        try {
+            cursor = db.query(TABLE_NAME, // a. table
+                    SELECT_COLUMNS, // b. column names
+                    selection,
+                    selectionArgs,
+                    null, // e. group by
+                    null, // f. h aving
+                    null, // g. order by
+                    null) // h. limit
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    ret.add(cursorToRecord(cursor))
+                } while (cursor.moveToNext())
+            }
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "getInstanceAlerts: exception ${ex.detailed}")
+        }
+        finally {
+            cursor?.close()
+        }
+
+        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} requests")
+
+        return ret
+    }
+
     override fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 

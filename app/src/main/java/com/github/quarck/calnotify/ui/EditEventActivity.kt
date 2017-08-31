@@ -28,6 +28,8 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
+// FIXME: event creation - "Goin? Yes / No" - fix dat!
+
 // FIXME: more detailed toasts
 
 // FIXME: when editing or adding and start is in the past - make sure to fire immediately
@@ -39,8 +41,6 @@ import java.util.*
 // FIXME: Show event description below the date (when notification opens snooze at least), or give an option
 
 // FIXME: Bin - invalid 'moved to' after edit
-
-// FIXME: check history / back behavior
 
 // FIXME: handle repeating requests
 

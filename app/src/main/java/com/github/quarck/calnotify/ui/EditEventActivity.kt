@@ -25,6 +25,7 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendareditor.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
@@ -689,7 +690,17 @@ class EditEventActivity : AppCompatActivity() {
             if (eventId != -1L) {
                 DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
 
-                Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
+                val nextReminder = calendarProvider.getNextEventReminderTime(this, eventId, startTime)
+                if (nextReminder != 0L) {
+                    Toast.makeText(
+                            this,
+                            resources.getString(R.string.event_was_updated_next_reminder).format(dateToStr(this, nextReminder)),
+                            Toast.LENGTH_LONG
+                    ).show()
+                }
+                else {
+                    Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
+                }
                 finish()
 
             } else {
@@ -705,15 +716,17 @@ class EditEventActivity : AppCompatActivity() {
             val success = CalendarChangeManager(CalendarProvider).updateEvent(this, eventToEdit, details)
 
             if (success) {
-                Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
-
-//                val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventToEdit.eventId);
-//                val intent = Intent(Intent.ACTION_VIEW).setData(uri)
-//
-//                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
-//                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)
-//
-//                startActivity(intent)
+                val nextReminder = calendarProvider.getNextEventReminderTime(this, eventToEdit.eventId, details.startTime)
+                if (nextReminder != 0L) {
+                    Toast.makeText(
+                            this,
+                            resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
+                            Toast.LENGTH_LONG
+                    ).show()
+                }
+                else {
+                    Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
+                }
 
                 finish()
             }

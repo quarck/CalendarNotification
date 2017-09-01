@@ -483,13 +483,19 @@
 
     <string name="default_duration">Default duration</string>
     <string name="default_duration_summary">Default duration for new events, in minutes</string>
+
     <string name="event_was_created">Event was created</string>
+    <string name="event_was_created_reminder_at" formatted="false">Event was created, next reminder: %s</string>
+
     <string name="event_not_found">Event not found</string>
     <string name="calendar_not_found">Calendar not found</string>
     <string name="failed_to_update_event_details">Failed to update event details</string>
     <string name="failed_to_move_event">Failed to move event: </string>
     <string name="failed_to_add_event">Failed to add event: </string>
+
     <string name="event_was_updated">Event was updated</string>
+    <string name="event_was_updated_next_reminder" formatted="false">Event was updated, next reminder: %s</string>
+
     <string name="failed_to_edit_event">Failed to updated event: </string>
     <string name="event_failed_location">Location: </string>
 

@@ -346,6 +346,21 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
+    override fun getNextEventReminderTime(context: Context, eventId: Long, instanceStartTime: Long): Long {
+
+        val instanceStart = instanceStartTime
+
+        val currentTime = System.currentTimeMillis()
+
+        val nextReminder =
+                getEventLocalReminders(context, eventId)
+                        .map { reminder -> instanceStart - reminder }
+                        .filter { reminder -> reminder > currentTime + Consts.ALARM_THRESHOLD }
+                        .min()
+
+        return nextReminder ?: 0L
+    }
+
     override fun getNextEventReminderTime(context: Context, event: EventAlertRecord): Long {
 
         val instanceStart = event.instanceStartTime

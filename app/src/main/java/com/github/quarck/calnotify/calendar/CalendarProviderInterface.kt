@@ -36,6 +36,8 @@ interface CalendarProviderInterface {
 
     fun getNextEventReminderTime(context: Context, event: EventAlertRecord): Long
 
+    fun getNextEventReminderTime(context: Context, eventId: Long, instanceStartTime: Long): Long
+
     fun getEvent(context: Context, eventId: Long): EventRecord?
 
     fun getEventIsDirty(context: Context, eventId: Long): Boolean?

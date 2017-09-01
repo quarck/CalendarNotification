@@ -31,9 +31,10 @@ interface CalendarChangeManagerInterface {
      * event
      * @param [context] - Android context
      * @param [calendarId] - Calendar ID to use
+     * @param [calendarOwnerAccount] - Account name of the calendar owner
      * @param [details] - details of the new event to create
      */
-    fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long
+    fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long
 
     /**
      * Moves calendar event by given time, returns true on success.

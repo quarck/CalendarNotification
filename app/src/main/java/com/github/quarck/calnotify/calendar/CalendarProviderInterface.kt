@@ -62,7 +62,7 @@ interface CalendarProviderInterface {
 
     fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long>
 
-    fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long
+    fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long
 
     fun updateEvent(context: Context, eventId: Long, calendarId: Long, oldDetails: CalendarEventDetails, newDetails: CalendarEventDetails): Boolean
 

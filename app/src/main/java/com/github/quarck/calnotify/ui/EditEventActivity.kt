@@ -31,8 +31,6 @@ import java.util.*
 
 // FIXME: event creation - "Goin? Yes / No" - fix dat!
 
-// FIXME: more detailed toasts
-
 // FIXME: when editing or adding and start is in the past - make sure to fire immediately
 
 // FIXME: when notification opens snooze - make sure to allow even title scrolling, and mb add another button to view the event
@@ -686,7 +684,7 @@ class EditEventActivity : AppCompatActivity() {
         val eventToEdit = originalEvent
 
         if (eventToEdit == null) {
-            val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, details)
+            val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
                 DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
 

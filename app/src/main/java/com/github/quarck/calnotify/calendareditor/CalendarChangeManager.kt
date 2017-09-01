@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarChangeManagerInterface {
 
-    override fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long {
+    override fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
 
         var eventId = -1L
 
@@ -43,6 +43,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         val event = CalendarChangeRequest(
                 id = -1L,
                 type = EventChangeRequestType.AddNewEvent,
+                calendarOwnerAccount = calendarOwnerAccount,
                 eventId = -1L,
                 calendarId = calendarId,
                 details = details,
@@ -55,7 +56,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             db.add(event)
             DevLog.info(context, LOG_TAG, "Event creation request logged")
 
-            eventId = provider.createEvent(context, event.calendarId, event.details)
+            eventId = provider.createEvent(context, event.calendarId, event.calendarOwnerAccount, event.details)
 
             if (eventId != -1L) {
                 DevLog.info(context, LOG_TAG, "Created new event, id $eventId")
@@ -142,6 +143,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                             type = EventChangeRequestType.MoveExistingEvent,
                             eventId = event.eventId,
                             calendarId = event.calendarId,
+                            calendarOwnerAccount = "",
                             status = EventChangeStatus.Dirty,
                             details = newDetails,
                             oldDetails = oldDetails
@@ -187,6 +189,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                             type = EventChangeRequestType.EditExistingEvent,
                             eventId = eventToEdit.eventId,
                             calendarId = eventToEdit.calendarId,
+                            calendarOwnerAccount = "",
                             status = EventChangeStatus.Dirty,
                             details = details,
                             oldDetails = eventToEdit.details

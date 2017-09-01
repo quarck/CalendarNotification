@@ -154,6 +154,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                     event.eventId = provider.createEvent(
                             context,
                             event.calendarId,
+                            event.calendarOwnerAccount,
                             event.details
                     )
                     event.status = EventChangeStatus.Dirty

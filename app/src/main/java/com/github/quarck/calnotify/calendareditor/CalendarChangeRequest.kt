@@ -49,6 +49,7 @@ data class CalendarChangeRequest(
         var type: EventChangeRequestType,
         var eventId: Long,
         val calendarId: Long,
+        val calendarOwnerAccount: String,
 
         val details: CalendarEventDetails,
         val oldDetails: CalendarEventDetails,

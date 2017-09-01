@@ -736,7 +736,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun createEvent(context: Context, calendarId: Long, details: CalendarEventDetails): Long {
+    override fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
 
         var eventId = -1L
 
@@ -783,6 +783,10 @@ object CalendarProvider : CalendarProviderInterface {
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
         values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+
+        // https://gist.github.com/mlc/5188579
+        values.put(CalendarContract.Events.ORGANIZER, calendarOwnerAccount)
+        values.put(CalendarContract.Events.HAS_ATTENDEE_DATA, 1);
 
         try {
             val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
@@ -1131,7 +1135,7 @@ object CalendarProvider : CalendarProviderInterface {
                 val calID: Long? = cursor.getLong(0)
                 val displayName: String? = cursor.getString(1)
                 val name: String? = cursor.getString(2)
-                val ownerAcconut: String? = cursor.getString(3)
+                val ownerAccount: String? = cursor.getString(3)
                 val accountName: String? = cursor.getString(4)
                 val accountType: String? = cursor.getString(5)
                 val color: Int? = cursor.getInt(6)
@@ -1157,7 +1161,7 @@ object CalendarProvider : CalendarProviderInterface {
 
                 ret.add(CalendarRecord(
                         calendarId = calID ?: -1L,
-                        owner = ownerAcconut ?: "",
+                        owner = ownerAccount ?: "",
                         accountName = accountName ?: "",
                         accountType = accountType ?: "",
                         displayName = displayName ?: "",

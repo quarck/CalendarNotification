@@ -49,6 +49,8 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
                         "$KEY_NUM_RETRIES INTEGER, " +
                         "$KEY_LAST_RETRY_TIME INTEGER, " +
 
+                        "$KEY_OWNER_ACCOUNT TEXT, " +
+
                         "$KEY_REPEATING_RULE TEXT, " +
                         "$KEY_REPEATING_DATE TEXT, " +
                         "$KEY_EXT_REPEATING_RULE TEXT, " +
@@ -87,7 +89,6 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
                         "$KEY_RESERVED_INT8 INTEGER, " +
                         "$KEY_RESERVED_INT9 INTEGER, " +
 
-                        "$KEY_RESERVED_STR1 TEXT, " +
                         "$KEY_RESERVED_STR2 TEXT, " +
                         "$KEY_RESERVED_STR3 TEXT, " +
 
@@ -227,6 +228,7 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_CALENDAR_ID, req.calendarId);
         values.put(KEY_NUM_RETRIES, req.numRetries)
         values.put(KEY_LAST_RETRY_TIME, req.lastRetryTime)
+        values.put(KEY_OWNER_ACCOUNT, req.calendarOwnerAccount)
 
         values.put(KEY_REPEATING_RULE, req.details.repeatingRule);
         values.put(KEY_REPEATING_DATE, req.details.repeatingRDate)
@@ -267,7 +269,6 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
         values.put(KEY_RESERVED_INT8, 0L)
         values.put(KEY_RESERVED_INT9, 0L)
 
-        values.put(KEY_RESERVED_STR1, "")
         values.put(KEY_RESERVED_STR2, "")
         values.put(KEY_RESERVED_STR3, "")
 
@@ -316,6 +317,7 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
                 id = cursor.getLong(PROJECTION_KEY_ID),
                 type = EventChangeRequestType.fromInt(cursor.getInt(PROJECTION_KEY_TYPE)),
                 calendarId = cursor.getLong(PROJECTION_KEY_CALENDAR_ID),
+                calendarOwnerAccount = cursor.getString(PROJECTION_KEY_OWNER_ACCOUNT),
                 status = EventChangeStatus.fromInt(cursor.getInt(PROJECTION_KEY_STATUS)),
                 lastStatusUpdate = cursor.getLong(PROJECTION_KEY_STATUS_TIMESTAMP),
                 eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
@@ -351,6 +353,8 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
         private const val KEY_CALENDAR_ID = "calendarId"
         private const val KEY_EVENTID = "eventId"
 
+        private const val KEY_OWNER_ACCOUNT = "s1"
+
         private const val KEY_REPEATING_RULE = "rRule"
         private const val KEY_REPEATING_DATE = "rDate"
         private const val KEY_EXT_REPEATING_RULE = "rExtRule"
@@ -379,7 +383,6 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
         private const val KEY_OLD_COLOR = "oldColor"
         private const val KEY_OLD_REMINDERS = "oldReminders"
 
-        private const val KEY_RESERVED_STR1 = "s1"
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
 
@@ -432,7 +435,8 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
                 KEY_OLD_LOCATION,
                 KEY_OLD_TIMEZONE,
                 KEY_OLD_COLOR,
-                KEY_OLD_REMINDERS
+                KEY_OLD_REMINDERS,
+                KEY_OWNER_ACCOUNT
         )
 
         const val PROJECTION_KEY_ID = 0
@@ -472,6 +476,8 @@ class CalendarChangeRequestsStorageImplV3 : CalendarChangeRequestsStorageImplInt
         const val PROJECTION_KEY_OLD_TIMEZONE = 31
         const val PROJECTION_KEY_OLD_COLOR = 32
         const val PROJECTION_KEY_OLD_REMINDERS = 33
+
+        const val PROJECTION_KEY_OWNER_ACCOUNT = 34
     }
 
 }

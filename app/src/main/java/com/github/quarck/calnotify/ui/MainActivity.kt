@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onStart() {
-        DevLog.debug(LOG_TAG, "onStart()")
+        DevLog.info(this, LOG_TAG, "onStart()")
         super.onStart()
 
         ApplicationController.onMainActivityStarted(this);
@@ -216,12 +216,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onStop() {
-        DevLog.debug(LOG_TAG, "onStop()")
+        DevLog.info(this, LOG_TAG, "onStop()")
         super.onStop()
     }
 
     public override fun onResume() {
-        DevLog.debug(LOG_TAG, "onResume")
+        DevLog.info(this, LOG_TAG, "onResume")
         super.onResume()
 
         checkPermissions()
@@ -323,7 +323,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     public override fun onPause() {
-        DevLog.debug(LOG_TAG, "onPause")
+        DevLog.info(this, LOG_TAG, "onPause")
 
         refreshReminderLastFired()
 
@@ -542,7 +542,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
 
     override fun onItemClick(v: View, position: Int, eventId: Long) {
-        DevLog.debug(LOG_TAG, "onItemClick, pos=$position, eventId=$eventId")
+        DevLog.info(this, LOG_TAG, "onItemClick, pos=$position, eventId=$eventId")
 
         val event = adapter.getEventAtPosition(position, eventId)
 
@@ -566,12 +566,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     // user clicks on 'dismiss' button, item still in the list
     override fun onItemDismiss(v: View, position: Int, eventId: Long) {
-        DevLog.debug(LOG_TAG, "onItemDismiss, pos=$position, eventId=$eventId");
+        DevLog.info(this, LOG_TAG, "onItemDismiss, pos=$position, eventId=$eventId");
 
         val event = adapter.getEventAtPosition(position, eventId)
 
         if (event != null) {
-            DevLog.debug(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+            DevLog.info(this, LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
             ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event);
 
             undoManager.addUndoState(
@@ -594,23 +594,21 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     // Item was already removed from UI, we just have to dismiss it now
     override fun onItemRemoved(event: EventAlertRecord) {
 
-        DevLog.debug(LOG_TAG, "onItemRemoved, eventId=${event.eventId}")
-
-        DevLog.debug(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
+        DevLog.info(this, LOG_TAG, "onItemRemoved: Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
         ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
     }
 
     override fun onItemRestored(event: EventAlertRecord) {
-        DevLog.debug(LOG_TAG, "onItemRestored, eventId=${event.eventId}")
+        DevLog.info(this, LOG_TAG, "onItemRestored, eventId=${event.eventId}")
         ApplicationController.restoreEvent(this, event)
 
         onNumEventsUpdated()
     }
 
     override fun onItemSnooze(v: View, position: Int, eventId: Long) {
-        DevLog.debug(LOG_TAG, "onItemSnooze, pos=$position, eventId=$eventId");
+        DevLog.info(this, LOG_TAG, "onItemSnooze, pos=$position, eventId=$eventId");
 
         val event = adapter.getEventAtPosition(position, eventId)
 

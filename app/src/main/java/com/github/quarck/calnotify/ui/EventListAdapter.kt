@@ -38,6 +38,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.getSpecialDetail
 import com.github.quarck.calnotify.calendar.isSpecial
+import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
@@ -201,6 +202,7 @@ class EventListAdapter(
                                 makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
                     }
 
+                    @Suppress("UseExpressionBody")
                     override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
                         return false
                     }
@@ -218,6 +220,9 @@ class EventListAdapter(
                                 else
                                     removeEvent(event)
                                 callback.onItemRemoved(event)
+                            }
+                            else {
+                                DevLog.error(context, LOG_TAG, "Failed to get event at post $swipedPosition")
                             }
                         }
                     }
@@ -410,11 +415,27 @@ class EventListAdapter(
 
     fun getEventAtPosition(position: Int, expectedEventId: Long): EventAlertRecord?
             = synchronized(this) {
-        if (position >= 0 && position < events.size && events[position].eventId == expectedEventId)
-            events[position];
-        else
-            null
-    }
+
+                if (position < 0) {
+                    DevLog.error(context, LOG_TAG, "getEventAtPosition: negative position $position")
+                    return null
+                }
+
+                if (position >= events.size) {
+                    DevLog.error(context, LOG_TAG, "getEventAtPosition: position $position exceeds events size ${events.size}")
+                    return null
+                }
+
+                if (events[position].eventId != expectedEventId) {
+                    DevLog.error(context, LOG_TAG, "Event at position $position is not matching expected event id, " +
+                            "expected: $expectedEventId, found: ${events[position].eventId} " +
+                            "(instance start ${events[position].instanceStartTime}, alertTime ${events[position].alertTime}, " +
+                            "calendar id ${events[position].calendarId})")
+                    return null
+                }
+
+                return events[position];
+            }
 
     private fun getEventAtPosition(position: Int): EventAlertRecord?
             = synchronized(this) {
@@ -450,8 +471,25 @@ class EventListAdapter(
                     Runnable() {
                         synchronized(this) {
                             val idx = events.indexOf(event)
-                            events = events.filter { ev -> ev != event }.toTypedArray()
-                            notifyItemRemoved(idx)
+                            if (idx != -1) {
+                                events = events.filter { ev -> ev != event }.toTypedArray()
+                                notifyItemRemoved(idx)
+                            }
+                            else {
+                                DevLog.error(context, LOG_TAG, "removeWithUndo pending action: cannot find event with id ${event.eventId}, instance start ${event.instanceStartTime}")
+                                DevLog.error(context, LOG_TAG, "Known events: ")
+                                for (ev in events) {
+                                    DevLog.error(context, LOG_TAG, "${ev.eventId}, ${ev.instanceStartTime}, eq: ${ev == event}")
+                                }
+
+                                val foundByManual =
+                                        events.withIndex().find {
+                                            (i, ev) ->
+                                            ev.eventId == event.eventId && ev.instanceStartTime == event.instanceStartTime
+                                        }
+
+                                DevLog.error(context, LOG_TAG, "Found by manual: ${foundByManual != null}")
+                            }
                         }
                     });
 
@@ -475,4 +513,8 @@ class EventListAdapter(
         get() {
             return ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
         }
+
+    companion object {
+        private const val LOG_TAG = "EventListAdapter"
+    }
 }

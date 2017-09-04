@@ -44,6 +44,7 @@
             android:key="sub_minute_reminder_intervals"
             android:title="@string/sub_minute_reminders_title"
             android:summary="@string/sub_minute_reminders_summary"
+            android:defaultValue="false"
             />
 
         <CheckBoxPreference

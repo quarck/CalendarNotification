@@ -29,10 +29,6 @@ import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
-// FIXME: event creation - "Goin? Yes / No" - fix dat!
-
-// FIXME: when editing or adding and start is in the past - make sure to fire immediately
-
 // FIXME: when notification opens snooze - make sure to allow even title scrolling, and mb add another button to view the event
 
 // FIXME: add 'dismiss and delete' experimental feature for non-repeating events

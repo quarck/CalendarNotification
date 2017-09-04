@@ -478,7 +478,7 @@
     <string name="enable_add_event_summary">Would allow creating events without leaving the app. Currently only non-repeating events are supported and only limited amount of fields are editable. This application would monitor newly created event to make sure it would not disappear on sync</string>
 
     <string name="enable_edit_event">Enable \'Edit Event\' button</string>
-    <string name="enable_edit_event_summary">Would allow editing basic event details directly from the snooze view</string>
+    <string name="enable_edit_event_summary">Would allow editing basic event details directly from the snooze view, only works for non-repeating events at the moment and not all the details are editable</string>
 
 
     <string name="default_duration">Default duration</string>

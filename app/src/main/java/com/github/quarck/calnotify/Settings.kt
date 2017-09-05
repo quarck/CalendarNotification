@@ -45,7 +45,8 @@ data class NotificationSettingsSnapshot
         val notificationOpensSnooze: Boolean,
         val quietHoursMuteLED: Boolean,
         val useAlarmStream: Boolean,
-        val useBundledNotifications: Boolean
+        val useBundledNotifications: Boolean,
+        val showDescription: Boolean
 )
 
 class Settings(context: Context) : PersistentStorageBase(context) {
@@ -358,6 +359,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val useBundledNotifications: Boolean
         get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
 
+    val showEventDescInTheNotification: Boolean
+        get() = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
@@ -376,7 +380,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 notificationOpensSnooze = notificationOpensSnooze,
                 quietHoursMuteLED = quietHoursMuteLED,
                 useAlarmStream = notificationUseAlarmStream,
-                useBundledNotifications = useBundledNotifications
+                useBundledNotifications = useBundledNotifications,
+                showDescription = showEventDescInTheNotification
         )
 
     companion object {
@@ -501,6 +506,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze"
 
         private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description"
+
+        private const val SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY = "show_event_desc_in_the_notification"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

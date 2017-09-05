@@ -135,6 +135,12 @@
             android:summary="@string/collapse_everything_summary"
             android:defaultValue="false"/>
 
+        <CheckBoxPreference
+            android:key="show_event_desc_in_the_notification"
+            android:title="@string/show_event_desc_in_the_notification_title"
+            android:summary="@string/show_event_desc_in_the_notification_summary"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

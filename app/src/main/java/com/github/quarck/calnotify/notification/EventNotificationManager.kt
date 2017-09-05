@@ -1034,16 +1034,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val currentTime = System.currentTimeMillis()
 
-
-        val notificationText = formatter.formatNotificationSecondaryText(event)
-
-        var title = event.title
-
-        if (settings.enableMonitorDebug
-                && event.origin != EventOrigin.ProviderBroadcast
-                && event.timeFirstSeen != 0L) {
-            title = "#${event.origin},${(event.timeFirstSeen - event.alertTime) / 60000L}m# ${event.title}"
+        val notificationText = StringBuilder()
+        notificationText.append(formatter.formatNotificationSecondaryText(event))
+        if (notificationSettings.showDescription && event.desc.isNotEmpty()) {
+            notificationText.append("\r\n")
+            notificationText.append(event.desc)
         }
+
+        val title = event.title
+        val notificationTextString = notificationText.toString()
 
         val sortKey = lastStatusChangeToSortingKey(event.lastStatusChangeTime, event.eventId)
 
@@ -1051,7 +1050,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
-                .setContentText(notificationText)
+                .setContentText(notificationTextString)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
                 .setPriority(
                         if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
@@ -1072,7 +1071,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         !notificationSettings.allowNotificationSwipe
                 )
                 .setStyle(
-                        NotificationCompat.BigTextStyle().bigText(notificationText)
+                        NotificationCompat.BigTextStyle().bigText(notificationTextString)
                 )
                 .setWhen(
                         event.lastStatusChangeTime
@@ -1247,7 +1246,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if ((!isReminder && notificationSettings.forwardEventToPebble) ||
                 (isReminder && notificationSettings.forwardReminderToPebble)) {
-            PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationText, notificationSettings.pebbleOldFirmware)
+            PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationTextString, notificationSettings.pebbleOldFirmware)
         }
     }
 

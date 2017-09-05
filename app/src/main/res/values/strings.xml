@@ -512,6 +512,8 @@
     <string name="open_in_calendar">Open in Calendar</string>
     <string name="snooze_hide_event_description_title">Hide description</string>
     <string name="snooze_hide_event_description_summary">Do not show event description on the snooze activity</string>
+    <string name="show_event_desc_in_the_notification_title">Show event description</string>
+    <string name="show_event_desc_in_the_notification_summary">Show event description in the notification</string>
 
 </resources>
 

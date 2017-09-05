@@ -291,6 +291,13 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     val y = title.getLayout().getLineTop(0)
                     title.scrollTo(0, y)
                 }
+                title.setTextIsSelectable(true)
+            }
+
+            if (!settings.snoozeHideEventDesc && ev.desc.isNotEmpty()) {
+                // Show the event desc
+                find<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
+                find<TextView>(R.id.snooze_view_event_description).text = ev.desc
             }
 
             var color: Int = ev.color.adjustCalendarColor(settings.darkerCalendarColors)

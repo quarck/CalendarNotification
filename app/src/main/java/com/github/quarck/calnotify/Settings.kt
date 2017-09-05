@@ -88,6 +88,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val snoozeTapOpensCalendar: Boolean
         get() = getBoolean(OPEN_CALENDAR_FROM_SNOOZE_KEY, true)
 
+    val snoozeHideEventDesc: Boolean
+        get() = getBoolean(SNOOZE_HIDE_EVENT_DESC_KEY, false)
+
     val vibraOn: Boolean
         get() = getBoolean(VIBRATION_ENABLED_KEY, true)
 
@@ -496,6 +499,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 	    private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"
 
         private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze"
+
+        private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

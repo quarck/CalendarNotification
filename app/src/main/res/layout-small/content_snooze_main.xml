@@ -125,6 +125,44 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
+        android:paddingTop="@dimen/snooze_view_action_padding_top"
+        android:id="@+id/layout_event_description"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:longClickable="false"
+            android:src="@drawable/ic_event_note_black_24dp"
+            android:paddingStart="@dimen/snooze_view_img_padding_start"
+            android:paddingEnd="@dimen/snooze_view_img_padding_end"
+            android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+            android:paddingBottom="10dp"
+            android:importantForAccessibility="no"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/snooze_view_event_description"
+            android:text="__DESC_PLACEHOLDER__"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/primary_text"
+            android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+            android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+            android:paddingStart="@dimen/snooze_view_padding_start"
+            android:paddingEnd="@dimen/snooze_view_padding_end"
+            android:textIsSelectable="true"
+            tools:ignore="HardcodedText"/>
+
+    </RelativeLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

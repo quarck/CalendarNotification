@@ -510,6 +510,8 @@
     <string name="open_calendar_from_snooze_title">Tap on title opens calendar</string>
     <string name="open_calendar_from_snooze_summary">Tap on the event title/time on Snooze activity would open details in the calendar application</string>
     <string name="open_in_calendar">Open in Calendar</string>
+    <string name="snooze_hide_event_description_title">Hide description</string>
+    <string name="snooze_hide_event_description_summary">Do not show event description on the snooze activity</string>
 
 </resources>
 

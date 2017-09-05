@@ -8,8 +8,8 @@
         android:id="@+id/action_dismiss_event"
         android:title="@string/dismiss" />
 
-    <!-- item
-        android:id="@+id/action_edit_event"
-        android:title="@string/edit_event" / -->
+    <item
+        android:id="@+id/action_open_in_calendar"
+        android:title="@string/open_in_calendar" />
 
 </menu>

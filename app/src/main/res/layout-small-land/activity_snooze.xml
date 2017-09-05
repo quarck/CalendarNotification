@@ -55,7 +55,7 @@
                 android:clickable="true"
                 android:onClick="OnButtonEventDetailsClick"
                 android:maxHeight="@dimen/snooze_view_event_title_max_height"
-                android:gravity="left|bottom"
+                android:gravity="start|bottom"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:scrollbars = "vertical"

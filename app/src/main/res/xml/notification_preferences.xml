@@ -126,6 +126,13 @@
             android:defaultValue="false" />
 
         <CheckBoxPreference
+            android:key="open_calendar_from_snooze"
+            android:title="@string/open_calendar_from_snooze_title"
+            android:summary="@string/open_calendar_from_snooze_summary"
+            android:defaultValue="true"
+            />
+
+        <CheckBoxPreference
             android:key="notification_auto_dismiss"
             android:title="@string/notification_auto_dismiss_on_reschedule"
             android:summary="@string/notification_auto_dismiss_on_reschedule_summary"

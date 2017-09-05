@@ -58,14 +58,15 @@
                 android:paddingTop="@dimen/snooze_view_header_padding_top"
                 android:paddingStart="@dimen/snooze_view_padding_start"
                 android:paddingEnd="@dimen/snooze_view_padding_end"
-                android:clickable="true"
-                android:onClick="OnButtonEventDetailsClick"
                 android:maxHeight="@dimen/snooze_view_event_title_max_height"
-                android:gravity="left|bottom"
-                android:ellipsize="end"
+                android:gravity="start|bottom"
                 android:maxLines="3"
                 android:scrollbars = "vertical"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText"
+                android:clickable="true"
+                android:onClick="OnButtonEventDetailsClick"
+                android:ellipsize="end"
+                />
 
             <ImageView
                 android:layout_width="wrap_content"

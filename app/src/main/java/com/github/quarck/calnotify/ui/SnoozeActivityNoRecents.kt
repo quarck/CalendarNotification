@@ -47,6 +47,9 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.text.method.ScrollingMovementMethod
+
+
 
 
 enum class SnoozeActivityStateCode(val code: Int) {
@@ -252,13 +255,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 locationView.setOnClickListener { MapsIntents.openLocation(this, ev.location) }
             }
 
-            val title =
-                    if (ev.title == "")
-                        this.resources.getString(R.string.empty_title)
-                    else
-                        ev.title;
-
-            find<TextView>(R.id.snooze_view_title).text = title;
+            val title = find<TextView>(R.id.snooze_view_title)
+            title.text = if (ev.title.isNotEmpty()) ev.title else this.resources.getString(R.string.empty_title);
 
             val (line1, line2) = formatter.formatDateTimeTwoLines(ev);
 
@@ -272,10 +270,20 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             else
                 dateTimeSecondLine.text = line2;
 
-            val onClick = View.OnClickListener { CalendarIntents.viewCalendarEvent(this, ev) }
+            if (settings.snoozeTapOpensCalendar) {
+                val onClick = View.OnClickListener { CalendarIntents.viewCalendarEvent(this, ev) }
 
-            dateTimeFirstLine.setOnClickListener(onClick)
-            dateTimeSecondLine.setOnClickListener(onClick)
+                dateTimeFirstLine.setOnClickListener(onClick)
+                dateTimeSecondLine.setOnClickListener(onClick)
+            }
+            else {
+                dateTimeFirstLine.isClickable = false
+                dateTimeSecondLine.isClickable = false
+                title.isClickable = false
+
+                title.setMovementMethod(ScrollingMovementMethod())
+                title.scrollY = 0
+            }
 
             var color: Int = ev.color.adjustCalendarColor(settings.darkerCalendarColors)
             if (color == 0)
@@ -410,12 +418,12 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     finish()
                     true
                 }
-/*                R.id.action_edit_event -> {
+                R.id.action_open_in_calendar -> {
                     if (ev != null)
-                        CalendarIntents.editCalendarEvent(this, ev)
+                        CalendarIntents.viewCalendarEvent(this, ev)
                     finish()
                     true
-                } */
+                }
                 else -> false
             }
         }

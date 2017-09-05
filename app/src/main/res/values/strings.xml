@@ -507,6 +507,9 @@
     <string name="sub_minute_reminders_summary">Enable sub-minute reminder intervals. Make sure to enable \'use setAlarmClock for reminders\' (above) and disable all android power saving / optimisation for this app</string>
     <string name="edit_auto_dismiss_title">Auto dismiss on edit</string>
     <string name="edit_auto_dismiss_summary">Auto dismiss event notification when you edit it using this app and new event time is in the future</string>
+    <string name="open_calendar_from_snooze_title">Tap on title opens calendar</string>
+    <string name="open_calendar_from_snooze_summary">Tap on the event title/time on Snooze activity would open details in the calendar application</string>
+    <string name="open_in_calendar">Open in Calendar</string>
 
 </resources>
 

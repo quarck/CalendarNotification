@@ -48,6 +48,9 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.text.method.ScrollingMovementMethod
+import android.text.method.Touch.scrollTo
+
+
 
 
 
@@ -282,7 +285,10 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                 title.isClickable = false
 
                 title.setMovementMethod(ScrollingMovementMethod())
-                title.scrollY = 0
+                title.post {
+                    val y = title.getLayout().getLineTop(0)
+                    title.scrollTo(0, y)
+                }
             }
 
             var color: Int = ev.color.adjustCalendarColor(settings.darkerCalendarColors)

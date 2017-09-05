@@ -63,8 +63,6 @@
                 android:maxLines="3"
                 android:scrollbars = "vertical"
                 tools:ignore="HardcodedText"
-                android:clickable="true"
-                android:onClick="OnButtonEventDetailsClick"
                 android:ellipsize="end"
                 />
 

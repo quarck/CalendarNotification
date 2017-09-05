@@ -278,6 +278,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                 dateTimeFirstLine.setOnClickListener(onClick)
                 dateTimeSecondLine.setOnClickListener(onClick)
+                title.isClickable = true
+                title.setOnClickListener(onClick)
             }
             else {
                 dateTimeFirstLine.isClickable = false

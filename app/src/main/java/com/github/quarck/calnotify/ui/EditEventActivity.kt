@@ -29,8 +29,6 @@ import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 
-// FIXME: when notification opens snooze - make sure to allow even title scrolling, and mb add another button to view the event
-
 // FIXME: add 'dismiss and delete' experimental feature for non-repeating events
 
 // FIXME: Show event description below the date (when notification opens snooze at least), or give an option

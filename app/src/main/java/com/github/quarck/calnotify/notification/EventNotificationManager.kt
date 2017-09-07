@@ -33,7 +33,6 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
@@ -47,8 +46,8 @@ import com.github.quarck.calnotify.utils.*
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager : EventNotificationManagerInterface {
 
-    var lastSoundTimestamp = 0L;
-    var lastVibrationTimestamp = 0L;
+    private var lastSoundTimestamp = 0L
+    private var lastVibrationTimestamp = 0L
 
     override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
 
@@ -101,7 +100,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     @Suppress("DEPRECATION")
-    fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
+    private fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
 
         if (settings.notificationWakeScreen) {
             //
@@ -117,14 +116,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     }
 
-    fun arrangeEvents(
+    private fun arrangeEvents(
             events: List<EventAlertRecord>,
             settings: Settings
     ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
 
         if (events.size >= Consts.MAX_NUM_EVENTS_BEFORE_COLLAPSING_EVERYTHING) {
             // short-cut to avoid heavy memory load on dealing with lots of requests...
-            return Pair(listOf<EventAlertRecord>(), events)
+            return Pair(listOf(), events)
         }
 
         val activeEvents = events.sortedBy { it.lastStatusChangeTime }
@@ -137,17 +136,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (collapsedEvents.size == 1) {
             recentEvents += collapsedEvents
-            collapsedEvents = listOf<EventAlertRecord>()
+            collapsedEvents = listOf()
         }
         else if (collapseEverything && !collapsedEvents.isEmpty()) {
             collapsedEvents = recentEvents + collapsedEvents
-            recentEvents = listOf<EventAlertRecord>()
+            recentEvents = listOf()
         }
 
         return Pair(recentEvents, collapsedEvents)
     }
 
-    fun arrangeEvents(
+    private fun arrangeEvents(
             db: EventsStorage,
             currentTime: Long,
             settings: Settings
@@ -281,7 +280,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
-    fun fireEventReminderNoSeparateNotification(
+    private fun fireEventReminderNoSeparateNotification(
             context: Context,
             db: EventsStorage,
             formatter: EventFormatterInterface,
@@ -300,13 +299,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             postNotification(
                     context,
-                    settings,
                     formatter,
                     firstEvent,
                     notificationSettings,
-                    true, // force, so it won't randomly pop-up this notification
-                    false, // was collapsed
-                    settings.snoozePresets,
+                    true,
+                    false, // force, so it won't randomly pop-up this notification
+                    settings.snoozePresets, // was collapsed
                     quietPeriodActive,
                     isReminder = true
             )
@@ -389,6 +387,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     var shouldBeQuiet = false
 
+                    @Suppress("CascadeIf")
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
@@ -406,6 +405,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                         // we are in a silent period, normally we should always be quiet, but there
                         // are a few exclusions
+                        @Suppress("LiftReturnOrAssignment")
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
@@ -525,7 +525,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (shouldPlayAndVibrate) {
             context.persistentState.notificationLastFireTime = System.currentTimeMillis()
-            reminderState.numRemindersFired = 0;
+            reminderState.numRemindersFired = 0
         }
 
         if (isQuietPeriodActive && events.isNotEmpty() && !shouldPlayAndVibrate) {
@@ -643,6 +643,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     var shouldBeQuiet = false
 
+                    @Suppress("CascadeIf")
                     if (force) {
                         // If forced to re-post all notifications - we only have to actually display notifications
                         // so not playing sound / vibration here
@@ -661,6 +662,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     else if (isQuietPeriodActive) {
                         // we are in a silent period, normally we should always be quiet, but there
                         // are a few exclusions
+                        @Suppress("LiftReturnOrAssignment")
                         if (primaryEventId != null && event.eventId == primaryEventId) {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
@@ -678,7 +680,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     postNotification(
                             context,
-                            settings,
                             formatter,
                             event,
                             if (shouldBeQuiet) notificationsSettingsQuiet else notificationsSettings,
@@ -708,7 +709,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 postNotification(
                         context,
-                        settings,
                         formatter,
                         event,
                         if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings,
@@ -746,7 +746,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (playedAnySound) {
             context.persistentState.notificationLastFireTime = System.currentTimeMillis()
-            reminderState.numRemindersFired = 0;
+            reminderState.numRemindersFired = 0
         }
 
         if (isQuietPeriodActive && events.isNotEmpty() && !playedAnySound) {
@@ -762,13 +762,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun lastStatusChangeToSortingKey(lastStatusChangeTime: Long, eventId: Long): String {
 
-        val sb = StringBuffer(20);
+        val sb = StringBuffer(20)
 
         var temp = eventId % (24 * 3)
 
         for (i in 0..3) {
 
-            val chr = 24 - temp % 24;
+            val chr = 24 - temp % 24
             temp /= 24
 
             sb.append(('A'.toInt() + chr).toChar())
@@ -778,7 +778,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         while (temp > 0) {
 
-            val chr = 24 - temp % 24;
+            val chr = 24 - temp % 24
             temp /= 24
 
             sb.append(('A'.toInt() + chr).toChar())
@@ -998,7 +998,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun postNotification(
             ctx: Context,
-            settings: Settings,
             formatter: EventFormatterInterface,
             event: EventAlertRecord,
             notificationSettings: NotificationSettingsSnapshot,
@@ -1153,15 +1152,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         for ((idx, snoozePreset) in snoozePresets.withIndex()) {
             if (idx == 0)
-                continue;
+                continue
 
             if (idx >= EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS)
-                break;
+                break
 
             if (snoozePreset <= 0L) {
                 val targetTime = event.displayedStartTime - Math.abs(snoozePreset)
                 if (targetTime - System.currentTimeMillis() < 5 * 60 * 1000L) // at least minutes left until target
-                    continue;
+                    continue
             }
 
             val snoozeIntent =
@@ -1317,10 +1316,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun removeVisibleNotifications(ctx: Context, events: Collection<EventAlertRecord>) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
-        for (event in events) {
-            if (event.displayStatus != EventDisplayStatus.Hidden)
-                notificationManager.cancel(event.notificationId)
-        }
+        events.filter { it.displayStatus != EventDisplayStatus.Hidden }
+                .forEach { notificationManager.cancel(it.notificationId) }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1393,7 +1390,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
     }
 
-    fun postDebugNotification(context: Context, notificationId: Int, title: String, text: String) {
+    private fun postDebugNotification(context: Context, notificationId: Int, title: String, text: String) {
 
         val notificationManager = NotificationManagerCompat.from(context)
 
@@ -1462,7 +1459,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         private const val LOG_TAG = "EventNotificationManager"
 
         private const val SCREEN_WAKE_LOCK_NAME = "ScreenWakeNotification"
-        private const val DIRECT_REMINDER_WAKE_LOCK_NAME = "DirectReminder"
+        //private const val DIRECT_REMINDER_WAKE_LOCK_NAME = "DirectReminder"
 
         private const val NOTIFICATION_GROUP = "GROUP_1"
 

@@ -1047,6 +1047,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 
+        val primaryPendingIntent =
+                if (notificationSettings.notificationOpensSnooze)
+                    snoozeActivityIntent
+                else
+                    calendarPendingIntent
+
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
@@ -1058,10 +1064,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             NotificationCompat.PRIORITY_DEFAULT
                 )
                 .setContentIntent(
-                        if (notificationSettings.notificationOpensSnooze)
-                            snoozeActivityIntent
-                        else
-                            calendarPendingIntent
+                        primaryPendingIntent
                 )
                 .setAutoCancel(
                         false // notificationSettings.allowNotificationSwipe // let user swipe to dismiss even if dismiss button is disabled - otherwise we would not receive any notification on dismiss when user clicks event
@@ -1144,6 +1147,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
         else {
             // swipe does dismiss
             builder.setDeleteIntent(dismissPendingIntent)
+        }
+
+        if (notificationSettings.appendEmptyAction) {
+            builder.addAction(
+                    NotificationCompat.Action.Builder(
+                            R.drawable.ic_empty,
+                            "",
+                            primaryPendingIntent
+                    ).build())
         }
 
         val extender =

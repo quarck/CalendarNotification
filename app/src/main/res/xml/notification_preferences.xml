@@ -143,4 +143,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/notifications_pure_hacks"
+        android:key="_notification_hacks"
+        >
+        <CheckBoxPreference
+            android:key="add_empty_action_to_the_end"
+            android:title="@string/add_empty_action_to_the_end_title"
+            android:summary="@string/add_empty_action_to_the_end_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

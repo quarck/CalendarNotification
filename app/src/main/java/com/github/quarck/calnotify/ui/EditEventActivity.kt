@@ -686,7 +686,7 @@ class EditEventActivity : AppCompatActivity() {
                 if (nextReminder != 0L) {
                     Toast.makeText(
                             this,
-                            resources.getString(R.string.event_was_updated_next_reminder).format(dateToStr(this, nextReminder)),
+                            resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
                             Toast.LENGTH_LONG
                     ).show()
                 }
@@ -712,7 +712,7 @@ class EditEventActivity : AppCompatActivity() {
                 if (nextReminder != 0L) {
                     Toast.makeText(
                             this,
-                            resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
+                            resources.getString(R.string.event_was_updated_next_reminder).format(dateToStr(this, nextReminder)),
                             Toast.LENGTH_LONG
                     ).show()
                 }

@@ -13,8 +13,6 @@
     <string name="on">Aktiviert</string>
     <string name="off">Deaktiviert</string>
 
-    <string name="empty" translatable="false" />
-
     <string name="dismiss">Schließen</string>
     <string name="dismiss_event">Termin schließen</string> <!-- to distinguish from dismissing the notification -->
     <string name="snooze">Schlummern</string>
@@ -64,7 +62,6 @@
     <string name="same_time_tomorrow">Auf morgen verschieben</string>
     <string name="next_week_same_day">Um eine Woche verschieben</string>
     <string name="custom_pick_a_date">Benutzerdefiniert (wählen Sie ein Datum)</string>
-    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
     <string name="snoozed_until_string">Nächste Erinnerung: </string>
     <string name="card_view_btn_change">BEARBEITEN</string>
@@ -73,9 +70,7 @@
     <string name="new_events_detected">Neuladen, um neue Termine zu sehen</string>
     <string name="button_reload">NEU LADEN</string>
     <string name="settings_name">Einstellungen</string>
-    <string name="credits_icon_author" translatable="false">Cornmanthe 3rd</string>
     <string name="app_icon_credit">App-Icon:</string>
-    <string name="kotlin_language" translatable="false">Kotlin Language</string>
     <string name="app_created_with">App erstellt mit</string>
     <string name="notification_settings">Benachrichtigungen</string>
     <string name="snooze_presets">Schlummern</string>
@@ -230,7 +225,6 @@
 
     <string name="usage_hints">Benutzungshinweise:</string>
 
-    <string name="hyphen" translatable="false">—</string>
     <string name="compact_vs_card_view">Kompakte- oder Kartenansicht</string>
     <string name="no_calendars_found">Keinen Kalender gefunden</string>
     <string name="dismissed">Verworfen</string>
@@ -498,9 +492,6 @@
 
     <string name="failed_to_edit_event">Fehler beim aktualisieren: </string>
     <string name="event_failed_location">Ort: </string>
-
-    <string name="horizontal_line_with_new_line" translatable="false">\n\n---------\n\n</string>
-    <string name="arrow_to_right" translatable="false"> --&gt; </string>
 
     <string name="pref_category_experimental_features">Experimentelle Funktionen</string>
     <string name="sub_minute_reminders_title">Erinnerungen in bruchteilen einer Minute</string>

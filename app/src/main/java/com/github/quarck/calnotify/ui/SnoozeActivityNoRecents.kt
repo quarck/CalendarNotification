@@ -418,10 +418,14 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.snooze, popup.menu)
 
+        val menuItem = popup.menu.findItem(R.id.action_dismiss_and_delete)
+        val ev = event
+        if (menuItem != null && ev != null) {
+            menuItem.isVisible = !ev.isRepeating && settings.enableDismissAndDelete
+        }
+
         popup.setOnMenuItemClickListener {
             item ->
-
-            val ev = event
 
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
@@ -433,6 +437,23 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     finish()
                     true
                 }
+
+                R.id.action_dismiss_and_delete -> {
+                    var success = false
+                    if (ev != null) {
+                        success = ApplicationController.dismissAndDeleteEvent(this, EventDismissType.ManuallyDismissedFromActivity, ev)
+                        if (success) {
+                            undoManager.addUndoState(
+                                    UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, ev) }))
+                        }
+                    }
+
+                    if (success)
+                        finish()
+
+                    true
+                }
+
                 R.id.action_open_in_calendar -> {
                     if (ev != null)
                         CalendarIntents.viewCalendarEvent(this, ev)

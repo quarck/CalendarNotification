@@ -67,4 +67,6 @@ interface CalendarProviderInterface {
     fun updateEvent(context: Context, eventId: Long, calendarId: Long, oldDetails: CalendarEventDetails, newDetails: CalendarEventDetails): Boolean
 
     fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean
+
+    fun deleteEvent(context: Context, eventId: Long): Boolean
 }

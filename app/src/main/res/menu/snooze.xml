@@ -12,4 +12,9 @@
         android:id="@+id/action_open_in_calendar"
         android:title="@string/open_in_calendar" />
 
+    <item android:id="@+id/action_dismiss_and_delete"
+        android:title="@string/dismiss_and_delete_event"
+        android:visible="false"
+        />
+
 </menu>

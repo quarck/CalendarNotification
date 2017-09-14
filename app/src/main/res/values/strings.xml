@@ -517,6 +517,9 @@
     <string name="add_empty_action_to_the_end_title">Append empty action</string>
     <string name="add_empty_action_to_the_end_summary">Append the empty-string action to the end of action list, use this if effect of the last action of the list extends to the whone width of notification</string>
     <string name="notifications_pure_hacks">Pure Hacks</string>
+    <string name="enable_dismiss_and_delete_title">\'Dismiss and delete\' menu</string>
+    <string name="enable_dismiss_and_delete_summary">Delete when its done! Adds menu option on the snooze screen to dismiss the notification and delete actual event, all in one click. Would only work for non-repeating events</string>
+    <string name="dismiss_and_delete_event">Dismiss and delete event</string>
 
 </resources>
 

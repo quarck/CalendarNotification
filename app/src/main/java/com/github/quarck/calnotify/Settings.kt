@@ -366,6 +366,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val showEventDescInTheNotification: Boolean
         get() = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false)
 
+    val enableDismissAndDelete: Boolean
+        get() = getBoolean(SNOOZE_ENABLE_DISMISS_AND_DELETE_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
@@ -515,6 +518,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY = "show_event_desc_in_the_notification"
 
         private const val NOTIFICATION_ADD_EMPTY_ACTION_KEY = "add_empty_action_to_the_end"
+
+        private const val SNOOZE_ENABLE_DISMISS_AND_DELETE_KEY = "enable_dismiss_and_delete"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

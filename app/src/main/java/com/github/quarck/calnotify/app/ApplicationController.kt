@@ -869,6 +869,17 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
+    fun dismissAndDeleteEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord): Boolean {
+        var ret = false
+
+        if (calendarProvider.deleteEvent(context, event.eventId)) {
+            dismissEvent(context, dismissType, event)
+            ret = true
+        }
+
+        return ret
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun dismissEvent(
             context: Context,

@@ -43,6 +43,12 @@
                     android:summary="@string/notification_auto_dismiss_on_reschedule_summary"
                     android:defaultValue="false" />
 
+                <CheckBoxPreference
+                        android:key="enable_dismiss_and_delete"
+                        android:title="@string/enable_dismiss_and_delete_title"
+                        android:summary="@string/enable_dismiss_and_delete_summary"
+                        android:defaultValue="false"
+                        />
         </PreferenceCategory>
 
 </PreferenceScreen>

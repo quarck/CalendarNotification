@@ -1035,6 +1035,62 @@ object CalendarProvider : CalendarProviderInterface {
                 newDetails)
     }
 
+
+    override fun deleteEvent(context: Context, eventId: Long): Boolean {
+        var ret = false
+
+        DevLog.debug(LOG_TAG, "Request to delete event $eventId")
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "deleteEvent: no permissions")
+            return false
+        }
+
+        try {
+//             First - remove all the reminders
+
+            val remindersToRemove = mutableListOf<Long>()
+
+            val cursor = CalendarContract.Reminders.query(
+                    context.contentResolver,
+                    eventId,
+                    arrayOf(CalendarContract.Reminders._ID)
+            )
+
+            while (cursor.moveToNext()) {
+                val reminderId = cursor.getLong(0)
+                remindersToRemove.add(reminderId)
+            }
+            cursor.close()
+
+            for (reminderId in remindersToRemove) {
+                val reminderUri = ContentUris.withAppendedId(CalendarContract.Reminders.CONTENT_URI, reminderId)
+                context.contentResolver.delete(reminderUri, null, null)
+                DevLog.info(context, LOG_TAG, "Removed reminder id $reminderId (of event $eventId)")
+            }
+
+            // Now - remove actual event
+            val removedEvents = context.contentResolver.delete(
+                    ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId),
+                    null,
+                    null
+            )
+
+            DevLog.info(context, LOG_TAG, "Removed $removedEvents events by event id $eventId")
+
+            ret = removedEvents > 0
+
+            if (removedEvents > 1) {
+                throw Exception("Removed more than expected: Event: $eventId, removed: $removedEvents")
+            }
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while removing calendar event: ${ex.detailed}")
+        }
+
+        return ret
+    }
+
 //    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 //
 //        var ret = false;

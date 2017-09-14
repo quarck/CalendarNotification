@@ -397,5 +397,134 @@
     <string name="special_thanks_line1">mojej żony Darii</string>
     <string name="special_thanks_line2">za obdarowywanie mnie czasem, w którym mogę pracować nad tym projektem</string>
 
+    <string-array name="time_units_plurals_with_seconds">
+        <item>sekundy</item>
+        <item>minuty</item>
+        <item>godziny</item>
+        <item>dni</item>
+    </string-array>
+
+
+    <string name="save_button_title">ZAPISZ</string>
+    <string name="add_event">Dodaj wydarzenie</string>
+
+    <string name="discard_new_event">Odrzucić?</string>
+    <string name="event_title_hint">Tytuł</string>
+    <string name="back_button">Wstecz</string>
+    <string name="save_button">Zapisz</string>
+    <string name="add_location">Lokalizacja</string>
+    <string name="add_note">Opis</string>
+    <string name="add_notification">Dodaj przypomnienie</string>
+    <string name="all_day">Cały dzień</string>
+    <string name="end_time_before_start_time">Zakończenie wcześniejsze od rozpoczęcia!</string>
+    <string name="notification_as_email">Jako email</string>
+
+    <string name="add_event_fmt_before" formatted="false">%s przed</string>
+    <string name="add_event_as_email_suffix">jako email</string>
+    <string name="add_event_as_sms_suffix">jako SMS</string>
+    <string name="add_event_as_alarm_suffix">jako alarm</string>
+    <string name="add_event_n_days_before" formatted="false">%s dni przed o %s</string>
+    <string name="add_event_one_day_before" formatted="false">Dzień przed o %s</string>
+    <string name="add_event_zero_days_before" formatted="false">W dniu wydarzenia o %s</string>
+    <string name="remove_reminder">Usuń</string>
+    <string name="made_in_ireland">Program powstał w Irlandii</string>
+    <string name="days_before">dni przed, o </string>
+    <string name="remind">Przypomnij</string>
+
+    <string-array
+        name="default_reminder_intervals">
+        <item>1 minuta</item>
+        <item>15 minut</item>
+        <item>30 minut</item>
+        <item>1 godzina</item>
+        <item>2 godziny</item>
+        <item>4 godziny</item>
+        <item>1 dzień</item>
+        <item>1 tydzień</item>
+        <item>Niestandardowy</item>
+    </string-array>
+
+    <string-array
+        name="default_reminder_intervals_all_day">
+        <item>Wprowadź ręcznie</item>
+        <item>Dzień przed o 8:00</item>
+        <item>Dzień przed o 12:00</item>
+        <item>Dzień przed o 18:00</item>
+        <item>Dzień przed o 21:00</item>
+        <item>W dniu wydarzenia o 8:00</item>
+        <item>W dniu wydarzenia o 12:00</item>
+    </string-array>
+
+    <string-array
+        name="default_snooze_intervals">
+        <item>Wprowadź ręcznie</item>
+        <item>15 minut</item>
+        <item>30 minut</item>
+        <item>45 minut</item>
+        <item>1 godzina</item>
+        <item>2 godziny</item>
+        <item>3 godziny</item>
+        <item>4 godziny</item>
+        <item>6 godzin</item>
+        <item>8 godzin</item>
+        <item>12 godzin</item>
+        <item>18 godzin</item>
+        <item>1 dzień</item>
+        <item>1,5 dnia</item>
+        <item>2 dni</item>
+        <item>3 dni</item>
+        <item>4 dni</item>
+        <item>7 dni</item>
+    </string-array>
+
+    <string name="new_event_max_reminder_is_28_days">Nie można ustawić przypomnienia wcześniej niż na 28 dni przed wydarzeniem</string>
+
+    <string name="add_event_event_title_hint">Tytuł</string>
+    <string name="calendar_was_changed_pull_down_to_refresh">Kalendarz został zmieniony, przesuń w dół, aby odświeżyć</string>
+    <string name="new_event_failed_to_create_event">Utworzenie wydarzenia nie powiodło się!</string>
+    <string name="no_active_calendars">Nieaktywne / obsługiwane kalendarze</string>
+
+    <string name="enable_add_event">Włącz przycisk \'Dodaj wydarzenie\'</string>
+    <string name="enable_add_event_summary">Włącza przycisk umożliwiający dodawanie wydarzeń kalendarza z poziomu tej aplikacji. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne. Aplikacja będzie monitorowała nowo dodane wydarzenia, aby nie zniknęły w trakcie synchronizacji.</string>
+
+    <string name="enable_edit_event">Włącz przycisk \'Edytuj wydarzenie\'</string>
+    <string name="enable_edit_event_summary">Włącza przycisk umożliwiający edycję szczegółów wydarzenia bezpośrednio z widoku przypomnienia. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne.</string>
+
+
+    <string name="default_duration">Domyślny czas trwania wydarzenia</string>
+    <string name="default_duration_summary">Domyślny czas trwania nowo dodawanych wydarzeń w minutach.</string>
+
+    <string name="event_was_created">Dodano wydarzenie</string>
+    <string name="event_was_created_reminder_at" formatted="false">Dodano wydarzenie, następne przypomnienie: %s</string>
+
+    <string name="event_not_found">Nie znaleziono wydarzenia</string>
+    <string name="calendar_not_found">Nie znaleziono kalendarza</string>
+    <string name="failed_to_update_event_details">Aktualizacja szczegółów wydarzenia nie powiodła się</string>
+    <string name="failed_to_move_event">Nie powiodło się przeniesienie wydarzenia: </string>
+    <string name="failed_to_add_event">Nie powiodło się dodanie wydarzenia: </string>
+
+    <string name="event_was_updated">Wydarzenie zostało zaktualizowane</string>
+    <string name="event_was_updated_next_reminder" formatted="false">Wydarzenie zaktualizowane, następne przypomnienie: %s</string>
+
+    <string name="failed_to_edit_event">Nie powiodła się aktualizacja wydarzenia: </string>
+    <string name="event_failed_location">Lokalizacja: </string>
+
+
+    <string name="pref_category_experimental_features">Funkcje eksperymentalne</string>
+    <string name="sub_minute_reminders_title">Sekundowe przypomnienia</string>
+    <string name="sub_minute_reminders_summary">Włącza możliwość ustawienia czasu między przypomnieniami krótszego od minuty. Dla poprawnego działania należy włączyć opcję \'setAlarmClock dla powiadomień\' (powyżej) i wyłączyć wszystkie funkcje oszczędzania energii i optymalizacji Androida dla tej aplikacji.</string>
+    <string name="edit_auto_dismiss_title">Odrzuć automatycznie przy edycji</string>
+    <string name="edit_auto_dismiss_summary">Odrzuć powiadomienie automatycznie, gdy wydarzenie zostanie przesunięte do przyszłości.</string>
+    <string name="open_calendar_from_snooze_title">Kliknij na tytule wydarzenia w powiadomieniu, aby przejść do kalendarza.</string>
+    <string name="open_calendar_from_snooze_summary">Kliknij na tytule/czasie wydarzenia, aby otworzyć jego szczegóły w kalendarzu.</string>
+    <string name="open_in_calendar">Otwórz w kalendarzu</string>
+    <string name="snooze_hide_event_description_title">Ukryj opis wydarzenia</string>
+    <string name="snooze_hide_event_description_summary">Nie wyświetlaj opisu wydarzenia w powiadomieniu.</string>
+    <string name="show_event_desc_in_the_notification_title">Wyświetlanie opisu wydarzenia</string>
+    <string name="show_event_desc_in_the_notification_summary">Wyświetlaj opis wydarzenia w powiadomieniu.</string>
+    <string name="add_empty_action_to_the_end_title">Dodaj puste działanie</string>
+    <string name="add_empty_action_to_the_end_summary">Dodaje puste działanie na końcu listy, użyj jeśli efekt ostatniego działania listy rozciąga się na całą szerokość powiadomienia</string>
+    <string name="notifications_pure_hacks">Sztuczki</string>
+
 </resources>
 

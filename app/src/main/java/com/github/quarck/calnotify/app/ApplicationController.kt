@@ -953,4 +953,8 @@ object ApplicationController : EventMovedHandler {
     fun postNotificationsAutoDismissedDebugMessage(context: Context) {
         notificationManager.postNotificationsAutoDismissedDebugMessage(context)
     }
+
+    fun postNearlyMissedNotificationDebugMessage(context: Context) {
+        notificationManager.postNearlyMissedNotificationDebugMessage(context)
+    }
 }

@@ -1442,6 +1442,18 @@ class EventNotificationManager : EventNotificationManagerInterface {
         PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events auto-dismissed", false)
     }
 
+    override fun postNearlyMissedNotificationDebugMessage(context: Context) {
+
+        postDebugNotification(
+                context,
+                Consts.NOTIFICATION_ID_DEBUG3_NEARLY_MISS,
+                "DEBUG: Nearly missed event",
+                "DEBUG: Some events has fired later than expeted"
+        )
+
+        PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events nearly-missed", false)
+    }
+
     override fun postNotificationsAlarmDelayDebugMessage(context: Context, title: String, text: String) {
 
         postDebugNotification(

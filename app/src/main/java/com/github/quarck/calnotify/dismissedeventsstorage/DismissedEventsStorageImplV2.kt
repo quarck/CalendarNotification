@@ -110,7 +110,13 @@ class DismissedEventsStorageImplV2
             // values
         }
         catch (ex: SQLiteConstraintException) {
-//            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB!")
+            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
+
+            db.update(
+                    TABLE_NAME,
+                    values,
+                    " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
         }
     }
 

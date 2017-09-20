@@ -7,7 +7,7 @@
             android:summary="@string/enable_reminders_summary"
             android:defaultValue="false"/>
 
-        <com.github.quarck.calnotify.prefs.ReminderIntervalPreference
+        <com.github.quarck.calnotify.prefs.ReminderPatternPreference
             android:key="remind_interval_key_pattern"
             android:title="@string/remind_interval"
             android:defaultValue="10m"

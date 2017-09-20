@@ -34,7 +34,7 @@ import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
-class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
+class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     : DialogPreference(context, attrs)
     , AdapterView.OnItemSelectedListener
 {
@@ -61,7 +61,7 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        val enableSubMinute = Settings(this.context).enableSubMinuteReminders
+        allowSubMinuteIntervals = Settings(this.context).enableSubMinuteReminders
 
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
@@ -73,10 +73,10 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
                             android.R.layout.simple_list_item_1,
                             view.context.resources.getStringArray(R.array.time_units_plurals_with_seconds)
                     )
-            SecondsIndex += 1
-            MinutesIndex += 1
-            HoursIndex += 1
-            DaysIndex += 1
+            SecondsIndex = 0
+            MinutesIndex = 1
+            HoursIndex = 2
+            DaysIndex = 3
         }
         else {
             timeUnitsSpinners.adapter =
@@ -85,6 +85,11 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
                             android.R.layout.simple_list_item_1,
                             view.context.resources.getStringArray(R.array.time_units_plurals)
                     )
+
+            SecondsIndex = -1
+            MinutesIndex = 0
+            HoursIndex = 1
+            DaysIndex = 2
         }
 
         timeUnitsSpinners.onItemSelectedListener = this
@@ -95,9 +100,6 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
 
         numberPicker.minValue = 1
         numberPicker.maxValue = 100
-
-        allowSubMinuteIntervals = enableSubMinute
-
 
         intervalSeconds = timeValueSeconds
     }
@@ -125,7 +127,7 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
 
-            persistInt(timeValueSeconds)
+            persistString(PreferenceUtils.formatPattern(longArrayOf(timeValueSeconds*1000L)))
 
             val settings = Settings(context)
 
@@ -152,18 +154,31 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             // Restore existing state
-            timeValueSeconds = this.getPersistedInt(0)
+
+            val strValue = this.getPersistedString("10m")
+
+            val value = PreferenceUtils.parseSnoozePresets(strValue)
+
+            if (value != null && value.size == 1) {
+                timeValueSeconds = (value[0] / 1000).toInt()
+            }
         }
-        else if (defaultValue != null && defaultValue is Int) {
+        else if (defaultValue != null && defaultValue is String) {
             // Set default state from the XML attribute
-            timeValueSeconds = defaultValue
-            persistInt(timeValueSeconds)
+
+            val value = PreferenceUtils.parseSnoozePresets(defaultValue)
+
+            if (value != null && value.size == 1) {
+                timeValueSeconds = (value[0] / 1000).toInt()
+            }
+            persistString(defaultValue)
         }
     }
 
     @Suppress("UseExpressionBody")
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInteger(index, 600)
+        val ret = a.getString(index)
+        return ret ?: "10m"
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -178,7 +193,6 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
             }
             return
         }
-
 
         val maxValue =
                 when (timeUnitsSpinners.selectedItemPosition) {

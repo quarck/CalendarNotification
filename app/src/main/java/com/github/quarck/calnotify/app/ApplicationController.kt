@@ -358,6 +358,8 @@ object ApplicationController : EventMovedHandler {
         else
             DevLog.debug(LOG_TAG, "event added: ${event.eventId} (cal id: ${event.calendarId})");
 
+        ReminderState(context).onNewEventFired()
+
         return ret
     }
 
@@ -478,8 +480,9 @@ object ApplicationController : EventMovedHandler {
         if (pairs.size != validPairs.size)
             DevLog.warn(context, LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
 
-        return validPairs
+        ReminderState(context).onNewEventFired()
 
+        return validPairs
     }
 
 

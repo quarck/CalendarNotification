@@ -101,7 +101,8 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                 if (hasActiveNotifications) {
 
-                    reminderAlarmNextFire = System.currentTimeMillis() + settings.remindersIntervalMillis
+                    reminderAlarmNextFire = System.currentTimeMillis() +
+                            settings.reminderIntervalMillisForIndex(reminderState.currentReminderPatternIndex)
 
                     if (quietHoursOneTimeReminderEnabled) {
                         // a little bit of a hack to set it to fire "as soon as possible after quiet hours"

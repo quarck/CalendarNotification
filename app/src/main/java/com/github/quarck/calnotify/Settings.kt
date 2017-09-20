@@ -75,9 +75,13 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, false)
         set(value) = setBoolean(NOTIFICATION_SETTINGS_MIGRATED_KEY, value)
 
-    var reminderSettingsMigrated: Boolean
-        get() = getBoolean(REMINDER_SETTINGS_MIGRATED_KEY, false)
-        set(value) = setBoolean(REMINDER_SETTINGS_MIGRATED_KEY, value)
+//    var reminderSettingsMigrated: Boolean
+//        get() = getBoolean(REMINDER_SETTINGS_MIGRATED_KEY, false)
+//        set(value) = setBoolean(REMINDER_SETTINGS_MIGRATED_KEY, value)
+
+    var reminderSettingsMigratedToPattern: Boolean
+        get() = getBoolean(REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY, false)
+        set(value) = setBoolean(REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY, value)
 
     var allowNotificationSwipe: Boolean
         get() = getBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, false)
@@ -242,12 +246,54 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val separateReminderNotification: Boolean
         get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, false)
 
-    val remindersIntervalMillisOld: Long
+    val remindersIntervalMillisDepricated1: Long
         get() = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES) * 60L * 1000L;
 
-    var remindersIntervalMillis: Long
+    var remindersIntervalMillisDepricated2: Long
         get() = getInt(REMIND_INTERVAL_SECONDS_KEY, DEFAULT_REMINDER_INTERVAL_SECONDS) * 1000L
         set(value) = setInt(REMIND_INTERVAL_SECONDS_KEY, (value / 1000L).toInt())
+
+    var remindersIntervalMillisPattern: LongArray
+        get() {
+            val raw = getString(REMINDER_INTERVAL_PATTERN_KEY, "")
+
+            val ret: LongArray?
+
+            if (!raw.isEmpty()) {
+                ret = PreferenceUtils.parseSnoozePresets(raw)
+            } else {
+                val intervalSeconds = getInt(REMIND_INTERVAL_SECONDS_KEY, 0)
+                if (intervalSeconds != 0) {
+                    ret = longArrayOf(intervalSeconds * 1000L)
+                }
+                else {
+                    val intervalMinutes = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES)
+                    ret = longArrayOf(intervalMinutes * 60L * 1000L)
+                }
+            }
+
+            return ret ?: longArrayOf(DEFAULT_REMINDER_INTERVAL_SECONDS * 1000L)
+        }
+        set(value) {
+            setString(REMINDER_INTERVAL_PATTERN_KEY, PreferenceUtils.formatPattern(value))
+        }
+
+    fun reminderIntervalMillisForIndex(index: Int): Long {
+        val pattern = remindersIntervalMillisPattern
+        val value = pattern[index % pattern.size]
+        return Math.max(value, Consts.MIN_REMINDER_INTERVAL_SECONDS * 1000L)
+    }
+
+    fun currentAndNextReminderIntervalsMillis(indexCurrent: Int): Pair<Long, Long> {
+        val pattern = remindersIntervalMillisPattern
+        val minInterval = Consts.MIN_REMINDER_INTERVAL_SECONDS * 1000L
+
+        val current = Math.max(pattern[indexCurrent % pattern.size], minInterval)
+        val next = Math.max(pattern[(indexCurrent + 1) % pattern.size], minInterval)
+
+        return Pair(current, next)
+    }
+
 
     val enableSubMinuteReminders: Boolean
         get() = getBoolean(ENABLE_SUB_MINUTE_REMINDERS_KEY, false)
@@ -403,7 +449,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe"
 
         private const val NOTIFICATION_SETTINGS_MIGRATED_KEY = "notification_settings_migrated"
-        private const val REMINDER_SETTINGS_MIGRATED_KEY = "reminder_settings_migrated"
+        //private const val REMINDER_SETTINGS_MIGRATED_KEY = "reminder_settings_migrated"
+        private const val REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY = "reminder_pattern_settings_migrated"
 
         private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
@@ -437,6 +484,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
         private const val REMIND_INTERVAL_MINUTES_KEY = "remind_interval_key2"
         private const val REMIND_INTERVAL_SECONDS_KEY = "remind_interval_key_seconds"
+        private const val REMINDER_INTERVAL_PATTERN_KEY = "remind_interval_key_pattern"
 
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
 

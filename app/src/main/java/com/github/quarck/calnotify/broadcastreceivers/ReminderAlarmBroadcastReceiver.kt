@@ -59,8 +59,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             }
 
             val settings = Settings(context)
+            val reminderState = ReminderState(context)
 
-            val reminderInterval = settings.remindersIntervalMillis
+            val (currentReminderInterval, nextReminderInterval) =
+                    settings.currentAndNextReminderIntervalsMillis(reminderState.currentReminderPatternIndex)
+
             val currentTime = System.currentTimeMillis()
 
             val silentUntil = QuietHoursManager.getSilentUntil(settings)
@@ -68,8 +71,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             var nextFireAt = 0L
             var shouldFire = false
             var itIsAfterQuietHoursReminder = false
-
-            val reminderState = ReminderState(context)
 
             if (reminderState.quietHoursOneTimeReminderEnabled) {
 
@@ -81,7 +82,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
                     // Check if regular reminders are enabled and schedule reminder if necessary
                     if (settings.remindersEnabled) {
-                        nextFireAt = currentTime + reminderInterval
+                        nextFireAt = currentTime + currentReminderInterval
                         DevLog.info(context, LOG_TAG, "Regular reminders enabled, arming next fire at $nextFireAt")
                     }
 
@@ -112,18 +113,18 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         nextFireAt = silentUntil
 
                     }
-                    else if (reminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD) {
+                    else if (currentReminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD) {
                         // Schedule actual time to fire based on how long ago we have fired
-                        val leftMillis = reminderInterval - sinceLastFire;
+                        val leftMillis = currentReminderInterval - sinceLastFire;
                         nextFireAt = currentTime + leftMillis
 
-                        DevLog.info(context, LOG_TAG, "Early alarm: since last: ${sinceLastFire}, interval: ${reminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
+                        DevLog.info(context, LOG_TAG, "Early alarm: since last: ${sinceLastFire}, interval[current]: ${currentReminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
                     }
                     else {
-                        nextFireAt = currentTime + reminderInterval
+                        nextFireAt = currentTime + nextReminderInterval
                         shouldFire = true
 
-                        DevLog.info(context, LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval: ${reminderInterval}, next fire expected at $nextFireAt")
+                        DevLog.info(context, LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval[next]: ${nextReminderInterval}, next fire expected at $nextFireAt")
 
                         if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
                             DevLog.error(context, LOG_TAG, "WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
@@ -153,9 +154,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                 reminderState.nextFireExpectedAt = nextFireAt
             }
 
-            if (shouldFire)
+            if (shouldFire) {
                 fireReminder(context, currentTime, itIsAfterQuietHoursReminder,
-                        reminderInterval, settings.separateReminderNotification)
+                        Math.min(currentReminderInterval, nextReminderInterval),
+                        settings.separateReminderNotification)
+            }
         }
     }
 

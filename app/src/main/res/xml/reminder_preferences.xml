@@ -8,10 +8,9 @@
             android:defaultValue="false"/>
 
         <com.github.quarck.calnotify.prefs.ReminderIntervalPreference
-            android:key="remind_interval_key_seconds"
+            android:key="remind_interval_key_pattern"
             android:title="@string/remind_interval"
-            android:numeric="integer"
-            android:defaultValue="600"
+            android:defaultValue="10m"
             android:dependency="enable_reminding_key" />
 
         <com.github.quarck.calnotify.prefs.MaxRemindersPreference

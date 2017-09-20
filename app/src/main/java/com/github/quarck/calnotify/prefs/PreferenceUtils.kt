@@ -34,19 +34,24 @@ object PreferenceUtils {
             = Pair(tm / MINUTES_IN_HOUR, tm % MINUTES_IN_HOUR)
 
     internal fun formatSnoozePreset(value: Long): String {
-        val minutes = value / 60L / 1000L
+        val seconds = value / 1000L
 
-        if (minutes % (60L * 24) == 0L) {
-            val days = minutes / (60L * 24)
+        if (seconds % (3600L * 24) == 0L) {
+            val days = seconds / (3600L * 24)
             return "${days}d"
         }
 
-        if (minutes % 60L == 0L) {
-            val hours = minutes / 60L
+        if (seconds % 3600L == 0L) {
+            val hours = seconds / 3600L
             return "${hours}h"
         }
 
-        return "${minutes}m"
+        if (seconds % 60L == 0L) {
+            val minutes = seconds / 60L
+            return "${minutes}m"
+        }
+
+        return "${seconds}s"
     }
 
     internal fun parseSnoozePresets(value: String): LongArray? {
@@ -64,6 +69,7 @@ object PreferenceUtils {
                         val num = str.dropLast(1).toLong()
                         val seconds =
                                 when (unit) {
+                                    "s" -> num
                                     "m" -> num * Consts.MINUTE_IN_SECONDS;
                                     "h" -> num * Consts.HOUR_IN_SECONDS;
                                     "d" -> num * Consts.DAY_IN_SECONDS;
@@ -99,4 +105,7 @@ object PreferenceUtils {
 
         return ret
     }
+
+    fun formatPattern(pattern: LongArray): String =
+            pattern.map { p -> formatSnoozePreset(p) }.joinToString(", ")
 }

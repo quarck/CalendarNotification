@@ -193,13 +193,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             }
         }
 
-        if (settings.versionCodeFirstInstalled < Consts.SUB_MINUTE_REMINDERS_SETTINGS_VER) {
-
-            if (!settings.reminderSettingsMigrated) {
-                settings.remindersIntervalMillis = settings.remindersIntervalMillisOld
-                settings.reminderSettingsMigrated = true;
+        if (settings.versionCodeFirstInstalled < Consts.REMINDER_PATTERNS_SETTINGS_VER) {
+            if (!settings.reminderSettingsMigratedToPattern) {
+                settings.remindersIntervalMillisPattern = settings.remindersIntervalMillisPattern
+                settings.reminderSettingsMigratedToPattern = true;
             }
-
         }
     }
 

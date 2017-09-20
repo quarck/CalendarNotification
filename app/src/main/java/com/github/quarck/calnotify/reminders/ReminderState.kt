@@ -34,12 +34,15 @@ class ReminderState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
 
     var nextFireExpectedAt by LongProperty(0, NEXT_FIRE_EXPECTED_AT_KEY)
 
+    var currentReminderPatternIndex by IntProperty(0, CURRENT_REMINDER_PATTERN_IDX_KEY)
+
 
     @SuppressLint("CommitPrefEdits")
     fun onReminderFired(currentTime: Long) {
 
         val quietHoursOneTime = quietHoursOneTimeReminderEnabled
         val numReminders = numRemindersFired
+        val currentIdx = currentReminderPatternIndex
 
         val editor = edit()
 
@@ -50,12 +53,18 @@ class ReminderState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
 
         editor.putLong(REMINDER_LAST_FIRE_TIME_KEY, currentTime)
 
+        editor.putInt(CURRENT_REMINDER_PATTERN_IDX_KEY, currentIdx + 1)
+
         editor.commit()
     }
 
     fun onUserInteraction(currentTime: Long) {
         // update last fire time to prevent from firing too yearly
         reminderLastFireTime = currentTime
+    }
+
+    fun onNewEventFired() {
+        currentReminderPatternIndex = 0;
     }
 
 
@@ -66,6 +75,7 @@ class ReminderState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
         const val NUM_REMINDERS_FIRED_KEY = "B"
         const val QUIET_HOURS_ONE_TIME_REMINDER_KEY = "C"
         const val NEXT_FIRE_EXPECTED_AT_KEY = "D"
+        const val CURRENT_REMINDER_PATTERN_IDX_KEY = "E"
     }
 }
 

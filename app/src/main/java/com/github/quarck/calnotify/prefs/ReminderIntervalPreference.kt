@@ -25,21 +25,34 @@ import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Toast
+import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
+import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
-class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
+class ReminderIntervalPreference(context: Context, attrs: AttributeSet)
+    : DialogPreference(context, attrs)
+    , AdapterView.OnItemSelectedListener
+{
+    var SecondsIndex = -1
+    var MinutesIndex = 0
+    var HoursIndex = 1
+    var DaysIndex = 2
+
     internal var timeValueSeconds = 0
 
-    internal lateinit var picker: TimeIntervalPickerController
+    internal lateinit var view: View
+    internal var maxIntervalMilliseconds = 0L
+    internal var allowSubMinuteIntervals = false
+    internal lateinit var numberPicker: NumberPicker
+    internal lateinit var timeUnitsSpinners: Spinner
 
     init {
-        dialogLayoutResource = R.layout.dialog_interval_picker
+        dialogLayoutResource = R.layout.dialog_reminder_interval_configuration
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
         dialogIcon = null
@@ -50,21 +63,61 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
 
         val enableSubMinute = Settings(this.context).enableSubMinuteReminders
 
-        picker = TimeIntervalPickerController(view, R.string.empty, 0L, enableSubMinute)
-        picker.intervalSeconds = timeValueSeconds
+        numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
+        timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
+
+        if (allowSubMinuteIntervals) {
+            timeUnitsSpinners.adapter =
+                    ArrayAdapter(
+                            view.context,
+                            android.R.layout.simple_list_item_1,
+                            view.context.resources.getStringArray(R.array.time_units_plurals_with_seconds)
+                    )
+            SecondsIndex += 1
+            MinutesIndex += 1
+            HoursIndex += 1
+            DaysIndex += 1
+        }
+        else {
+            timeUnitsSpinners.adapter =
+                    ArrayAdapter(
+                            view.context,
+                            android.R.layout.simple_list_item_1,
+                            view.context.resources.getStringArray(R.array.time_units_plurals)
+                    )
+        }
+
+        timeUnitsSpinners.onItemSelectedListener = this
+
+        timeUnitsSpinners.setSelection(MinutesIndex)
+
+        timeUnitsSpinners.onItemSelectedListener = this
+
+        numberPicker.minValue = 1
+        numberPicker.maxValue = 100
+
+        allowSubMinuteIntervals = enableSubMinute
+
+
+        intervalSeconds = timeValueSeconds
     }
 
     override fun onClick() {
         super.onClick()
-        picker.clearFocus()
+        clearFocus()
+    }
+
+    fun clearFocus() {
+        numberPicker.clearFocus()
+        timeUnitsSpinners.clearFocus()
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
-            picker.clearFocus()
+            clearFocus()
 
-            timeValueSeconds = picker.intervalSeconds
+            timeValueSeconds = intervalSeconds
 
             if (timeValueSeconds == 0) {
                 timeValueSeconds = 60
@@ -112,6 +165,107 @@ class ReminderIntervalPreference(context: Context, attrs: AttributeSet) : Dialog
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
         return a.getInteger(index, 600)
     }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+        if (maxIntervalMilliseconds == 0L) {
+            if (position == SecondsIndex) {
+                numberPicker.minValue = Consts.MIN_REMINDER_INTERVAL_SECONDS
+                numberPicker.maxValue = 60
+            } else {
+                numberPicker.minValue = 1
+                numberPicker.maxValue = 100
+            }
+            return
+        }
+
+
+        val maxValue =
+                when (timeUnitsSpinners.selectedItemPosition) {
+                    SecondsIndex ->
+                        maxIntervalMilliseconds / 1000L
+                    MinutesIndex ->
+                        maxIntervalMilliseconds / Consts.MINUTE_IN_MILLISECONDS
+                    HoursIndex ->
+                        maxIntervalMilliseconds / Consts.HOUR_IN_MILLISECONDS
+                    DaysIndex ->
+                        maxIntervalMilliseconds / Consts.DAY_IN_MILLISECONDS
+                    else ->
+                        throw Exception("Unknown time unit")
+                }
+
+        numberPicker.maxValue = Math.min(maxValue.toInt(), 100)
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>) {
+
+    }
+
+    private var intervalSeconds: Int
+        get() {
+            clearFocus()
+
+            val number = numberPicker.value
+
+            val multiplier =
+                    when (timeUnitsSpinners.selectedItemPosition) {
+                        SecondsIndex ->
+                            1
+                        MinutesIndex ->
+                            60
+                        HoursIndex ->
+                            60 * 60
+                        DaysIndex ->
+                            24 * 60 * 60
+                        else ->
+                            throw Exception("Unknown time unit")
+                    }
+
+            return (number * multiplier).toInt()
+        }
+        set(value) {
+
+            if (allowSubMinuteIntervals) {
+                var number = value
+                var units = SecondsIndex
+
+                if ((number % 60) == 0) {
+                    units = MinutesIndex
+                    number /= 60 // to minutes
+                }
+
+                if ((number % 60) == 0) {
+                    units = HoursIndex
+                    number /= 60 // to hours
+                }
+
+                if ((number % 24) == 0) {
+                    units = DaysIndex
+                    number /= 24 // to days
+                }
+
+                timeUnitsSpinners.setSelection(units)
+                numberPicker.value = number.toInt()
+
+            }
+            else {
+                var number = value / 60 // convert to minutes
+                var units = MinutesIndex
+
+                if ((number % 60) == 0) {
+                    units = HoursIndex
+                    number /= 60 // to hours
+                }
+
+                if ((number % 24) == 0) {
+                    units = DaysIndex
+                    number /= 24 // to days
+                }
+
+                timeUnitsSpinners.setSelection(units)
+                numberPicker.value = number.toInt()
+            }
+        }
 
     companion object {
         private const val LOG_TAG = "TimePickerPreference"

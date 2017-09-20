@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:theme="@style/PickerDialogTheme"
+    >
+
+    <LinearLayout
+        android:id="@+id/layout_reminder_interval_simple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        >
+
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numberPickerTimeInterval"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center"
+            />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerTimeIntervalUnit"
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+
+            />
+
+        <!-- android:entries="@array/time_units_plurals" -->
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkbox_custom_reminder_pattern"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_pattern"
+        android:layout_gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+    <LinearLayout
+        android:id="@+id/layout_reminder_interval_custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/reminder_pattern"
+            android:layout_gravity="start"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textColor="@color/primary_text"
+            />
+
+        <EditText
+            android:id="@+id/edittext_custom_reminder_pattern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="15m"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:ignore="HardcodedText"
+            android:inputType="text"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

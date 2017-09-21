@@ -9,6 +9,19 @@
     android:theme="@style/PickerDialogTheme"
     >
 
+    <CheckBox
+        android:id="@+id/checkbox_custom_reminder_pattern"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_pattern"
+        android:layout_gravity="start"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        />
+
     <LinearLayout
         android:id="@+id/layout_reminder_interval_simple"
         android:layout_width="wrap_content"
@@ -38,50 +51,58 @@
 
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/checkbox_custom_reminder_pattern"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/custom_pattern"
-        android:layout_gravity="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        />
-
     <LinearLayout
         android:id="@+id/layout_reminder_interval_custom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="start"
         android:visibility="gone"
         >
 
-        <TextView
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/reminder_pattern"
-            android:layout_gravity="start"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:textColor="@color/primary_text"
-            />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/edittext_custom_reminder_pattern"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="15m"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText"
-            android:inputType="text"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="start"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/reminder_pattern"
+                    android:layout_gravity="start"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:textColor="@color/primary_text"
+                    />
+
+                <EditText
+                    android:id="@+id/edittext_custom_reminder_pattern"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="15m"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:ignore="HardcodedText"
+                    android:inputType="text"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    />
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
 
     </LinearLayout>
 

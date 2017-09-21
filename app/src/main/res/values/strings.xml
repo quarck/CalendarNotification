@@ -519,7 +519,7 @@
     <string name="enable_dismiss_and_delete_summary">Delete when its done! Adds menu option on the snooze screen to dismiss the notification and delete actual event, all in one click. Would only work for non-repeating events</string>
     <string name="dismiss_and_delete_event">Dismiss and delete event</string>
     <string name="custom_pattern">Custom pattern</string>
-    <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\', \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over\nMinimum interval is 15 seconds (15s)</string>
+    <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\' (min value), \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over</string>
 
 </resources>
 

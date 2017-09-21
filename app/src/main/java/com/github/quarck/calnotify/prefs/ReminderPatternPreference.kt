@@ -171,7 +171,9 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
                 val pattern = PreferenceUtils.parseSnoozePresets(text)
 
                 if (pattern != null && pattern.size >= 1) {
-                    reminderPatternMillis = pattern
+                    reminderPatternMillis =
+                            pattern.map { Math.max(it, Consts.MIN_REMINDER_INTERVAL_SECONDS*1000L) }
+                                    .toLongArray()
                     persistString(PreferenceUtils.formatPattern(reminderPatternMillis)) // some kind of 'cleanup' from user input
                 }
                 else {

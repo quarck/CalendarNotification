@@ -43,13 +43,19 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     var HoursIndex = 1
     var DaysIndex = 2
 
-    internal var timeValueSeconds = 0
+    //internal var timeValueSeconds = 0
+    internal var reminderPatternMillis = longArrayOf(0)
+    internal var simpleIntervalMode = true
 
     internal lateinit var view: View
     internal var maxIntervalMilliseconds = 0L
     internal var allowSubMinuteIntervals = false
     internal lateinit var numberPicker: NumberPicker
     internal lateinit var timeUnitsSpinners: Spinner
+    internal lateinit var checkboxCustomPattern: CheckBox
+    internal lateinit var editTextCustomPattern: EditText
+    internal lateinit var layoutSimpleInterval: LinearLayout
+    internal lateinit var layoutCustomPattern: LinearLayout
 
     init {
         dialogLayoutResource = R.layout.dialog_reminder_interval_configuration
@@ -65,6 +71,11 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
 
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
+        checkboxCustomPattern = view.find<CheckBox>(R.id.checkbox_custom_reminder_pattern)
+        editTextCustomPattern = view.find<EditText>(R.id.edittext_custom_reminder_pattern)
+
+        layoutSimpleInterval = view.find<LinearLayout>(R.id.layout_reminder_interval_simple)
+        layoutCustomPattern = view.find<LinearLayout>(R.id.layout_reminder_interval_custom)
 
         if (allowSubMinuteIntervals) {
             timeUnitsSpinners.adapter =
@@ -101,7 +112,31 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         numberPicker.minValue = 1
         numberPicker.maxValue = 100
 
-        intervalSeconds = timeValueSeconds
+        simpleIntervalMode = reminderPatternMillis.size == 1
+        checkboxCustomPattern.isChecked = !simpleIntervalMode
+        updateLayout()
+
+        checkboxCustomPattern.setOnClickListener {
+            v ->
+            simpleIntervalMode = !checkboxCustomPattern.isChecked
+            updateLayout()
+        }
+    }
+
+    private fun updateLayout() {
+
+        if (simpleIntervalMode) {
+            simpleIntervalSeconds = (reminderPatternMillis[0] / 1000L).toInt()
+
+            layoutSimpleInterval.visibility = View.VISIBLE
+            layoutCustomPattern.visibility = View.GONE
+        }
+        else {
+            editTextCustomPattern.setText(PreferenceUtils.formatPattern(reminderPatternMillis))
+
+            layoutSimpleInterval.visibility = View.GONE
+            layoutCustomPattern.visibility = View.VISIBLE
+        }
     }
 
     override fun onClick() {
@@ -119,34 +154,52 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         if (positiveResult) {
             clearFocus()
 
-            timeValueSeconds = intervalSeconds
+            if (simpleIntervalMode) {
+                var simpleIntervalMillis = simpleIntervalSeconds * 1000L
 
-            if (timeValueSeconds == 0) {
-                timeValueSeconds = 60
-                val msg = context.resources.getString(R.string.invalid_reminder_interval)
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                if (simpleIntervalMillis == 0L) {
+                    simpleIntervalMillis = 60 * 1000L
+                    val msg = context.resources.getString(R.string.invalid_reminder_interval)
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                }
+
+                reminderPatternMillis = longArrayOf(simpleIntervalMillis)
+                persistString(PreferenceUtils.formatPattern(reminderPatternMillis))
+            }
+            else {
+                val text = editTextCustomPattern.text.toString()
+                val pattern = PreferenceUtils.parseSnoozePresets(text)
+
+                if (pattern != null && pattern.size >= 1) {
+                    reminderPatternMillis = pattern
+                    persistString(PreferenceUtils.formatPattern(reminderPatternMillis)) // some kind of 'cleanup' from user input
+                }
+                else {
+                    Toast.makeText(context, R.string.error_cannot_parse_pattern, Toast.LENGTH_LONG).show()
+                }
             }
 
-            persistString(PreferenceUtils.formatPattern(longArrayOf(timeValueSeconds*1000L)))
+            if (isMarshmallowOrAbove) {
+                val anyShortReminders = reminderPatternMillis.any { it < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC }
+                if (anyShortReminders) {
+                    val settings = Settings(context)
 
-            val settings = Settings(context)
+                    if (settings.dontShowMarshmallowWarningInSettings) {
+                        AlertDialog.Builder(context)
+                                .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
+                                .setCancelable(false)
+                                .setPositiveButton(android.R.string.ok) {
+                                    _, _ ->
+                                }
+                                .setNegativeButton(R.string.never_show_again) {
+                                    _, _ ->
+                                    Settings(context).dontShowMarshmallowWarningInSettings = true
+                                }
+                                .create()
+                                .show()
+                    }
 
-            if (isMarshmallowOrAbove &&
-                    timeValueSeconds * 1000L < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC &&
-                    !settings.dontShowMarshmallowWarningInSettings) {
-
-                AlertDialog.Builder(context)
-                        .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.ok) {
-                            _, _ ->
-                        }
-                        .setNegativeButton(R.string.never_show_again) {
-                            _, _ ->
-                            Settings(context).dontShowMarshmallowWarningInSettings = true
-                        }
-                        .create()
-                        .show()
+                }
             }
         }
     }
@@ -155,12 +208,10 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         if (restorePersistedValue) {
             // Restore existing state
 
-            val strValue = this.getPersistedString("10m")
+            val value = PreferenceUtils.parseSnoozePresets(this.getPersistedString("10m"))
 
-            val value = PreferenceUtils.parseSnoozePresets(strValue)
-
-            if (value != null && value.size == 1) {
-                timeValueSeconds = (value[0] / 1000).toInt()
+            if (value != null) {
+                reminderPatternMillis = value
             }
         }
         else if (defaultValue != null && defaultValue is String) {
@@ -168,8 +219,8 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
 
             val value = PreferenceUtils.parseSnoozePresets(defaultValue)
 
-            if (value != null && value.size == 1) {
-                timeValueSeconds = (value[0] / 1000).toInt()
+            if (value != null) {
+                reminderPatternMillis = value
             }
             persistString(defaultValue)
         }
@@ -215,7 +266,7 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
 
     }
 
-    private var intervalSeconds: Int
+    private var simpleIntervalSeconds: Int
         get() {
             clearFocus()
 

@@ -184,7 +184,7 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
                 if (anyShortReminders) {
                     val settings = Settings(context)
 
-                    if (settings.dontShowMarshmallowWarningInSettings) {
+                    if (!settings.dontShowMarshmallowWarningInSettings) {
                         AlertDialog.Builder(context)
                                 .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
                                 .setCancelable(false)

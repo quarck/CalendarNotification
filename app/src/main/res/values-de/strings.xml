@@ -494,8 +494,6 @@
     <string name="event_failed_location">Ort: </string>
 
     <string name="pref_category_experimental_features">Experimentelle Funktionen</string>
-    <string name="sub_minute_reminders_title">Erinnerungen in bruchteilen einer Minute</string>
-    <string name="sub_minute_reminders_summary">Es muss auch \'setAlarmClock\' in den Einstellungen weiter oben aktiviert werden. Desweiteren müssen alle Android Energiesparfunktionen für diese App deaktiviert werden.</string>
     <string name="edit_auto_dismiss_title">Automatisch verwerfen</string>
     <string name="edit_auto_dismiss_summary">Benachrichtungen verwerfen, wenn der Termin gerade bearbeit wird und die neue Zeit in der Zukunft ist.</string>
     <string name="open_calendar_from_snooze_title">Auf den Titel klicken öffnet den Kalender</string>

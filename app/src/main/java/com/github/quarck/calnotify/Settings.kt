@@ -294,10 +294,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         return Pair(current, next)
     }
 
-
-    val enableSubMinuteReminders: Boolean
-        get() = getBoolean(ENABLE_SUB_MINUTE_REMINDERS_KEY, false)
-
     val maxNumberOfReminders: Int
         get() = getString(MAX_REMINDERS_KEY, DEFAULT_MAX_REMINDERS).toIntOrNull() ?: 0
 
@@ -556,8 +552,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val AUTO_DISMISS_WHEN_EDITED_USING_APP = "auto_dismiss_events_when_edited_into_future"
 
         private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
-
-	    private const val ENABLE_SUB_MINUTE_REMINDERS_KEY = "sub_minute_reminder_intervals"
 
         private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze"
 

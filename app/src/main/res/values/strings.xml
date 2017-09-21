@@ -503,8 +503,6 @@
     <string name="arrow_to_right" translatable="false"> --&gt; </string>
 
     <string name="pref_category_experimental_features">Experimental features</string>
-    <string name="sub_minute_reminders_title">Sub-minute reminders</string>
-    <string name="sub_minute_reminders_summary">Enable sub-minute reminder intervals. Make sure to enable \'use setAlarmClock for reminders\' (above) and disable all android power saving / optimisation for this app</string>
     <string name="edit_auto_dismiss_title">Auto dismiss on edit</string>
     <string name="edit_auto_dismiss_summary">Auto dismiss event notification when you edit it using this app and new event time is in the future</string>
     <string name="open_calendar_from_snooze_title">Tap on title opens calendar</string>

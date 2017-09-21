@@ -41,17 +41,19 @@
         >
 
         <CheckBoxPreference
-            android:key="sub_minute_reminder_intervals"
-            android:title="@string/sub_minute_reminders_title"
-            android:summary="@string/sub_minute_reminders_summary"
-            android:defaultValue="false"
-            />
-
-        <CheckBoxPreference
             android:key="enable_add_event"
             android:title="@string/enable_add_event"
             android:summary="@string/enable_add_event_summary"
             android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="default_new_event_duration"
+            android:title="@string/default_duration"
+            android:summary="@string/default_duration_summary"
+            android:dependency="enable_add_event"
+            android:numeric="integer"
+            android:defaultValue="30"
+            />
 
         <CheckBoxPreference
             android:key="enable_edit_event"
@@ -65,15 +67,6 @@
             android:summary="@string/edit_auto_dismiss_summary"
             android:defaultValue="false"
             android:dependency="enable_edit_event"/>
-
-        <EditTextPreference
-            android:key="default_new_event_duration"
-            android:title="@string/default_duration"
-            android:summary="@string/default_duration_summary"
-            android:dependency="enable_add_event"
-            android:numeric="integer"
-            android:defaultValue="30"
-            />
 
     </PreferenceCategory>
 

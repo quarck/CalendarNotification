@@ -38,10 +38,10 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     : DialogPreference(context, attrs)
     , AdapterView.OnItemSelectedListener
 {
-    var SecondsIndex = -1
-    var MinutesIndex = 0
-    var HoursIndex = 1
-    var DaysIndex = 2
+    val SecondsIndex = 0
+    val MinutesIndex = 1
+    val HoursIndex = 2
+    val DaysIndex = 3
 
     //internal var timeValueSeconds = 0
     internal var reminderPatternMillis = longArrayOf(0)
@@ -49,7 +49,6 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
 
     internal lateinit var view: View
     internal var maxIntervalMilliseconds = 0L
-    internal var allowSubMinuteIntervals = false
     internal lateinit var numberPicker: NumberPicker
     internal lateinit var timeUnitsSpinners: Spinner
     internal lateinit var checkboxCustomPattern: CheckBox
@@ -67,8 +66,6 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        allowSubMinuteIntervals = Settings(this.context).enableSubMinuteReminders
-
         numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
         checkboxCustomPattern = view.find<CheckBox>(R.id.checkbox_custom_reminder_pattern)
@@ -77,31 +74,12 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         layoutSimpleInterval = view.find<LinearLayout>(R.id.layout_reminder_interval_simple)
         layoutCustomPattern = view.find<LinearLayout>(R.id.layout_reminder_interval_custom)
 
-        if (allowSubMinuteIntervals) {
-            timeUnitsSpinners.adapter =
-                    ArrayAdapter(
-                            view.context,
-                            android.R.layout.simple_list_item_1,
-                            view.context.resources.getStringArray(R.array.time_units_plurals_with_seconds)
-                    )
-            SecondsIndex = 0
-            MinutesIndex = 1
-            HoursIndex = 2
-            DaysIndex = 3
-        }
-        else {
-            timeUnitsSpinners.adapter =
-                    ArrayAdapter(
-                            view.context,
-                            android.R.layout.simple_list_item_1,
-                            view.context.resources.getStringArray(R.array.time_units_plurals)
-                    )
-
-            SecondsIndex = -1
-            MinutesIndex = 0
-            HoursIndex = 1
-            DaysIndex = 2
-        }
+        timeUnitsSpinners.adapter =
+                ArrayAdapter(
+                        view.context,
+                        android.R.layout.simple_list_item_1,
+                        view.context.resources.getStringArray(R.array.time_units_plurals_with_seconds)
+                )
 
         timeUnitsSpinners.onItemSelectedListener = this
 
@@ -292,46 +270,26 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         }
         set(value) {
 
-            if (allowSubMinuteIntervals) {
-                var number = value
-                var units = SecondsIndex
+            var number = value
+            var units = SecondsIndex
 
-                if ((number % 60) == 0) {
-                    units = MinutesIndex
-                    number /= 60 // to minutes
-                }
-
-                if ((number % 60) == 0) {
-                    units = HoursIndex
-                    number /= 60 // to hours
-                }
-
-                if ((number % 24) == 0) {
-                    units = DaysIndex
-                    number /= 24 // to days
-                }
-
-                timeUnitsSpinners.setSelection(units)
-                numberPicker.value = number.toInt()
-
+            if ((number % 60) == 0) {
+                units = MinutesIndex
+                number /= 60 // to minutes
             }
-            else {
-                var number = value / 60 // convert to minutes
-                var units = MinutesIndex
 
-                if ((number % 60) == 0) {
-                    units = HoursIndex
-                    number /= 60 // to hours
-                }
-
-                if ((number % 24) == 0) {
-                    units = DaysIndex
-                    number /= 24 // to days
-                }
-
-                timeUnitsSpinners.setSelection(units)
-                numberPicker.value = number.toInt()
+            if ((number % 60) == 0) {
+                units = HoursIndex
+                number /= 60 // to hours
             }
+
+            if ((number % 24) == 0) {
+                units = DaysIndex
+                number /= 24 // to days
+            }
+
+            timeUnitsSpinners.setSelection(units)
+            numberPicker.value = number.toInt()
         }
 
     companion object {

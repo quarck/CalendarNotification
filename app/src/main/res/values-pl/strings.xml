@@ -509,8 +509,6 @@
     <string name="event_failed_location">Lokalizacja: </string>
 
     <string name="pref_category_experimental_features">Funkcje eksperymentalne</string>
-    <string name="sub_minute_reminders_title">Sekundowe przypomnienia</string>
-    <string name="sub_minute_reminders_summary">Włącza możliwość ustawienia czasu między przypomnieniami krótszego od minuty. Dla poprawnego działania należy włączyć opcję \'setAlarmClock dla powiadomień\' (powyżej) i wyłączyć wszystkie funkcje oszczędzania energii i optymalizacji Androida dla tej aplikacji.</string>
     <string name="edit_auto_dismiss_title">Odrzuć automatycznie przy edycji</string>
     <string name="edit_auto_dismiss_summary">Odrzuć powiadomienie automatycznie, gdy wydarzenie zostanie przesunięte na przyszły termin.</string>
     <string name="open_calendar_from_snooze_title">Kliknij na tytule wydarzenia w powiadomieniu, aby przejść do kalendarza.</string>

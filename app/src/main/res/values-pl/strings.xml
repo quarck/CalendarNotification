@@ -403,7 +403,7 @@
         <item>godziny</item>
         <item>dni</item>
     </string-array>
-    
+
     <string name="save_button_title">ZAPISZ</string>
     <string name="add_event">Dodaj wydarzenie</string>
 

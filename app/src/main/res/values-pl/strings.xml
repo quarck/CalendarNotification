@@ -403,8 +403,7 @@
         <item>godziny</item>
         <item>dni</item>
     </string-array>
-
-
+    
     <string name="save_button_title">ZAPISZ</string>
     <string name="add_event">Dodaj wydarzenie</string>
 
@@ -417,7 +416,7 @@
     <string name="add_notification">Dodaj przypomnienie</string>
     <string name="all_day">Cały dzień</string>
     <string name="end_time_before_start_time">Zakończenie wcześniejsze od rozpoczęcia!</string>
-    <string name="notification_as_email">Jako email</string>
+    <string name="notification_as_email">jako email</string>
 
     <string name="add_event_fmt_before" formatted="false">%s przed</string>
     <string name="add_event_as_email_suffix">jako email</string>
@@ -477,7 +476,7 @@
         <item>7 dni</item>
     </string-array>
 
-    <string name="new_event_max_reminder_is_28_days">Nie można ustawić przypomnienia wcześniej niż na 28 dni przed wydarzeniem</string>
+    <string name="new_event_max_reminder_is_28_days">Nie można ustawić przypomnienia wcześniejszego niż na 28 dni przed wydarzeniem</string>
 
     <string name="add_event_event_title_hint">Tytuł</string>
     <string name="calendar_was_changed_pull_down_to_refresh">Kalendarz został zmieniony, przesuń w dół, aby odświeżyć</string>
@@ -509,20 +508,25 @@
     <string name="failed_to_edit_event">Nie powiodła się aktualizacja wydarzenia: </string>
     <string name="event_failed_location">Lokalizacja: </string>
 
+    <string name="horizontal_line_with_new_line" translatable="false">\n\n---------\n\n</string>
+    <string name="arrow_to_right" translatable="false"> --&gt; </string>
 
     <string name="pref_category_experimental_features">Funkcje eksperymentalne</string>
+    <string name="sub_minute_reminders_title">Sekundowe przypomnienia</string>
+    <string name="sub_minute_reminders_summary">Włącza możliwość ustawienia czasu między przypomnieniami krótszego od minuty. Dla poprawnego działania należy włączyć opcję \'setAlarmClock dla powiadomień\' (powyżej) i wyłączyć wszystkie funkcje oszczędzania energii i optymalizacji Androida dla tej aplikacji.</string>
     <string name="edit_auto_dismiss_title">Odrzuć automatycznie przy edycji</string>
-    <string name="edit_auto_dismiss_summary">Odrzuć powiadomienie automatycznie, gdy wydarzenie zostanie przesunięte do przyszłości.</string>
+    <string name="edit_auto_dismiss_summary">Odrzuć powiadomienie automatycznie, gdy wydarzenie zostanie przesunięte na przyszły termin.</string>
     <string name="open_calendar_from_snooze_title">Kliknij na tytule wydarzenia w powiadomieniu, aby przejść do kalendarza.</string>
     <string name="open_calendar_from_snooze_summary">Kliknij na tytule/czasie wydarzenia, aby otworzyć jego szczegóły w kalendarzu.</string>
     <string name="open_in_calendar">Otwórz w kalendarzu</string>
     <string name="snooze_hide_event_description_title">Ukryj opis wydarzenia</string>
     <string name="snooze_hide_event_description_summary">Nie wyświetlaj opisu wydarzenia w powiadomieniu.</string>
-    <string name="show_event_desc_in_the_notification_title">Wyświetlanie opisu wydarzenia</string>
-    <string name="show_event_desc_in_the_notification_summary">Wyświetlaj opis wydarzenia w powiadomieniu.</string>
-    <string name="add_empty_action_to_the_end_title">Dodaj puste działanie</string>
-    <string name="add_empty_action_to_the_end_summary">Dodaje puste działanie na końcu listy, użyj jeśli efekt ostatniego działania listy rozciąga się na całą szerokość powiadomienia</string>
-    <string name="notifications_pure_hacks">Sztuczki</string>
+    <string name="show_event_desc_in_the_notification_title">Wyświetlaj opis wydarzenia</string>
+    <string name="show_event_desc_in_the_notification_summary">Wyświetlaj w powiadomieniu opis wydarzenia.</string>
+    <string name="add_empty_action_to_the_end_title">Dodaj pusty klawisz</string>
+    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok klawisza wywołuje działanie jak kliknięcie w ten klawisz np. odrzucenie powiadomienia. Opcja ta dodaje pusty klawisz akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
+    <string name="notifications_pure_hacks">Nietypowe rozwiązania</string>
+	
 
 </resources>
 

@@ -508,9 +508,6 @@
     <string name="failed_to_edit_event">Nie powiodła się aktualizacja wydarzenia: </string>
     <string name="event_failed_location">Lokalizacja: </string>
 
-    <string name="horizontal_line_with_new_line" translatable="false">\n\n---------\n\n</string>
-    <string name="arrow_to_right" translatable="false"> --&gt; </string>
-
     <string name="pref_category_experimental_features">Funkcje eksperymentalne</string>
     <string name="sub_minute_reminders_title">Sekundowe przypomnienia</string>
     <string name="sub_minute_reminders_summary">Włącza możliwość ustawienia czasu między przypomnieniami krótszego od minuty. Dla poprawnego działania należy włączyć opcję \'setAlarmClock dla powiadomień\' (powyżej) i wyłączyć wszystkie funkcje oszczędzania energii i optymalizacji Androida dla tej aplikacji.</string>

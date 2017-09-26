@@ -72,7 +72,8 @@ class EventsStorageImplV9(val context: Context)
                         "$KEY_EVENT_STATUS INTEGER, " +
                         "$KEY_EVENT_ATTENDANCE_STATUS INTEGER, " +
 
-                        "$KEY_RESERVED_INT1 INTEGER, " +
+                        "$KEY_IS_MUTED INTEGER, " +
+
                         "$KEY_RESERVED_INT2 INTEGER, " +
                         "$KEY_RESERVED_INT3 INTEGER, " +
                         "$KEY_RESERVED_INT4 INTEGER, " +
@@ -445,8 +446,10 @@ class EventsStorageImplV9(val context: Context)
         values.put(KEY_EVENT_STATUS, event.eventStatus.code)
         values.put(KEY_EVENT_ATTENDANCE_STATUS, event.attendanceStatus.code)
 
+        values.put(KEY_IS_MUTED, if (event.isMuted) 1 else 0)
+
         // reserved - must be filled also
-        values.put(KEY_RESERVED_INT1, 0)
+
         values.put(KEY_RESERVED_INT2, 0)
         values.put(KEY_RESERVED_INT3, 0)
         values.put(KEY_RESERVED_INT4, 0)
@@ -483,7 +486,8 @@ class EventsStorageImplV9(val context: Context)
                 origin = EventOrigin.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ORIGIN)),
                 timeFirstSeen = cursor.getLong(PROJECTION_KEY_TIME_FIRST_SEEN),
                 eventStatus = EventStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_STATUS)),
-                attendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ATTENDANCE_STATUS))
+                attendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ATTENDANCE_STATUS)),
+                isMuted =  cursor.getInt(PROJECTION_KEY_IS_MUTED) != 0
         )
     }
 
@@ -522,8 +526,8 @@ class EventsStorageImplV9(val context: Context)
         private const val KEY_EVENT_STATUS = "attsts"
         private const val KEY_EVENT_ATTENDANCE_STATUS = "oattsts"
 
+        private const val KEY_IS_MUTED = "i1"
 
-        private const val KEY_RESERVED_INT1 = "i1"
         private const val KEY_RESERVED_INT2 = "i2"
         private const val KEY_RESERVED_INT3 = "i3"
         private const val KEY_RESERVED_INT4 = "i4"
@@ -555,7 +559,8 @@ class EventsStorageImplV9(val context: Context)
                 KEY_EVENT_ORIGIN,
                 KEY_TIME_FIRST_SEEN,
                 KEY_EVENT_STATUS,
-                KEY_EVENT_ATTENDANCE_STATUS
+                KEY_EVENT_ATTENDANCE_STATUS,
+                KEY_IS_MUTED
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0
@@ -579,5 +584,6 @@ class EventsStorageImplV9(val context: Context)
         const val PROJECTION_KEY_TIME_FIRST_SEEN = 18
         const val PROJECTION_KEY_EVENT_STATUS = 19
         const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 20
+        const val PROJECTION_KEY_IS_MUTED = 21
     }
 }

@@ -82,7 +82,11 @@ object ApplicationController : EventMovedHandler {
         get() = addEventMonitor
 
     fun hasActiveEvents(context: Context) =
-            EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
+            EventsStorage(context).use {
+                val settings = Settings(context)
+                val filterMuted = settings.enableNotificationMute
+                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && (!filterMuted || !it.isMuted) }.any()
+            }
 
     fun onEventAlarm(context: Context) {
 
@@ -593,6 +597,47 @@ object ApplicationController : EventMovedHandler {
 
             notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
         }
+    }
+
+    fun toggleMuteForEvent(context: Context, eventId: Long, instanceStartTime: Long, muteAction: Int): Boolean {
+
+        var ret: Boolean = false
+
+        val currentTime = System.currentTimeMillis()
+
+        val mutedEvent: EventAlertRecord? =
+                EventsStorage(context).use {
+                    db ->
+                    var event = db.getEvent(eventId, instanceStartTime)
+
+                    if (event != null) {
+
+                        val (success, newEvent) = db.updateEvent(event,
+                                isMuted = muteAction == 0,
+                                lastStatusChangeTime = currentTime)
+
+                        event = if (success) newEvent else null
+                    }
+
+                    event;
+                }
+
+        if (mutedEvent != null) {
+            ret = true;
+
+            notificationManager.onEventMuteToggled(context, EventFormatter(context), mutedEvent)
+
+            ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} mute toggled: ${mutedEvent.isMuted}: $ret")
+        }
+        else {
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $muteAction")
+        }
+
+        return ret
     }
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {

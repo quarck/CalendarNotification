@@ -45,7 +45,8 @@ interface EventsStorageInterface {
             lastStatusChangeTime: Long? = null,
             displayStatus: EventDisplayStatus? = null,
             color: Int? = null,
-            isRepeating: Boolean? = null): Pair<Boolean, EventAlertRecord>
+            isRepeating: Boolean? = null,
+            isMuted: Boolean? = null): Pair<Boolean, EventAlertRecord>
 
     fun updateEvents(
             events: List<EventAlertRecord>,

@@ -103,6 +103,25 @@ class EventNotificationManager : EventNotificationManagerInterface {
         postEventNotifications(context, formatter, false, null)
     }
 
+    override fun onEventMuteToggled(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
+        postEventNotifications(context, formatter, false, null)
+
+        val settings = Settings(context)
+
+        postNotification(
+                context,
+                formatter,
+                event,
+                settings.notificationSettingsSnapshot,
+                true,
+                false,
+                settings.snoozePresets,
+                QuietHoursManager.getSilentUntil(settings) != 0L,
+                false
+        )
+
+    }
+
     override fun onAllEventsSnoozed(context: Context) {
         context.notificationManager.cancelAll()
     }

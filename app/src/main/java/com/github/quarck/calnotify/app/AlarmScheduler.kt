@@ -97,7 +97,11 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
             if (settings.remindersEnabled || quietHoursOneTimeReminderEnabled) {
 
-                val hasActiveNotifications = events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any()
+                val filterMuted = settings.enableNotificationMute
+
+                val hasActiveNotifications = events.filter {
+                    it.snoozedUntil == 0L && it.isNotSpecial && (!filterMuted || !it.isMuted)
+                }.any()
 
                 if (hasActiveNotifications) {
 

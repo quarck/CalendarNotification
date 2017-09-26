@@ -36,6 +36,8 @@ interface EventNotificationManagerInterface {
 
     fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
+    fun onEventMuteToggled(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord);
+
     fun onAllEventsSnoozed(context: Context)
 
     fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);

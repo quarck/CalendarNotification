@@ -105,7 +105,8 @@ class EventsStorage(val context: Context)
                              lastStatusChangeTime: Long?,
                              displayStatus: EventDisplayStatus?,
                              color: Int?,
-                             isRepeating: Boolean?
+                             isRepeating: Boolean?,
+                             isMuted: Boolean?
     ): Pair<Boolean, EventAlertRecord> {
         val newEvent =
                 event.copy(
@@ -118,7 +119,8 @@ class EventsStorage(val context: Context)
                         lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color,
-                        isRepeating = isRepeating ?: event.isRepeating
+                        isRepeating = isRepeating ?: event.isRepeating,
+                        isMuted = isMuted ?: event.isMuted
                 );
 
         val success = updateEvent(newEvent)

@@ -1157,6 +1157,41 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.setDeleteIntent(dismissPendingIntent)
         }
 
+        if (notificationSettings.enableNotificationMute) {
+            // build and append
+
+            val muteTogglePendingIntent =
+                    pendingServiceIntent(ctx,
+                            defaultMuteToggleIntent(
+                                    ctx,
+                                    event.eventId,
+                                    event.instanceStartTime,
+                                    event.notificationId,
+                                    if (event.isMuted) 1 else 0
+                            ),
+                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_MUTE_TOGGLE_OFFSET
+                    )
+
+            val actionBuilder =
+                if (event.isMuted) {
+                    NotificationCompat.Action.Builder(
+                            R.drawable.ic_volume_off_white_24dp,
+                            ctx.getString(R.string.un_mute_notification),
+                            muteTogglePendingIntent
+                    )
+
+                }
+                else {
+                    NotificationCompat.Action.Builder(
+                            R.drawable.ic_volume_up_white_24dp,
+                            ctx.getString(R.string.mute_notification),
+                            muteTogglePendingIntent
+                    )
+                }
+
+            builder.addAction(actionBuilder.build())
+        }
+
         if (notificationSettings.appendEmptyAction) {
             builder.addAction(
                     NotificationCompat.Action.Builder(
@@ -1299,6 +1334,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
         intent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePreset)
+        return intent
+    }
+
+    private fun defaultMuteToggleIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, muteAction: Int): Intent {
+        val intent = Intent(ctx, NotificationActionMuteToggleService::class.java)
+        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
+        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
+        intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
+        intent.putExtra(Consts.INTENT_MUTE_ACTION, muteAction)
         return intent
     }
 
@@ -1501,6 +1545,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         const val EVENT_CODE_DELETE_OFFSET = 2
         const val EVENT_CODE_OPEN_OFFSET = 3
         const val EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET = 4
+        const val EVENT_CODE_MUTE_TOGGLE_OFFSET = 5
         const val EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS = 10
         const val EVENT_CODES_TOTAL = 16
 

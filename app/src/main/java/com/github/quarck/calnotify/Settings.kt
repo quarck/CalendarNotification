@@ -31,6 +31,7 @@ data class NotificationSettingsSnapshot
 (
         val allowNotificationSwipe: Boolean,
         val notificationSwipeDoesSnooze: Boolean,
+        val enableNotificationMute: Boolean,
         val ringtoneUri: Uri?,
         val vibrationOn: Boolean,
         val vibrationPattern: LongArray,
@@ -418,6 +419,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
+                enableNotificationMute = enableNotificationMute && remindersEnabled,
                 ringtoneUri = ringtoneURI,
                 vibrationOn = vibraOn,
                 vibrationPattern = vibrationPattern,

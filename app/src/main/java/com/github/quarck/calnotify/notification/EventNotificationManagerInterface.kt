@@ -26,6 +26,10 @@ import com.github.quarck.calnotify.textutils.EventFormatterInterface
 interface EventNotificationManagerInterface {
     fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord);
 
+    fun onEventDismissing(context: Context, eventId: Long, notificationId: Int);
+
+    fun onEventsDismissing(context: Context, events: Collection<EventAlertRecord>);
+
     fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
     fun onEventsDismissed(context: Context, formatter: EventFormatterInterface, events: Collection<EventAlertRecord>, postNotifications: Boolean/* = true*/, hasActiveEvents: Boolean);

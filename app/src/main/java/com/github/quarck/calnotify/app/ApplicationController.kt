@@ -312,9 +312,12 @@ object ApplicationController : EventMovedHandler {
 
                 try {
                     // delete old instances for the same event id (should be only one, but who knows)
+                    notificationManager.onEventsDismissing(context, oldEvents)
+
+                    val formatter = EventFormatter(context)
                     for (oldEvent in oldEvents) {
                         db.deleteEvent(oldEvent)
-                        notificationManager.onEventDismissed(context, EventFormatter(context), oldEvent.eventId, oldEvent.notificationId)
+                        notificationManager.onEventDismissed(context, formatter, oldEvent.eventId, oldEvent.notificationId)
                     }
                 }
                 catch (ex: Exception) {
@@ -413,6 +416,9 @@ object ApplicationController : EventMovedHandler {
 
             if (!eventsToDismiss.isEmpty()) {
                 // delete old instances for the same event id (should be only one, but who knows)
+
+                notificationManager.onEventsDismissing(context, eventsToDismiss)
+
                 db.deleteEvents(eventsToDismiss)
 
                 val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
@@ -786,6 +792,8 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
+        notificationManager.onEventsDismissing(context, events)
+
         if (db.deleteEvents(events) == events.size) {
 
             val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
@@ -844,6 +852,8 @@ object ApplicationController : EventMovedHandler {
                 it.addEvent(dismissType, event)
             }
         }
+
+        notificationManager.onEventDismissing(context, event.eventId, event.notificationId);
 
         if (db.deleteEvent(event.eventId, event.instanceStartTime)) {
 

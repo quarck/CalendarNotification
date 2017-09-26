@@ -520,6 +520,8 @@
     <string name="dismiss_and_delete_event">Dismiss and delete event</string>
     <string name="custom_pattern">Custom pattern</string>
     <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\' (min value), \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over</string>
+    <string name="enable_mute_title">Enable mute</string>
+    <string name="enable_mute_summary">Enables \'mute\' button in the notification to mute reminders for particular events</string>
 
 </resources>
 

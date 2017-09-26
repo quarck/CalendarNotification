@@ -883,6 +883,10 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
+    fun muteAllEvents(context: Context) {
+//        XXX
+    }
+
     fun dismissEvent(
             context: Context,
             db: EventsStorageInterface,

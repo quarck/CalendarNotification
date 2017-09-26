@@ -12,6 +12,14 @@
         android:title="@string/snooze_all" />
 
     <item
+        android:id="@+id/action_mute_all"
+        android:orderInCategory="95"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_volume_off_white_24dp"
+        android:title="@string/mute_all"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/action_dismissed_events"
         android:orderInCategory="100"
         app:showAsAction="never"

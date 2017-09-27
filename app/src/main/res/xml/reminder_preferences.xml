@@ -21,14 +21,6 @@
             android:dependency="enable_reminding_key"
             />
 
-        <CheckBoxPreference
-                android:key="enable_notification_mute"
-                android:title="@string/enable_mute_title"
-                android:summary="@string/enable_mute_summary"
-                android:dependency="enable_reminding_key"
-                android:defaultValue="false"
-            />
-
         <!-- MaxRemindersPreference -->
 
         <CheckBoxPreference android:key="reminders_custom_ringtone"

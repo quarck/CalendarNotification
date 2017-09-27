@@ -57,4 +57,19 @@
         android:summary="@string/ignore_all_day_events_summary"
         android:defaultValue="false" />
 
+
+    <CheckBoxPreference
+        android:key="enable_notification_mute"
+        android:title="@string/enable_mute_title"
+        android:summary="@string/enable_mute_summary"
+        android:defaultValue="false"
+        />
+
+    <CheckBoxPreference
+        android:key="enable_notification_mute_tags"
+        android:title="@string/enable_mute_tag_title"
+        android:summary="@string/enable_mute_tag_summary"
+        android:defaultValue="false"
+        />
+
 </PreferenceScreen>

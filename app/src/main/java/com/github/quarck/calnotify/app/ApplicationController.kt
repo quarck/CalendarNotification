@@ -75,6 +75,8 @@ object ApplicationController : EventMovedHandler {
 
     private val addEventMonitor: CalendarChangeRequestMonitorInterface by lazy { CalendarChangeRequestMonitor() }
 
+    private val muteManager: MuteManagerInterface by lazy { MuteManager() }
+
     val CalendarMonitor: CalendarMonitorInterface
         get() = calendarMonitorInternal
 
@@ -292,7 +294,9 @@ object ApplicationController : EventMovedHandler {
             return ret;
         }
 
-        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}")
+        event.isMuted = muteManager.shouldNewEventBeMuted(context, settings, event)
+
+        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -395,6 +399,8 @@ object ApplicationController : EventMovedHandler {
 
                 DevLog.info(context, LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
+                event.isMuted = muteManager.shouldNewEventBeMuted(context, settings, event)
+
                 if (event.isRepeating) {
                     // repeating event - always simply add
                     pairsToAdd.add(Pair(alert, event))
@@ -442,7 +448,11 @@ object ApplicationController : EventMovedHandler {
                 for ((_, event) in pairsToAdd)
                     event.lastStatusChangeTime = currentTime++
 
-                db.addEvents(pairsToAdd.map { it.second }) // ignoring result of add - here we are using another way to validate succesfull add
+                val eventsToAdd = pairsToAdd.map {
+                    it.second
+                }
+
+                db.addEvents(eventsToAdd) // ignoring result of add - here we are using another way to validate succesfull add
             }
         }
 

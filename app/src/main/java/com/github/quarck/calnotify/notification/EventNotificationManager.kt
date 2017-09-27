@@ -220,7 +220,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val (recentEvents, collapsedEvents) = arrangeEvents(db, currentTime, settings)
 
-
             if (recentEvents.isNotEmpty()) {
 
                 val ongoingSummary =
@@ -228,10 +227,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 updatedAnything =
                         postDisplayedEventNotifications(
-                                context, db, settings,
+                                context,
+                                db,
+                                settings,
                                 formatter,
                                 recentEvents,
-                                force, isQuietPeriodActive,
+                                force,
+                                isQuietPeriodActive,
                                 primaryEventId,
                                 ongoingSummary,
                                 numTotalEvents = recentEvents.size + collapsedEvents.size
@@ -458,6 +460,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         }
                     }
 
+                    shouldBeQuiet = shouldBeQuiet || event.isMuted
+
                     postedNotification = true
                     shouldPlayAndVibrate = shouldPlayAndVibrate || !shouldBeQuiet
 
@@ -469,13 +473,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 //DevLog.debug(LOG_TAG, "Posting snoozed notification id ${event.notificationId}, eventId ${event.eventId}, isQuietPeriodActive=$isQuietPeriodActive")
 
                 postedNotification = true
-                shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive
+                shouldPlayAndVibrate = shouldPlayAndVibrate || (!isQuietPeriodActive && !event.isMuted)
             }
         }
 
         if (playReminderSound)
             shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive
-
 
         // now build actual notification and notify
         val intent = Intent(context, MainActivity::class.java)
@@ -717,7 +720,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                     DevLog.debug(LOG_TAG, "event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet, isMuted=${event.isMuted}")
 
-                    shouldBeQuiet = shouldBeQuiet && !event.isMuted
+                    shouldBeQuiet = shouldBeQuiet || event.isMuted
 
                     postNotification(
                             context,
@@ -752,7 +755,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         context,
                         formatter,
                         event,
-                        if (isQuietPeriodActive && !event.isMuted) notificationsSettingsQuiet else notificationsSettings,
+                        if (isQuietPeriodActive || event.isMuted) notificationsSettingsQuiet else notificationsSettings,
                         force,
                         false,
                         snoozePresets,
@@ -1176,19 +1179,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.addAction(snoozeAction)
         }
 
-        if (!notificationSettings.allowNotificationSwipe) {
-            // swipe not allowed - show snooze and dismiss
-            builder.addAction(dismissAction)
-        }
-        else if (notificationSettings.notificationSwipeDoesSnooze) {
-            // swipe does snooze
-            builder.setDeleteIntent(defaultSnooze0PendingIntent)
-            builder.addAction(dismissAction)
-        }
-        else {
-            // swipe does dismiss
-            builder.setDeleteIntent(dismissPendingIntent)
-        }
 
         if (notificationSettings.enableNotificationMute) {
             // build and append
@@ -1206,23 +1196,37 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     )
 
             val actionBuilder =
-                if (event.isMuted) {
-                    NotificationCompat.Action.Builder(
-                            R.drawable.ic_volume_off_white_24dp,
-                            ctx.getString(R.string.un_mute_notification),
-                            muteTogglePendingIntent
-                    )
+                    if (event.isMuted) {
+                        NotificationCompat.Action.Builder(
+                                R.drawable.ic_volume_off_white_24dp,
+                                ctx.getString(R.string.un_mute_notification),
+                                muteTogglePendingIntent
+                        )
 
-                }
-                else {
-                    NotificationCompat.Action.Builder(
-                            R.drawable.ic_volume_up_white_24dp,
-                            ctx.getString(R.string.mute_notification),
-                            muteTogglePendingIntent
-                    )
-                }
+                    }
+                    else {
+                        NotificationCompat.Action.Builder(
+                                R.drawable.ic_volume_up_white_24dp,
+                                ctx.getString(R.string.mute_notification),
+                                muteTogglePendingIntent
+                        )
+                    }
 
             builder.addAction(actionBuilder.build())
+        }
+
+        if (!notificationSettings.allowNotificationSwipe) {
+            // swipe not allowed - show snooze and dismiss
+            builder.addAction(dismissAction)
+        }
+        else if (notificationSettings.notificationSwipeDoesSnooze) {
+            // swipe does snooze
+            builder.setDeleteIntent(defaultSnooze0PendingIntent)
+            builder.addAction(dismissAction)
+        }
+        else {
+            // swipe does dismiss
+            builder.setDeleteIntent(dismissPendingIntent)
         }
 
         if (notificationSettings.appendEmptyAction) {

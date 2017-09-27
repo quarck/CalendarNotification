@@ -117,7 +117,7 @@ data class EventAlertRecord(
         var timeFirstSeen: Long = 0L,
         var eventStatus: EventStatus = EventStatus.Confirmed,
         var attendanceStatus: AttendanceStatus = AttendanceStatus.None,
-        val isMuted: Boolean = false
+        var isMuted: Boolean = false
 )
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {

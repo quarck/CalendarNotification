@@ -415,6 +415,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableNotificationMute: Boolean
         get() = getBoolean(ENABLE_NOTIFICATION_MUTE_KEY, false)
 
+    val enableNotificationMuteTags: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_MUTE_TAG_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
@@ -569,6 +572,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val SNOOZE_ENABLE_DISMISS_AND_DELETE_KEY = "enable_dismiss_and_delete"
 
         private const val ENABLE_NOTIFICATION_MUTE_KEY = "enable_notification_mute"
+        private const val ENABLE_NOTIFICATION_MUTE_TAG_KEY = "enable_notification_mute_tags"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

@@ -373,7 +373,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     private fun doMuteAll() {
-        ApplicationController.muteAllEvents(this);
+        ApplicationController.muteAllVisibleEvents(this);
 
         reloadData()
         lastEventDismissalScrollPosition = null
@@ -395,7 +395,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
         if (muteAllMenuItem != null) {
             muteAllMenuItem.isVisible = settings.enableNotificationMute
-            muteAllMenuItem.isEnabled = adapter.itemCount > 0
+            muteAllMenuItem.isEnabled = adapter.anyForMute
         }
 
         val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)

@@ -37,6 +37,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.getSpecialDetail
+import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -512,6 +513,11 @@ class EventListAdapter(
     val anyForDismissAllButRecentAndSnoozed: Boolean
         get() {
             return ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
+        }
+
+    val anyForMute: Boolean
+        get() {
+            return events.any { it.snoozedUntil == 0L && it.isNotSpecial}
         }
 
     companion object {

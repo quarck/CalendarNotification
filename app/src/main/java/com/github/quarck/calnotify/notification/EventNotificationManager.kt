@@ -104,20 +104,32 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     override fun onEventMuteToggled(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
-        postEventNotifications(context, formatter, false, null)
+
+        if (event.displayStatus != EventDisplayStatus.DisplayedNormal)
+            return
 
         val settings = Settings(context)
 
+        val notificationSettings = settings.notificationSettingsSnapshot
+
+        val notificationsSettingsQuiet =
+                notificationSettings.copy(
+                        ringtoneUri = null,
+                        vibrationOn = false,
+                        forwardEventToPebble = false,
+                        forwardReminderToPebble = false
+                )
+
         postNotification(
-                context,
-                formatter,
-                event,
-                settings.notificationSettingsSnapshot,
-                true,
-                false,
-                settings.snoozePresets,
-                QuietHoursManager.getSilentUntil(settings) != 0L,
-                false
+                ctx = context,
+                formatter = formatter,
+                event = event,
+                notificationSettings = notificationsSettingsQuiet,
+                isForce = false,
+                wasCollapsed = false,
+                snoozePresetsNotFiltered = settings.snoozePresets,
+                isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L,
+                isReminder = false
         )
 
     }
@@ -703,7 +715,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         }
                     }
 
-                    DevLog.debug(LOG_TAG, "event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet")
+                    DevLog.debug(LOG_TAG, "event ${event.eventId}: shouldBeQuiet = $shouldBeQuiet, isMuted=${event.isMuted}")
+
+                    shouldBeQuiet = shouldBeQuiet && !event.isMuted
 
                     postNotification(
                             context,
@@ -738,7 +752,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         context,
                         formatter,
                         event,
-                        if (isQuietPeriodActive) notificationsSettingsQuiet else notificationsSettings,
+                        if (isQuietPeriodActive && !event.isMuted) notificationsSettingsQuiet else notificationsSettings,
                         force,
                         false,
                         snoozePresets,

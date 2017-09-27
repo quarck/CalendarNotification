@@ -612,10 +612,7 @@ object ApplicationController : EventMovedHandler {
 
                     if (event != null) {
 
-                        val (success, newEvent) = db.updateEvent(event,
-                                isMuted = muteAction == 0,
-                                lastStatusChangeTime = currentTime)
-
+                        val (success, newEvent) = db.updateEvent(event, isMuted = muteAction == 0)
                         event = if (success) newEvent else null
                     }
 
@@ -883,8 +880,28 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun muteAllEvents(context: Context) {
-//        XXX
+    fun muteAllVisibleEvents(context: Context) {
+
+        EventsStorage(context).use {
+            db ->
+            val eventsToMute = db.events.filter {
+                event -> (event.snoozedUntil == 0L) && event.isNotSpecial
+            }
+
+            if (eventsToMute.isNotEmpty()) {
+
+                val mutedEvents = eventsToMute.map { event -> event.copy(isMuted = true) }
+                db.updateEvents(mutedEvents)
+
+                val formatter = EventFormatter(context)
+                for (mutedEvent in mutedEvents)
+                    notificationManager.onEventMuteToggled(context, formatter, mutedEvent)
+
+                ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
+                alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            }
+        }
     }
 
     fun dismissEvent(

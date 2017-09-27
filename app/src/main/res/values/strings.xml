@@ -524,8 +524,8 @@
     <string name="enable_mute_summary">Enables \'mute\' button in the notification to mute reminders for particular events</string>
     <string name="un_mute_notification">Un-Mute</string>
     <string name="mute_notification">Mute</string>
-    <string name="mute_all">Mute all</string>
-    <string name="mute_all_events_question">Mute all events?</string>
+    <string name="mute_all">Mute all visible</string>
+    <string name="mute_all_events_question">Mute all visible events?</string>
 
 </resources>
 

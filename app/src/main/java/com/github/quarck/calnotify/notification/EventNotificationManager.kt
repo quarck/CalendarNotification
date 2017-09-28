@@ -818,7 +818,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             sb.append(('A'.toInt() + chr).toChar())
         }
 
-        temp = lastStatusChangeTime
+        temp = lastStatusChangeTime - 1500000000000L
 
         while (temp > 0) {
 
@@ -1100,7 +1100,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
-                .setSmallIcon(R.drawable.stat_notify_calendar)
+                .setSmallIcon(if (!event.isMuted) R.drawable.stat_notify_calendar else R.drawable.ic_volume_off_white_24dp)
                 .setPriority(
                         if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
                             NotificationCompat.PRIORITY_HIGH

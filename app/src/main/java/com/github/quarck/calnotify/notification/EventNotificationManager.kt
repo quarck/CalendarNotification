@@ -1180,7 +1180,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
 
-        if (notificationSettings.enableNotificationMute) {
+        if (notificationSettings.enableNotificationMute || event.isMuted) {
             // build and append
 
             val muteTogglePendingIntent =

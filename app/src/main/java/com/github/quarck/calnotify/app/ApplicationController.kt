@@ -75,7 +75,7 @@ object ApplicationController : EventMovedHandler {
 
     private val addEventMonitor: CalendarChangeRequestMonitorInterface by lazy { CalendarChangeRequestMonitor() }
 
-    private val muteManager: MuteManagerInterface by lazy { MuteManager() }
+    private val tagsManager: TagsManagerInterface by lazy { TagsManager() }
 
     val CalendarMonitor: CalendarMonitorInterface
         get() = calendarMonitorInternal
@@ -83,12 +83,18 @@ object ApplicationController : EventMovedHandler {
     val AddEventMonitorInstance: CalendarChangeRequestMonitorInterface
         get() = addEventMonitor
 
-    fun hasActiveEvents(context: Context) =
+//    fun hasActiveEvents(context: Context) =
+//            EventsStorage(context).use {
+//                val settings = Settings(context)
+//                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
+//            }
+
+    fun hasActiveEventsToRemind(context: Context) =
             EventsStorage(context).use {
                 val settings = Settings(context)
-                val filterMuted = settings.enableNotificationMute
-                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && (!filterMuted || !it.isMuted) }.any()
+                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
             }
+
 
     fun onEventAlarm(context: Context) {
 
@@ -294,9 +300,9 @@ object ApplicationController : EventMovedHandler {
             return ret;
         }
 
-        event.isMuted = muteManager.shouldNewEventBeMuted(context, settings, event)
+        tagsManager.parseEventTags(context, settings, event)
 
-        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}")
+        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}, task: ${event.isTask}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -399,7 +405,7 @@ object ApplicationController : EventMovedHandler {
 
                 DevLog.info(context, LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
-                event.isMuted = muteManager.shouldNewEventBeMuted(context, settings, event)
+                tagsManager.parseEventTags(context, settings, event)
 
                 if (event.isRepeating) {
                     // repeating event - always simply add
@@ -900,7 +906,7 @@ object ApplicationController : EventMovedHandler {
 
             if (eventsToMute.isNotEmpty()) {
 
-                val mutedEvents = eventsToMute.map { event -> event.copy(isMuted = true) }
+                val mutedEvents = eventsToMute.map { it.isMuted = true; it }
                 db.updateEvents(mutedEvents)
 
                 val formatter = EventFormatter(context)

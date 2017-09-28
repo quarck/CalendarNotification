@@ -72,4 +72,11 @@
         android:defaultValue="false"
         />
 
+    <CheckBoxPreference
+        android:key="enable_notification_task_tags"
+        android:title="@string/enable_task_tag_title"
+        android:summary="@string/enable_task_tag_summary"
+        android:defaultValue="false"
+        />
+
 </PreferenceScreen>

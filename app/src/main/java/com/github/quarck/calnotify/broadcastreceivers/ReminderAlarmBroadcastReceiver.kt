@@ -53,7 +53,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
-            if (!ApplicationController.hasActiveEvents(context)) {
+            if (!ApplicationController.hasActiveEventsToRemind(context)) {
                 DevLog.info(context, LOG_TAG, "Reminder broadcast alarm received: no active requests")
                 return@wakeLocked
             }

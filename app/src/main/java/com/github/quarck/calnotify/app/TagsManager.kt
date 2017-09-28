@@ -23,6 +23,41 @@ import android.content.Context
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
-interface MuteManagerInterface {
-    fun shouldNewEventBeMuted(context: Context, settings: Settings, event: EventAlertRecord): Boolean
+
+class TagsManager : TagsManagerInterface {
+
+    private fun hasTag(text: String, tag: String): Boolean {
+
+        var ret = false
+
+        val pos = text.indexOf(tag, ignoreCase = true)
+        if (pos != -1) {
+            val nextCharAfterTag = pos + tag.length;
+            if (nextCharAfterTag < text.length) {
+                ret = !text[nextCharAfterTag].isLetterOrDigit();
+            }
+            else {
+                ret = true;
+            }
+        }
+
+        return ret
+    }
+
+    private fun EventAlertRecord.hasTag(tag: String) =
+            hasTag(this.title, tag) || hasTag(this.desc, tag)
+
+    override fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
+
+        if (settings.enableNotificationMuteTags)
+            event.isMuted = event.hasTag(MUTE_TAG)
+
+        if (settings.enableNotificationTaskTags)
+            event.isTask = event.hasTag(TASK_TAG)
+    }
+
+    companion object {
+        const val MUTE_TAG = "#mute"
+        const val TASK_TAG = "#task"
+    }
 }

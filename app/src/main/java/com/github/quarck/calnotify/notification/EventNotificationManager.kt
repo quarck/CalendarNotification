@@ -1097,10 +1097,16 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 else
                     calendarPendingIntent
 
+        var iconId = R.drawable.stat_notify_calendar
+        if (event.isTask)
+            iconId = R.drawable.ic_event_available_white_24dp
+        else if (event.isMuted)
+            iconId = R.drawable.ic_volume_off_white_24dp
+
         val builder = NotificationCompat.Builder(ctx)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
-                .setSmallIcon(if (!event.isMuted) R.drawable.stat_notify_calendar else R.drawable.ic_volume_off_white_24dp)
+                .setSmallIcon(iconId)
                 .setPriority(
                         if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
                             NotificationCompat.PRIORITY_HIGH

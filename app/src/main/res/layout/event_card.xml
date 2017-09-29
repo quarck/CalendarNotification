@@ -135,6 +135,19 @@
                 android:clickable="true"
                 android:visibility="gone"
                 />
+
+            <ImageView
+                android:id="@+id/imageview_is_muted_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/card_view_event_time"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                card_view:srcCompat="@drawable/ic_volume_off_black_24dp"
+                android:contentDescription="@string/notification_is_muted"
+                android:visibility="gone"
+                />
         </RelativeLayout>
 
         <RelativeLayout

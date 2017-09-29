@@ -115,6 +115,20 @@
 
             />
 
+        <ImageView
+            android:id="@+id/imageview_is_muted_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/card_view_event_date"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            card_view:srcCompat="@drawable/ic_volume_off_black_24dp"
+            android:contentDescription="@string/notification_is_muted"
+            android:visibility="gone"
+
+            />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -158,6 +172,7 @@
             android:paddingEnd="16dp"
             android:paddingRight="16dp"
             />
+
     </RelativeLayout>
 
     <View
@@ -165,6 +180,7 @@
         android:layout_height="0.25dp"
         android:background="@color/light_divider"
         android:layout_alignParentBottom="true"/>
+
 
 </RelativeLayout>
 

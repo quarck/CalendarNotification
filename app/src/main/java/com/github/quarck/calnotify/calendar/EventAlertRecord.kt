@@ -110,6 +110,8 @@ fun Long.setFlag(flag: Long, value: Boolean)
         else
             this and flag.inv()
 
+data class EventAlertRecordKey(val eventId: Long, val instanceStartTime: Long)
+
 data class EventAlertRecord(
         val calendarId: Long,
         val eventId: Long,
@@ -141,6 +143,9 @@ data class EventAlertRecord(
     var isTask: Boolean
         get() = flags.isFlagSet(EventAlertFlags.IS_TASK)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_TASK, value) }
+
+    val key: EventAlertRecordKey
+        get() = EventAlertRecordKey(eventId, instanceStartTime)
 }
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {

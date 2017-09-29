@@ -125,7 +125,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 formatter = formatter,
                 event = event,
                 notificationSettings = notificationsSettingsQuiet,
-                isForce = false,
+                isForce = true,
                 wasCollapsed = false,
                 snoozePresetsNotFiltered = settings.snoozePresets,
                 isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L,

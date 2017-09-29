@@ -1162,7 +1162,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val dismissAction =
                 NotificationCompat.Action.Builder(
                         R.drawable.ic_clear_white_24dp,
-                        ctx.getString(com.github.quarck.calnotify.R.string.dismiss),
+                        ctx.getString(if (event.isTask) R.string.done else R.string.dismiss),
                         dismissPendingIntent
                 ).build()
 
@@ -1180,7 +1180,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
 
-        if (notificationSettings.enableNotificationMute || event.isMuted) {
+        if ((notificationSettings.enableNotificationMute && !event.isTask) || event.isMuted) {
             // build and append
 
             val muteTogglePendingIntent =

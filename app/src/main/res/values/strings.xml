@@ -535,5 +535,7 @@
     <string name="mute_all">Mute all visible</string>
     <string name="mute_all_events_question">Mute all visible events?</string>
 
+    <string name="done">Done</string>
+
 </resources>
 

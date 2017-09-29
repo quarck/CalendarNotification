@@ -418,11 +418,35 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.snooze, popup.menu)
 
-        val menuItem = popup.menu.findItem(R.id.action_dismiss_and_delete)
         val ev = event
-        if (menuItem != null && ev != null) {
-            menuItem.isVisible = !ev.isRepeating && settings.enableDismissAndDelete
+        if (ev != null) {
+            val menuItem = popup.menu.findItem(R.id.action_dismiss_and_delete)
+            if (menuItem != null) {
+                menuItem.isVisible = !ev.isRepeating && settings.enableDismissAndDelete
+            }
+
+            val menuItemMute = popup.menu.findItem(R.id.action_mute_event)
+            if (menuItemMute != null) {
+                menuItemMute.isVisible = settings.enableNotificationMute && !ev.isMuted
+            }
+
+            val menuItemUnMute = popup.menu.findItem(R.id.action_unmute_event)
+            if (menuItemUnMute != null) {
+                menuItemUnMute.isVisible = ev.isMuted
+            }
         }
+
+        /*    <item
+        android:id="@+id/action_mute_event"
+        android:title="@string/mute_notification"
+        android:visible="false"
+        />
+
+    <item
+        android:id="@+id/action_unmute_event"
+        android:title="@string/un_mute_notification"
+        android:visible="false"
+        />*/
 
         popup.setOnMenuItemClickListener {
             item ->
@@ -450,6 +474,22 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                     if (success)
                         finish()
+
+                    true
+                }
+
+                R.id.action_mute_all -> {
+                    if (ev != null) {
+                        ApplicationController.toggleMuteForEvent(this, ev.eventId, ev.instanceStartTime, 0)
+                    }
+
+                    true
+                }
+
+                R.id.action_unmute_event -> {
+                    if (ev != null) {
+                        ApplicationController.toggleMuteForEvent(this, ev.eventId, ev.instanceStartTime, 1)
+                    }
 
                     true
                 }

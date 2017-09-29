@@ -297,7 +297,7 @@
     <string name="notification_auto_dismiss_on_reschedule_summary">Benachrichtigung schließen, wenn der Termin über den Kalender verschoben wurde. Der Termin muss mindestens um 15 Minuten verschoben werden. Der Termin braucht Erinnerungen in der Zukunft.\nHinweis: Diese Funktion hängt vom Kalender ab, ob er die App über eine Verschiebung informiert. Diese Information kommt verzögert (bis zu 60 Sekunden).</string>
     <string name="attach_applicatoin_log">Anwendungslog anhängen</string>
     <string name="attach_applicatoin_log_perm">Logs sind auf dieses Anwendung begrenzt.\n\nEs sind keine Information, wie Titel, Orte o.ä., über Termine in den Logs sichtbar.\n\nAlle Dateien, welche per E-Mail versendet werden, können von Dritten abgefangen werden!</string>
-    <string name="use_set_alarm_clock_title">Verwende \'setAlarmClock\'</string>
+    <string name="use_set_alarm_clock_title">Verwende \'setAlarmClock\' für Erinnnerungen</string>
     <string name="use_set_alarm_clock_summary">Nur bei Android Marshmallow oder neueren Versionen! Es wird der \'setAlarmClock\' Aufruf für geplante oder schlummernde Erinnnerungen verwendet. Dies erhöht die Genauigkeit.\nAls Nebeneffekt wird das \'Alarm\' Icon angezeigt, wenn aktive oder schlummernde Erinnnerungen vorhanden sind.</string>
     <string name="reminder_fallback_method_title">Ausweichlösung</string>
     <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert.</string>
@@ -373,7 +373,7 @@
     <string name="android_wear">Android Wear</string>
     <string name="reminders_play_directly_title">Erinnerungen direkt abspielen</string>
     <string name="reminders_play_directly_summary">Erinnerungenbenarchtigungen nicht anzeigen</string>
-    <string name="allow_notification_swipe_title">Wischen der Benachrichtung</string>
+    <string name="allow_notification_swipe_title">Ablehnen Wischgeste</string>
     <string name="allow_notification_swipe_summary">Benachrichtigung wegwischen anstatt \'Schließen\'</string>
     <string name="separate_reminder_notification_title">Extra Benachrichtigung</string>
     <string name="separate_reminder_notification_summary">Zusätzlich mit einer kurzen extra Erinnerung benachrichtigen (diese extra Benachrichtigung schließt sich nach einigen Sekunden selbstständig)</string>
@@ -503,6 +503,13 @@
     <string name="snooze_hide_event_description_summary">Beschreibung während des Schlummerns nicht anzeigen</string>
     <string name="show_event_desc_in_the_notification_title">Beschreibung anzeigen</string>
     <string name="show_event_desc_in_the_notification_summary">Beschreibung in der Benachrichtigung anzeigen</string>
+    <string name="add_empty_action_to_the_end_title">Leere Aktion hinzufügen</string>
+    <string name="add_empty_action_to_the_end_summary">Ans Ende der Aktionsliste eine leere Aktion hinzufügen. Dies erweitert die Benachrichtigung auf die komplette Breite.</string>
     <string name="notifications_pure_hacks">Reine Hacks...</string>
+    <string name="enable_dismiss_and_delete_title">\'Ablehnen und Löschen\' Menü</string>
+    <string name="enable_dismiss_and_delete_summary">Löschen wenn es erledigt ist! Fügt eine Option dem Schlummermenü hinzu um die Benachrichtigun abzulehnen und den aktuellen Termin zu löschen. Dies fünktioniert nicht für Wiederholungstermine.</string>
+    <string name="dismiss_and_delete_event">Termin ablehnen und löschen</string>
+    <string name="custom_pattern">Benutzerdefiniertes Profil</string>
+    <string name="reminder_pattern">Komma getrennte Liste mit Erinnerungsintervallen, wie zum Beispiel \'15s\', \'15m\', \'2h\' oder \'3d\'</string>
 
 </resources>

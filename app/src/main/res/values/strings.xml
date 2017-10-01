@@ -537,6 +537,8 @@
 
     <string name="done">Done</string>
     <string name="notification_is_muted">Notification is muted</string>
+    <string name="mute_options">Mute options</string>
+    <string name="calendar_handling_options">Calendar handling options</string>
 
 </resources>
 

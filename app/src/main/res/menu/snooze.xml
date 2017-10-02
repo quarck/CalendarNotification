@@ -34,4 +34,9 @@
         android:visible="false"
         />
 
+    <item android:id="@+id/action_done_and_delete"
+        android:title="@string/done_and_delete"
+        android:visible="false"
+        />
+
 </menu>

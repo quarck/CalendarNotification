@@ -420,19 +420,32 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
         val ev = event
         if (ev != null) {
-            val menuItem = popup.menu.findItem(R.id.action_dismiss_and_delete)
-            if (menuItem != null) {
-                menuItem.isVisible = !ev.isRepeating && settings.enableDismissAndDelete
+            if (settings.enableDismissAndDelete) {
+                val menuItem = popup.menu.findItem(R.id.action_dismiss_and_delete)
+                if (menuItem != null) {
+                    menuItem.isVisible = !ev.isRepeating
+                }
             }
 
-            val menuItemMute = popup.menu.findItem(R.id.action_mute_event)
-            if (menuItemMute != null) {
-                menuItemMute.isVisible = settings.enableNotificationMute && !ev.isMuted && !ev.isTask
+            if (settings.enableNotificationMute) {
+                val menuItemMute = popup.menu.findItem(R.id.action_mute_event)
+                if (menuItemMute != null) {
+                    menuItemMute.isVisible = !ev.isMuted && !ev.isTask
+                }
             }
 
             val menuItemUnMute = popup.menu.findItem(R.id.action_unmute_event)
             if (menuItemUnMute != null) {
                 menuItemUnMute.isVisible = ev.isMuted
+            }
+
+            if (ev.isTask) {
+                val menuItemDismiss = popup.menu.findItem(R.id.action_dismiss_event)
+                val menuItemDone = popup.menu.findItem(R.id.action_done_event)
+                if (menuItemDismiss != null && menuItemDone != null) {
+                    menuItemDismiss.isVisible = false
+                    menuItemDone.isVisible = true
+                }
             }
         }
 
@@ -452,7 +465,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             item ->
 
             when (item.itemId) {
-                R.id.action_dismiss_event -> {
+                R.id.action_dismiss_event, R.id.action_done_event -> {
                     if (ev != null) {
                         ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, ev)
                         undoManager.addUndoState(

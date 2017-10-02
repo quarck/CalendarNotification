@@ -56,10 +56,14 @@ class TagsManager : TagsManagerInterface {
 
         if (settings.enableNotificationTaskTags)
             event.isTask = event.hasTag(TASK_TAG)
+
+        if (settings.enableNotificationAlarmTags)
+            event.isAlarm = event.hasTag(ALARM_TAG)
     }
 
     companion object {
         const val MUTE_TAG = "#mute"
         const val TASK_TAG = "#task"
+        const val ALARM_TAG = "#alarm"
     }
 }

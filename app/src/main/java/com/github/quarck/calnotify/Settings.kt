@@ -421,6 +421,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableNotificationTaskTags: Boolean
         get() = getBoolean(ENABLE_NOTIFICATION_TASK_TAG_KEY, false)
 
+    val enableNotificationAlarmTags: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_ALARM_TAG_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
@@ -577,6 +580,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_NOTIFICATION_MUTE_KEY = "enable_notification_mute"
         private const val ENABLE_NOTIFICATION_MUTE_TAG_KEY = "enable_notification_mute_tags"
         private const val ENABLE_NOTIFICATION_TASK_TAG_KEY = "enable_notification_task_tags"
+        private const val ENABLE_NOTIFICATION_ALARM_TAG_KEY = "enable_notification_alarm_tags"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

@@ -339,14 +339,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context.notificationManager.cancel(firstEvent.notificationId)
 
             postNotification(
-                    context,
-                    formatter,
-                    firstEvent,
-                    notificationSettings,
-                    true,
-                    false, // force, so it won't randomly pop-up this notification
-                    settings.snoozePresets, // was collapsed
-                    quietPeriodActive,
+                    ctx = context,
+                    formatter = formatter,
+                    event = firstEvent,
+                    notificationSettings = notificationSettings,
+                    isForce = true,
+                    wasCollapsed = false, // force, so it won't randomly pop-up this notification
+                    snoozePresetsNotFiltered = settings.snoozePresets, // was collapsed
+                    isQuietPeriodActive = quietPeriodActive,
                     isReminder = true
             )
         } else if (!collapsedEvents.isEmpty()) {
@@ -354,15 +354,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
 
             postEverythingCollapsed(
-                    context,
-                    db,
-                    collapsedEvents,
-                    settings,
-                    notificationSettings,
-                    false,
-                    quietPeriodActive,
-                    null,
-                    true
+                    context = context,
+                    db = db,
+                    events = collapsedEvents,
+                    settings = settings,
+                    notificationsSettingsIn = notificationSettings,
+                    force = false,
+                    isQuietPeriodActive = quietPeriodActive,
+                    primaryEventId = null,
+                    playReminderSound = true
             )
         }
     }
@@ -417,8 +417,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 displayStatus = EventDisplayStatus.DisplayedCollapsed
         )
 
+        var anyAlarmTags = false
 
         for (event in events) {
+
+            anyAlarmTags = anyAlarmTags || event.isAlarm
 
             if (event.snoozedUntil == 0L) {
 
@@ -534,7 +537,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 lastSoundTimestamp = currentTime
 
-                if (notificationsSettings.useAlarmStream)
+                if (notificationsSettings.useAlarmStream || anyAlarmTags)
                     builder.setSound(notificationsSettings.ringtoneUri, AudioManager.STREAM_ALARM)
                 else
                     builder.setSound(notificationsSettings.ringtoneUri)
@@ -1299,7 +1302,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             lastSoundTimestamp = currentTime
 
-            if (notificationSettings.useAlarmStream)
+            if (notificationSettings.useAlarmStream || event.isAlarm)
                 builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
             else
                 builder.setSound(notificationSettings.ringtoneUri)

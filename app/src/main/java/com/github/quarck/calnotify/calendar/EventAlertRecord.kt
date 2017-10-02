@@ -98,7 +98,7 @@ enum class AttendanceStatus(val code: Int) {
 object EventAlertFlags {
     const val IS_MUTED = 1L
     const val IS_TASK = 2L
-    //const val NEXT_ONE = 4L
+    const val IS_ALARM = 4L
 }
 
 fun Long.isFlagSet(flag: Long)
@@ -143,6 +143,10 @@ data class EventAlertRecord(
     var isTask: Boolean
         get() = flags.isFlagSet(EventAlertFlags.IS_TASK)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_TASK, value) }
+
+    var isAlarm: Boolean
+        get() = flags.isFlagSet(EventAlertFlags.IS_ALARM)
+        set(value) { flags = flags.setFlag(EventAlertFlags.IS_ALARM, value) }
 
     val key: EventAlertRecordKey
         get() = EventAlertRecordKey(eventId, instanceStartTime)

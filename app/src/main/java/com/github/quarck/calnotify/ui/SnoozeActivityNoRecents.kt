@@ -478,7 +478,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
                     true
                 }
 
-                R.id.action_mute_all -> {
+                R.id.action_mute_event -> {
                     if (ev != null) {
                         ApplicationController.toggleMuteForEvent(this, ev.eventId, ev.instanceStartTime, 0)
                     }

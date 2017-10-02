@@ -901,7 +901,7 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use {
             db ->
             val eventsToMute = db.events.filter {
-                event -> (event.snoozedUntil == 0L) && event.isNotSpecial
+                event -> (event.snoozedUntil == 0L) && event.isNotSpecial && !event.isTask
             }
 
             if (eventsToMute.isNotEmpty()) {

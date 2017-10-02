@@ -533,7 +533,7 @@
     <string name="un_mute_notification">Un-Mute</string>
     <string name="mute_notification">Mute</string>
     <string name="mute_all">Mute all visible</string>
-    <string name="mute_all_events_question">Mute all visible events?</string>
+    <string name="mute_all_events_question">Mute all visible events? (Tasks excluded)</string>
 
     <string name="done">Done</string>
     <string name="notification_is_muted">Notification is muted</string>

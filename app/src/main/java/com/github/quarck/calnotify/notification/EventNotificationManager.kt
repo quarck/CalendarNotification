@@ -298,7 +298,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             lastStatusChange,
                             notificationSettings,
                             isQuietPeriodActive,
-                            itIsAfterQuietHoursReminder
+                            itIsAfterQuietHoursReminder,
+                            activeEvents.any { it.isAlarm }
                     )
                 }
                 else {
@@ -332,6 +333,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     ) {
         val (recentEvents, collapsedEvents) = arrangeEvents(activeEvents, settings)
 
+        val anyAlarms = activeEvents.any { it.isAlarm }
+
         if (!recentEvents.isEmpty()) {
             // normal
             val firstEvent = recentEvents.last()
@@ -347,7 +350,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     wasCollapsed = false, // force, so it won't randomly pop-up this notification
                     snoozePresetsNotFiltered = settings.snoozePresets, // was collapsed
                     isQuietPeriodActive = quietPeriodActive,
-                    isReminder = true
+                    isReminder = true,
+                    forceAlarmStream = anyAlarms
             )
         } else if (!collapsedEvents.isEmpty()) {
             // collapsed
@@ -840,7 +844,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             numActiveEvents: Int,
             lastStatusChange: Long,
             notificationSettings: NotificationSettingsSnapshot,
-            isQuietPeriodActive: Boolean, itIsAfterQuietHoursReminder: Boolean
+            isQuietPeriodActive: Boolean,
+            itIsAfterQuietHoursReminder: Boolean,
+            forceAlarmStream: Boolean
     ) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
@@ -916,7 +922,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             lastSoundTimestamp = currentTime
 
-            if (notificationSettings.useAlarmStream)
+            if (notificationSettings.useAlarmStream || forceAlarmStream)
                 builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
             else
                 builder.setSound(notificationSettings.ringtoneUri)
@@ -1052,7 +1058,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             wasCollapsed: Boolean,
             snoozePresetsNotFiltered: LongArray,
             isQuietPeriodActive: Boolean,
-            isReminder: Boolean = false
+            isReminder: Boolean = false,
+            forceAlarmStream: Boolean = false
     ) {
         val notificationManager = NotificationManagerCompat.from(ctx)
 
@@ -1302,7 +1309,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             lastSoundTimestamp = currentTime
 
-            if (notificationSettings.useAlarmStream || event.isAlarm)
+            if (notificationSettings.useAlarmStream || event.isAlarm || forceAlarmStream)
                 builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
             else
                 builder.setSound(notificationSettings.ringtoneUri)

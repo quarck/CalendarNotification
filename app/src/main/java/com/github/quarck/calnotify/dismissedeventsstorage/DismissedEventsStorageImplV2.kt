@@ -64,8 +64,8 @@ class DismissedEventsStorageImplV2
                         "$KEY_IS_REPEATING INTEGER, " +
 
                         "$KEY_ALL_DAY INTEGER, " +
+                        "$KEY_FLAGS INTEGER, " +
 
-                        "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
                         "$KEY_RESERVED_INT3 INTEGER, " +
                         "$KEY_RESERVED_INT4 INTEGER, " +
@@ -205,9 +205,9 @@ class DismissedEventsStorageImplV2
         values.put(KEY_COLOR, event.color)
         values.put(KEY_IS_REPEATING, event.isRepeating)
         values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
+        values.put(KEY_FLAGS, event.flags)
 
         // Fill reserved keys with some placeholders
-        values.put(KEY_RESERVED_INT1, 0L)
         values.put(KEY_RESERVED_INT2, 0L)
         values.put(KEY_RESERVED_INT3, 0L)
         values.put(KEY_RESERVED_INT4, 0L)
@@ -242,7 +242,8 @@ class DismissedEventsStorageImplV2
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
                 color = cursor.getInt(PROJECTION_KEY_COLOR),
                 isRepeating = cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0,
-                isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
+                isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
+                flags = cursor.getLong(PROJECTION_KEY_FLAGS)
         )
 
         return DismissedEventAlertRecord(
@@ -280,11 +281,11 @@ class DismissedEventsStorageImplV2
         private const val KEY_LAST_EVENT_VISIBILITY = "lastSeen"
         private const val KEY_COLOR = "color"
         private const val KEY_ALERT_TIME = "alertTime"
+        private const val KEY_FLAGS = "i1"
 
         private const val KEY_RESERVED_STR2 = "s2"
         private const val KEY_RESERVED_STR3 = "s3"
 
-        private const val KEY_RESERVED_INT1 = "i1"
         private const val KEY_RESERVED_INT2 = "i2"
         private const val KEY_RESERVED_INT3 = "i3"
         private const val KEY_RESERVED_INT4 = "i4"
@@ -312,7 +313,8 @@ class DismissedEventsStorageImplV2
                 KEY_DISPLAY_STATUS,
                 KEY_COLOR,
                 KEY_IS_REPEATING,
-                KEY_ALL_DAY
+                KEY_ALL_DAY,
+                KEY_FLAGS
         )
 
         const val PROJECTION_KEY_CALENDAR_ID = 0
@@ -333,5 +335,6 @@ class DismissedEventsStorageImplV2
         const val PROJECTION_KEY_COLOR = 15
         const val PROJECTION_KEY_IS_REPEATING = 16
         const val PROJECTION_KEY_ALL_DAY = 17
+        const val PROJECTION_KEY_FLAGS = 18
     }
 }

@@ -75,14 +75,26 @@ object ApplicationController : EventMovedHandler {
 
     private val addEventMonitor: CalendarChangeRequestMonitorInterface by lazy { CalendarChangeRequestMonitor() }
 
+    private val tagsManager: TagsManagerInterface by lazy { TagsManager() }
+
     val CalendarMonitor: CalendarMonitorInterface
         get() = calendarMonitorInternal
 
     val AddEventMonitorInstance: CalendarChangeRequestMonitorInterface
         get() = addEventMonitor
 
-    fun hasActiveEvents(context: Context) =
-            EventsStorage(context).use { it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial }.any() }
+//    fun hasActiveEvents(context: Context) =
+//            EventsStorage(context).use {
+//                val settings = Settings(context)
+//                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
+//            }
+
+    fun hasActiveEventsToRemind(context: Context) =
+            EventsStorage(context).use {
+                val settings = Settings(context)
+                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
+            }
+
 
     fun onEventAlarm(context: Context) {
 
@@ -288,7 +300,9 @@ object ApplicationController : EventMovedHandler {
             return ret;
         }
 
-        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}")
+        tagsManager.parseEventTags(context, settings, event)
+
+        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}, task: ${event.isTask}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -391,6 +405,8 @@ object ApplicationController : EventMovedHandler {
 
                 DevLog.info(context, LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
+                tagsManager.parseEventTags(context, settings, event)
+
                 if (event.isRepeating) {
                     // repeating event - always simply add
                     pairsToAdd.add(Pair(alert, event))
@@ -438,7 +454,11 @@ object ApplicationController : EventMovedHandler {
                 for ((_, event) in pairsToAdd)
                     event.lastStatusChangeTime = currentTime++
 
-                db.addEvents(pairsToAdd.map { it.second }) // ignoring result of add - here we are using another way to validate succesfull add
+                val eventsToAdd = pairsToAdd.map {
+                    it.second
+                }
+
+                db.addEvents(eventsToAdd) // ignoring result of add - here we are using another way to validate succesfull add
             }
         }
 
@@ -593,6 +613,44 @@ object ApplicationController : EventMovedHandler {
 
             notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
         }
+    }
+
+    fun toggleMuteForEvent(context: Context, eventId: Long, instanceStartTime: Long, muteAction: Int): Boolean {
+
+        var ret: Boolean = false
+
+        val currentTime = System.currentTimeMillis()
+
+        val mutedEvent: EventAlertRecord? =
+                EventsStorage(context).use {
+                    db ->
+                    var event = db.getEvent(eventId, instanceStartTime)
+
+                    if (event != null) {
+
+                        val (success, newEvent) = db.updateEvent(event, isMuted = muteAction == 0)
+                        event = if (success) newEvent else null
+                    }
+
+                    event;
+                }
+
+        if (mutedEvent != null) {
+            ret = true;
+
+            notificationManager.onEventMuteToggled(context, EventFormatter(context), mutedEvent)
+
+            ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
+            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} mute toggled: ${mutedEvent.isMuted}: $ret")
+        }
+        else {
+            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $muteAction")
+        }
+
+        return ret
     }
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
@@ -835,6 +893,30 @@ object ApplicationController : EventMovedHandler {
                         event.isNotSpecial
             }
             dismissEvents(context, db, eventsToDismiss, dismissType, false)
+        }
+    }
+
+    fun muteAllVisibleEvents(context: Context) {
+
+        EventsStorage(context).use {
+            db ->
+            val eventsToMute = db.events.filter {
+                event -> (event.snoozedUntil == 0L) && event.isNotSpecial && !event.isTask
+            }
+
+            if (eventsToMute.isNotEmpty()) {
+
+                val mutedEvents = eventsToMute.map { it.isMuted = true; it }
+                db.updateEvents(mutedEvents)
+
+                val formatter = EventFormatter(context)
+                for (mutedEvent in mutedEvents)
+                    notificationManager.onEventMuteToggled(context, formatter, mutedEvent)
+
+                ReminderState(context).onUserInteraction(System.currentTimeMillis())
+
+                alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            }
         }
     }
 

@@ -1,60 +1,100 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <CheckBoxPreference android:key="enable_manual_calendar_rescan"
-        android:title="@string/manual_event_rescan_title"
-        android:summary="@string/manual_event_rescan_summary"
-        android:defaultValue="true"
-        />
+    <PreferenceCategory
+        android:title="@string/calendar_handling_options"
+        android:key="pref_key_cal_category">
 
-    <CheckBoxPreference
-        android:key="notify_on_email_only_events"
-        android:title="@string/handle_email_only_events_title"
-        android:summary="@string/handle_email_only_events_summary"
-        android:dependency="enable_manual_calendar_rescan"
-        android:defaultValue="false"
-        />
+        <CheckBoxPreference android:key="enable_manual_calendar_rescan"
+            android:title="@string/manual_event_rescan_title"
+            android:summary="@string/manual_event_rescan_summary"
+            android:defaultValue="true"
+            />
 
-    <CheckBoxPreference android:key="remind_events_no_rmdnrs"
-        android:title="@string/handle_events_with_no_reminders"
-        android:summary="@string/handle_events_with_no_reminders_summary"
-        android:dependency="enable_manual_calendar_rescan"
-        android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="notify_on_email_only_events"
+            android:title="@string/handle_email_only_events_title"
+            android:summary="@string/handle_email_only_events_summary"
+            android:dependency="enable_manual_calendar_rescan"
+            android:defaultValue="false"
+            />
 
-    <com.github.quarck.calnotify.prefs.DefaultManualNotificationPreference
-        android:key="default_rminder_time"
-        android:title="@string/default_reminder_time"
-        android:summary="@string/default_reminder_time_summary_short"
-        android:dependency="remind_events_no_rmdnrs"
-        android:numeric="integer"
-        android:defaultValue="15"
-        />
+        <CheckBoxPreference android:key="remind_events_no_rmdnrs"
+            android:title="@string/handle_events_with_no_reminders"
+            android:summary="@string/handle_events_with_no_reminders_summary"
+            android:dependency="enable_manual_calendar_rescan"
+            android:defaultValue="false"/>
 
-    <com.github.quarck.calnotify.prefs.DefaultManualAllDayNotificationPreference
-        android:key="default_all_day_rminder_time"
-        android:title="@string/default_all_day_reminder_time"
-        android:summary="@string/default_all_day_reminder_time_summary_short"
-        android:dependency="remind_events_no_rmdnrs"
-        android:numeric="integer"
-        android:defaultValue="-480"
-        />
+        <com.github.quarck.calnotify.prefs.DefaultManualNotificationPreference
+            android:key="default_rminder_time"
+            android:title="@string/default_reminder_time"
+            android:summary="@string/default_reminder_time_summary_short"
+            android:dependency="remind_events_no_rmdnrs"
+            android:numeric="integer"
+            android:defaultValue="15"
+            />
 
-    <CheckBoxPreference
-        android:key="dont_show_declined_events"
-        android:title="@string/ignore_declined_events"
-        android:summary="@string/ignore_declined_events_summary"
-        android:defaultValue="false" />
+        <com.github.quarck.calnotify.prefs.DefaultManualAllDayNotificationPreference
+            android:key="default_all_day_rminder_time"
+            android:title="@string/default_all_day_reminder_time"
+            android:summary="@string/default_all_day_reminder_time_summary_short"
+            android:dependency="remind_events_no_rmdnrs"
+            android:numeric="integer"
+            android:defaultValue="-480"
+            />
 
-    <CheckBoxPreference
-        android:key="dont_show_cancelled_events"
-        android:title="@string/ignore_cancelled_events"
-        android:summary="@string/ignore_cancelled_events_summary"
-        android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="dont_show_declined_events"
+            android:title="@string/ignore_declined_events"
+            android:summary="@string/ignore_declined_events_summary"
+            android:defaultValue="false" />
 
-    <CheckBoxPreference
-        android:key="dont_show_all_day_events"
-        android:title="@string/ignore_all_day_events"
-        android:summary="@string/ignore_all_day_events_summary"
-        android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="dont_show_cancelled_events"
+            android:title="@string/ignore_cancelled_events"
+            android:summary="@string/ignore_cancelled_events_summary"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="dont_show_all_day_events"
+            android:title="@string/ignore_all_day_events"
+            android:summary="@string/ignore_all_day_events_summary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/mute_options"
+        android:key="pref_key_mute_category">
+
+        <CheckBoxPreference
+            android:key="enable_notification_mute"
+            android:title="@string/enable_mute_title"
+            android:summary="@string/enable_mute_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
+            android:key="enable_notification_mute_tags"
+            android:title="@string/enable_mute_tag_title"
+            android:summary="@string/enable_mute_tag_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
+            android:key="enable_notification_task_tags"
+            android:title="@string/enable_task_tag_title"
+            android:summary="@string/enable_task_tag_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
+            android:key="enable_notification_alarm_tags"
+            android:title="@string/enable_alarm_tag_title"
+            android:summary="@string/enable_alarm_tag_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -61,6 +61,8 @@ object Consts {
 
     const val INTENT_TTS_TEXT = "text"
 
+    const val INTENT_MUTE_ACTION = "muteAction"
+
     // max number of notifications displayed on the screen at all the times
     const val MAX_NOTIFICATIONS = 16
 

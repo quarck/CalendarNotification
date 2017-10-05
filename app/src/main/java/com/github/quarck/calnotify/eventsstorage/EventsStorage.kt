@@ -22,8 +22,10 @@ package com.github.quarck.calnotify.eventsstorage
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.quarck.calnotify.calendar.EventAlertFlags
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.calendar.setFlag
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
@@ -105,8 +107,15 @@ class EventsStorage(val context: Context)
                              lastStatusChangeTime: Long?,
                              displayStatus: EventDisplayStatus?,
                              color: Int?,
-                             isRepeating: Boolean?
+                             isRepeating: Boolean?,
+                             isMuted: Boolean?
     ): Pair<Boolean, EventAlertRecord> {
+
+        var newFlags = event.flags
+        if (isMuted != null) {
+            newFlags = event.flags.setFlag(EventAlertFlags.IS_MUTED, isMuted)
+        }
+
         val newEvent =
                 event.copy(
                         alertTime = alertTime ?: event.alertTime,
@@ -118,7 +127,8 @@ class EventsStorage(val context: Context)
                         lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color,
-                        isRepeating = isRepeating ?: event.isRepeating
+                        isRepeating = isRepeating ?: event.isRepeating,
+                        flags = newFlags
                 );
 
         val success = updateEvent(newEvent)

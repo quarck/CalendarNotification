@@ -95,6 +95,23 @@ enum class AttendanceStatus(val code: Int) {
     }
 }
 
+object EventAlertFlags {
+    const val IS_MUTED = 1L
+    const val IS_TASK = 2L
+    const val IS_ALARM = 4L
+}
+
+fun Long.isFlagSet(flag: Long)
+        = (this and flag) != 0L
+
+fun Long.setFlag(flag: Long, value: Boolean)
+        = if (value)
+            this or flag
+        else
+            this and flag.inv()
+
+data class EventAlertRecordKey(val eventId: Long, val instanceStartTime: Long)
+
 data class EventAlertRecord(
         val calendarId: Long,
         val eventId: Long,
@@ -116,8 +133,24 @@ data class EventAlertRecord(
         var origin: EventOrigin = EventOrigin.ProviderBroadcast,
         var timeFirstSeen: Long = 0L,
         var eventStatus: EventStatus = EventStatus.Confirmed,
-        var attendanceStatus: AttendanceStatus = AttendanceStatus.None
-)
+        var attendanceStatus: AttendanceStatus = AttendanceStatus.None,
+        var flags: Long = 0
+) {
+    var isMuted: Boolean
+        get() = flags.isFlagSet(EventAlertFlags.IS_MUTED)
+        set(value) { flags = flags.setFlag(EventAlertFlags.IS_MUTED, value) }
+
+    var isTask: Boolean
+        get() = flags.isFlagSet(EventAlertFlags.IS_TASK)
+        set(value) { flags = flags.setFlag(EventAlertFlags.IS_TASK, value) }
+
+    var isAlarm: Boolean
+        get() = flags.isFlagSet(EventAlertFlags.IS_ALARM)
+        set(value) { flags = flags.setFlag(EventAlertFlags.IS_ALARM, value) }
+
+    val key: EventAlertRecordKey
+        get() = EventAlertRecordKey(eventId, instanceStartTime)
+}
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
     var ret = false

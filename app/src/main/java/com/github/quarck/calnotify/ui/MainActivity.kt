@@ -347,9 +347,33 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 .show()
     }
 
+    private fun onMuteAll() {
+        AlertDialog.Builder(this)
+                .setMessage(R.string.mute_all_events_question)
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes) {
+                    _, _ ->
+                    doMuteAll()
+                }
+                .setNegativeButton(R.string.cancel) {
+                    _, _ ->
+                }
+                .create()
+                .show()
+    }
+
     private fun doDismissAll() {
 
         ApplicationController.dismissAllButRecentAndSnoozed(this, EventDismissType.ManuallyDismissedFromActivity);
+
+        reloadData()
+        lastEventDismissalScrollPosition = null
+
+        onNumEventsUpdated()
+    }
+
+    private fun doMuteAll() {
+        ApplicationController.muteAllVisibleEvents(this);
 
         reloadData()
         lastEventDismissalScrollPosition = null
@@ -366,6 +390,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             menuItem.title =
                     resources.getString(
                             if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
+        }
+
+        val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
+        if (muteAllMenuItem != null) {
+            muteAllMenuItem.isVisible = settings.enableNotificationMute
+            muteAllMenuItem.isEnabled = adapter.anyForMute
         }
 
         val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
@@ -398,6 +428,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
                                 .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+
+            R.id.action_mute_all ->
+                onMuteAll()
 
             R.id.action_dismissed_events ->
                 startActivity(

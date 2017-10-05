@@ -31,6 +31,7 @@ data class NotificationSettingsSnapshot
 (
         val allowNotificationSwipe: Boolean,
         val notificationSwipeDoesSnooze: Boolean,
+        val enableNotificationMute: Boolean,
         val ringtoneUri: Uri?,
         val vibrationOn: Boolean,
         val vibrationPattern: LongArray,
@@ -411,10 +412,23 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableDismissAndDelete: Boolean
         get() = getBoolean(SNOOZE_ENABLE_DISMISS_AND_DELETE_KEY, false)
 
+    val enableNotificationMute: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_MUTE_KEY, false)
+
+    val enableNotificationMuteTags: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_MUTE_TAG_KEY, false)
+
+    val enableNotificationTaskTags: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_TASK_TAG_KEY, false)
+
+    val enableNotificationAlarmTags: Boolean
+        get() = getBoolean(ENABLE_NOTIFICATION_ALARM_TAG_KEY, false)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
+                enableNotificationMute = enableNotificationMute && remindersEnabled,
                 ringtoneUri = ringtoneURI,
                 vibrationOn = vibraOn,
                 vibrationPattern = vibrationPattern,
@@ -562,6 +576,11 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATION_ADD_EMPTY_ACTION_KEY = "add_empty_action_to_the_end"
 
         private const val SNOOZE_ENABLE_DISMISS_AND_DELETE_KEY = "enable_dismiss_and_delete"
+
+        private const val ENABLE_NOTIFICATION_MUTE_KEY = "enable_notification_mute"
+        private const val ENABLE_NOTIFICATION_MUTE_TAG_KEY = "enable_notification_mute_tags"
+        private const val ENABLE_NOTIFICATION_TASK_TAG_KEY = "enable_notification_task_tags"
+        private const val ENABLE_NOTIFICATION_ALARM_TAG_KEY = "enable_notification_alarm_tags"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

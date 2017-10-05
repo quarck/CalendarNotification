@@ -30,14 +30,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.getSpecialDetail
-import com.github.quarck.calnotify.calendar.isSpecial
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -85,6 +84,10 @@ class EventListAdapter(
         var dismissButton: Button?
         var undoButton: Button?
 
+        var muteImage: ImageView?
+        var taskImage: ImageView?
+        val alarmImage: ImageView?
+
         var calendarColor: ColorDrawable
 
         init {
@@ -107,6 +110,10 @@ class EventListAdapter(
             compactViewCalendarColor = itemView.find<View?>(R.id.compact_view_calendar_color)
 
             undoButton = itemView.find<Button?>(R.id.card_view_button_undo)
+
+            muteImage = itemView.find<ImageView?>(R.id.imageview_is_muted_indicator)
+            taskImage = itemView.find<ImageView?>(R.id.imageview_is_task_indicator)
+            alarmImage = itemView.find<ImageView?>(R.id.imageview_is_alarm_indicator)
 
             calendarColor = ColorDrawable(0)
 
@@ -145,8 +152,8 @@ class EventListAdapter(
 
     private var currentScrollPosition: Int = 0
 
-    private val pendingEventRemoveRunnables = mutableMapOf<EventAlertRecord, Runnable>()
-    private var eventsPendingRemoval = mutableListOf<EventAlertRecord>()
+    private val pendingEventRemoveRunnables = mutableMapOf<EventAlertRecordKey, Runnable>()
+    private var eventsPendingRemoval = mutableMapOf<EventAlertRecordKey, EventAlertRecord>()
 
     private val eventFormatter = EventFormatter(context)
 
@@ -224,6 +231,9 @@ class EventListAdapter(
                             else {
                                 DevLog.error(context, LOG_TAG, "Failed to get event at post $swipedPosition")
                             }
+                        }
+                        else {
+                            DevLog.error(context, LOG_TAG, "onSwiped: can't get swipedPosition")
                         }
                     }
 
@@ -307,8 +317,9 @@ class EventListAdapter(
             return
 
         val event = events[position]
+        val eventKey = event.key
 
-        if (eventsPendingRemoval.contains(event)) {
+        if (eventsPendingRemoval.contains(eventKey)) {
             // we need to show the "undo" state of the row
             holder.undoLayout?.visibility = View.VISIBLE
             holder.compactViewContentLayout?.visibility = View.GONE
@@ -318,18 +329,23 @@ class EventListAdapter(
 
                 callback.onItemRestored(event)
 
-                pendingEventRemoveRunnables.remove(event)
+                pendingEventRemoveRunnables.remove(eventKey)
 
-                eventsPendingRemoval.remove(event)
+                eventsPendingRemoval.remove(eventKey)
 
                 notifyItemChanged(events.indexOf(event))
             }
-
         }
         else {
             holder.eventId = event.eventId;
 
             holder.eventTitleText.text = event.title
+
+            holder.muteImage?.visibility = if (event.isMuted) View.VISIBLE else View.GONE
+
+            holder.taskImage?.visibility = if (event.isTask) View.VISIBLE else View.GONE
+
+            holder.alarmImage?.visibility = if (event.isAlarm) View.VISIBLE else View.GONE
 
             if (useCompactView) {
                 holder.undoLayout?.visibility = View.GONE
@@ -345,7 +361,6 @@ class EventListAdapter(
                     holder.eventDateText.text = detail1
                     holder.eventTimeText.text = detail2
                 }
-
             }
             else {
 
@@ -441,8 +456,10 @@ class EventListAdapter(
             = synchronized(this) {
         if (position >= 0 && position < events.size)
             events[position];
-        else
+        else {
+            DevLog.error(context, LOG_TAG, "getEventAtPosition: requested pos $position, size: ${events.size}")
             null
+        }
     }
 
 
@@ -462,12 +479,14 @@ class EventListAdapter(
 
     fun removeWithUndo(event: EventAlertRecord) {
 
-        if (!eventsPendingRemoval.contains(event)) {
+        val eventKey = event.key
 
-            eventsPendingRemoval.add(event);
+        if (!eventsPendingRemoval.contains(eventKey)) {
+
+            eventsPendingRemoval[eventKey] = event;
 
             pendingEventRemoveRunnables.put(
-                    event,
+                    eventKey,
                     Runnable() {
                         synchronized(this) {
                             val idx = events.indexOf(event)
@@ -489,6 +508,10 @@ class EventListAdapter(
                                         }
 
                                 DevLog.error(context, LOG_TAG, "Found by manual: ${foundByManual != null}")
+
+                                if (foundByManual != null) {
+                                    notifyItemRemoved(foundByManual.index)
+                                }
                             }
                         }
                     });
@@ -497,10 +520,15 @@ class EventListAdapter(
                 notifyItemChanged(events.indexOf(event));
             }
         }
+        else {
+            DevLog.error(context, LOG_TAG, "Event is already scheduled for removal!")
+        }
     }
 
-    fun isPendingRemoval(position: Int)
-            = eventsPendingRemoval.contains(getEventAtPosition(position))
+    fun isPendingRemoval(position: Int): Boolean {
+        val event = getEventAtPosition(position)
+        return event != null && eventsPendingRemoval.contains(event.key)
+    }
 
     fun clearUndoState() {
 
@@ -510,9 +538,10 @@ class EventListAdapter(
     }
 
     val anyForDismissAllButRecentAndSnoozed: Boolean
-        get() {
-            return ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
-        }
+        get() = ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
+
+    val anyForMute: Boolean
+        get() = events.any { it.snoozedUntil == 0L && it.isNotSpecial}
 
     companion object {
         private const val LOG_TAG = "EventListAdapter"

@@ -116,6 +116,7 @@
         <service android:name=".calendarmonitor.CalendarMonitorService" />
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
+        <service android:name=".notification.NotificationActionMuteToggleService" />
         <service android:name=".ui.UINotifierService" />
         <service android:name=".notification.TextToSpeechService" />
 

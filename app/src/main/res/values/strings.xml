@@ -517,9 +517,31 @@
     <string name="notifications_pure_hacks">Pure Hacks</string>
     <string name="enable_dismiss_and_delete_title">\'Dismiss and delete\' menu</string>
     <string name="enable_dismiss_and_delete_summary">Delete when its done! Adds menu option on the snooze screen to dismiss the notification and delete actual event, all in one click. Would only work for non-repeating events</string>
-    <string name="dismiss_and_delete_event">Dismiss and delete event</string>
+    <string name="dismiss_and_delete_event">Dismiss and delete</string>
+    <string name="done_and_delete">Done and delete</string>
     <string name="custom_pattern">Custom pattern</string>
     <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\' (min value), \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over</string>
+
+    <string name="enable_mute_title">Enable mute</string>
+    <string name="enable_mute_summary">Enables functionality of muting events:\n* adds \'mute\' button in the notification \n* enables related functionality in the main UI\nMuted notifications would not generate reminders, muted snoozed event would re-appear silently without sound or vibration</string>
+
+    <string name="enable_mute_tag_title">Handle #mute tag</string>
+    <string name="enable_mute_tag_summary">By adding #mute tag into event title or description you could make it muted by default, you could still un-mute it manually after event fires (next occurrence of repeating event would be still muted by default)\nEvent would be muted even if \'enable mute\' setting is disabled</string>
+
+    <string name="enable_task_tag_title">Handle #task tag</string>
+    <string name="enable_task_tag_summary">Similar to #mute tag, but 1st appearance and re-appearing after snooze would not be muted\nRepeating reminders are not generated</string>
+
+    <string name="un_mute_notification">Un-Mute</string>
+    <string name="mute_notification">Mute</string>
+    <string name="mute_all">Mute all visible</string>
+    <string name="mute_all_events_question">Mute all visible events? (Tasks excluded)</string>
+
+    <string name="done">Done</string>
+    <string name="notification_is_muted">Notification is muted</string>
+    <string name="mute_options">Mute options</string>
+    <string name="calendar_handling_options">Calendar handling options</string>
+    <string name="enable_alarm_tag_title">Handle #alarm tag</string>
+    <string name="enable_alarm_tag_summary">By adding #alarm tag to the event title or description you would force app to use Alarm volume for notification for particular event</string>
 
 </resources>
 

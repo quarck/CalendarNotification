@@ -25,8 +25,16 @@
         android:title="@string/settings"/>
 
     <item
+        android:id="@+id/action_mute_all"
+        android:orderInCategory="123"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_volume_off_white_24dp"
+        android:title="@string/mute_all"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/action_dismiss_all"
-        android:orderInCategory="121"
+        android:orderInCategory="126"
         app:showAsAction="never"
         android:title="@string/dismiss_all_events" />
 

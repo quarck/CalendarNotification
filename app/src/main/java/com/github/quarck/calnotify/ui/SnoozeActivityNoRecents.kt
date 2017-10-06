@@ -50,10 +50,7 @@ import android.graphics.Color
 import android.text.method.ScrollingMovementMethod
 import android.text.method.Touch.scrollTo
 
-
-
-
-
+// TODO: add repeating rule and calendar name somewhere on the snooze activity
 
 enum class SnoozeActivityStateCode(val code: Int) {
     Normal(0),

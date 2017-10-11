@@ -220,6 +220,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val (recentEvents, collapsedEvents) = arrangeEvents(db, currentTime, settings)
 
+            val anyAlarms = recentEvents.any { it.isAlarm } || collapsedEvents.any { it.isAlarm }
+
             if (recentEvents.isNotEmpty()) {
 
                 val ongoingSummary =
@@ -227,24 +229,44 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 updatedAnything =
                         postDisplayedEventNotifications(
-                                context,
-                                db,
-                                settings,
-                                formatter,
-                                recentEvents,
-                                force,
-                                isQuietPeriodActive,
-                                primaryEventId,
-                                ongoingSummary,
-                                numTotalEvents = recentEvents.size + collapsedEvents.size
+                                context = context,
+                                db = db,
+                                settings = settings,
+                                formatter = formatter,
+                                events = recentEvents,
+                                force = force,
+                                isQuietPeriodActive = isQuietPeriodActive,
+                                primaryEventId = primaryEventId,
+                                summaryNotificationIsOngoing = ongoingSummary,
+                                numTotalEvents = recentEvents.size + collapsedEvents.size,
+                                hasAlarms = anyAlarms
                                 )
             }
 
             if (!recentEvents.isEmpty())
-                collapseDisplayedNotifications(context, db, collapsedEvents, settings, force, isQuietPeriodActive)
+                collapseDisplayedNotifications(
+                        context = context,
+                        db = db,
+                        events = collapsedEvents,
+                        settings = settings,
+                        force = force,
+                        isQuietPeriodActive = isQuietPeriodActive
+                )
             else {
-                if (postEverythingCollapsed(context, db, collapsedEvents, settings, null, force, isQuietPeriodActive, primaryEventId, false))
+                if (postEverythingCollapsed(
+                        context = context,
+                        db = db,
+                        events = collapsedEvents,
+                        settings = settings,
+                        notificationsSettingsIn = null,
+                        force = force,
+                        isQuietPeriodActive = isQuietPeriodActive,
+                        primaryEventId = primaryEventId,
+                        playReminderSound = false,
+                        hasAlarms = anyAlarms
+                )) {
                     updatedAnything = true
+                }
             }
 
             if (recentEvents.isEmpty() && collapsedEvents.isEmpty()) {
@@ -366,7 +388,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     force = false,
                     isQuietPeriodActive = quietPeriodActive,
                     primaryEventId = null,
-                    playReminderSound = true
+                    playReminderSound = true,
+                    hasAlarms = anyAlarms
             )
         }
     }
@@ -386,7 +409,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             force: Boolean,
             isQuietPeriodActive: Boolean,
             primaryEventId: Long?,
-            playReminderSound: Boolean
+            playReminderSound: Boolean,
+            hasAlarms: Boolean
     ): Boolean {
 
         if (events.isEmpty()) {
@@ -421,11 +445,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 displayStatus = EventDisplayStatus.DisplayedCollapsed
         )
 
-        var anyAlarmTags = false
-
         for (event in events) {
-
-            anyAlarmTags = anyAlarmTags || event.isAlarm
 
             if (event.snoozedUntil == 0L) {
 
@@ -458,7 +478,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
                             //DevLog.debug(LOG_TAG, "event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
-                            shouldBeQuiet = settings.quietHoursMutePrimary
+                            shouldBeQuiet = settings.quietHoursMutePrimary && !event.isAlarm
                         }
                         else {
                             // not a primary event -- always silent in silent period
@@ -485,7 +505,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         if (playReminderSound)
-            shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive
+            shouldPlayAndVibrate = shouldPlayAndVibrate || !isQuietPeriodActive || hasAlarms
 
         // now build actual notification and notify
         val intent = Intent(context, MainActivity::class.java)
@@ -541,7 +561,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 lastSoundTimestamp = currentTime
 
-                if (notificationsSettings.useAlarmStream || anyAlarmTags)
+                if (notificationsSettings.useAlarmStream || hasAlarms)
                     builder.setSound(notificationsSettings.ringtoneUri, AudioManager.STREAM_ALARM)
                 else
                     builder.setSound(notificationsSettings.ringtoneUri)
@@ -577,7 +597,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             reminderState.numRemindersFired = 0
         }
 
-        if (isQuietPeriodActive && events.isNotEmpty() && !shouldPlayAndVibrate) {
+        if (isQuietPeriodActive && events.isNotEmpty() && !shouldPlayAndVibrate && !hasAlarms) {
 
             DevLog.debug(LOG_TAG, "Would remind after snooze period")
 
@@ -636,7 +656,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isQuietPeriodActive: Boolean,
             primaryEventId: Long?,
             summaryNotificationIsOngoing: Boolean,
-            numTotalEvents: Int
+            numTotalEvents: Int,
+            hasAlarms: Boolean
     ): Boolean {
 
         DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications")
@@ -716,7 +737,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             // this is primary event -- play based on use preference for muting
                             // primary event reminders
                             DevLog.info(context, LOG_TAG, "event ${event.eventId}: quiet period and this is primary notification - sound according to settings")
-                            shouldBeQuiet = settings.quietHoursMutePrimary
+                            shouldBeQuiet = settings.quietHoursMutePrimary && !event.isAlarm
                         }
                         else {
                             // not a primary event -- always silent in silent period

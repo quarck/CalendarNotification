@@ -538,7 +538,7 @@
     <string name="mute_options">Mute options</string>
     <string name="calendar_handling_options">Calendar handling options</string>
     <string name="enable_alarm_tag_title">Handle #alarm tag</string>
-    <string name="enable_alarm_tag_summary">By adding #alarm tag to the event title or description you would force app to use Alarm volume for notification for particular event</string>
+    <string name="enable_alarm_tag_summary">By adding #alarm tag to the event title or description you would force app to use Alarm volume for notification for particular event\nAlso quiet hours would be ignored for events with #alarm tag</string>
 
 </resources>
 

@@ -27,6 +27,8 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.calendar.isNotSpecial
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
@@ -66,7 +68,20 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
             val currentTime = System.currentTimeMillis()
 
-            val silentUntil = QuietHoursManager.getSilentUntil(settings)
+            val activeEvents =
+                    EventsStorage(context).use {
+                        db ->
+                        db.events.filter {
+                            ((it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)) && it.isNotSpecial
+                        }
+                    }
+            val anyAlarms = activeEvents.any { it.isAlarm }
+            //
+            val silentUntil = if (!anyAlarms) QuietHoursManager.getSilentUntil(settings) else 0L
+
+            if (anyAlarms) {
+                DevLog.info(context, LOG_TAG, "Quiet hours overriden by #alarm tag")
+            }
 
             var nextFireAt = 0L
             var shouldFire = false

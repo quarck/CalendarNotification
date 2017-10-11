@@ -248,9 +248,6 @@
     <string name="multiple_events_single_notification">"%d événements du calendrier"</string>
     <string name="advanced">"Avancée"</string>
 
-    <string name="reminders_not_accurate" formatted="false">WARNING:\nReminder fired recently\n\nDue to restrictions imposed by Android Marshmallow and above ("Doze" and "App Standby" modes), next reminder or snoozed event is unlikely to fire earlier than in %d minutes from now\nThis restriction doesn\'t apply when device is charging</string>
-    <string name="reminders_not_accurate_again">WARNING:\nDue to restrictions imposed by Android Marshmallow and above ("Doze" and "App Standby" modes), reminder intervals shorter than 10 minutes would actually fire at approximate rate of one reminder every 10 minutes\nLimitations imposed by OS are not allowing to make reminder interval shorter\nThis restriction doesn\'t apply when device is charging</string>
-
     <string name="open_wiki">"OUVRIR WIKI"</string>
     <string name="dash_or_dash">"— ou —"</string>
     <string name="check_wiki_text">"Si vous avez une question sur l'utilisation de cette application, vérifiez d'abord s'il y a déjà une réponse sur le Wiki:"</string>

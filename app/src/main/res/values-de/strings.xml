@@ -248,9 +248,6 @@
     <string name="multiple_events_single_notification">%d Kalender Benachrichtigungen</string>
     <string name="advanced">Erweitert</string>
 
-    <string name="reminders_not_accurate" formatted="false">WARNUNG:\nErinnerung wurde vor kurzem angezeigt.\n\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), wird die nächste Erinnerung möglicherweise nicht früher als %d Minuten von jetzt an angezeigt.\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
-    <string name="reminders_not_accurate_again">WARNUNG:\nWegen Einschränkungen von Android Marshmallow und neuer ("Doze" und "App Standby" Modus), Erinnerungsabstände kürzer als 10 Minuten werden trotzdem erst all 10 Minuten angezeigt.\nDurch diese Beschränkung von Android können die Abstände nicht verkürzt werden.\nDiese Einschränkung trifft nicht zu, wenn das Gerät gerade geladen wird</string>
-
     <string name="open_wiki">WIKI ÖFFNEN</string>
     <string name="dash_or_dash">— oder —</string>
     <string name="check_wiki_text">Bei Fragen zu der App bitte zuerst im Wiki schauen, ob diese vielleicht dort schon beantwortet wurde:</string>

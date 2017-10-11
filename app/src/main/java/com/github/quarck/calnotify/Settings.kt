@@ -346,13 +346,13 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
         set(value) = setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
 
-    var dontShowMarshmallowWarning: Boolean
-        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
-        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
-
-    var dontShowMarshmallowWarningInSettings: Boolean
-        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
-        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
+//    var dontShowMarshmallowWarning: Boolean
+//        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
+//        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
+//
+//    var dontShowMarshmallowWarningInSettings: Boolean
+//        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
+//        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
 
     val useSetAlarmClock: Boolean
         get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)

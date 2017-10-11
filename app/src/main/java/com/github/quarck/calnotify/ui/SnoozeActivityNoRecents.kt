@@ -576,53 +576,6 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             CalendarIntents.viewCalendarEvent(this, ev)
     }
 
-    private fun checkForMarshmallowWarningAndContinueWith(
-            res: SnoozeResult,
-            cont: () -> Unit) {
-
-        if (!isMarshmallowOrAbove || res.quietUntil != 0L || res.snoozedUntil == 0L) {
-            cont()
-            return
-        }
-
-        val lastAlarm = globalState?.lastTimerBroadcastReceived ?: 0L
-        val currentTime = System.currentTimeMillis()
-
-        val untilNextAlarmFromLastAlarm = res.snoozedUntil - lastAlarm
-
-        if (untilNextAlarmFromLastAlarm >= Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC) {
-            cont()
-            return
-        }
-
-        if (settings.dontShowMarshmallowWarning) {
-            cont()
-            return
-        }
-
-        val expectedNextFire = lastAlarm + Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC
-        val untilNextFire = expectedNextFire - currentTime
-
-        val mmWarning =
-                String.format(
-                        resources.getString(R.string.reminders_not_accurate),
-                        (untilNextFire / 1000L + 59L) / 60L)
-
-        AlertDialog.Builder(this)
-                .setMessage(mmWarning).setCancelable(false)
-                .setPositiveButton(android.R.string.ok) {
-                    _, _ ->
-                    cont()
-                }
-                .setNegativeButton(R.string.never_show_again) {
-                    _, _ ->
-                    settings.dontShowMarshmallowWarning = true
-                    cont()
-                }
-                .create()
-                .show()
-    }
-
     private fun snoozeEvent(snoozeDelay: Long) {
         val ev = event
         if (ev != null) {
@@ -630,14 +583,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             val result = ApplicationController.snoozeEvent(this, ev.eventId, ev.instanceStartTime, snoozeDelay);
             if (result != null) {
-                checkForMarshmallowWarningAndContinueWith(result) {
-                    result.toast(this)
-                    finish()
-                }
+                result.toast(this)
             }
-            else {
-                finish()
-            }
+            finish()
 
         }
         else {
@@ -655,13 +603,9 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                         val result = ApplicationController.snoozeAllEvents(this, snoozeDelay, snoozeAllIsChange, false);
                         if (result != null) {
-                            checkForMarshmallowWarningAndContinueWith(result) {
-                                result.toast(this)
-                                finish()
-                            }
+                            result.toast(this)
                         }
-                        else
-                            finish()
+                        finish()
                     }
                     .setNegativeButton(R.string.cancel) {
                         _, _ ->

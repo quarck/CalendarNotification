@@ -158,29 +158,6 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
                     Toast.makeText(context, R.string.error_cannot_parse_pattern, Toast.LENGTH_LONG).show()
                 }
             }
-
-            if (isMarshmallowOrAbove) {
-                val anyShortReminders = reminderPatternMillis.any { it < Consts.MARSHMALLOW_MIN_REMINDER_INTERVAL_USEC }
-                if (anyShortReminders) {
-                    val settings = Settings(context)
-
-                    if (!settings.dontShowMarshmallowWarningInSettings) {
-                        AlertDialog.Builder(context)
-                                .setMessage(context.resources.getString(R.string.reminders_not_accurate_again))
-                                .setCancelable(false)
-                                .setPositiveButton(android.R.string.ok) {
-                                    _, _ ->
-                                }
-                                .setNegativeButton(R.string.never_show_again) {
-                                    _, _ ->
-                                    Settings(context).dontShowMarshmallowWarningInSettings = true
-                                }
-                                .create()
-                                .show()
-                    }
-
-                }
-            }
         }
     }
 

@@ -27,6 +27,8 @@ import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.calendar.isActiveAlarm
+import com.github.quarck.calnotify.calendar.isNotSnoozed
 import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
@@ -68,18 +70,17 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
             val currentTime = System.currentTimeMillis()
 
-            val activeEvents =
-                    EventsStorage(context).use {
-                        db ->
-                        db.events.filter {
-                            ((it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)) && it.isNotSpecial
-                        }
-                    }
-            val anyAlarms = activeEvents.any { it.isAlarm }
-            //
-            val silentUntil = if (!anyAlarms) QuietHoursManager.getSilentUntil(settings) else 0L
+            val hasActiveAlarms = EventsStorage(context).use {
+                db -> db.events.any { it.isActiveAlarm && !it.isMuted && !it.isTask }
+            }
 
-            if (anyAlarms) {
+            val silentUntil =
+                    if (hasActiveAlarms)
+                        0L
+                    else
+                        QuietHoursManager.getSilentUntil(settings)
+
+            if (hasActiveAlarms) {
                 DevLog.info(context, LOG_TAG, "Quiet hours overriden by #alarm tag")
             }
 
@@ -170,19 +171,30 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (shouldFire) {
-                fireReminder(context, currentTime, itIsAfterQuietHoursReminder,
-                        Math.min(currentReminderInterval, nextReminderInterval),
-                        settings.separateReminderNotification)
+                fireReminder(
+                        context = context,
+                        currentTime = currentTime,
+                        itIsAfterQuietHoursReminder = itIsAfterQuietHoursReminder,
+                        reminderInterval = Math.min(currentReminderInterval, nextReminderInterval),
+                        separateReminderNotification = settings.separateReminderNotification,
+                        hasActiveAlarms = hasActiveAlarms
+                )
             }
         }
     }
 
-    private fun fireReminder(context: Context, currentTime: Long, itIsAfterQuietHoursReminder: Boolean,
-                             reminderInterval: Long, separateReminderNotification: Boolean) {
+    private fun fireReminder(
+            context: Context,
+            currentTime: Long,
+            itIsAfterQuietHoursReminder: Boolean,
+            reminderInterval: Long,
+            separateReminderNotification: Boolean,
+            hasActiveAlarms: Boolean
+    ) {
 
         DevLog.info(context, LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
 
-        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder);
+        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
 
         ReminderState(context).onReminderFired(currentTime)
 

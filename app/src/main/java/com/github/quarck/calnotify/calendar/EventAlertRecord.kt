@@ -287,6 +287,14 @@ val EventAlertRecord.displayedStartTime: Long
 val EventAlertRecord.displayedEndTime: Long
     get() = if (instanceEndTime != 0L) instanceEndTime else endTime
 
+val EventAlertRecord.isSnoozed: Boolean
+    get() = snoozedUntil != 0L
+
+val EventAlertRecord.isNotSnoozed: Boolean
+    get() = snoozedUntil == 0L
+
+val EventAlertRecord.isActiveAlarm: Boolean
+    get() = isNotSnoozed && isNotSpecial && isAlarm
 
 val EventAlertRecord.isSpecial: Boolean
     get() = instanceStartTime == Long.MAX_VALUE

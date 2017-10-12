@@ -279,10 +279,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             wakeScreenIfRequired(context, settings)
     }
 
-    override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean) {
+    override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean) {
 
         val settings = Settings(context)
-        val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+        val isQuietPeriodActive = !hasActiveAlarms && (QuietHoursManager.getSilentUntil(settings) != 0L)
 
         EventsStorage(context).use {
             db ->
@@ -296,13 +296,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val currentTime = System.currentTimeMillis()
 
-            val activeEvents =
-                    db.events
-                            .filter {
-                                ((it.snoozedUntil == 0L)
-                                        || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD))
-                                        && it.isNotSpecial
-                            }
+            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial }
 
             val numActiveEvents = activeEvents.count()
             val lastStatusChange = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
@@ -311,6 +305,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 if (settings.separateReminderNotification) {
 
+                    // TODO: test if this is necessary
                     if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
                         postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
 
@@ -321,7 +316,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             notificationSettings,
                             isQuietPeriodActive,
                             itIsAfterQuietHoursReminder,
-                            activeEvents.any { it.isAlarm }
+                            hasActiveAlarms
                     )
                 }
                 else {

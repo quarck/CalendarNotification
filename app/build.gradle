@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.quarck.calnotify"
-        minSdkVersion 17
+        minSdkVersion 18
         targetSdkVersion 25
         versionCode 4340
         versionName "1.4.16"

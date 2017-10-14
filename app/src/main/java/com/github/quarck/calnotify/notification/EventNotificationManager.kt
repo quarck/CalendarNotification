@@ -296,7 +296,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             val currentTime = System.currentTimeMillis()
 
-            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial }
+            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial && !it.isTask }
 
             val numActiveEvents = activeEvents.count()
             val lastStatusChange = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
@@ -350,7 +350,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     ) {
         val (recentEvents, collapsedEvents) = arrangeEvents(activeEvents, settings)
 
-        val anyAlarms = activeEvents.any { it.isAlarm }
+        val anyAlarms = activeEvents.any { it.isAlarm && !it.isTask }
 
         if (!recentEvents.isEmpty()) {
             // normal

@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+//TODO include kotlin runtime and language version in the about dialog
+
 class AboutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

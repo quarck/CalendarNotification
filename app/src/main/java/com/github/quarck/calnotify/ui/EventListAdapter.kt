@@ -199,11 +199,15 @@ class EventListAdapter(
                         val position = viewHolder!!.adapterPosition
                         val adapter = recyclerView?.adapter as EventListAdapter?
 
-                        if (adapter == null)
+                        if (adapter == null) {
+                            DevLog.error(context, LOG_TAG, "getMovementFlags: no adapter! returning 0")
                             return 0
+                        }
 
-                        if (adapter.isPendingRemoval(position))
+                        if (adapter.isPendingRemoval(position)) {
+                            DevLog.info(context, LOG_TAG, "getMovementFlags: pos ${position} is pending removal, returning 0")
                             return 0
+                        }
 
                         return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) or
                                 makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)

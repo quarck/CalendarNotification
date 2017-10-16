@@ -1211,6 +1211,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             builder.addAction(snoozeAction)
         }
 
+        val extender =
+                NotificationCompat.WearableExtender()
+                        .addAction(defaultSnooze0Action)
 
         if ((notificationSettings.enableNotificationMute && !event.isTask) || event.isMuted) {
             // build and append
@@ -1244,7 +1247,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         )
                     }
 
-            builder.addAction(actionBuilder.build())
+            val action = actionBuilder.build()
+            builder.addAction(action)
+            extender.addAction(action)
         }
 
         if (!notificationSettings.allowNotificationSwipe) {
@@ -1269,10 +1274,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             primaryPendingIntent
                     ).build())
         }
-
-        val extender =
-                NotificationCompat.WearableExtender()
-                        .addAction(defaultSnooze0Action)
 
         for ((idx, snoozePreset) in snoozePresets.withIndex()) {
             if (idx == 0)

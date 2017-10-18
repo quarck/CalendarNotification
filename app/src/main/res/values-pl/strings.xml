@@ -7,7 +7,7 @@
 
     <string name="settings">Ustawienia</string>
 
-    <string name="application_has_no_access">Aplikacja wymaga specjalnych uprawnień, aby mieć dostęp do powiadomień kalendarza\n\nProszę udzielić uprawnień READ_CALENDAR i WRITE_CALENDAR \n\nWRITE_CALENDAR, aby ukryć pierwotne powiadomienia z kalendarza</string>
+    <string name="application_has_no_access">Aplikacja wymaga specjalnych uprawnień, aby mieć dostęp do powiadomień kalendarza.\n\nProszę udzielić uprawnień READ_CALENDAR i WRITE_CALENDAR \n\nWRITE_CALENDAR, aby ukryć pierwotne powiadomienia z kalendarza.</string>
     
 	<string name="cancel">Anuluj</string>
 
@@ -19,29 +19,29 @@
     <string name="snooze">Odłóż</string>
 
     <string name="show_dismiss_button">Pokaż przycisk \'Odrzuć\'</string>
-    <string name="show_dismiss_summary">Przycisk \'Odrzuć\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku</string>
+    <string name="show_dismiss_summary">Przycisk \'Odrzuć\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku.</string>
 
     <string name="play_reminder_sound">Dźwięk powiadomień</string>
-    <string name="play_reminder_sound_summary">Włącz, aby odegrać dźwięk powiadomienia</string>
+    <string name="play_reminder_sound_summary">Włącz, aby odegrać dźwięk powiadomienia.</string>
 
     <string name="ringtone_selection">Dzwonek powiadomień</string>
-    <string name="ringtone_selection_summary">Wybierz dzwonek dla powiadomień</string>
+    <string name="ringtone_selection_summary">Wybierz dzwonek dla powiadomień.</string>
 
     <string name="vibra_on">Wibracje</string>
 
 
-    <string name="notification_light_summary">Użyj diody do informowania o aktywnych powiadomieniach</string>
+    <string name="notification_light_summary">Użyj diody do informowania o aktywnych powiadomieniach.</string>
     <string name="notification_light_title">Powiadomienia diodą</string>
 
     <string name="help_feedback">Pomoc i Opinie</string>
 
     <string name="feedback">Opinie</string>
 
-    <string name="help_title">Jeżeli znalazłeś błąd, masz pytanie lub chciałbyś zasugerować nową opcję w aplikacji - proszę o kontakt z autorem poprzez mail.\n\nProszę nie oczekuj natychmiastowej odpowiedzi, rozwijam tę aplikację w moim wolnym czasie i mogę odpowiadać tylko jeżeli znajdę na to czas</string>
+    <string name="help_title">Jeżeli znalazłeś błąd, masz pytanie lub chciałbyś zasugerować nową opcję w aplikacji skontaktuj się proszę z autorem poprzez email.\n\nProszę nie oczekuj natychmiastowej odpowiedzi. Rozwijam tę aplikację w moim wolnym czasie i mogę odpowiadać tylko jeżeli znajdę na to czas.</string>
     <string name="email_developer">EMAIL DO AUTORA</string>
 
-    <string name="forward_to_pebble">Przekaż do Pebble</string>
-	<string name="forward_to_pebble_summary">Jeśli posiadasz smartwatch Pebble, aplikacja będzie przekazywać do niego powiadomienia</string>
+    <string name="forward_to_pebble">Przekazuj powiadomienia do Pebble</string>
+	<string name="forward_to_pebble_summary">Jeśli go posiadzasz, przekazuj powiadomienia na smartwatch Pebble.</string>
 
     <string name="multiple_events">%d więcej wydarzeń</string>
     <string name="multiple_events_details">Kliknij, aby zobaczyć szczegóły</string>
@@ -57,7 +57,8 @@
 
     <string name="location">Lokalizacja:</string>
     <string name="today">dzisiaj</string>
-    <string name="tomorrow">jutra</string>
+    <string name="tomorrow">jutro</string>
+
     <string name="yesterday">wczoraj</string>
    <string name="change_event_time">Zmień czas wydarzenia</string>
     <string name="one_hour_from_now">Przenieś na następną godzinę</string>
@@ -76,15 +77,15 @@
     <string name="app_icon_credit">Za ikonę:</string>
     <string name="app_created_with">Utworzono w</string>
     <string name="notification_settings">Ustawienia powiadomień</string>
-    <string name="snooze_presets">Ustawienia odkładania</string>
+    <string name="snooze_presets">Ustawienia odłożeń</string>
     <string name="smartwatch_support">Wsparcie dla smartwatch</string>
     <!-- string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string -->
 
     <string name="error_cannot_parse_preset">Przepraszam, nie można przetworzyć definicji</string>
-    <string name="snooze_presets_title">Definicje odkładania</string>
-    <string name="snooze_presets_summary">Tutaj możesz zmienić domyślne czasy odkładania</string>
+    <string name="snooze_presets_title">Definicje odłożeń</string>
+    <string name="snooze_presets_summary">Tutaj zmienisz domyślne czasy odłożeń.</string>
 
-    <string name="error_too_many_presets">Dopuszczalne jest użycie maksymalnie 6 definicji, wszystkie kolejne są ignorowane</string>
+    <string name="error_too_many_presets">Dopuszczalne jest użycie maksymalnie 6 definicji, wszystkie kolejne są ignorowane.</string>
 
     <string name="now">teraz</string>
     <string name="days">dni</string>
@@ -95,25 +96,25 @@
     <string name="minute">minuta</string>
     <string name="seconds">sekund</string>
     <string name="second">sekunda</string>
-    <string name="no_events_to_display">Tu będą pojawiać się aktywne i odłożone powiadomienia\nBrak powiadomień do wyświetlenia</string>
+    <string name="no_events_to_display">Tu będą pojawiać się aktywne \ni odłożone powiadomienia\n\nBrak powiadomień do wyświetlenia</string>
     <string name="no_calendar_permissions_main">Aplikacja nie ma przyznanych uprawnień dostępu do kalendarza</string>
     <string name="view_after_edit">Zobacz po edycji</string>
-    <string name="view_after_edit_summary">Włącz, aby po odłożeniu wydarzenia wyświetlić je w kalendarzu</string>
-    <string name="misc_settings">Więcej ustawień</string>
+    <string name="view_after_edit_summary">Włącz, aby po odłożeniu wydarzenia wyświetlić je w kalendarzu.</string>
+    <string name="misc_settings">Pozostałe</string>
     <string name="abort_broadcast">Wyłącz powiadomienia kalendarza</string>
-    <string name="abort_broadcast_summary">Włącz jeśli równocześnie pojawiają się powiadomienia z kalendarza Android i z tej aplikacji</string>
+    <string name="abort_broadcast_summary">Włącz jeśli równocześnie pojawiają się powiadomienia z kalendarza Android i z tej aplikacji.</string>
 
     <string name="enable_reminders">Włącz przypomnienia</string>
-    <string name="enable_reminders_summary">Jeżeli włączone, aplikacja będzie wielokrotnie przypominała o aktywnych powiadomieniach</string>
+    <string name="enable_reminders_summary">Jeżeli włączone, aplikacja będzie wielokrotnie przypominała o aktywnych powiadomieniach.</string>
 	
     <string name="remind_interval">Czas między przypomnieniami</string>
     <string name="invalid_reminder_interval">Interwał przypomnień nie może wynosić 0, przywrócono wartość 1 minuty</string>
     <string name="max_reminders">Maksymalna liczba przypomnień</string>
-    <string name="max_reminders_summary">Maksymalna liczba przypomnień, 0 oznacza przypominanie bez końca, aż do odrzucenia</string>
+    <string name="max_reminders_summary">Ustawia maksymalną liczbę przypomnień. \n\'Zero\' oznacza przypominanie bez końca, aż do odrzucenia.</string>
 
     <string name="pebble_notification_title">Kalendarz</string>
-    <string name="heads_up_notification">Powiadomienia Heads-up</string>
-    <string name="heads_up_notification_summary">Wyświetla powiadomienia w górnej części ekranu</string>
+    <string name="heads_up_notification">Powiadomienia na górze ekranu</string>
+    <string name="heads_up_notification_summary">Wyświetlaj zanikające powiadomienia w górnej części ekranu.</string>
 	
     <string name="projectPageOnGitHub">Strona projektu na GitHub</string>
 	
@@ -125,7 +126,7 @@
 
     <string name="led_color">Kolor diody</string>
     <string name="wake_screen_title">Wybudzanie ekranu</string>
-    <string name="wake_screen_summary">Wybudzanie ekranu na krótki czas, gdy nadejdzie powiadomienie</string>
+    <string name="wake_screen_summary">Wybudzaj ekran na krótki czas, gdy nadejdzie powiadomienie.</string>
 
     <string name="error_cannot_parse_pattern">Nie można przetworzyć z powodu błędnych danych</string>
     <string name="quiet_time_from">Początek godzin ciszy</string>
@@ -140,7 +141,7 @@
     <string name="quiet_hours_summary">Użyj godzin ciszy do wyciszenia wszystkich przypomnień i odłożonych wydarzeń w określonym czasie. Podstawowe powiadomienia o wydarzeniach będą nadal odtwarzane zgodnie z ustawieniami.</string>
 
     <string name="quiet_hours_mute_primary">Wycisz podstawowe powiadomienia</string>
-    <string name="quiet_hours_mute_primary_summary">Wycisz podstawowe powiadomienia podczas godzin ciszy, aby aplikacja pozostała całkowicie wyciszona. Podstawowe powiadomienie jest pierwszym powiadomieniem o wydarzeniu.</string>
+    <string name="quiet_hours_mute_primary_summary">Wyciszaj podstawowe powiadomienia podczas godzin ciszy, aby aplikacja pozostała całkowicie wyciszona. Podstawowe powiadomienie jest pierwszym powiadomieniem o wydarzeniu.</string>
 
     <string name="quiet_hours_main_activity_status" formatted="false">Godziny ciszy są aktywne\n Brak powiadomień do %s</string>
     <string name="hits_quiet_period">(przypada na godziny ciszy)</string>
@@ -148,13 +149,13 @@
 
 	<!-- English text has changed: -->
 	
-    <string name="for_a_custom_time">Na niestandardowy okres</string>
-    <string name="until_specific_time">Na konkretną datę i godzinę</string>
+    <string name="for_a_custom_time">Niestandardowy okres</string>
+    <string name="until_specific_time">Konkretna data i godzina</string>
     <string name="snooze_for">Odłóż na:</string>
     <string name="selected_time_is_in_the_past"><b>Nie można odłożyć powiadomienia do przeszłości</b></string>
     <string name="snooze_until_string">Odłóż do daty / godziny:</string>
     <string name="custom_snooze_options_title">Niestandardowe opcje odłożenia</string>
-    <string name="custom_snooze_options_summary">Pokazuj niestandardowe opcje odłożenia</string>
+    <string name="custom_snooze_options_summary">Pokazuj niestandardowe opcje odłożenia.</string>
 
     <string-array name="time_units_plurals">
         <item>Minuty</item>
@@ -162,20 +163,20 @@
         <item>Dni</item>
     </string-array>
 
-    <string name="pebble_event_text_in_the_title">Tekst wydarzenia w tytule</string>
-    <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania Pebble</string>
+    <string name="pebble_event_text_in_the_title">Treść wydarzenia w tytule</string>
+    <string name="pebble_event_text_in_the_title_summary">Przydatne dla starszej wersji oprogramowania Pebble.</string>
 
     <string name="title_calendars_activity">Obsługiwane kalendarze</string>
 
-    <string name="power_optimisation_warning"><b>Ważna informacja dla użytkowników telefonów Samsung:</b>\n\nW najnowszych urządzeniach Samsung dodał optymalizację użycia energii\nJeżeli optymalizacja zostanie włączona dla Calendar Notifications Plus, powiadomienia dla wydarzeń mogą pojawiać się z opóźnieniem\n\nNie ma możliwośći automatycznego sprawdzenia czy optymalizacja jest włączona czy nie. Należy to zrobić samemu\n\nWyłączenie optymalizacji użycia energii dla aplikacji nie spowoduje drenażu baterii\n\nProszę otworzyć\nUstawienia -&gt; Bateria -&gt; Oszczędzanie energii -&gt; Znajdź "Calendar Notifications Plus"\ni zmień na \'Wyłączony\'\n\nTa informacja nie ma znaczenie jeżeli używasz niestandardowego ROM (brak TouchWiz)</string>
+    <string name="power_optimisation_warning"><b>Ważna informacja dla użytkowników telefonów Samsung:</b>\n\nW najnowszych urządzeniach Samsung dodał optymalizację użycia energii.\nJeżeli optymalizacja zostanie włączona dla Calendar Notifications Plus, powiadomienia dla wydarzeń mogą pojawiać się z opóźnieniem.\n\nNie ma możliwośći automatycznego sprawdzenia czy optymalizacja jest włączona czy nie. Należy to zrobić samemu.\n\nWyłączenie optymalizacji użycia energii dla aplikacji nie spowoduje drenażu baterii.\n\nProszę otworzyć\nUstawienia -&gt; Bateria -&gt; Oszczędzanie energii -&gt; Znajdź "Calendar Notifications Plus"\n i zmień na \'Wyłączony\'\n\nTa informacja nie ma znaczenia jeżeli używasz niestandardowego ROM (brak TouchWiz).</string>
     <string name="never_show_again">Nie pokazuj ponownie</string>
 
 
-    <string name="dialog_snooze_text_label_v2">Lista definicji rozdzielana przecinkami\n\nDopuszczalne są wartości takie jak: \'15m\', \'2h\' lub \'3d\' oraz wartości ujemne: \'-5m\' ("5 minut przed wydarzeniem")\n\nMozna ustawić do 6 wartości\n\nPozostaw puste, aby użyć ustawień domyślnych aplikacji</string>
+    <string name="dialog_snooze_text_label_v2">Lista definicji rozdzielana przecinkami\n\nDopuszczalne są wartości takie jak: \'15m\', \'2h\' lub \'3d\' oraz wartości ujemne: \'-5m\' ("5 minut przed wydarzeniem")\n\nMożna ustawić do 6 wartości\n\nPozostaw puste, aby użyć ustawień domyślnych aplikacji</string>
 
 	<!-- New strings: -->
 		
-	<string name="snooze_all_confirmation">Odłożyć wszystkie wydarzenia?\nWcześniej odłożone wydarzenia także zmienią swój czas, chyba że odłożenie było ustawione na dłuższy okres</string>
+	<string name="snooze_all_confirmation">Czy odłożyć wszystkie wydarzenia?\nWcześniej odłożone wydarzenia także zmienią swój czas, chyba że odłożenie było ustawione na dłuższy okres.</string>
     <string name="change_all_notification">Zmieniasz czas odłożenia dla WSZYSTKICH wydarzeń\nKontynuować?</string>
 
     <string name="snooze_all_events">Odłóż wszystkie wydarzenia na:</string>
@@ -215,10 +216,10 @@
     <string name="event_time_example_2ln_second">22:00 – 23:00</string>
     <string name="event_list_style">Lista wydarzeń</string>
 
-    <string name="restart_the_app_to_apply_changes">Uruchom aplikację ponownie, aby zastosować zmiany</string>
-    <string name="event_list_style_summary">Wybierz pomiędzy widokiem skróconym a widokiem karty\nZmiana wymaga ponownego uruchomienia aplikacji</string>
+    <string name="restart_the_app_to_apply_changes">Aby zastosować zmiany uruchom aplikację ponownie.</string>
+    <string name="event_list_style_summary">Wybierz pomiędzy widokiem skróconym a widokiem karty\nZmiana wymaga ponownego uruchomienia aplikacji.</string>
     <string name="compact_view">Widok skrócony</string>
-    <string name="compact_view_explanation">— Przesuń, aby odrzucić\n— Kliknij na wydarzeniu, aby otworzyć okno wyboru czasu odłożenia\n— Otwórz odłożenie i kliknij na tytuł, aby otworzyć wydarzenie w kalendarzu</string>
+    <string name="compact_view_explanation">— Przesuń, aby odrzucić\n— Kliknij na wydarzeniu, aby otworzyć ekran wyboru czasu odłożenia\n— Kliknij na tytuł odłożonego powiadomienia, aby otworzyć wydarzenie w kalendarzu</string>
     <string name="list_item_look_like">Wygląd listy:</string>
     <string name="card_view">Widok karty</string>
     <string name="card_view_explanation">— Kliknij na karcie, aby otworzyć wydarzenie w kalendarzu\n— Użyj przycisków \'ZMIEŃ\' lub \'ODRZUĆ\' wydarzenie</string>
@@ -242,17 +243,20 @@
 	
 		
     <string name="halo_light_theme_date_picker">Motyw Halo.Light dla okna wyboru daty</string>
-    <string name="halo_light_theme_date_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru daty</string>
+    <string name="halo_light_theme_date_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru daty.</string>
     <string name="halo_light_theme_time_picker">Motyw Halo.Light dla okna wyboru godziny</string>
-    <string name="halo_light_theme_time_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru godziny</string>
+    <string name="halo_light_theme_time_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru godziny.</string>
 
     <string name="max_notifications_before_collapse">Maksymalna liczba powiadomień</string>
-    <string name="max_notifications_before_collapse_summary">Maksymalna liczba powiadomień, które mogą być wyświetlone naraz.\nUwaga: ze względu na możliwość nieprawidłowego działania na niektórych urządzeniach maksymalną liczbę powiadomień ograniczono do 8</string>
+    <string name="max_notifications_before_collapse_summary">Maksymalna liczba powiadomień, które mogą być wyświetlone naraz.\nUwaga: ze względu na możliwość nieprawidłowego działania na niektórych urządzeniach maksymalną liczbę powiadomień ograniczono do 8.</string>
     <string name="collapse_everything">Zwiń wszystkie powiadomienia</string>
-    <string name="collapse_everything_summary">Zwija wszystkie aktywne powiadomienia do jednego, grupowego, gdy ich liczba przekroczy ustalony limit </string>
+    <string name="collapse_everything_summary">Zwijaj wszystkie aktywne powiadomienia do jednego, grupowego, gdy ich liczba przekroczy ustalony limit.</string>
 
     <string name="multiple_events_single_notification">%d wydarzeń kalendarza</string>
     <string name="advanced">Zaawansowane</string>
+
+    <string name="reminders_not_accurate" formatted="false">UWAGA:\nPrzypomnienie zostało przed chwilą uruchomione\n\nZe względu na ograniczenie wprowadzone do Androida 6 i nowszych (tryby "Doze" i "App Standby") odłożone przypomnienie lub wydarzenie nie mogą być uruchomione wcześniej niż po %d minutach od teraz\nOgraniczenie nie obowiązuje w trakcie ładowania urządzenia</string> 
+    <string name="reminders_not_accurate_again">UWAGA:\nZe względu na ograniczenie wprowadzone do Androida 6 i nowszych (tryby "Doze" i "App Standby"), przypomnienia ustawione na czas krótszy niż 10 minut będą uruchamiane z częstotliwością jednego na ok. 10 minut\nOgraniczenia narzucone przez system nie pozwalają na ustawienie krótszego czasu\nOgraniczenie nie obowiązuje w trakcie ładowania urządzenia</string>
 
     <string name="open_wiki">OTWÓRZ WIKI</string>
     <string name="dash_or_dash">— lub —</string>
@@ -260,7 +264,7 @@
     <string name="lightweight_swipe">Wolniejsze przesunięcie</string>
     <string name="lightweight_swipe_summary">Zmniejsz prędkość przesunięcia potrzebną do odrzucenia wydarzenia za pomocą \'szybkiego przesunięcia\'</string>
     <string name="notify_tts">Wypowiadaj powiadomienia</string>
-    <string name="notify_tts_summary">Wypowiadaj na głos tytuł wydarzenia</string>
+    <string name="notify_tts_summary">Wypowiadaj na głos tytuł wydarzenia.</string>
 
     <string name="edit_event">Edytuj wydarzenie</string>
 
@@ -268,7 +272,7 @@
     <string name="deleted_events">Kosz</string>
     <string name="enable_bin">Włącz kosz</string>
     <string name="keep_bin_events_days">Dni przechowywania wydarzeń w koszu</string>
-    <string name="app_behavior">Inne ustawienia</string>
+    <string name="app_behavior">Inne działania</string>
 
     <string name="bin_setting_group_name">Ustawienia kosza</string>
 
@@ -277,38 +281,37 @@
     <string name="dismissed_from_notification" formatted="false">Odrzucono z powiadomienia %s</string>
     <string name="event_moved_new_time" formatted="false">Przesunięte na %s</string>
     <string name="restore">Przywróć powiadomienie</string>
-    <string name="delete">Wykasuj z historii</string>
+    <string name="delete">Usuń z historii</string>
     <string name="swipe_to_delete">Przesuń, aby usunąć z hisorii</string>
     <string name="remove_all">Usuń wszystkie</string>
 
-    <string name="remove_all_confirmation">Czy na pewno usunąć wszystkie? </string>
+    <string name="remove_all_confirmation">Czy na pewno usunąć wszystkie?</string>
     <string name="title_activity_privacy_policy">Polityka Prywatności</string>
-    <string name="context_policy">Aplikacja, ze względu na swój charakter, odbiera i przechowuje informacje o wydarzeniach uruchamianych przez kalendarz Androida\n\nŻadna z tych informacji nigdy nie jest przekazywana poza aplikację:\n\n* nie jest nigdzie transmitowana\n\n* ani z nikim dzielona\n\n* lub dostarczana osobom trzecim\n\nWszystkie dane wydarzeń są usuwane w momencie ich odrzucenia\n\nW przypadku używania opcji przechowywania odrzuconych wydarzeń w Koszu takie dane zostają usunięte w momencie czyszczenia kosza według ustalonego harmonogramu lub w momencie czyszczenia na żądanie.</string>
+    <string name="context_policy">Aplikacja, ze względu na swój charakter, odbiera i przechowuje informacje o wydarzeniach uruchamianych przez kalendarz Androida\n\nŻadna z tych informacji nigdy nie jest przekazywana poza aplikację:\n\n* nie jest nigdzie transmitowana\n\n* ani z nikim dzielona\n\n* lub dostarczana osobom trzecim\n\nWszystkie dane wydarzeń są usuwane w momencie ich odrzucenia\n\nW przypadku używania opcji przechowywania odrzuconych wydarzeń w Koszu takie dane zostają usunięte w momencie czyszczenia kosza według ustalonego harmonogramu lub w momencie czyszczenia na żądanie</string>
     <string name="privacy_policy">Polityka Prywatności</string>
-    <string name="notification_swipe_does_snooze">Przesuń, aby odłożyć </string>
-    <string name="notification_swipe_does_snooze_summary">Przesunięcie odłoży powiadomienie na okres pierwszej wartości ustalonej w Defninicjach odkładania</string>
+    <string name="notification_swipe_does_snooze">Przesuń, aby odłożyć</string>
+    <string name="notification_swipe_does_snooze_summary">Przesuwaj powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
 
     <string name="full_dismiss">Full Dismiss</string>
 	<!-- according to Sergey's explanation translation not required; string no more used -->
     <string name="pebble_forward_only_reminders">Pebble - przekazuj tylko powiadomienia</string>
-    <string name="pebble_forward_only_reminders_summary">Włącza obsługę kalendarzy przez Pebble</string>
+    <string name="pebble_forward_only_reminders_summary">Włącza obsługę kalendarzy przez Pebble.</string>
     <string name="event_color_notification">Koloruj powiadomienia</string>
-    <string name="event_color_notification_summary">Pokaż powiadomienie w kolorze przypisanym do użytego kalendarza. Uwaga: opcja zależna od oprogramowania telefonu, na niektórych urządzeniach może nie działać.</string>
-    <string name="notfication_opens_snooze">Otwórz okno odkładania</string>
-    <string name="notfication_opens_snooze_summary">Włącz jeśli chcesz bezpośrednio, z poziomu powiadomienia, otwierać okno wyboru czasu odłożenia\nKliknij na tytule wydarzenia w powiadomieniu, aby do niego przejść.</string>
-
+    <string name="event_color_notification_summary">Wyświetlaj powiadomienia w kolorze przypisanym do użytego kalendarza. \nUwaga: opcja zależna od oprogramowania telefonu i na niektórych urządzeniach może nie działać.</string>
+    <string name="notfication_opens_snooze">Otwórz ekran odłożeń</string>
+    <string name="notfication_opens_snooze_summary">Włącz jeśli chcesz otwierać ekran wyboru czasu odłożenia bezpośrednio z poziomu powiadomienia. Kliknij na tytule wydarzenia w powiadomieniu, aby do niego przejść.</string>
     <string name="notification_auto_dismiss_on_reschedule">Odrzuć po zmianie terminu</string>
-    <string name="notification_auto_dismiss_on_reschedule_summary">Odrzuć powiadomienie w przypadku zmiany terminu wydarzenia w kalendarzu Android o min. 15 minut.\nWydarzenie musi mieć aktywne powiadomienia w przyszłości\n\nUWAGA: funkcja jest zależna od działania kalendarza i może być aktywowana z opóźnieniem do 60 sekund.</string>
+    <string name="notification_auto_dismiss_on_reschedule_summary">Odrzuć powiadomienie w przypadku zmiany terminu wydarzenia w kalendarzu Android o min. 15 minut. Wydarzenie musi mieć aktywne powiadomienia w przyszłości.\n\nUWAGA: funkcja zależna od działania kalendarza - może być aktywowana z opóźnieniem do 60 sekund.</string>
     <string name="attach_applicatoin_log">Dołącz logi aplikacji</string>
     <string name="attach_applicatoin_log_perm">Logi dotyczą tylko samej aplikacji\n\nNie jest w nich zawarta żadna tekstowa informacja o wydarzeniach (np. tytuł wydarzenia, lokalizacja itp.) \n\nŻadne pliki wysłane mailem nie zostaną przekazane osobom trzecim!</string>
     <string name="use_set_alarm_clock_title">setAlarmClock dla powiadomień</string>
-    <string name="use_set_alarm_clock_summary">Dotyczy tylko Androida 6 i nowszych!\n \nWłączenie poprawia dokładność czasu uruchamiania powiadomień\nEfektem ubocznym jest widoczna ikona \'alarm\' na pasku stanu, gdy aktywne są odłożone wydarzenia lub powiadomienia</string>
+    <string name="use_set_alarm_clock_summary">Dotyczy tylko Androida 6 i nowszych.\n \nWłączenie poprawia dokładność czasu uruchamiania powiadomień.\nEfektem ubocznym jest widoczna ikona \'alarm\' na pasku stanu, gdy aktywne są odłożone wydarzenia lub powiadomienia.</string>
     <string name="reminder_fallback_method_title">Awaryjna metoda odtwarzania dźwięku</string>
-    <string name="reminder_fallback_method_summary">Spróbuj tego ustawienia jeśli dźwięk przypomnień nie działa</string>
+    <string name="reminder_fallback_method_summary">Spróbuj tego ustawienia jeśli dźwięk przypomnień nie działa.</string>
     <string name="reminder_custom_ringtone">Dzwonek niestandardowy</string>
     <string name="reminder_custom_vibration">Wibracje niestandardowe</string>
     <string name="quiet_hours_mute_led">Wyłącz diodę</string>
-    <string name="quiet_hours_mute_led_summary">Powiadomienia diodą nie będą aktywne podczas godzin ciszy</string>
+    <string name="quiet_hours_mute_led_summary">Powiadomienia diodą nie będą aktywne podczas godzin ciszy.</string>
 
     <string name="reminder_you_have_missed_event">Przypomnienie: przeoczyłeś wydarzenie</string>
     <string name="reminder_you_have_missed_events">Przypomnienie: przeoczyłeś wydarzenia</string>
@@ -317,54 +320,54 @@
 
     <string name="build_time_string_format" formatted="false">Wydanie: %s</string>
     <string name="dismiss_all_events">Odrzuć wydarzenia</string>
-    <string name="dismiss_all_events_confirmation">Odrzucić WSZYSTKIE wydarzenia?\n\nTEJ OPERACJI NIE MOŻNA COFNĄĆ!\n\nOdłożone wydarzenia nie zostaną usunięte</string>
+    <string name="dismiss_all_events_confirmation">Czy odrzucić WSZYSTKIE wydarzenia?\n\nTEJ OPERACJI NIE MOŻNA COFNĄĆ!\n\nOdłożone wydarzenia nie zostaną usunięte</string>
     <string name="handle_events_with_no_reminders">Wydarzenia bez przypomnień</string>
-    <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustalonych przypomnień</string>
+    <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustawionych przypomnień.</string>
     <string name="default_reminder_time">Domyślny czas przypomnienia</string>
-    <string name="default_reminder_time_summary">Czas przypomnienia dla wydarzeń bez ustawionych przypomnień, w minutach przed wydarzeniem</string>
-    <string name="default_reminder_time_summary_short">Czas przypomnienia dla wydarzeń bez przypomnień</string>
+    <string name="default_reminder_time_summary">Ustaw czas przypomnienia dla wydarzeń bez ustawionych przypomnień.</string>
+    <string name="default_reminder_time_summary_short">Czas przypomnienia dla wydarzeń bez przypomnień.</string>
     <string name="default_all_day_reminder_time">Wydarzenia całodzienne</string>
-    <string name="default_all_day_reminder_time_summary">Domyślny czas przypomnień dla wydarzeń całodziennych bez ustalonego powiadamiania; w godzinach przed czasem wydarzenia (godziną 00:00 dnia wydarzenia)\nPrzykładowo:\n\n * \'-8\' oznacza powiadomienie o 8 rano w dniu wydarzenia\n\n * \'7\' oznacza siedem godzin przed 00:00, czyli 17 dzień wcześniej</string>
-    <string name="default_all_day_reminder_time_summary_short">Domyślny czas przypomnień dla wydarzeń całodziennych, które nie mają ustawionych przypomnień</string>
+    <string name="default_all_day_reminder_time_summary">Ustaw domyślny czas przypomnień dla wydarzeń całodziennych, które nie mają ustawionych przypomnień; w godzinach przed czasem wydarzenia (godziną 00:00 dnia wydarzenia).\nPrzykładowo:\n\n * \'-8\' oznacza powiadomienie o 8 rano w dniu wydarzenia.\n\n * \'7\' oznacza siedem godzin przed 00:00, czyli o 17 dzień wcześniej.</string>
+    <string name="default_all_day_reminder_time_summary_short">Ustaw domyślny czas przypomnień dla wydarzeń całodziennych, które nie mają ustawionych przypomnień.</string>
 	<!-- Three strings above are translated but they are not in use anymore -->
-    <string name="reminder_custom_ringtone_summary">Użyj niestandardowego dzwonka dla powiadomień</string>
-    <string name="reminder_custom_vibration_summary">Użyj niestandardowej wibracji dla powiadomień</string>
+    <string name="reminder_custom_ringtone_summary">Używaj niestandardowego dzwonka dla powiadomień.</string>
+    <string name="reminder_custom_vibration_summary">Używaj niestandardowej wibracji dla powiadomień.</string>
     <string name="special_event_title">Uwaga: pominięto powtarzające się wydarzenia</string>
-    <string name="special_event_detail_format" formatted="false">Wyświetlono tylko %d ze %d wydarzeń</string>
+    <string name="special_event_detail_format" formatted="false">Wyświetlono tylko %d z %d wydarzeń</string>
     <string name="special_event_detail2" formatted="false">Urządzenie było wyłączone przez długi czas</string>
     <string name="reminder_after_quiet_time">Przypomnienie: wydarzenia uruchomione podczas godzin ciszy</string>
     <string name="ignore_declined_events">Ignoruj odrzucone wydarzenia</string>
-    <string name="ignore_declined_events_summary">Wydarzenia, które odrzuciłeś (declined)</string>
+    <string name="ignore_declined_events_summary">Ignoruj wydarzenia, które zostały odrzucone (declined).</string>
     <string name="ignore_cancelled_events">Ignoruj anulowane wydarzenia</string>
-    <string name="ignore_cancelled_events_summary">Wydarzenia, które zostały anulowane przez organizatora (organizer)</string>
+    <string name="ignore_cancelled_events_summary">Ignoruj wydarzenia, które zostały anulowane przez organizatora (organizer).</string>
     <string name="first_day_of_week">Pierwszy dzień tygodnia</string>
-    <string name="first_day_of_week_summary">Tylko dla Androida 5 i nowszych</string>
+    <string name="first_day_of_week_summary">Dotyczy tylko Androida 5 i nowszych.</string>
     <string name="use_alarm_stream">Użyj głośności alarmów</string>
-    <string name="use_alarm_stream_summary">Odtwarzaj dźwięk powiadomienia z głośnością ustawioną dla alarmów zamiast głośności przypisanej powiadomieniom</string>
+    <string name="use_alarm_stream_summary">Odtwarzaj dźwięk powiadomienia z głośnością ustawioną dla alarmów zamiast głośności przypisanej powiadomieniom.</string>
 
     <string name="restrict_swipe_to_dismiss">Ogranicz przesuwanie powiadomień</string>
-    <string name="snooze_on_swipe">Przesuń wydarzenie, aby je odłożyć</string>
-    <string name="snooze_on_swipe_summary">Przesunięcie odłoży wydarzenie na okres pierwszej wartości ustalonej w Defninicjach odkładania</string>
+    <string name="snooze_on_swipe">Przesuń, aby odłożyć</string>
+    <string name="snooze_on_swipe_summary">Przesuwaj powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
 
     <string name="on_the_day_before">Dzień przed</string>
     <string name="on_the_day_of_event">W dniu wydarzenia</string>
-    <string name="before_the_event">Przed wydarzeniem</string>
+    <string name="before_the_event">przed wydarzeniem</string>
     <string name="ignore_all_day_events">Ignoruj wydarzenia całodzienne</string>
-    <string name="ignore_all_day_events_summary">Nie przypominaj o wydarzeniach całodziennych</string>
+    <string name="ignore_all_day_events_summary">Nie przypominaj o wydarzeniach całodziennych.</string>
 
     <string name="next_reminder_fmt" formatted="false">Następne przypomnienie: %s</string>
     <string name="darker_calendar_color">Ciemniejsze kolory kalendarza</string>
     <string name="use_set_alarm_clock_for_events">setAlarmClock dla wydarzeń</string>
-    <string name="use_set_alarm_clock_for_events_summary">Ustawienie mające zastosowanie, gdy przypomnienia nie uruchamiają się prawidłowo</string>
+    <string name="use_set_alarm_clock_for_events_summary">Ustawienie mające zastosowanie, gdy przypomnienia nie uruchamiają się prawidłowo.</string>
 	
     <string name="keep_logs_title">Zachowaj logi</string>
-    <string name="keep_logs_summary">Nie włączaj dopóki nie zostaniesz o to poproszony przez autora aplikacji</string>
+    <string name="keep_logs_summary">Nie włączaj dopóki nie zostaniesz o to poproszony przez autora aplikacji.</string>
     <string name="manual_event_rescan_title">Ręczne skanowanie kalendarza</string>
-    <string name="manual_event_rescan_summary">Poprawia niezawodność działania przypomnień o wydarzeniach i pozwala na obsługę wydarzeń bez ustawionych przypomnień</string>
+    <string name="manual_event_rescan_summary">Poprawiaj niezawodność działania przypomnień o wydarzeniach i pozwalaj na obsługę wydarzeń bez ustawionych przypomnień.</string>
     <string name="handle_email_only_events_title">Wydarzenia z powiadomieniem email</string>
-    <string name="handle_email_only_events_summary">Powiadamianie o wydarzeniach z ustawionym tylko przypomnieniem email</string>
+    <string name="handle_email_only_events_summary">Powiadamiaj o wydarzeniach z ustawionym tylko przypomnieniem email.</string>
     <string name="bundle_notifications_title">Powiadomienia grupowe</string>
-    <string name="bundle_notifications_summary">Użyj powiadomień grupowych (dotyczy Androida 6 i nowszych)</string>
+    <string name="bundle_notifications_summary">Używaj powiadomień grupowych (dotyczy Androida 6 i nowszych).</string>
 
     <string name="calendar">Kalendarz</string>
     <string name="N_calendar_events" formatted="false">%d wydarzenia</string>
@@ -373,25 +376,155 @@
     <string name="led">LED</string>
     <string name="notification_behavior">Zachowanie powiadomienia</string>
     <string name="pebble">Pebble</string>
-    <string name="pebble_forward_reminders">Przekazuj przypomnienia do Pebble</string>
-    <string name="pebble_forward_reminders_summary">Przekazuj wszystkie przypomnienia. Domyślnie przekazywane są tylko pierwotne powiadomienia.</string>
+    <string name="pebble_forward_reminders">Przekaż przypomnienia do Pebble</string>
+    <string name="pebble_forward_reminders_summary">Przekazuj wszystkie przypomnienia. Domyślnie przekazywane są tylko powiadomienia pierwotne.</string>
     <string name="android_wear">Android Wear</string>
     <string name="reminders_play_directly_title">Powiadomienia odtwarzaj bezpośrednio</string>
     <string name="reminders_play_directly_summary">Nie przesyłaj przypomnień powiadomień</string>
     <string name="allow_notification_swipe_title">Przesuń, aby odrzucić</string>
-    <string name="allow_notification_swipe_summary">Przesuń powiadomienie, aby je odrzucić. Wyłącza przycisk \'Odrzuć\' w powiadomieniu.</string>
+    <string name="allow_notification_swipe_summary">Przesuwaj powiadomienie, aby je odrzucić. Wyłącza przycisk \'Odrzuć\' w powiadomieniu.</string>
     <string name="separate_reminder_notification_title">Osobne przypomnienia</string>
-    <string name="separate_reminder_notification_summary">Wyświetlanie dodatkowych, zanikających powiadomień o przeoczonych powiadomieniach</string>
+    <string name="separate_reminder_notification_summary">Wyświetlaj dodatkowe, zanikające powiadomienia o przeoczonych powiadomieniach.</string>
 
     <string name="instructions_for_android_wear">Instrukcje dla Android Wear</string>
     <string name="android_wear_actual_instruction">
-        Aby włączyć powiadomienia w Android Wear włącz opcję \'Przesuń powiadomienia\' w \'Ustawieniach powiadomień\'
+        Aby włączyć powiadomienia w Android Wear włącz opcję \'Przesuń powiadomienia\' w \'Ustawieniach powiadomień\'.
         \n\nWłączenie pozwoli na automatyczne pobieranie powiadomień przez Android Wear.
-        \n\nAby zabezpieczyć przed przypadkowym odrzuceniem powiadomienia możliwe jest także w tym samym miejscu opcji \'Przesuń, aby odłożyć\'. Zmieni to funkcję przesuwania powiadomienia z odrzucania na odłożenie na pierwszą wartość definicji odkładania.</string>
+        \n\nAby zabezpieczyć przed przypadkowym odrzuceniem powiadomienia możliwe jest także włączenie w tym samym miejscu opcji \'Przesuń, aby odłożyć\'. Zmieni to funkcję przesuwania powiadomienia z odrzucania na odłożenie, na pierwszą wartość Definicji odłożeń.</string>
     <string name="exit">Wyjście</string>
 
     <string name="special_thanks_line1">mojej żony Darii</string>
     <string name="special_thanks_line2">za obdarowywanie mnie czasem, w którym mogę pracować nad tym projektem</string>
+
+    <string-array name="time_units_plurals_with_seconds">
+        <item>sekundy</item>
+        <item>minuty</item>
+        <item>godziny</item>
+        <item>dni</item>
+    </string-array>
+
+    <string name="save_button_title">ZAPISZ</string>
+    <string name="add_event">Dodaj wydarzenie</string>
+
+    <string name="discard_new_event">Odrzucić?</string>
+    <string name="event_title_hint">Tytuł</string>
+    <string name="back_button">Wstecz</string>
+    <string name="save_button">Zapisz</string>
+    <string name="add_location">Lokalizacja</string>
+    <string name="add_note">Opis</string>
+    <string name="add_notification">Dodaj przypomnienie</string>
+    <string name="all_day">Cały dzień</string>
+    <string name="end_time_before_start_time">Czas zakończenia wcześniejszy od rozpoczęcia!</string>
+    <string name="notification_as_email">jako email</string>
+
+    <string name="add_event_fmt_before" formatted="false">%s przed</string>
+    <string name="add_event_as_email_suffix">jako email</string>
+    <string name="add_event_as_sms_suffix">jako SMS</string>
+    <string name="add_event_as_alarm_suffix">jako alarm</string>
+    <string name="add_event_n_days_before" formatted="false">%s dni przed o %s</string>
+    <string name="add_event_one_day_before" formatted="false">Dzień przed o %s</string>
+    <string name="add_event_zero_days_before" formatted="false">W dniu wydarzenia o %s</string>
+    <string name="remove_reminder">Usuń</string>
+    <string name="made_in_ireland">Program powstał w Irlandii</string>
+    <string name="days_before">dni przed, o </string>
+    <string name="remind">Przypomnij</string>
+
+    <string-array
+        name="default_reminder_intervals">
+        <item>1 minuta</item>
+        <item>15 minut</item>
+        <item>30 minut</item>
+        <item>1 godzina</item>
+        <item>2 godziny</item>
+        <item>4 godziny</item>
+        <item>1 dzień</item>
+        <item>1 tydzień</item>
+        <item>Niestandardowy</item>
+    </string-array>
+
+    <string-array
+        name="default_reminder_intervals_all_day">
+        <item>Wprowadź ręcznie</item>
+        <item>Dzień przed o 8:00</item>
+        <item>Dzień przed o 12:00</item>
+        <item>Dzień przed o 18:00</item>
+        <item>Dzień przed o 21:00</item>
+        <item>W dniu wydarzenia o 8:00</item>
+        <item>W dniu wydarzenia o 12:00</item>
+    </string-array>
+
+    <string-array
+        name="default_snooze_intervals">
+        <item>Wprowadź ręcznie</item>
+        <item>15 minut</item>
+        <item>30 minut</item>
+        <item>45 minut</item>
+        <item>1 godzina</item>
+        <item>2 godziny</item>
+        <item>3 godziny</item>
+        <item>4 godziny</item>
+        <item>6 godzin</item>
+        <item>8 godzin</item>
+        <item>12 godzin</item>
+        <item>18 godzin</item>
+        <item>1 dzień</item>
+        <item>1,5 dnia</item>
+        <item>2 dni</item>
+        <item>3 dni</item>
+        <item>4 dni</item>
+        <item>7 dni</item>
+    </string-array>
+
+    <string name="new_event_max_reminder_is_28_days">Nie można ustawić przypomnienia wcześniejszego niż na 28 dni przed wydarzeniem</string>
+
+    <string name="add_event_event_title_hint">Tytuł</string>
+    <string name="calendar_was_changed_pull_down_to_refresh">Kalendarz został zmieniony, przesuń w dół, aby odświeżyć</string>
+    <string name="new_event_failed_to_create_event">Utworzenie wydarzenia nie powiodło się!</string>
+    <string name="no_active_calendars">Nieaktywne / obsługiwane kalendarze</string>
+
+    <string name="enable_add_event">Włącz przycisk \'Dodaj wydarzenie\'</string>
+    <string name="enable_add_event_summary">Włącza przycisk umożliwiający dodawanie wydarzeń kalendarza z poziomu tej aplikacji. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne. Aplikacja będzie monitorowała nowo dodane wydarzenia, aby nie zniknęły w trakcie synchronizacji.</string>
+
+    <string name="enable_edit_event">Włącz przycisk \'Edytuj wydarzenie\'</string>
+    <string name="enable_edit_event_summary">Włącza przycisk umożliwiający edycję szczegółów wydarzenia bezpośrednio z widoku przypomnienia. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne.</string>
+
+
+    <string name="default_duration">Domyślny czas trwania wydarzenia</string>
+    <string name="default_duration_summary">Domyślny czas trwania nowo dodawanych wydarzeń w minutach.</string>
+
+    <string name="event_was_created">Dodano wydarzenie</string>
+    <string name="event_was_created_reminder_at" formatted="false">Dodano wydarzenie, następne przypomnienie: %s</string>
+
+    <string name="event_not_found">Nie znaleziono wydarzenia</string>
+    <string name="calendar_not_found">Nie znaleziono kalendarza</string>
+    <string name="failed_to_update_event_details">Aktualizacja szczegółów wydarzenia nie powiodła się</string>
+    <string name="failed_to_move_event">Nie powiodło się przeniesienie wydarzenia: </string>
+    <string name="failed_to_add_event">Nie powiodło się dodanie wydarzenia: </string>
+
+    <string name="event_was_updated">Wydarzenie zostało zaktualizowane</string>
+    <string name="event_was_updated_next_reminder" formatted="false">Wydarzenie zaktualizowane, następne przypomnienie: %s</string>
+
+    <string name="failed_to_edit_event">Nie powiodła się aktualizacja wydarzenia: </string>
+    <string name="event_failed_location">Lokalizacja: </string>
+
+    <string name="pref_category_experimental_features">Funkcje eksperymentalne</string>
+    <string name="edit_auto_dismiss_title">Odrzuć automatycznie przy edycji</string>
+    <string name="edit_auto_dismiss_summary">Odrzucaj powiadomienie automatycznie, gdy wydarzenie zostanie przesunięte na przyszły termin.</string>
+    <string name="open_calendar_from_snooze_title">Otwórz w kalendarzu</string>
+<string name="open_calendar_from_snooze_summary">Kliknij na tytule lub czasie wydarzenia na ekranie powiadomień, aby wyświetlić je w kalendarzu.</string>
+    <string name="open_in_calendar">Otwórz w kalendarzu</string>
+    <string name="snooze_hide_event_description_title">Ukryj opis wydarzenia</string>
+    <string name="snooze_hide_event_description_summary">Nie wyświetlaj opisu wydarzenia w powiadomieniu.</string>
+    <string name="show_event_desc_in_the_notification_title">Wyświetl opis wydarzenia</string>
+    <string name="show_event_desc_in_the_notification_summary">Wyświetlaj w powiadomieniu opis wydarzenia.</string>
+    <string name="add_empty_action_to_the_end_title">Dodaj pusty klawisz</string>
+    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok klawisza wywołuje działanie takie jak kliknięcie w ten klawisz np. odrzucenie powiadomienia. Opcja ta dodaje pusty klawisz akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
+    <string name="notifications_pure_hacks">Nietypowe rozwiązania</string>
+	<string name="enable_dismiss_and_delete_title">Włącz opcję \'Odrzuć i usuń\'</string>
+<string name="enable_dismiss_and_delete_summary">Dodaje opcję \'Odrzuć i usuń\' w menu ekranu odłożeń. Jedno kliknięcie odrzuci powiadomienie i jednocześnie usunie wydarzenie z kalendarza. Opcja dostępna tylko dla wydarzeń niecyklicznych.</string>
+<string name="dismiss_and_delete_event">Odrzuć i usuń wydarzenie</string>
+<string name="custom_pattern">Ustawienia niestandardowe</string>
+<string name="reminder_pattern">Wzór cyklu przypomnień - lista rozdzielana przecinkami. Dopuszczalne są wartości takie jak: \'15s\' (min. wartość), \'15m\', \'2h\' lub \'3d\'\nWzór będzie powtarzany cyklicznie.\nNowe lub \'odświeżone\' wydarzenia będą uruchamiać cykl od nowa.</string>
 
 </resources>
 

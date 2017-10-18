@@ -91,7 +91,7 @@ object ApplicationController : EventMovedHandler {
 
     fun hasActiveEventsToRemind(context: Context) =
             EventsStorage(context).use {
-                val settings = Settings(context)
+                //val settings = Settings(context)
                 it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
             }
 
@@ -619,7 +619,7 @@ object ApplicationController : EventMovedHandler {
 
         var ret: Boolean = false
 
-        val currentTime = System.currentTimeMillis()
+        //val currentTime = System.currentTimeMillis()
 
         val mutedEvent: EventAlertRecord? =
                 EventsStorage(context).use {
@@ -951,8 +951,8 @@ object ApplicationController : EventMovedHandler {
         else {
             DevLog.error(context, LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
             DevLog.error(context, LOG_TAG, " -- known events / instances: ")
-            for (event in db.events) {
-                DevLog.error(context, LOG_TAG, " -- : ${event.eventId}, ${event.instanceStartTime}, ${event.alertTime}, ${event.snoozedUntil}")
+            for (ev in db.events) {
+                DevLog.error(context, LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
             }
         }
     }
@@ -995,8 +995,8 @@ object ApplicationController : EventMovedHandler {
                 DevLog.error(context, LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
 
                 DevLog.error(context, LOG_TAG, " -- known events / instances: ")
-                for (event in db.events) {
-                    DevLog.error(context, LOG_TAG, " -- : ${event.eventId}, ${event.instanceStartTime}, ${event.alertTime}, ${event.snoozedUntil}")
+                for (ev in db.events) {
+                    DevLog.error(context, LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
                 }
             }
         }

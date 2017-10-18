@@ -1000,7 +1000,7 @@ object CalendarProvider : CalendarProviderInterface {
                 for (reminderId in remindersToRemove) {
                     val reminderUri = ContentUris.withAppendedId(
                             CalendarContract.Reminders.CONTENT_URI, reminderId)
-                    val rows = context.contentResolver.delete(reminderUri, null, null)
+                    /*val rows = */context.contentResolver.delete(reminderUri, null, null)
                 }
 
                 for (reminder in newReminders) {

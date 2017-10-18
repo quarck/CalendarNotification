@@ -294,7 +294,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             vibrationPattern = settings.reminderVibrationPattern
                     )
 
-            val currentTime = System.currentTimeMillis()
+            //val currentTime = System.currentTimeMillis()
 
             val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial && !it.isTask  && !it.isMuted}
 

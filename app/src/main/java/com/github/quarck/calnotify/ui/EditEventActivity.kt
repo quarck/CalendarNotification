@@ -408,7 +408,7 @@ class EditEventActivity : AppCompatActivity() {
         }
         else if (eventToEdit != null) {
 
-            val details = eventToEdit.details
+            //val details = eventToEdit.details
 
             val cal = calendars.find { it.calendarId == eventToEdit.calendarId }
             if (cal == null) {

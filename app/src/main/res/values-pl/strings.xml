@@ -255,9 +255,6 @@
     <string name="multiple_events_single_notification">%d wydarzeń kalendarza</string>
     <string name="advanced">Zaawansowane</string>
 
-    <string name="reminders_not_accurate" formatted="false">UWAGA:\nPrzypomnienie zostało przed chwilą uruchomione\n\nZe względu na ograniczenie wprowadzone do Androida 6 i nowszych (tryby "Doze" i "App Standby") odłożone przypomnienie lub wydarzenie nie mogą być uruchomione wcześniej niż po %d minutach od teraz\nOgraniczenie nie obowiązuje w trakcie ładowania urządzenia</string> 
-    <string name="reminders_not_accurate_again">UWAGA:\nZe względu na ograniczenie wprowadzone do Androida 6 i nowszych (tryby "Doze" i "App Standby"), przypomnienia ustawione na czas krótszy niż 10 minut będą uruchamiane z częstotliwością jednego na ok. 10 minut\nOgraniczenia narzucone przez system nie pozwalają na ustawienie krótszego czasu\nOgraniczenie nie obowiązuje w trakcie ładowania urządzenia</string>
-
     <string name="open_wiki">OTWÓRZ WIKI</string>
     <string name="dash_or_dash">— lub —</string>
     <string name="check_wiki_text">Jeśli masz pytanie odnośnie używania aplikacji sprawdź najpierw stronę Wiki, czy nie ma tam już odpowiedzi:</string>

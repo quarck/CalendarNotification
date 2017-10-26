@@ -23,7 +23,7 @@
 
     <dimen name="snooze_view_event_title_max_height">120dp</dimen>
     <dimen name="snooze_view_event_details_max_height">100dp</dimen>
-    <dimen name="snooze_view_title_height">110dp</dimen>
+    <dimen name="snooze_view_title_height">120dp</dimen>
 
     <dimen name="snooze_view_in_text_vert_padding">4dp</dimen>
     <dimen name="snooze_view_details_initial_padding">10dp</dimen>

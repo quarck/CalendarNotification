@@ -89,6 +89,83 @@
             android:contentDescription="@string/save_button"
             />
 
+        <LinearLayout
+            android:id="@+id/add_event_layout_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/add_event_title"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:paddingStart="@dimen/add_event_view_padding_start"
+            android:paddingEnd="@dimen/add_event_view_padding_end"
+            android:layout_margin="0dp"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:id="@+id/add_event_task_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:longClickable="false"
+
+                android:paddingBottom="6dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="0dp"
+                android:paddingTop="0dp"
+
+                android:clickable="true"
+
+                android:text="@string/task_tag"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="normal"
+                android:textColor="@color/event_unselected_tag_color"
+                />
+
+            <TextView
+                android:id="@+id/add_event_mute_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:longClickable="false"
+
+                android:paddingBottom="6dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="0dp"
+                android:paddingTop="0dp"
+
+                android:clickable="true"
+
+                android:text="@string/mute_tag"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="normal"
+                android:textColor="@color/event_unselected_tag_color"
+                />
+
+            <TextView
+                android:id="@+id/add_event_alarm_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:longClickable="false"
+
+                android:paddingBottom="6dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="0dp"
+                android:paddingTop="0dp"
+
+                android:clickable="true"
+
+                android:text="@string/alarm_tag"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textStyle="normal"
+                android:textColor="@color/event_unselected_tag_color"
+                />
+
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 

@@ -539,6 +539,9 @@
     <string name="calendar_handling_options">Calendar handling options</string>
     <string name="enable_alarm_tag_title">Handle #alarm tag</string>
     <string name="enable_alarm_tag_summary">By adding #alarm tag to the event title or description you would force app to use Alarm volume for notification for particular event\nAlso quiet hours would be ignored for events with #alarm tag</string>
+    <string name="task_tag">#task</string>
+    <string name="mute_tag">#mute</string>
+    <string name="alarm_tag">#alarm</string>
 
 </resources>
 

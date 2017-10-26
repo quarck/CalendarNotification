@@ -190,6 +190,14 @@ class EditEventActivity : AppCompatActivity() {
 
     private lateinit var note: EditText
 
+    private lateinit var muteTagButton: TextView
+    private lateinit var taskTagButton: TextView
+    private lateinit var alarmTagButton: TextView
+
+    private var isMuted = false
+    private var isTask = false
+    private var isAlarm = false
+
     private lateinit var calendars: List<CalendarRecord>
     private lateinit var calendar: CalendarRecord
 
@@ -314,6 +322,45 @@ class EditEventActivity : AppCompatActivity() {
 
         // settings
         settings = Settings(this)
+
+        if (eventId == -1L && settings.enableTagButtons) {
+            val layout = find<LinearLayout?>(R.id.add_event_layout_buttons)
+            if (layout != null) {
+                layout.visibility = View.VISIBLE
+            }
+
+            taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
+            muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
+            alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
+
+            taskTagButton.setOnClickListener( {
+                isTask = !isTask
+
+                if (isTask)
+                    taskTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+                else
+                    taskTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+            })
+
+            muteTagButton.setOnClickListener( {
+                isMuted = !isMuted
+
+                if (isMuted)
+                    muteTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+                else
+                    muteTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+            })
+
+            alarmTagButton.setOnClickListener( {
+                isAlarm = !isAlarm
+
+                if (isAlarm)
+                    alarmTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+                else
+                    alarmTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+            })
+        }
+
 
         // Default calendar
         calendars = calendarProvider
@@ -657,8 +704,18 @@ class EditEventActivity : AppCompatActivity() {
 
         val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
 
+        var appendTags = ""
+        if (originalEvent == null) {
+            if (isMuted)
+                appendTags += " #mute"
+            if (isTask)
+                appendTags += " #task"
+            if (isAlarm)
+                appendTags += " #alarm"
+        }
+
         val details = CalendarEventDetails(
-                        title = eventTitleText.text.toString(),
+                        title = eventTitleText.text.toString() + appendTags,
                         desc = note.text.toString(),
                         location = eventLocation.text.toString(),
                         timezone = originalEvent?.timezone ?: calendar.timeZone,

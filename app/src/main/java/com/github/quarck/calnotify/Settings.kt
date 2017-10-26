@@ -424,6 +424,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableNotificationAlarmTags: Boolean
         get() = getBoolean(ENABLE_NOTIFICATION_ALARM_TAG_KEY, false)
 
+    val enableTagButtons: Boolean
+        get() = true
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 allowNotificationSwipe = allowNotificationSwipe,

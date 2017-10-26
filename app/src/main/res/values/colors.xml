@@ -27,6 +27,9 @@
     <color name="event_title_color">#FFFFFF</color>
     <color name="event_title_hint_color">#CECECE</color>
 
+    <color name="event_unselected_tag_color">#AEAEAE</color>
+    <color name="event_selected_tag_color">#FFFFFF</color>
+
 <!--
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>

@@ -106,4 +106,6 @@
     <dimen name="fab_layout_margin">16dp</dimen>
 
 
+    <dimen name="add_event_view_title_height">110dp</dimen>
+
 </resources>

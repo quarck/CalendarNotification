@@ -35,7 +35,7 @@
 -->
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="@dimen/snooze_view_title_height"
+            android:layout_height="@dimen/add_event_view_title_height"
             android:id="@+id/add_event_title"
             android:text="@string/empty"
             android:hint="@string/add_event_event_title_hint"
@@ -47,7 +47,6 @@
             android:paddingTop="@dimen/add_event_view_header_padding_top"
             android:paddingStart="@dimen/add_event_view_padding_start"
             android:paddingEnd="@dimen/add_event_view_padding_end"
-            android:maxHeight="@dimen/add_event_view_event_title_max_height"
             android:gravity="start|bottom"
             android:ellipsize="end"
             android:maxLines="1"

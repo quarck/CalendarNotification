@@ -103,7 +103,10 @@ data class EditEventActivityState(
         var isAllDay: Boolean,
         var reminders: List<EventReminderRecord>,
         var allDayReminders: List<EventReminderRecord>,
-        var selectedCalendar: Long
+        var selectedCalendar: Long,
+        var isMuted: Boolean,
+        var isTask: Boolean,
+        var isAlarm: Boolean
 ) {
     fun toBundle(bundle: Bundle) {
         bundle.putLong(KEY_EVENT_ID, eventId)
@@ -116,6 +119,9 @@ data class EditEventActivityState(
         bundle.putString(KEY_REMINDERS, reminders.serialize())
         bundle.putString(KEY_ALL_DAY_REMINDERS, allDayReminders.serialize())
         bundle.putLong(KEY_SELECTED_CALENDAR, selectedCalendar)
+        bundle.putBoolean(KEY_IS_ALARM, isAlarm)
+        bundle.putBoolean(KEY_IS_TASK, isTask)
+        bundle.putBoolean(KEY_IS_MUTED, isMuted)
     }
 
     companion object {
@@ -133,6 +139,9 @@ data class EditEventActivityState(
             val reminders = bundle.getString(KEY_REMINDERS, "").deserializeCalendarEventReminders()
             val allDayReminders = bundle.getString(KEY_ALL_DAY_REMINDERS, "").deserializeCalendarEventReminders()
             val selectedCalendar = bundle.getLong(KEY_SELECTED_CALENDAR)
+            val muted = bundle.getBoolean(KEY_IS_MUTED)
+            val task = bundle.getBoolean(KEY_IS_TASK)
+            val alarm = bundle.getBoolean(KEY_IS_ALARM)
 
             return EditEventActivityState(
                     id,
@@ -144,7 +153,10 @@ data class EditEventActivityState(
                     isAllDay,
                     reminders,
                     allDayReminders,
-                    selectedCalendar
+                    selectedCalendar,
+                    muted,
+                    task,
+                    alarm
                     )
         }
 
@@ -158,6 +170,9 @@ data class EditEventActivityState(
         const val KEY_REMINDERS = "reminders"
         const val KEY_ALL_DAY_REMINDERS = "adayreminders"
         const val KEY_SELECTED_CALENDAR = "cal"
+        const val KEY_IS_MUTED = "isMuted"
+        const val KEY_IS_TASK = "isTask"
+        const val KEY_IS_ALARM = "isAlarm"
 
     }
 }
@@ -323,44 +338,29 @@ class EditEventActivity : AppCompatActivity() {
         // settings
         settings = Settings(this)
 
-        if (eventId == -1L && settings.enableTagButtons) {
-            val layout = find<LinearLayout?>(R.id.add_event_layout_buttons)
-            if (layout != null) {
-                layout.visibility = View.VISIBLE
-            }
+        taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
+        muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
+        alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
 
-            taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
-            muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
-            alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
+        updateTags(settings, true)
+
+        if (originalEvent == null && settings.enableTagButtons) {
 
             taskTagButton.setOnClickListener( {
                 isTask = !isTask
-
-                if (isTask)
-                    taskTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-                else
-                    taskTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+                updateTags(settings, false)
             })
 
             muteTagButton.setOnClickListener( {
                 isMuted = !isMuted
-
-                if (isMuted)
-                    muteTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-                else
-                    muteTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+                updateTags(settings, false)
             })
 
             alarmTagButton.setOnClickListener( {
                 isAlarm = !isAlarm
-
-                if (isAlarm)
-                    alarmTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-                else
-                    alarmTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+                updateTags(settings, false)
             })
         }
-
 
         // Default calendar
         calendars = calendarProvider
@@ -442,6 +442,10 @@ class EditEventActivity : AppCompatActivity() {
             switchAllDay.isChecked = state.isAllDay
             isAllDay = state.isAllDay
 
+            isMuted = state.isMuted
+            isAlarm = state.isAlarm
+            isTask = state.isTask
+
             for (reminder in state.reminders) {
                 addReminder(reminder, false)
             }
@@ -452,6 +456,7 @@ class EditEventActivity : AppCompatActivity() {
 
             updateDateTimeUI();
             updateReminders()
+            updateTags(settings, true)
         }
         else if (eventToEdit != null) {
 
@@ -558,7 +563,10 @@ class EditEventActivity : AppCompatActivity() {
                         isAllDay,
                         regularReminders,
                         allDayReminders,
-                        calendar.calendarId
+                        calendar.calendarId,
+                        isMuted,
+                        isTask,
+                        isAlarm
                 )
 
         state.toBundle(outState)
@@ -605,6 +613,42 @@ class EditEventActivity : AppCompatActivity() {
             dateTo.text = DateUtils.formatDateTime(this,
                     Math.max(toClean.timeInMillis-1000L, fromClean.timeInMillis),
                     dateFormat)
+        }
+    }
+
+    fun updateTags(settings: Settings, updateLayouts: Boolean) {
+
+        val enableTags = originalEvent == null && settings.enableTagButtons
+
+        if (updateLayouts) {
+            val layout = find<LinearLayout?>(R.id.add_event_layout_buttons)
+            if (layout != null) {
+                layout.visibility = if (enableTags) View.VISIBLE else View.GONE
+            }
+        }
+
+        if (enableTags) {
+
+            if (updateLayouts) {
+                taskTagButton.visibility = if (settings.enableNotificationTaskTags) View.VISIBLE else View.GONE
+                muteTagButton.visibility = if (settings.enableNotificationMuteTags) View.VISIBLE else View.GONE
+                alarmTagButton.visibility = if (settings.enableNotificationAlarmTags) View.VISIBLE else View.GONE
+            }
+
+            if (isTask)
+                taskTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+            else
+                taskTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+
+            if (isMuted)
+                muteTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+            else
+                muteTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+
+            if (isAlarm)
+                alarmTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
+            else
+                alarmTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
         }
     }
 

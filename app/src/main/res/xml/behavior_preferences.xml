@@ -95,6 +95,14 @@
             android:defaultValue="false"
             />
 
+        <CheckBoxPreference
+            android:key="enable_tag_buttons"
+            android:title="Quick add #tags"
+            android:summary="Add UI elements on the New event activity to quickly add event tags (would only show tags that are enabled)"
+            android:defaultValue="false"
+            />
+<!--             android:dependency="enable_notification_mute_tags||enable_notification_alarm_tags||enable_notification_task_tags"
+ -->
     </PreferenceCategory>
 
 </PreferenceScreen>

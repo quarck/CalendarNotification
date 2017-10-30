@@ -209,6 +209,9 @@ class EditEventActivity : AppCompatActivity() {
     private lateinit var taskTagButton: TextView
     private lateinit var alarmTagButton: TextView
 
+    private lateinit var tagsLayout: LinearLayout
+
+
     private var isMuted = false
     private var isTask = false
     private var isAlarm = false
@@ -342,6 +345,8 @@ class EditEventActivity : AppCompatActivity() {
         muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
         alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
 
+        tagsLayout = find<LinearLayout?>(R.id.add_event_layout_buttons) ?: throw Exception("Can't find add_event_layout_buttons")
+
         updateTags(settings, true)
 
         if (originalEvent == null && settings.enableTagButtons) {
@@ -429,6 +434,8 @@ class EditEventActivity : AppCompatActivity() {
 
             val color = originalEvent?.color ?: calendar.color
             eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
+            if (tagsLayout != null)
+                tagsLayout.background = eventTitleText.background;
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = color.scaleColor(0.7f)
@@ -476,6 +483,8 @@ class EditEventActivity : AppCompatActivity() {
 
             accountName.text = calendar.name
             eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
+            if (tagsLayout != null)
+                tagsLayout.background = eventTitleText.background;
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
@@ -518,6 +527,8 @@ class EditEventActivity : AppCompatActivity() {
             // Initialize default values
             accountName.text = calendar.name
             eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+            if (tagsLayout != null)
+                tagsLayout.background = eventTitleText.background;
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = calendar.color.scaleColor(0.7f)
@@ -621,9 +632,8 @@ class EditEventActivity : AppCompatActivity() {
         val enableTags = originalEvent == null && settings.enableTagButtons
 
         if (updateLayouts) {
-            val layout = find<LinearLayout?>(R.id.add_event_layout_buttons)
-            if (layout != null) {
-                layout.visibility = if (enableTags) View.VISIBLE else View.GONE
+            if (tagsLayout != null) {
+                tagsLayout.visibility = if (enableTags) View.VISIBLE else View.GONE
             }
         }
 
@@ -722,14 +732,17 @@ class EditEventActivity : AppCompatActivity() {
                 persistentState.lastCalendar = calendar.calendarId
 
                 accountName.text = calendar.name
-                eventTitleText.background = ColorDrawable(
-                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+//                eventTitleText.background = ColorDrawable(
+//                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     window.statusBarColor = calendar.color.scaleColor(0.7f)
                 }
 
                 eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+                if (tagsLayout != null)
+                    tagsLayout.background = eventTitleText.background;
             }
         }
         builder.show()

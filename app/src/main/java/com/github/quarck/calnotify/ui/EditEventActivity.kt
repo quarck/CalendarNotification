@@ -732,8 +732,8 @@ class EditEventActivity : AppCompatActivity() {
                 persistentState.lastCalendar = calendar.calendarId
 
                 accountName.text = calendar.name
-//                eventTitleText.background = ColorDrawable(
-//                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+                eventTitleText.background = ColorDrawable(
+                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

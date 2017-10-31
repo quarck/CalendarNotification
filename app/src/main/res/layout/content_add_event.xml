@@ -99,7 +99,8 @@
             android:paddingStart="@dimen/add_event_view_padding_start"
             android:paddingEnd="@dimen/add_event_view_padding_end"
             android:layout_margin="0dp"
-            android:visibility="gone"
+            android:visibility="visible"
+            android:background="#00FEFEFE"
             >
 
             <TextView

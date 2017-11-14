@@ -436,9 +436,8 @@ class EditEventActivity : AppCompatActivity() {
             accountName.text = calendar.name
 
             val color = originalEvent?.color ?: calendar.color
-            //eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
             eventTitleLayout.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
-//            tagsLayout.background = eventTitleText.background;
+            eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = color.scaleColor(0.7f)
@@ -485,10 +484,8 @@ class EditEventActivity : AppCompatActivity() {
             switchAllDay.isEnabled = false
 
             accountName.text = calendar.name
-//            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
             eventTitleLayout.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
-            // TAGS are not visible here - don't change colour
-//                tagsLayout.background = eventTitleText.background;
+            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
@@ -530,8 +527,8 @@ class EditEventActivity : AppCompatActivity() {
         else {
             // Initialize default values
             accountName.text = calendar.name
-            //eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
             eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = calendar.color.scaleColor(0.7f)
@@ -741,9 +738,9 @@ class EditEventActivity : AppCompatActivity() {
                     window.statusBarColor = calendar.color.scaleColor(0.7f)
                 }
 
-                //eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
                 eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
-//                    tagsLayout.background = eventTitleText.background;
+                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
             }
         }
         builder.show()

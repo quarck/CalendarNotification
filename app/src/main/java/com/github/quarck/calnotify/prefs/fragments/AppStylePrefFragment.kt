@@ -49,8 +49,8 @@ class AppStylePrefFragment : Fragment() {
 
         val useCompactView = settings.useCompactView
 
-        view.find<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
-        view.find<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
+        view.find<RadioButton>(R.id.radio_button_compact_view)?.isChecked = useCompactView
+        view.find<RadioButton>(R.id.radio_button_card_view)?.isChecked = !useCompactView
 
         return view
     }

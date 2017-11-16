@@ -310,45 +310,45 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            find<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+            find<LinearLayout>(R.id.layout_focus_catcher)?.visibility = View.GONE
         }
 
-        eventTitleLayout = find<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
+        eventTitleLayout = findOrThrow<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
 
         // get all the objects first
-        eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
+        eventTitleText = findOrThrow<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
 
-        buttonSave = find<Button?>(R.id.add_event_save) ?: throw Exception("Can't find add_event_save")
-        buttonCancel = find<ImageView?>(R.id.add_event_view_cancel) ?: throw Exception("Can't find add_event_view_cancel")
+        buttonSave = findOrThrow<Button?>(R.id.add_event_save) ?: throw Exception("Can't find add_event_save")
+        buttonCancel = findOrThrow<ImageView?>(R.id.add_event_view_cancel) ?: throw Exception("Can't find add_event_view_cancel")
 
-        accountName = find<TextView?>(R.id.account_name) ?: throw Exception("Can't find account_name")
+        accountName = findOrThrow<TextView?>(R.id.account_name) ?: throw Exception("Can't find account_name")
 
-        switchAllDay = find<Switch?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
+        switchAllDay = findOrThrow<Switch?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
 
-        dateFrom = find<Button?>(R.id.add_event_date_from) ?: throw Exception("Can't find add_event_date_from")
-        timeFrom = find<Button?>(R.id.add_event_time_from) ?: throw Exception("Can't find add_event_time_from")
+        dateFrom = findOrThrow<Button?>(R.id.add_event_date_from) ?: throw Exception("Can't find add_event_date_from")
+        timeFrom = findOrThrow<Button?>(R.id.add_event_time_from) ?: throw Exception("Can't find add_event_time_from")
 
-        dateTo = find<Button?>(R.id.add_event_date_to) ?: throw Exception("Can't find add_event_date_to")
-        timeTo = find<Button?>(R.id.add_event_time_to) ?: throw Exception("Can't find add_event_time_to")
+        dateTo = findOrThrow<Button?>(R.id.add_event_date_to) ?: throw Exception("Can't find add_event_date_to")
+        timeTo = findOrThrow<Button?>(R.id.add_event_time_to) ?: throw Exception("Can't find add_event_time_to")
 
-        eventLocation = find<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
+        eventLocation = findOrThrow<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
 
-        notificationsLayout = find<LinearLayout?>(R.id.notifications) ?: throw Exception("Can't find notifications")
-        notificationPrototype = find<TextView?>(R.id.notificationPrototype) ?: throw Exception("Can't find notificationPrototype")
-        addNotification = find<TextView?>(R.id.add_notification) ?: throw Exception("Can't find add_notification")
+        notificationsLayout = findOrThrow<LinearLayout?>(R.id.notifications) ?: throw Exception("Can't find notifications")
+        notificationPrototype = findOrThrow<TextView?>(R.id.notificationPrototype) ?: throw Exception("Can't find notificationPrototype")
+        addNotification = findOrThrow<TextView?>(R.id.add_notification) ?: throw Exception("Can't find add_notification")
 
-        note = find<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
+        note = findOrThrow<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
 
         notificationPrototype.visibility = View.GONE
 
         // settings
         settings = Settings(this)
 
-        taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
-        muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
-        alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
+        taskTagButton = findOrThrow<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
+        muteTagButton = findOrThrow<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
+        alarmTagButton = findOrThrow<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
 
-        tagsLayout = find<LinearLayout?>(R.id.add_event_layout_buttons) ?: throw Exception("Can't find add_event_layout_buttons")
+        tagsLayout = findOrThrow<LinearLayout?>(R.id.add_event_layout_buttons) ?: throw Exception("Can't find add_event_layout_buttons")
 
         updateTags(settings, true)
 
@@ -762,11 +762,11 @@ class EditEventActivity : AppCompatActivity() {
         var appendTags = ""
         if (originalEvent == null) {
             if (isMuted)
-                appendTags += " #mute"
+                appendTags += " " + Consts.TAG_STRING_MUTE
             if (isTask)
-                appendTags += " #task"
+                appendTags += " " + Consts.TAG_STRING_TASK
             if (isAlarm)
-                appendTags += " #alarm"
+                appendTags += " " + Consts.TAG_STRING_ALARM
         }
 
         val details = CalendarEventDetails(
@@ -1100,9 +1100,9 @@ class EditEventActivity : AppCompatActivity() {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_allday_notification, null);
 
-        val numberPicker = dialogView.find<NumberPicker>(R.id.number_picker_days_before)
-        val timePicker = dialogView.find<TimePicker>(R.id.time_picker_notification_time_of_day)
-        val isEmailCb = dialogView.find<CheckBox>(R.id.checkbox_as_email)
+        val numberPicker = dialogView.findOrThrow<NumberPicker>(R.id.number_picker_days_before)
+        val timePicker = dialogView.findOrThrow<TimePicker>(R.id.time_picker_notification_time_of_day)
+        val isEmailCb = dialogView.findOrThrow<CheckBox>(R.id.checkbox_as_email)
 
         numberPicker.minValue = 0
         numberPicker.maxValue = Consts.NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE

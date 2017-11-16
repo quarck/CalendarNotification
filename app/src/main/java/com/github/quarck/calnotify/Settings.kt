@@ -26,29 +26,35 @@ import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import com.github.quarck.calnotify.utils.toIntOrNull
 
+enum class RingtoneOrigin {
+    Main,
+    Reminder,
+    Quiet,
+}
 
 data class NotificationSettingsSnapshot
 (
-        val allowNotificationSwipe: Boolean,
-        val notificationSwipeDoesSnooze: Boolean,
-        val enableNotificationMute: Boolean,
-        val ringtoneUri: Uri?,
-        val vibrationOn: Boolean,
-        val vibrationPattern: LongArray,
-        val ledNotificationOn: Boolean,
-        val ledColor: Int,
-        val ledPattern: IntArray,
-        val headsUpNotification: Boolean,
-        val forwardEventToPebble: Boolean,
-        val pebbleOldFirmware: Boolean,
-        val forwardReminderToPebble: Boolean,
-        val showColorInNotification: Boolean,
-        val notificationOpensSnooze: Boolean,
-        val quietHoursMuteLED: Boolean,
-        val useAlarmStream: Boolean,
-        val useBundledNotifications: Boolean,
-        val showDescription: Boolean,
-        val appendEmptyAction: Boolean
+    val allowNotificationSwipe: Boolean,
+    val notificationSwipeDoesSnooze: Boolean,
+    val enableNotificationMute: Boolean,
+    val ringtoneUri: Uri?,
+    val ringtoneOrigin: RingtoneOrigin,
+    val vibrationOn: Boolean,
+    val vibrationPattern: LongArray,
+    val ledNotificationOn: Boolean,
+    val ledColor: Int,
+    val ledPattern: IntArray,
+    val headsUpNotification: Boolean,
+    val forwardEventToPebble: Boolean,
+    val pebbleOldFirmware: Boolean,
+    val forwardReminderToPebble: Boolean,
+    val showColorInNotification: Boolean,
+    val notificationOpensSnooze: Boolean,
+    val quietHoursMuteLED: Boolean,
+    val useAlarmStream: Boolean,
+    val useBundledNotifications: Boolean,
+    val showDescription: Boolean,
+    val appendEmptyAction: Boolean
 )
 
 class Settings(context: Context) : PersistentStorageBase(context) {
@@ -433,6 +439,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 enableNotificationMute = enableNotificationMute && remindersEnabled,
                 ringtoneUri = ringtoneURI,
+                ringtoneOrigin = RingtoneOrigin.Main,
                 vibrationOn = vibraOn,
                 vibrationPattern = vibrationPattern,
                 ledNotificationOn = ledNotificationOn,

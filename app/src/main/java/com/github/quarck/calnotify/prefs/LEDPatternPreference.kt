@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 class LEDPatternPreference(context: Context, attrs: AttributeSet)
     : DialogPreference(context, attrs), SeekBar.OnSeekBarChangeListener {
@@ -58,11 +59,11 @@ class LEDPatternPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        onTimeSeeker = view.find<SeekBar>(R.id.seek_bar_led_on_time)
-        offTimeSeeker = view.find<SeekBar>(R.id.seek_bar_led_off_time)
+        onTimeSeeker = view.findOrThrow<SeekBar>(R.id.seek_bar_led_on_time)
+        offTimeSeeker = view.findOrThrow<SeekBar>(R.id.seek_bar_led_off_time)
 
-        onTimeText = view.find<TextView>(R.id.text_view_led_on_time_value)
-        offTimeText = view.find<TextView>(R.id.text_view_led_off_time_value)
+        onTimeText = view.findOrThrow<TextView>(R.id.text_view_led_on_time_value)
+        offTimeText = view.findOrThrow<TextView>(R.id.text_view_led_off_time_value)
 
         millisecondsString = view.resources.getString(R.string.milliseconds_suffix)
 

@@ -38,6 +38,12 @@ object Consts {
 
     const val DEFAULT_SNOOZE_TIME_IF_NONE = 15L * 60L * 1000L
 
+    const val NOTIFICATION_CHANNEL_ID_MAIN = "main"
+    const val NOTIFICAITON_CHANNEL_ID_MAIN_ALARM = "alarm"
+    const val NOTIFICATION_CHANNEL_ID_REMINDER = "reminder"
+    const val NOTIFICATION_CHANNEL_ID_ALARM_REMINDER = "alarmReminder"
+    const val NOTIFICATION_CHANNEL_ID_QUIET = "quiet"
+
     const val NOTIFICATION_ID_COLLAPSED = 0
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1
     const val NOTIFICATION_ID_REMINDER = Int.MAX_VALUE - 1
@@ -140,4 +146,8 @@ object Consts {
     const val NEW_EVENT_MIN_MONITOR_RETRY_MILLISECONDS: Long = 10*60L*1000L // 10 minutes
     const val NEW_EVENT_MONITOR_MAX_RETRIES: Int = 10
     const val MIN_REMINDER_INTERVAL_SECONDS: Int = 15
+
+    const val TAG_STRING_TASK = "#task"
+    const val TAG_STRING_MUTE = "#mute"
+    const val TAG_STRING_ALARM = "#alarm"
 }

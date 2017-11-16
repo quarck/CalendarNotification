@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.R.id
 import com.github.quarck.calnotify.R.layout
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.vibratorService
 
 
@@ -54,7 +55,7 @@ open class VibrationPatternPreference(internal var context: Context, attrs: Attr
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        edit = view.find<EditText>(id.editTextVibrationPattern)
+        edit = view.findOrThrow<EditText>(id.editTextVibrationPattern)
         edit.setText(patternValue)
     }
 

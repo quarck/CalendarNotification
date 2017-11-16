@@ -41,6 +41,7 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
@@ -92,11 +93,11 @@ class EventListAdapter(
 
         init {
             eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitleText = itemView.find<TextView>(R.id.card_view_event_name)
+            eventTitleText = itemView.findOrThrow<TextView>(R.id.card_view_event_name)
             eventTitleLayout = itemView.find<RelativeLayout?>(R.id.card_view_event_title_layout)
 
-            eventDateText = itemView.find<TextView>(R.id.card_view_event_date)
-            eventTimeText = itemView.find<TextView>(R.id.card_view_event_time)
+            eventDateText = itemView.findOrThrow<TextView>(R.id.card_view_event_date)
+            eventTimeText = itemView.findOrThrow<TextView>(R.id.card_view_event_time)
             snoozedUntilText = itemView.find<TextView>(R.id.card_view_snoozed_until)
 
             eventLocatoinText = itemView.find<TextView?>(R.id.card_view_location)

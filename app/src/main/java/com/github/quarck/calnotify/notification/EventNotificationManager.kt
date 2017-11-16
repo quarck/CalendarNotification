@@ -24,6 +24,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
@@ -42,6 +43,12 @@ import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.SnoozeActivityNoRecents
 import com.github.quarck.calnotify.utils.*
+import android.app.NotificationManager
+import android.app.NotificationChannel
+import android.os.Build
+import android.content.Context.NOTIFICATION_SERVICE
+import android.net.Uri
+
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager : EventNotificationManagerInterface {
@@ -115,6 +122,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notificationsSettingsQuiet =
                 notificationSettings.copy(
                         ringtoneUri = null,
+                        ringtoneOrigin = RingtoneOrigin.Quiet,
                         vibrationOn = false,
                         forwardEventToPebble = false,
                         forwardReminderToPebble = false
@@ -290,6 +298,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             val notificationSettings =
                     settings.notificationSettingsSnapshot.copy(
                             ringtoneUri = settings.reminderRingtoneURI,
+                            ringtoneOrigin = RingtoneOrigin.Reminder,
                             vibrationOn = settings.reminderVibraOn,
                             vibrationPattern = settings.reminderVibrationPattern
                     )
@@ -389,6 +398,100 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
+    /*
+    * @returns channel id
+    * */
+    private fun createNotificationChannel(
+            context: Context,
+            notificationSettings: NotificationSettingsSnapshot,
+            isAlarmStream: Boolean
+    ): String {
+
+        val channelName: Int
+        val channelDesc: Int
+        val channelId: String
+
+        when (notificationSettings.ringtoneOrigin) {
+            RingtoneOrigin.Main -> {
+                if (isAlarmStream) {
+                    channelName = R.string.channel_main_alarm_name
+                    channelDesc = R.string.channel_main_alarm_desc
+                    channelId = Consts.NOTIFICAITON_CHANNEL_ID_MAIN_ALARM
+                } else {
+                    channelName = R.string.channel_main_name
+                    channelDesc = R.string.channel_main_desc
+                    channelId = Consts.NOTIFICATION_CHANNEL_ID_MAIN
+                }
+            }
+            RingtoneOrigin.Reminder -> {
+                if (isAlarmStream) {
+                    channelName = R.string.channel_reminder_alarm_name
+                    channelDesc = R.string.channel_reminder_alarm_desc
+                    channelId = Consts.NOTIFICATION_CHANNEL_ID_ALARM_REMINDER
+                } else {
+                    channelName = R.string.channel_reminder_name
+                    channelDesc = R.string.channel_reminder_desc
+                    channelId = Consts.NOTIFICATION_CHANNEL_ID_REMINDER
+                }
+            }
+            RingtoneOrigin.Quiet -> {
+                channelName = R.string.channel_quiet_name
+                channelDesc = R.string.channel_quiet_desc
+                channelId = Consts.NOTIFICATION_CHANNEL_ID_QUIET
+            }
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return channelId
+
+        val notificationChannel =
+                NotificationChannel(
+                        channelId,
+                        context.resources.getString(channelName),
+                        if (isAlarmStream)
+                            NotificationManager.IMPORTANCE_HIGH
+                        else
+                            NotificationManager.IMPORTANCE_DEFAULT
+                )
+
+        // Configure the notification channel.
+        notificationChannel.description = context.resources.getString(channelDesc)
+
+        if (notificationSettings.ledNotificationOn) {
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = notificationSettings.ledColor
+        }
+        else {
+            notificationChannel.enableLights(false)
+        }
+
+        if (notificationSettings.vibrationOn) {
+            notificationChannel.enableVibration(true)
+            notificationChannel.vibrationPattern = notificationSettings.vibrationPattern
+        }
+        else  {
+            notificationChannel.enableVibration(false)
+        }
+
+        val attribBuilder = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+
+        if (isAlarmStream) {
+            attribBuilder
+                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+        }
+        else {
+            attribBuilder.setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+        }
+
+        notificationChannel.setSound(notificationSettings.ringtoneUri, attribBuilder.build())
+
+        context.notificationManager.createNotificationChannel(notificationChannel)
+
+        return channelId
+    }
 
 
     override fun cleanupEventReminder(context: Context) {
@@ -412,6 +515,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             hideCollapsedEventsNotification(context)
             return false
         }
+
         DevLog.debug(context, LOG_TAG, "Posting ${events.size} notifications in collapsed view")
 
         val notificationsSettings = notificationsSettingsIn ?: settings.notificationSettingsSnapshot
@@ -421,7 +525,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         var shouldPlayAndVibrate = false
 
         val currentTime = System.currentTimeMillis()
-
 
         // make sure we remove full notifications
         if (force)
@@ -532,8 +635,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         })
                         .toString()
 
+
+        val channelId = createNotificationChannel(
+                context,
+                notificationsSettings,
+                isAlarmStream = notificationsSettings.useAlarmStream || hasAlarms
+        )
+
         val builder =
-                NotificationCompat.Builder(context)
+                NotificationCompat.Builder(context, channelId)
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
@@ -662,6 +772,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notificationsSettingsQuiet =
                 notificationsSettings.copy(
                         ringtoneUri = null,
+                        ringtoneOrigin = RingtoneOrigin.Quiet,
                         vibrationOn = false,
                         forwardEventToPebble = false,
                         forwardReminderToPebble = false
@@ -906,7 +1017,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     EventFormatter(ctx).formatTimeDuration(msAgo))
         }
 
-        val builder = NotificationCompat.Builder(ctx)
+        val builder = NotificationCompat.Builder(ctx, channelId)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
@@ -1005,7 +1116,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
 
-        val groupBuilder = NotificationCompat.Builder(ctx)
+        val groupBuilder = NotificationCompat.Builder(ctx, channelId)
                 .setContentTitle(ctx.resources.getString(R.string.calendar))
                 .setContentText(text)
                 .setSubText(text)
@@ -1129,7 +1240,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         else if (event.isMuted)
             iconId = R.drawable.stat_notify_calendar_muted
 
-        val builder = NotificationCompat.Builder(ctx)
+        val builder = NotificationCompat.Builder(ctx, channelId)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
                 .setSmallIcon(iconId)
@@ -1492,7 +1603,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toString()
 
         val builder =
-                NotificationCompat.Builder(context)
+                NotificationCompat.Builder(context, channelId)
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
@@ -1531,7 +1642,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val appPendingIntent = pendingActivityIntent(context,
                 Intent(context, MainActivity::class.java), notificationId)
 
-        val builder = NotificationCompat.Builder(context)
+        val builder = NotificationCompat.Builder(context, channelId)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)

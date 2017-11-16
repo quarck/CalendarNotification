@@ -48,8 +48,8 @@ class AppStylePrefActivity : AppCompatActivity() {
 
         val useCompactView = settings.useCompactView
 
-        find<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
-        find<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
+        find<RadioButton>(R.id.radio_button_compact_view)?.isChecked = useCompactView
+        find<RadioButton>(R.id.radio_button_card_view)?.isChecked = !useCompactView
     }
 
     fun onRadioButtonClicked(view: View) {

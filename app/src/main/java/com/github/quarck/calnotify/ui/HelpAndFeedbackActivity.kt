@@ -63,11 +63,11 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             // would allow us accessing only our own logs
             // we don't want to grab any other logs accidently and too lazy
             // to implement proper filter :)
-            find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
-            find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
+            find<CheckBox>(R.id.checkboxIncludeLogs)?.visibility = View.GONE
+            find<TextView>(R.id.textViewLogFileNote)?.visibility = View.GONE
         } else {
-            find<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
-            find<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
+            find<CheckBox>(R.id.checkboxIncludeLogs)?.isChecked = true
+            find<TextView>(R.id.textViewLogFileNote)?.visibility = View.VISIBLE
         }
 
         DevLog.debug(LOG_TAG, "onCreate")
@@ -76,17 +76,17 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
-        find<TextView>(R.id.textViewLogFileNote).visibility =
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs)?.isChecked ?: false
+        find<TextView>(R.id.textViewLogFileNote)?.visibility =
                 if (shouldAttachLogs) View.VISIBLE else View.GONE
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnIncludeLogsClick(v: View) {
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs)?.isChecked ?: false
 
-        find<TextView>(R.id.textViewLogFileNote).visibility =
+        find<TextView>(R.id.textViewLogFileNote)?.visibility =
                 if (shouldAttachLogs) View.VISIBLE else View.GONE
     }
 
@@ -94,7 +94,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     fun OnButtonEmailDeveloper(v: View) {
         DevLog.debug(LOG_TAG, "Emailing developer");
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs)?.isChecked ?: false
 
         val email =
                 Intent(Intent.ACTION_SEND)

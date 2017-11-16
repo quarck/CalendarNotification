@@ -40,6 +40,7 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
@@ -66,13 +67,13 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
         var spacingView: View
 
         init {
-            view = itemView.find<LinearLayout>(R.id.linearLyaoutCalendarView)
+            view = itemView.findOrThrow<LinearLayout>(R.id.linearLyaoutCalendarView)
 
-            calendarAccountName = view.find<TextView>(R.id.textViewCalendarOwner)
-            checkboxCalendarName = view.find<CheckBox>(R.id.checkBoxCalendarSelection)
-            colorView = view.find<View>(R.id.viewCalendarColor)
-            calendarEntryLayout = view.find<LinearLayout>(R.id.linearLayoutCalendarEntry)
-            spacingView = view.find<View>(R.id.viewCalendarsSpacing)
+            calendarAccountName = view.findOrThrow<TextView>(R.id.textViewCalendarOwner)
+            checkboxCalendarName = view.findOrThrow<CheckBox>(R.id.checkBoxCalendarSelection)
+            colorView = view.findOrThrow<View>(R.id.viewCalendarColor)
+            calendarEntryLayout = view.findOrThrow<LinearLayout>(R.id.linearLayoutCalendarEntry)
+            spacingView = view.findOrThrow<View>(R.id.viewCalendarsSpacing)
 
             checkboxCalendarName.setOnClickListener {
                 view ->
@@ -150,7 +151,7 @@ class CalendarsActivity : AppCompatActivity() {
         DevLog.debug(LOG_TAG, "onCreate")
 
         setContentView(R.layout.activity_calendars)
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(find<Toolbar>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
@@ -166,11 +167,11 @@ class CalendarsActivity : AppCompatActivity() {
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = find<RecyclerView>(R.id.list_calendars)
+        recyclerView = findOrThrow<RecyclerView>(R.id.list_calendars)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
 
-        noCalendarsText = find<TextView>(R.id.no_calendars_text)
+        noCalendarsText = find<TextView>(R.id.no_calendars_text) ?: throw Exception("Cant find R.id.no_calendars_text")
     }
 
     override fun onResume() {

@@ -543,5 +543,17 @@
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
 
+    <string name="channel_main_name">Calendar</string>
+    <string name="channel_main_desc">Calendar Notifications Plus - main calendar notifications</string>
+    <string name="channel_reminder_name">Calendar Reminder</string>
+    <string name="channel_reminder_desc">Calendar Notifications Plus - calendar reminders</string>
+    <string name="channel_main_alarm_name">Calendar - Alarm</string>
+    <string name="channel_main_alarm_desc">Calendar Notifications Plus - main calendar notifications via alarm stream</string>
+    <string name="channel_reminder_alarm_name">Calendar Reminder- Alarm</string>
+    <string name="channel_reminder_alarm_desc">Calendar Notifications Plus - calendar reminders via alarm stream</string>
+    <string name="channel_quiet_name">Calendar - Quiet</string>
+    <string name="channel_quiet_desc">Calendar Notifications Plus - calendar notifications in quiet mode</string>
+
+
 </resources>
 

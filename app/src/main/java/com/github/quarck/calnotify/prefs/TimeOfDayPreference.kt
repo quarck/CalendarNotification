@@ -30,6 +30,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.hourCompat
 import com.github.quarck.calnotify.utils.minuteCompat
 import java.text.DateFormat
@@ -75,7 +76,7 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        picker = view.find<TimePicker>(R.id.time_picker_pref_time_of_day)
+        picker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_time_of_day)
 
         picker.setIs24HourView(isTwentyFourHour)
         picker.hourCompat = timeValue.component1()

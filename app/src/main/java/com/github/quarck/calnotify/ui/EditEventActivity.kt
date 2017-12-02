@@ -310,7 +310,7 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            find<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+            findOrThrow<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
         }
 
         eventTitleLayout = find<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
@@ -1100,9 +1100,9 @@ class EditEventActivity : AppCompatActivity() {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_allday_notification, null);
 
-        val numberPicker = dialogView.find<NumberPicker>(R.id.number_picker_days_before)
-        val timePicker = dialogView.find<TimePicker>(R.id.time_picker_notification_time_of_day)
-        val isEmailCb = dialogView.find<CheckBox>(R.id.checkbox_as_email)
+        val numberPicker = dialogView.findOrThrow<NumberPicker>(R.id.number_picker_days_before)
+        val timePicker = dialogView.findOrThrow<TimePicker>(R.id.time_picker_notification_time_of_day)
+        val isEmailCb = dialogView.findOrThrow<CheckBox>(R.id.checkbox_as_email)
 
         numberPicker.minValue = 0
         numberPicker.maxValue = Consts.NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE

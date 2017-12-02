@@ -28,6 +28,7 @@ import android.widget.NumberPicker
 import com.github.quarck.calnotify.R
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.toIntOrNull
 
 class NumberPickerController(val view: View, val minValue: Int, val maxValue: Int) {
@@ -35,7 +36,7 @@ class NumberPickerController(val view: View, val minValue: Int, val maxValue: In
     var numberPicker: NumberPicker
 
     init {
-        numberPicker = view.find<NumberPicker>(R.id.numberPickerMaxReminders)
+        numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerMaxReminders)
 
         numberPicker.minValue = minValue
         numberPicker.maxValue = maxValue

@@ -32,6 +32,7 @@ import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 class ReminderPatternPreference(context: Context, attrs: AttributeSet)
@@ -66,13 +67,13 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        numberPicker = view.find<NumberPicker>(R.id.numberPickerTimeInterval)
-        timeUnitsSpinners = view.find<Spinner>(R.id.spinnerTimeIntervalUnit)
-        checkboxCustomPattern = view.find<CheckBox>(R.id.checkbox_custom_reminder_pattern)
-        editTextCustomPattern = view.find<EditText>(R.id.edittext_custom_reminder_pattern)
+        numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerTimeInterval)
+        timeUnitsSpinners = view.findOrThrow<Spinner>(R.id.spinnerTimeIntervalUnit)
+        checkboxCustomPattern = view.findOrThrow<CheckBox>(R.id.checkbox_custom_reminder_pattern)
+        editTextCustomPattern = view.findOrThrow<EditText>(R.id.edittext_custom_reminder_pattern)
 
-        layoutSimpleInterval = view.find<LinearLayout>(R.id.layout_reminder_interval_simple)
-        layoutCustomPattern = view.find<LinearLayout>(R.id.layout_reminder_interval_custom)
+        layoutSimpleInterval = view.findOrThrow<LinearLayout>(R.id.layout_reminder_interval_simple)
+        layoutCustomPattern = view.findOrThrow<LinearLayout>(R.id.layout_reminder_interval_custom)
 
         timeUnitsSpinners.adapter =
                 ArrayAdapter(

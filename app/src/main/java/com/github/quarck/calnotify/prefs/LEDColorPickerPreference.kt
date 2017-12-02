@@ -33,6 +33,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
@@ -80,7 +81,7 @@ class LEDColorPickerPreference(context: Context, attrs: AttributeSet) : DialogPr
         colorValue = this.getPersistedInt(0)
         for (buttonId in colorButtonIds) {
 
-            val button = view.find<Button>(buttonId)
+            val button = view.findOrThrow<Button>(buttonId)
             button.setOnClickListener { v -> onClick(v) }
 
             val parent: ViewParent = button.parent

@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 class AppStylePrefActivity : AppCompatActivity() {
 
@@ -48,8 +49,8 @@ class AppStylePrefActivity : AppCompatActivity() {
 
         val useCompactView = settings.useCompactView
 
-        find<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
-        find<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
+        findOrThrow<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
+        findOrThrow<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
     }
 
     fun onRadioButtonClicked(view: View) {

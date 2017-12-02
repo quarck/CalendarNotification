@@ -59,6 +59,7 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import org.jetbrains.annotations.NotNull
 import java.util.*
 
@@ -132,29 +133,29 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = find<RecyclerView>(R.id.list_events)
+        recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView
 
-        reloadLayout = find<RelativeLayout>(R.id.activity_main_reload_layout)
+        reloadLayout = findOrThrow<RelativeLayout>(R.id.activity_main_reload_layout)
 
-        quietHoursLayout = find<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
-        quietHoursTextView = find<TextView>(R.id.activity_main_quiet_hours)
+        quietHoursLayout = findOrThrow<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
+        quietHoursTextView = findOrThrow<TextView>(R.id.activity_main_quiet_hours)
 
-        newStyleMessageLayout = find<View>(R.id.activity_main_new_style_message_layout)
+        newStyleMessageLayout = findOrThrow<View>(R.id.activity_main_new_style_message_layout)
 
         if (useCompactView && settings.showNewStyleMessage) {
             newStyleMessageLayout.visibility = View.VISIBLE
             if (settings.versionCodeFirstInstalled >= Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
-                find<Button>(R.id.activity_main_button_hate_new_style).visibility = View.GONE
-                find<TextView>(R.id.text_view_style_message).text = resources.getString(R.string.usage_hints)
+                findOrThrow<Button>(R.id.activity_main_button_hate_new_style).visibility = View.GONE
+                findOrThrow<TextView>(R.id.text_view_style_message).text = resources.getString(R.string.usage_hints)
             }
         }
 
         calendarRescanEnabled = settings.enableCalendarRescan
 
-        floatingAddEvent = find<FloatingActionButton>(R.id.action_btn_add_event)
+        floatingAddEvent = findOrThrow<FloatingActionButton>(R.id.action_btn_add_event)
 
         floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
@@ -270,7 +271,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         if (undoManager.canUndo) {
-            val coordinatorLayout = find<CoordinatorLayout>(R.id.main_activity_coordinator)
+            val coordinatorLayout = findOrThrow<CoordinatorLayout>(R.id.main_activity_coordinator)
 
             Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
@@ -567,7 +568,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun onNumEventsUpdated() {
         val hasEvents = adapter.itemCount > 0
-        find<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
+        findOrThrow<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
         this.invalidateOptionsMenu();
     }
 
@@ -614,7 +615,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             onNumEventsUpdated()
 
-            val coordinatorLayout = find<CoordinatorLayout>(R.id.main_activity_coordinator)
+            val coordinatorLayout = findOrThrow<CoordinatorLayout>(R.id.main_activity_coordinator)
 
             Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }

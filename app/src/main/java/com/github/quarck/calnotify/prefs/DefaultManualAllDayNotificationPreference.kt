@@ -29,6 +29,7 @@ import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.hourCompat
 import com.github.quarck.calnotify.utils.minuteCompat
 
@@ -53,9 +54,9 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        timePicker = view.find<TimePicker>(R.id.time_picker_pref_notification_time_of_day)
-        radioButtonDayBefore = view.find<RadioButton>(R.id.radio_button_day_before)
-        radioButtonDayOfEvent = view.find<RadioButton>(R.id.radio_button_day_of_event)
+        timePicker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_notification_time_of_day)
+        radioButtonDayBefore = view.findOrThrow<RadioButton>(R.id.radio_button_day_before)
+        radioButtonDayOfEvent = view.findOrThrow<RadioButton>(R.id.radio_button_day_of_event)
 
         isTwentyFourHour = android.text.format.DateFormat.is24HourFormat(context)//  context.is24HoursClock()
         timePicker.setIs24HourView(isTwentyFourHour)

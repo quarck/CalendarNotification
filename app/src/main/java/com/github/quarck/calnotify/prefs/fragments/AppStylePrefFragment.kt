@@ -29,6 +29,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 class AppStylePrefFragment : Fragment() {
 
@@ -49,8 +50,8 @@ class AppStylePrefFragment : Fragment() {
 
         val useCompactView = settings.useCompactView
 
-        view.find<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
-        view.find<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
+        view.findOrThrow<RadioButton>(R.id.radio_button_compact_view).isChecked = useCompactView
+        view.findOrThrow<RadioButton>(R.id.radio_button_card_view).isChecked = !useCompactView
 
         return view
     }

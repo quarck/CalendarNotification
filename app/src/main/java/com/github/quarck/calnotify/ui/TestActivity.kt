@@ -39,6 +39,7 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.logs.DevLoggerSettings
 import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
@@ -60,10 +61,10 @@ class TestActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        find<TextView>(R.id.todo).visibility = View.VISIBLE;
-        find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
-        find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
-        find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
+        findOrThrow<TextView>(R.id.todo).visibility = View.VISIBLE;
+        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
+        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
+        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
     }
 
 
@@ -106,7 +107,7 @@ class TestActivity : Activity() {
     private var cnt = 0;
 
     private val filterText: String
-        get() = find<EditText>(R.id.edittext_debug_event_id).text.toString()
+        get() = findOrThrow<EditText>(R.id.edittext_debug_event_id).text.toString()
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonViewClick(v: View) {
@@ -258,17 +259,17 @@ class TestActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAutoDismissDebugClick(v: View) {
-        settings.debugNotificationAutoDismiss = find<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked
+        settings.debugNotificationAutoDismiss = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAlarmDelayDebugClick(v: View) {
-        settings.debugAlarmDelays = find<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked
+        settings.debugAlarmDelays = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleDebugMonitorClick(v: View) {
-        settings.enableMonitorDebug = find<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked
+        settings.enableMonitorDebug = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

@@ -38,6 +38,7 @@ import com.github.quarck.calnotify.logs.LogcatProvider
 import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.isKitkatOrAbove
 import java.io.File
 import java.io.PrintWriter
@@ -63,11 +64,11 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
             // would allow us accessing only our own logs
             // we don't want to grab any other logs accidently and too lazy
             // to implement proper filter :)
-            find<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
-            find<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
+            findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
+            findOrThrow<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         } else {
-            find<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
-            find<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
+            findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).isChecked = true
+            findOrThrow<TextView>(R.id.textViewLogFileNote).visibility = View.VISIBLE
         }
 
         DevLog.debug(LOG_TAG, "onCreate")
@@ -76,17 +77,17 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
-        find<TextView>(R.id.textViewLogFileNote).visibility =
+        val shouldAttachLogs = findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        findOrThrow<TextView>(R.id.textViewLogFileNote).visibility =
                 if (shouldAttachLogs) View.VISIBLE else View.GONE
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnIncludeLogsClick(v: View) {
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        val shouldAttachLogs = findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).isChecked
 
-        find<TextView>(R.id.textViewLogFileNote).visibility =
+        findOrThrow<TextView>(R.id.textViewLogFileNote).visibility =
                 if (shouldAttachLogs) View.VISIBLE else View.GONE
     }
 
@@ -94,7 +95,7 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
     fun OnButtonEmailDeveloper(v: View) {
         DevLog.debug(LOG_TAG, "Emailing developer");
 
-        val shouldAttachLogs = find<CheckBox>(R.id.checkboxIncludeLogs).isChecked
+        val shouldAttachLogs = findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).isChecked
 
         val email =
                 Intent(Intent.ACTION_SEND)

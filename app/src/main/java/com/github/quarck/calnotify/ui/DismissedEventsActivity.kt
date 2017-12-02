@@ -19,6 +19,7 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
 
 class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback {
 
@@ -44,7 +45,7 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
                         this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = find<RecyclerView>(R.id.list_events)
+        recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView

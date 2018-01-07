@@ -505,8 +505,33 @@
     <string name="notifications_pure_hacks">Reine Hacks...</string>
     <string name="enable_dismiss_and_delete_title">\'Ablehnen und Löschen\' Menü</string>
     <string name="enable_dismiss_and_delete_summary">Löschen wenn es erledigt ist! Fügt eine Option dem Schlummermenü hinzu um die Benachrichtigun abzulehnen und den aktuellen Termin zu löschen. Dies fünktioniert nicht für Wiederholungstermine.</string>
-    <string name="dismiss_and_delete_event">Termin ablehnen und löschen</string>
+    <string name="dismiss_and_delete_event">Ablehnen und löschen</string>
+    <string name="done_and_delete">Erledigt und löschen</string>
     <string name="custom_pattern">Benutzerdefiniertes Profil</string>
     <string name="reminder_pattern">Komma getrennte Liste mit Erinnerungsintervallen, wie zum Beispiel \'15s\', \'15m\', \'2h\' oder \'3d\'</string>
+
+    <string name="enable_mute_title">Stummschaltung</string>
+    <string name="enable_mute_summary">Erlaubt Termine stumm zu schalten:\n* zeigt einen \'Stummschalten\' Knopf in die Benachrichtigung an \n* aktiviert benötigte Funktionen im Hauptmenü\nStummgeschaltete Benachrichtigungen erzeugen keine Erinnerung, stumm geschaltete schlummernde Termine werden ohne Ton oder Vibration wieder angezeigt</string>
+
+    <string name="enable_mute_tag_title">Behandel #mute Kennzeichner</string>
+    <string name="enable_mute_tag_summary">Wenn der #mute Kennzeichner zum Termin Titel oder Beschreibung hinzugefügt wird, macht diesen Termin stumm. Diese Stummschaltung kann später manuell nach der Erinnerung aufgehoben werden. Die nächste Erinngerung von Serienterminen wird wieder stumm sein.\nDer Termin wird stumm sein, auch wenn \'Stummschaltung\' in den Einstellungen deaktivert ist.</string>
+
+    <string name="enable_task_tag_title">Behandel #task Kennzeichner</string>
+    <string name="enable_task_tag_summary">Ähnlich wie der #mute Kennzeichner, aber die erste und alle wiederkehrenenden Erinngerungen nach der Stummchalteung sind nicht mehr stumm geschaltet\nWiederholdende Erinngerungen werden nicht erstellt.</string>
+
+    <string name="un_mute_notification">Lautschalten</string>
+    <string name="mute_notification">Stummschalten</string>
+    <string name="mute_all">Alle sichtbaren stumm schalten</string>
+    <string name="mute_all_events_question">Alle sichtbaren Termine stumm schalten? (Aufgaben ausgeschlossen)</string>
+
+    <string name="done">Erledigt</string>
+    <string name="notification_is_muted">Benachrichtigung wurde stumm geschaltet</string>
+    <string name="mute_options">Stummschalte Optionen</string>
+    <string name="calendar_handling_options">Kalender Optionen</string>
+    <string name="enable_alarm_tag_title">Behandel #alarm Kennzeichner</string>
+    <string name="enable_alarm_tag_summary">Wenn der #alarm Kennzeichner zum Termin Titel oder Beschreibung hinzugefügt wird, zwingt die App die Alarm Lautstärke für die Benachrichtigung zu verwenden.\nDie Ruhezeit für den Termin mit dem #alarm Kennzeichner wird ignoriert.</string>
+    <string name="task_tag">#task</string>
+    <string name="mute_tag">#mute</string>
+    <string name="alarm_tag">#alarm</string>
 
 </resources>

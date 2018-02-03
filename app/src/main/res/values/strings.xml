@@ -542,6 +542,7 @@
     <string name="task_tag">#task</string>
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
+    <string name="create_event">Create Event</string>
 
 </resources>
 

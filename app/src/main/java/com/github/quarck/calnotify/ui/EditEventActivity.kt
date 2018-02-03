@@ -1,3 +1,22 @@
+//
+//   Calendar Notifications Plus
+//   Copyright (C) 2018 Sergey Parshin (s.parshin.sc@gmail.com)
+//
+//   This program is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program; if not, write to the Free Software Foundation,
+//   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+//
+
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
@@ -178,9 +197,11 @@ data class EditEventActivityState(
 }
 
 
-class EditEventActivity : AppCompatActivity() {
+open class EditEventActivity : AppCompatActivity() {
 
     data class ReminderWrapper(val view: TextView, var reminder: EventReminderRecord, val isForAllDay: Boolean)
+
+    private var receivedSharedText = ""
 
     private lateinit var eventTitleText: EditText
 
@@ -299,6 +320,16 @@ class EditEventActivity : AppCompatActivity() {
 
         persistentState = CalendarChangePersistentState(this)
 
+        val intent = intent
+        val action = intent.action
+        val type = intent.type
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                receivedSharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+            }
+        }
+
         val eventId = intent.getLongExtra(EVENT_ID, -1)
         if (eventId != -1L) {
             originalEvent = CalendarProvider.getEvent(this, eventId)
@@ -310,7 +341,8 @@ class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            findOrThrow<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+            if (receivedSharedText.isEmpty())
+                findOrThrow<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
         }
 
         eventTitleLayout = find<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
@@ -529,6 +561,10 @@ class EditEventActivity : AppCompatActivity() {
             accountName.text = calendar.name
             eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
             eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+
+            if (receivedSharedText.isNotEmpty()) {
+                eventTitleText.setText(receivedSharedText)
+            }
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 window.statusBarColor = calendar.color.scaleColor(0.7f)

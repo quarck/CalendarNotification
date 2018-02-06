@@ -80,7 +80,7 @@ class DismissedEventListAdapter(
 
         var eventHolder: RelativeLayout?
         var eventTitleText: TextView
-        var eventTitleLayout: RelativeLayout?
+        //var eventTitleLayout: RelativeLayout?
         var eventDateText: TextView
         var eventTimeText: TextView
 
@@ -95,7 +95,7 @@ class DismissedEventListAdapter(
         init {
             eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
             eventTitleText = itemView.findOrThrow<TextView>(R.id.card_view_event_name)
-            eventTitleLayout = itemView.findOrThrow<RelativeLayout?>(R.id.card_view_event_title_layout)
+            //eventTitleLayout = itemView.findOrThrow<RelativeLayout?>(R.id.card_view_event_title_layout)
 
             eventDateText = itemView.findOrThrow<TextView>(R.id.card_view_event_date)
             eventTimeText = itemView.findOrThrow<TextView>(R.id.card_view_event_time)

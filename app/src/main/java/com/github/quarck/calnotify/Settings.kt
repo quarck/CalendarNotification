@@ -45,7 +45,6 @@ data class NotificationSettingsSnapshot
         val notificationOpensSnooze: Boolean,
         val quietHoursMuteLED: Boolean,
         val useAlarmStream: Boolean,
-        val useBundledNotifications: Boolean,
         val showDescription: Boolean,
         val appendEmptyAction: Boolean
 )
@@ -146,9 +145,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val headsUpNotification: Boolean
         get() = getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
 
-    val notificationWakeScreen: Boolean
-        get() = getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
-
     val showColorInNotification: Boolean
         get() = getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
 
@@ -233,14 +229,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val maxNotifications: Int
         get() = getInt(NOTIFICATION_MAX_NOTIFICATIONS_KEY, Consts.DEFAULT_NOTIFICATIONS)
 
-    val collapseEverything: Boolean
-        get() = getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)
-
     val remindersEnabled: Boolean
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
-
-    val separateReminderNotification: Boolean
-        get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, false)
 
     val remindersIntervalMillisDepricated1: Long
         get() = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES) * 60L * 1000L;
@@ -398,9 +388,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
-    val useBundledNotifications: Boolean
-        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
-
     val showEventDescInTheNotification: Boolean
         get() = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false)
 
@@ -440,7 +427,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 notificationOpensSnooze = notificationOpensSnooze,
                 quietHoursMuteLED = quietHoursMuteLED,
                 useAlarmStream = notificationUseAlarmStream,
-                useBundledNotifications = useBundledNotifications,
                 showDescription = showEventDescInTheNotification,
                 appendEmptyAction = notificationAddEmptyAction
         )
@@ -479,7 +465,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color"
 
         private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
-        private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything"
 
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
         private const val SHOW_CUSTOM_SNOOZE_TIMES_KEY = "show_custom_snooze_and_until"
@@ -549,10 +534,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"
-
-        private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
-
-        private const val SEPARATE_REMINDER_NOTIFICATION_KEY = "separate_reminder_notification"
 
         private const val DEVELOPER_MODE_KEY = "dev"
 

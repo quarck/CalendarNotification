@@ -125,8 +125,6 @@
     <string name="change_all_title">Zmień wszystkie wydarzenia</string>
 
     <string name="led_color">Kolor diody</string>
-    <string name="wake_screen_title">Wybudzanie ekranu</string>
-    <string name="wake_screen_summary">Wybudzaj ekran na krótki czas, gdy nadejdzie powiadomienie.</string>
 
     <string name="error_cannot_parse_pattern">Nie można przetworzyć z powodu błędnych danych</string>
     <string name="quiet_time_from">Początek godzin ciszy</string>
@@ -380,8 +378,6 @@
     <string name="reminders_play_directly_summary">Nie przesyłaj przypomnień powiadomień</string>
     <string name="allow_notification_swipe_title">Przesuń, aby odrzucić</string>
     <string name="allow_notification_swipe_summary">Przesuwaj powiadomienie, aby je odrzucić. Wyłącza przycisk \'Odrzuć\' w powiadomieniu.</string>
-    <string name="separate_reminder_notification_title">Osobne przypomnienia</string>
-    <string name="separate_reminder_notification_summary">Wyświetlaj dodatkowe, zanikające powiadomienia o przeoczonych powiadomieniach.</string>
 
     <string name="instructions_for_android_wear">Instrukcje dla Android Wear</string>
     <string name="android_wear_actual_instruction">

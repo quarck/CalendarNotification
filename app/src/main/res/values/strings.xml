@@ -130,8 +130,6 @@
     <string name="change_all_title">Change all events</string>
 
     <string name="led_color">LED Color</string>
-    <string name="wake_screen_title">Wake screen</string>
-    <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
 
     <string name="error_cannot_parse_pattern">Cannot parse this pattern</string>
     <string name="quiet_time_from">Quiet time from</string>
@@ -378,8 +376,6 @@
     <string name="reminders_play_directly_summary">Do not post reminder notifications</string>
     <string name="allow_notification_swipe_title">Allow notification swipe</string>
     <string name="allow_notification_swipe_summary">Use notification swipe instead of \'dismiss\' action to dismiss the event</string>
-    <string name="separate_reminder_notification_title">Separate reminder notification</string>
-    <string name="separate_reminder_notification_summary">Would remind via posting a sepaarate short-living reminder notification (auto-dismissed in a few seconds)</string>
 
     <string name="instructions_for_android_wear">Instructions for Android Wear</string>
     <string name="android_wear_actual_instruction">

@@ -1148,8 +1148,8 @@ open class EditEventActivity : AppCompatActivity() {
 
         val (hr, min) = currentReminder.allDayHourOfDayAndMinute
 
-        timePicker.hourCompat = hr
-        timePicker.minuteCompat = min
+        timePicker.hour = hr
+        timePicker.minute = min
 
 
         val builder = AlertDialog.Builder(this)
@@ -1163,8 +1163,8 @@ open class EditEventActivity : AppCompatActivity() {
             timePicker.clearFocus()
 
             val daysBefore = numberPicker.value
-            val pickerHr = timePicker.hourCompat
-            val pickerMin = timePicker.minuteCompat
+            val pickerHr = timePicker.hour
+            val pickerMin = timePicker.minute
 
             val daysInMilliseconds = daysBefore * Consts.DAY_IN_MILLISECONDS
             val hrMinInMilliseconds = pickerHr * Consts.HOUR_IN_MILLISECONDS + pickerMin * Consts.MINUTE_IN_MILLISECONDS

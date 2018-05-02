@@ -125,8 +125,6 @@
     <string name="change_all_title">Alle Termine bearbeiten</string>
 
     <string name="led_color">LED Farbe</string>
-    <string name="wake_screen_title">Bildschirm aktivieren</string>
-    <string name="wake_screen_summary">Bildschirm kurz aktivieren wenn eine Benachrichtigung fällig wird.</string>
 
     <string name="error_cannot_parse_pattern">Fehler beim Einlesen des Schemas</string>
     <string name="quiet_time_from">Ruhezeit von</string>
@@ -372,8 +370,6 @@
     <string name="reminders_play_directly_summary">Erinnerungenbenarchtigungen nicht anzeigen</string>
     <string name="allow_notification_swipe_title">Ablehnen Wischgeste</string>
     <string name="allow_notification_swipe_summary">Benachrichtigung wegwischen anstatt \'Schließen\'</string>
-    <string name="separate_reminder_notification_title">Extra Benachrichtigung</string>
-    <string name="separate_reminder_notification_summary">Zusätzlich mit einer kurzen extra Erinnerung benachrichtigen (diese extra Benachrichtigung schließt sich nach einigen Sekunden selbstständig)</string>
 
     <string name="instructions_for_android_wear">Beschreibung für Android Wear</string>
     <string name="android_wear_actual_instruction">

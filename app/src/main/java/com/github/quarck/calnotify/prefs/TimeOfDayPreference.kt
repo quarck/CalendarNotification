@@ -31,8 +31,6 @@ import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.hourCompat
-import com.github.quarck.calnotify.utils.minuteCompat
 import java.text.DateFormat
 import java.util.*
 
@@ -79,8 +77,8 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         picker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_time_of_day)
 
         picker.setIs24HourView(isTwentyFourHour)
-        picker.hourCompat = timeValue.component1()
-        picker.minuteCompat = timeValue.component2()
+        picker.hour = timeValue.component1()
+        picker.minute = timeValue.component2()
 
         updateWidgetView()
     }
@@ -96,7 +94,7 @@ class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPrefere
         if (positiveResult) {
             picker.clearFocus()
 
-            timeValue = Pair(picker.hourCompat, picker.minuteCompat)
+            timeValue = Pair(picker.hour, picker.minute)
             persistInt(PreferenceUtils.packTime(timeValue))
             updateWidgetView()
         }

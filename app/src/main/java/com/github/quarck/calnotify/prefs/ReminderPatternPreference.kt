@@ -33,7 +33,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
 class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     : DialogPreference(context, attrs)

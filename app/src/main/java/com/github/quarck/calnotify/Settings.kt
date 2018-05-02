@@ -29,7 +29,6 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 
 data class NotificationSettingsSnapshot
 (
-        val allowNotificationSwipe: Boolean,
         val notificationSwipeDoesSnooze: Boolean,
         val enableNotificationMute: Boolean,
         val ringtoneUri: Uri?,
@@ -83,10 +82,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     var reminderSettingsMigratedToPattern: Boolean
         get() = getBoolean(REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY, false)
         set(value) = setBoolean(REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY, value)
-
-    var allowNotificationSwipe: Boolean
-        get() = getBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, false)
-        set(value) = setBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, value)
 
     val notificationAddEmptyAction: Boolean
         get() = getBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, false)
@@ -429,7 +424,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                allowNotificationSwipe = allowNotificationSwipe,
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 enableNotificationMute = enableNotificationMute && remindersEnabled,
                 ringtoneUri = ringtoneURI,
@@ -458,8 +452,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val USE_COMPACT_LAYOUT_KEY = "compact_layout"
 
         private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
-
-        private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe"
 
         private const val NOTIFICATION_SETTINGS_MIGRATED_KEY = "notification_settings_migrated"
         //private const val REMINDER_SETTINGS_MIGRATED_KEY = "reminder_settings_migrated"

@@ -532,7 +532,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toString()
 
         val builder =
-                NotificationCompat.Builder(context)
+                NotificationCompat.Builder(context, NotificationChannelManager.createDefaultNotificationChannel(context))
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
@@ -905,7 +905,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     EventFormatter(ctx).formatTimeDuration(msAgo))
         }
 
-        val builder = NotificationCompat.Builder(ctx)
+        val builder = NotificationCompat.Builder(ctx, NotificationChannelManager.createDefaultNotificationChannel(ctx))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
@@ -1004,7 +1004,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
 
-        val groupBuilder = NotificationCompat.Builder(ctx)
+        val groupBuilder = NotificationCompat.Builder(ctx, NotificationChannelManager.createDefaultNotificationChannel(ctx))
                 .setContentTitle(ctx.resources.getString(R.string.calendar))
                 .setContentText(text)
                 .setSubText(text)
@@ -1125,7 +1125,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         else if (event.isMuted)
             iconId = R.drawable.stat_notify_calendar_muted
 
-        val builder = NotificationCompat.Builder(ctx)
+        val builder = NotificationCompat.Builder(ctx, NotificationChannelManager.createDefaultNotificationChannel(ctx))
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
                 .setSmallIcon(iconId)
@@ -1484,7 +1484,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toString()
 
         val builder =
-                NotificationCompat.Builder(context)
+                NotificationCompat.Builder(context, NotificationChannelManager.createDefaultNotificationChannel(context))
                         .setContentTitle(title)
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
@@ -1523,7 +1523,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val appPendingIntent = pendingActivityIntent(context,
                 Intent(context, MainActivity::class.java), notificationId)
 
-        val builder = NotificationCompat.Builder(context)
+        val builder = NotificationCompat.Builder(context, NotificationChannelManager.createDefaultNotificationChannel(context))
                 .setContentTitle(title)
                 .setContentText(text)
                 .setSmallIcon(R.drawable.stat_notify_calendar)

@@ -55,6 +55,11 @@ class CalendarListEntry(
 class CalendarListAdapter(val context: Context, var entries: Array<CalendarListEntry>)
     : RecyclerView.Adapter<CalendarListAdapter.ViewHolder>() {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent?.context).inflate(R.layout.calendar_view, parent, false);
+        return ViewHolder(view);
+    }
+
     inner class ViewHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView) {
 
@@ -91,7 +96,7 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
     var onItemChanged: ((View, Long, Boolean) -> Unit)? = null;
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         if (position >= 0 && position < entries.size && holder != null) {
 
@@ -123,11 +128,6 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
                 }
             }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.calendar_view, parent, false);
-        return ViewHolder(view);
     }
 
     override fun getItemCount(): Int {

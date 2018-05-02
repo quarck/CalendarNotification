@@ -40,8 +40,12 @@ class AppStylePrefFragment : Fragment() {
 
         DevLog.debug(LOG_TAG, "onCreate")
 
-        settings = Settings(activity)
+        val ctx = context
 
+        if (ctx != null)
+            settings = Settings(ctx)
+        else
+            throw Exception("Context is null")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

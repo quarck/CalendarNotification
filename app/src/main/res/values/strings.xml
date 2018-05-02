@@ -543,6 +543,8 @@
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
     <string name="create_event">Create Event</string>
+    <string name="notification_channel_default">Default Notifications</string>
+    <string name="notification_channel_default_desc">Default notifications from the app</string>
 
 </resources>
 

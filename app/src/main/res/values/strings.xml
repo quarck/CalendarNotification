@@ -541,6 +541,14 @@
     <string name="create_event">Create Event</string>
     <string name="notification_channel_default">Default Notifications</string>
     <string name="notification_channel_default_desc">Default notifications from the app</string>
+    <string name="notification_channel_alarm">Alarm Notifications</string>
+    <string name="notification_channel_alarm_desc">Notifications using Alarm tone</string>
+    <string name="notification_channel_silent">Silent Notifications</string>
+    <string name="notification_channel_silent_desc">Notifications using no sound or vibration</string>
+    <string name="notification_channel_reminders">Reminder notifications</string>
+    <string name="notification_channel_reminders_desc">Reminders for missed events</string>
+    <string name="notification_channel_alarm_reminders">Alarm Reminders</string>
+    <string name="notification_channel_alarm_reminders_desc">Reminders for missed events played with alarm volume</string>
 
 </resources>
 

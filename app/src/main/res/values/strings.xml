@@ -199,9 +199,6 @@
     <string name="vibration_pattern">Vibration pattern</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2500ms</string>
-    <string name="led_on_time">LED On Time:</string>
-    <string name="led_off_time">LED Off Time:</string>
-    <string name="led_pattern">LED Pattern</string>
 
     <string name="milliseconds_suffix">ms</string>
     <string name="compact_layout">Use compact view</string>
@@ -304,8 +301,6 @@
     <string name="reminder_fallback_method_summary">Try selecting this if reminders sound doesn\'t work</string>
     <string name="reminder_custom_ringtone">Custom ringtone</string>
     <string name="reminder_custom_vibration">Custom vibration</string>
-    <string name="quiet_hours_mute_led">Mute LED</string>
-    <string name="quiet_hours_mute_led_summary">Led notification would be disabled during quiet hours</string>
 
     <string name="reminder_you_have_missed_event">Reminder: you have missed event</string>
     <string name="reminder_you_have_missed_events">Reminder: you have missed events</string>
@@ -539,12 +534,21 @@
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
     <string name="create_event">Create Event</string>
+
     <string name="notification_channel_default">Default Notifications</string>
     <string name="notification_channel_default_desc">Default notifications from the app</string>
     <string name="notification_channel_alarm">Alarm Notifications</string>
     <string name="notification_channel_alarm_desc">Notifications using Alarm tone</string>
     <string name="notification_channel_silent">Silent Notifications</string>
     <string name="notification_channel_silent_desc">Notifications using no sound or vibration</string>
+
+    <string name="notification_channel_repost_default">Re-post Notifications</string>
+    <string name="notification_channel_repost_default_desc">Previously active notifications re-posted after reboot / app update</string>
+    <string name="notification_channel_repost_alarm">Re-post alarm Notifications</string>
+    <string name="notification_channel_repost_alarm_desc">Previously active notifications re-posted after reboot / app update</string>
+    <string name="notification_channel_repost_silent">Re-post silent Notifications</string>
+    <string name="notification_channel_repost_silent_desc">Previously active notifications re-posted after reboot / app update</string>
+
     <string name="notification_channel_reminders">Reminder notifications</string>
     <string name="notification_channel_reminders_desc">Reminders for missed events</string>
     <string name="notification_channel_alarm_reminders">Alarm Reminders</string>

@@ -30,13 +30,4 @@
             android:defaultValue="false"
             />
 
-        <CheckBoxPreference
-            android:key="quiet_hours_mute_led"
-            android:title="@string/quiet_hours_mute_led"
-            android:summary="@string/quiet_hours_mute_led_summary"
-            android:dependency="enable_quiet_hours"
-            android:defaultValue="false"
-            />
-
-
 </PreferenceScreen>

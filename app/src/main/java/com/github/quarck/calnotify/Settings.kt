@@ -31,19 +31,18 @@ data class NotificationSettingsSnapshot
 (
         val notificationSwipeDoesSnooze: Boolean,
         val enableNotificationMute: Boolean,
-        val ringtoneUri: Uri?,
-        val vibrationOn: Boolean,
-        val vibrationPattern: LongArray,
-        val ledNotificationOn: Boolean,
-        val ledColor: Int,
-        val ledPattern: IntArray,
-        val headsUpNotification: Boolean,
-        val forwardEventToPebble: Boolean,
-        val pebbleOldFirmware: Boolean,
-        val forwardReminderToPebble: Boolean,
+//        val ringtoneUri: Uri?,
+//        val vibrationOn: Boolean,
+//        val vibrationPattern: LongArray,
+//        val ledNotificationOn: Boolean,
+//        val ledColor: Int,
+//        val ledPattern: IntArray,
+//        val headsUpNotification: Boolean,
+//        val forwardEventToPebble: Boolean,
+//        val pebbleOldFirmware: Boolean,
+//        val forwardReminderToPebble: Boolean,
         val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
-        val quietHoursMuteLED: Boolean,
         val useAlarmStream: Boolean,
         val showDescription: Boolean,
         val appendEmptyAction: Boolean
@@ -125,13 +124,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val ledColor: Int
         get() = getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
-
-    val ledPattern: IntArray
-        get() =
-        getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
-                .split(",")
-                .map { it.toInt() }
-                .toIntArray()
 
     val forwardEventToPebble: Boolean
         get() = getBoolean(FORWARD_TO_PEBBLE_KEY, false)
@@ -295,9 +287,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val quietHoursMutePrimary: Boolean
         get() = getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
-    val quietHoursMuteLED: Boolean
-        get() = getBoolean(QUIET_HOURS_MUTE_LED, false)
-
     fun getCalendarIsHandled(calendarId: Long) =
             getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
 
@@ -413,19 +402,18 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = NotificationSettingsSnapshot(
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 enableNotificationMute = enableNotificationMute && remindersEnabled,
-                ringtoneUri = ringtoneURI,
-                vibrationOn = vibraOn,
-                vibrationPattern = vibrationPattern,
-                ledNotificationOn = ledNotificationOn,
-                ledColor = ledColor,
-                ledPattern = ledPattern,
-                headsUpNotification = headsUpNotification,
-                forwardEventToPebble = forwardEventToPebble,
-                pebbleOldFirmware = pebbleOldFirmware,
-                forwardReminderToPebble = forwardReminderToPebble,
+//                ringtoneUri = ringtoneURI,
+//                vibrationOn = vibraOn,
+//                vibrationPattern = vibrationPattern,
+//                ledNotificationOn = ledNotificationOn,
+//                ledColor = ledColor,
+//                ledPattern = ledPattern,
+//                headsUpNotification = headsUpNotification,
+//                forwardEventToPebble = forwardEventToPebble,
+//                pebbleOldFirmware = pebbleOldFirmware,
+//                forwardReminderToPebble = forwardReminderToPebble,
                 showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
-                quietHoursMuteLED = quietHoursMuteLED,
                 useAlarmStream = notificationUseAlarmStream,
                 showDescription = showEventDescInTheNotification,
                 appendEmptyAction = notificationAddEmptyAction
@@ -491,8 +479,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from"
         private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
         private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
-        private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
-        private const val QUIET_HOURS_MUTE_LED = "quiet_hours_mute_led"
 
         private const val HALO_LIGHT_DATE_PICKER_KEY = "halo_light_date"
         private const val HALO_LIGHT_TIMER_PICKER_KEY = "halo_light_time"

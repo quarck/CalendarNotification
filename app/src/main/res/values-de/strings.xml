@@ -194,9 +194,6 @@
     <string name="vibration_pattern">Vibrationsmuster</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2,5s</string>
-    <string name="led_on_time">LED An:</string>
-    <string name="led_off_time">LED Aus:</string>
-    <string name="led_pattern">LED Muster</string>
 
     <string name="milliseconds_suffix">ms</string>
     <string name="compact_layout">Kompaktansicht verwenden</string>
@@ -298,8 +295,6 @@
     <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert.</string>
     <string name="reminder_custom_ringtone">Benutzerdefinierter Klingelton</string>
     <string name="reminder_custom_vibration">Benutzerdefinierter Vibration</string>
-    <string name="quiet_hours_mute_led">Benachrichtungs-LED</string>
-    <string name="quiet_hours_mute_led_summary">Die LED wird in der Ruhezeit ausgeschaltet</string>
 
     <string name="reminder_you_have_missed_event">Erinnerung: Sie haben einen verpassten Termin</string>
     <string name="reminder_you_have_missed_events">Erinnerung: Sie haben verpasste Termine</string>

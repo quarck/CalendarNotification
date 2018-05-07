@@ -20,7 +20,9 @@
 package com.github.quarck.calnotify.notification
 
 import android.app.IntentService
+import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.widget.Toast
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
@@ -30,9 +32,16 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifierService
-import com.github.quarck.calnotify.utils.DateTimeUtils
+
+class DisplayToast(private val context: Context, internal var text: String) : Runnable {
+    override fun run() {
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    }
+}
 
 class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeService") {
+
+    var handler = Handler()
 
     override fun onHandleIntent(intent: Intent?) {
         DevLog.debug(LOG_TAG, "onHandleIntent")
@@ -50,10 +59,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                 if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                     if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null) {
                         DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime snoozed by $snoozeDelay")
-                        val formatter = EventFormatter(this)
-                        val format = getString(R.string.event_snoozed_by)
-                        val text = String.format(format, formatter.formatTimeDuration(snoozeDelay, 60L))
-                        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                        onSnoozedBy(snoozeDelay)
                     }
 
                     UINotifierService.notifyUI(this, true);
@@ -68,11 +74,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
 
                 if (ApplicationController.snoozeAllEvents(this, snoozeDelay, false, true) != null) {
                     DevLog.info(this, LOG_TAG, "all visible snoozed by $snoozeDelay")
-
-                    val formatter = EventFormatter(this)
-                    val format = getString(R.string.event_snoozed_by)
-                    val text = String.format(format, formatter.formatTimeDuration(snoozeDelay, 60L))
-                    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                    onSnoozedBy(snoozeDelay)
                 }
 
                 UINotifierService.notifyUI(this, true);
@@ -83,6 +85,13 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
         }
 
         ApplicationController.cleanupEventReminder(this)
+    }
+
+    private fun onSnoozedBy(duration: Long) {
+        val formatter = EventFormatter(this)
+        val format = getString(R.string.event_snoozed_by)
+        val text = String.format(format, formatter.formatTimeDuration(duration, 60L))
+        handler.post(DisplayToast(this, text))
     }
 
     companion object {

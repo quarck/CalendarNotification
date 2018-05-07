@@ -113,8 +113,6 @@
     <string name="max_reminders_summary">Maximum number of reminders to fire, 0 for indefinite</string>
 
     <string name="pebble_notification_title">Calendar</string>
-    <string name="heads_up_notification">Heads-up Notification</string>
-    <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
     <string name="change_all">Change All</string>

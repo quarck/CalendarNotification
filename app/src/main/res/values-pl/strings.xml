@@ -113,9 +113,7 @@
     <string name="max_reminders_summary">Ustawia maksymalną liczbę przypomnień. \n\'Zero\' oznacza przypominanie bez końca, aż do odrzucenia.</string>
 
     <string name="pebble_notification_title">Kalendarz</string>
-    <string name="heads_up_notification">Powiadomienia na górze ekranu</string>
-    <string name="heads_up_notification_summary">Wyświetlaj zanikające powiadomienia w górnej części ekranu.</string>
-	
+
     <string name="projectPageOnGitHub">Strona projektu na GitHub</string>
 	
     <string name="snooze_all">Odłóż wszystkie</string>

@@ -111,19 +111,19 @@ object NotificationChannelManager {
                         channelId = NOTIFICATION_CHANNEL_ID_DEFAULT
                         channelName = context.getString(R.string.notification_channel_default)
                         channelDesc = context.getString(R.string.notification_channel_default_desc)
-
-                        if (settings.headsUpNotification)
-                            importance = NotificationManager.IMPORTANCE_HIGH
+                        importance = NotificationManager.IMPORTANCE_DEFAULT
                     }
                     NotificationChannelManager.SoundState.Alarm -> {
                         channelId = NOTIFICATION_CHANNEL_ID_ALARM
                         channelName = context.getString(R.string.notification_channel_alarm)
                         channelDesc = context.getString(R.string.notification_channel_alarm_desc)
+                        importance = NotificationManager.IMPORTANCE_HIGH
                     }
                     NotificationChannelManager.SoundState.Silent -> {
                         channelId = NOTIFICATION_CHANNEL_ID_SILENT
                         channelName = context.getString(R.string.notification_channel_silent)
                         channelDesc = context.getString(R.string.notification_channel_silent_desc)
+                        importance = NotificationManager.IMPORTANCE_LOW
                     }
                 }
             }
@@ -135,16 +135,19 @@ object NotificationChannelManager {
                         channelId = NOTIFICATION_CHANNEL_ID_REPOST_DEFAULT
                         channelName = context.getString(R.string.notification_channel_repost_default)
                         channelDesc = context.getString(R.string.notification_channel_repost_default_desc)
+                        importance = NotificationManager.IMPORTANCE_DEFAULT
                     }
                     NotificationChannelManager.SoundState.Alarm -> {
                         channelId = NOTIFICATION_CHANNEL_ID_REPOST_ALARM
                         channelName = context.getString(R.string.notification_channel_repost_alarm)
                         channelDesc = context.getString(R.string.notification_channel_repost_alarm_desc)
+                        importance = NotificationManager.IMPORTANCE_DEFAULT
                     }
                     NotificationChannelManager.SoundState.Silent -> {
                         channelId = NOTIFICATION_CHANNEL_ID_REPOST_SILENT
                         channelName = context.getString(R.string.notification_channel_repost_silent)
                         channelDesc = context.getString(R.string.notification_channel_repost_silent_desc)
+                        importance = NotificationManager.IMPORTANCE_LOW
                     }
                 }
             }
@@ -157,12 +160,14 @@ object NotificationChannelManager {
                 channelId = NOTIFICAITON_CHANNEL_ID_REMINDER_ALARM
                 channelName = context.getString(R.string.notification_channel_alarm_reminders)
                 channelDesc = context.getString(R.string.notification_channel_alarm_reminders_desc)
+                importance = NotificationManager.IMPORTANCE_HIGH
             }
             else { // if (soundState == SoundState.Alarm) {
                 // use regular channel - there are no silent reminders
                 channelId = NOTIFICATION_CHANNEL_ID_REMINDER
                 channelName = context.getString(R.string.notification_channel_reminders)
                 channelDesc = context.getString(R.string.notification_channel_reminders_desc)
+                importance = NotificationManager.IMPORTANCE_DEFAULT
             }
         }
 
@@ -177,8 +182,6 @@ object NotificationChannelManager {
         else {
             notificationChannel.enableLights(false)
         }
-
-
 
         val attribBuilder = AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
@@ -195,7 +198,6 @@ object NotificationChannelManager {
 
         if (soundState != SoundState.Silent) {
             if (!isReminder) {
-
                 notificationChannel.setSound(settings.ringtoneURI, attribBuilder.build())
 
                 if (settings.vibraOn) {
@@ -206,7 +208,6 @@ object NotificationChannelManager {
                 }
             }
             else {
-
                 notificationChannel.setSound(settings.reminderRingtoneURI, attribBuilder.build())
 
                 if (settings.reminderVibraOn) {
@@ -216,6 +217,10 @@ object NotificationChannelManager {
                     notificationChannel.enableVibration(false)
                 }
             }
+        }
+
+        if (isReminder) {
+            notificationChannel.setShowBadge(false)
         }
 
         context.notificationManager.createNotificationChannel(notificationChannel)

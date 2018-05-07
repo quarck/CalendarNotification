@@ -41,7 +41,7 @@ data class NotificationSettingsSnapshot
 //        val forwardEventToPebble: Boolean,
 //        val pebbleOldFirmware: Boolean,
 //        val forwardReminderToPebble: Boolean,
-        val showColorInNotification: Boolean,
+        //val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
         val useAlarmStream: Boolean,
         val showDescription: Boolean,
@@ -124,21 +124,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val ledColor: Int
         get() = getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
-
-    val forwardEventToPebble: Boolean
-        get() = getBoolean(FORWARD_TO_PEBBLE_KEY, false)
-
-    val pebbleOldFirmware: Boolean
-        get() = getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
-
-    val forwardReminderToPebble: Boolean
-        get() = getBoolean(PEBBLE_FORWARD_REMINDERS_KEY, false)
-
-    val headsUpNotification: Boolean
-        get() = getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
-
-    val showColorInNotification: Boolean
-        get() = getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
 
     val notificationPlayTts: Boolean
         get() = getBoolean(NOTIFICATION_TTS_KEY, false)
@@ -412,7 +397,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 //                forwardEventToPebble = forwardEventToPebble,
 //                pebbleOldFirmware = pebbleOldFirmware,
 //                forwardReminderToPebble = forwardReminderToPebble,
-                showColorInNotification = showColorInNotification,
+//                showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
                 useAlarmStream = notificationUseAlarmStream,
                 showDescription = showEventDescInTheNotification,
@@ -445,12 +430,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATION_AUTO_DISMISS_DEBUG_KEY = "auto_dismiss_debug"
         private const val NOTIFICATION_ALARM_DELAYS_DEBUG_KEY = "alarm_delays_debug"
 
-        private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
-        private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
-        private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
-        private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
         private const val NOTIFICATION_TTS_KEY = "notification_tts"
-        private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color"
 
         private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
 
@@ -465,8 +445,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val REMINDER_INTERVAL_PATTERN_KEY = "remind_interval_key_pattern"
 
         private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
-
-        private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders"
 
         private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone"
         private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration"

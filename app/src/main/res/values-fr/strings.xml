@@ -113,8 +113,6 @@
     <string name="max_reminders_summary">"Nombre maximal de rappels, 0 pour durée infinie"</string>
 
     <string name="pebble_notification_title">"Calendrier"</string>
-    <string name="heads_up_notification">"Notification 'Heads-up'"</string>
-    <string name="heads_up_notification_summary">"Affiche brièvement la notification en haut de l'écran"</string>
     <string name="projectPageOnGitHub">"Page de projet sur GitHub"</string>
     <string name="snooze_all">"Tout répéter"</string>
     <string name="change_all">"Changer tout"</string>

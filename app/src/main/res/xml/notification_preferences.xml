@@ -68,18 +68,6 @@
             android:summary="@string/snooze_on_swipe_summary"
             android:defaultValue="false"
             />
-
-        <CheckBoxPreference android:key="heads_up_notification"
-            android:title="@string/heads_up_notification"
-            android:summary="@string/heads_up_notification_summary"
-            android:defaultValue="true" />
-
-        <CheckBoxPreference android:key="notification_cal_color"
-            android:title="@string/event_color_notification"
-            android:summary="@string/event_color_notification_summary"
-            android:defaultValue="true"
-            />
-
     </PreferenceCategory>
 
     <!-- CheckBoxPreference android:key="notification_tts"

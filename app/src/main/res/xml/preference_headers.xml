@@ -48,12 +48,6 @@
         android:summary=""
         />
 
-
-    <header
-        android:fragment="com.github.quarck.calnotify.prefs.fragments.SmartwatchSettingsFragment"
-        android:title="@string/smartwatch_support"
-        android:summary="" />
-
     <header
         android:fragment="com.github.quarck.calnotify.prefs.fragments.MiscSettingsFragment"
         android:title="@string/misc_settings"

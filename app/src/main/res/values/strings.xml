@@ -551,6 +551,7 @@
     <string name="notification_channel_reminders_desc">Reminders for missed events</string>
     <string name="notification_channel_alarm_reminders">Alarm Reminders</string>
     <string name="notification_channel_alarm_reminders_desc">Reminders for missed events played with alarm volume</string>
+    <string name="event_snoozed_by" formatted="false">Event snoozed by %s</string>
 
 </resources>
 

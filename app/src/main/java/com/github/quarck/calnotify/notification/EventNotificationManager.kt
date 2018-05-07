@@ -1364,7 +1364,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         PebbleUtils.forwardNotificationToPebble(context, title, text, false)
     }
 
-
     companion object {
         private const val LOG_TAG = "EventNotificationManager"
 

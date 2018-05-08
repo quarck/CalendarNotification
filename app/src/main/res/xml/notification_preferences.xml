@@ -63,10 +63,10 @@
         android:key="_notifications_behavior">
 
         <CheckBoxPreference
-            android:key="pref_key_enable_swipe_to_snooze"
+            android:key="pref_key_swipe_does_snooze2"
             android:title="@string/snooze_on_swipe"
             android:summary="@string/snooze_on_swipe_summary"
-            android:defaultValue="false"
+            android:defaultValue="true"
             />
     </PreferenceCategory>
 

@@ -110,7 +110,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 notificationSettings = notificationSettings,
                 isRepost = true,
                 snoozePresetsNotFiltered = settings.snoozePresets,
-                shouldBeQuiet = true
+                shouldBeQuiet = true,
+                isReminder = false,
+                forceAlarmStream = false
         )
     }
 
@@ -224,7 +226,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         isQuietPeriodActive = isQuietPeriodActive,
                         primaryEventId = primaryEventId,
                         playReminderSound = false,
-                        hasAlarms = anyAlarms
+                        hasAlarms = anyAlarms,
+                        isReminder = false
                 )) {
                     updatedAnything = true
                 }
@@ -236,7 +239,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
-    override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean) {
+    override fun fireEventReminder(
+            context: Context, itIsAfterQuietHoursReminder: Boolean,
+            hasActiveAlarms: Boolean, separateNotification: Boolean) {
 
         val settings = Settings(context)
         val isQuietPeriodActive = !hasActiveAlarms && (QuietHoursManager.getSilentUntil(settings) != 0L)
@@ -256,19 +261,33 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (numActiveEvents > 0) {
 
-                // TODO: test if this is necessary
-                if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
-                    postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+                if (separateNotification) {
+                    // TODO: test if this is necessary
+                    if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
+                        postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
 
-                postReminderNotification(
-                        context,
-                        numActiveEvents,
-                        lastStatusChange,
-                        notificationSettings,
-                        isQuietPeriodActive,
-                        itIsAfterQuietHoursReminder,
-                        hasActiveAlarms
-                )
+                    postReminderNotification(
+                            context,
+                            numActiveEvents,
+                            lastStatusChange,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            itIsAfterQuietHoursReminder,
+                            hasActiveAlarms
+                    )
+                }
+                else {
+                    fireEventReminderNoSeparateNotification(
+                            context,
+                            db,
+                            EventFormatter(context),
+                            settings,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            activeEvents
+                    )
+                }
+
             }
             else {
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -290,7 +309,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isQuietPeriodActive: Boolean,
             primaryEventId: Long?,
             playReminderSound: Boolean,
-            hasAlarms: Boolean
+            hasAlarms: Boolean,
+            isReminder: Boolean
     ): Boolean {
 
         if (events.isEmpty()) {
@@ -424,7 +444,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             soundState = NotificationChannelManager.SoundState.Alarm
 
         val channel = NotificationChannelManager.createNotificationChannelForPurpose(context,
-                isReminder = false, isRepost = true,
+                isSeparateReminderNotification = false, isInLineReminder = isReminder, isRepost = true,
                 soundState = soundState)
 
         val builder =
@@ -438,7 +458,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setStyle(Notification.BigTextStyle().bigText(bigText))
                         .setNumber(numEvents)
                         .setShowWhen(false)
-                        .setOnlyAlertOnce(true)
+                        .setOnlyAlertOnce(!(isReminder && soundState != NotificationChannelManager.SoundState.Silent))
 
         builder.setGroup(NOTIFICATION_GROUP)
 
@@ -603,7 +623,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             notificationSettings = notificationsSettings,
                             isRepost = force,
                             snoozePresetsNotFiltered = snoozePresets,
-                            shouldBeQuiet = isQuietPeriodActive || wasCollapsed
+                            shouldBeQuiet = isQuietPeriodActive || wasCollapsed,
+                            isReminder = false,
+                            forceAlarmStream = false
                     )
 
                     // Update db to indicate that this event is currently actively displayed
@@ -632,7 +654,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         notificationSettings = notificationsSettings,
                         isRepost = force,
                         snoozePresetsNotFiltered = snoozePresets,
-                        shouldBeQuiet = isQuietPeriodActive || event.isMuted
+                        shouldBeQuiet = isQuietPeriodActive || event.isMuted,
+                        isReminder = false,
+                        forceAlarmStream = false
                 )
 
                 if (event.snoozedUntil + Consts.ALARM_THRESHOLD < currentTime) {
@@ -705,6 +729,57 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return sb.reverse().toString()
     }
 
+    private fun fireEventReminderNoSeparateNotification(
+            context: Context,
+            db: EventsStorage,
+            formatter: EventFormatterInterface,
+            settings: Settings,
+            notificationSettings: NotificationSettingsSnapshot,
+            quietPeriodActive: Boolean,
+            activeEvents: List<EventAlertRecord>
+    ) {
+        val (recentEvents, collapsedEvents) = arrangeEvents(activeEvents, settings)
+
+        val anyAlarms = activeEvents.any { it.isAlarm && !it.isTask && !it.isMuted }
+
+        if (!recentEvents.isEmpty()) {
+            // normal
+            val firstEvent = recentEvents.last()
+
+            context.notificationManager.cancel(firstEvent.notificationId)
+
+            postNotification(
+                    ctx = context,
+                    formatter = formatter,
+                    event = firstEvent,
+                    notificationSettings = notificationSettings,
+                    isRepost = true,
+                    snoozePresetsNotFiltered = settings.snoozePresets, // was collapsed
+                    shouldBeQuiet = quietPeriodActive,
+                    isReminder = true,
+                    forceAlarmStream = anyAlarms
+            )
+        } else if (!collapsedEvents.isEmpty()) {
+            // collapsed
+            context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
+
+            postEverythingCollapsed(
+                    context = context,
+                    db = db,
+                    events = collapsedEvents,
+                    settings = settings,
+                    notificationsSettingsIn = notificationSettings,
+                    force = false,
+                    isQuietPeriodActive = quietPeriodActive,
+                    primaryEventId = null,
+                    playReminderSound = true,
+                    hasAlarms = anyAlarms,
+                    isReminder = true
+            )
+        }
+    }
+
+
     @Suppress("DEPRECATION")
     private fun postReminderNotification(
             ctx: Context,
@@ -758,7 +833,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         val channel = NotificationChannelManager.createNotificationChannelForPurpose(
-                ctx, isReminder = true, isRepost = false,
+                ctx, isSeparateReminderNotification = true, isInLineReminder = false, isRepost = false,
                 soundState = if (notificationSettings.useAlarmStream || forceAlarmStream)
                     NotificationChannelManager.SoundState.Alarm
                 else NotificationChannelManager.SoundState.Normal)
@@ -832,7 +907,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
 
         val channel = NotificationChannelManager.createNotificationChannelForPurpose(
-                ctx, isReminder = false, isRepost = true, soundState = NotificationChannelManager.SoundState.Silent)
+                ctx, isSeparateReminderNotification = false, isInLineReminder = false,
+                isRepost = true, soundState = NotificationChannelManager.SoundState.Silent)
 
         val groupBuilder = Notification.Builder(ctx, channel)
                 .setContentTitle(ctx.resources.getString(R.string.calendar))
@@ -899,7 +975,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationSettings: NotificationSettingsSnapshot,
             isRepost: Boolean, // == isRepost || wasCollapsed
             snoozePresetsNotFiltered: LongArray,
-            shouldBeQuiet: Boolean
+            shouldBeQuiet: Boolean,
+            isReminder: Boolean,
+            forceAlarmStream: Boolean
     ) {
         val notificationManager = ctx.notificationManager
 
@@ -954,15 +1032,24 @@ class EventNotificationManager : EventNotificationManagerInterface {
             iconId = R.drawable.stat_notify_calendar_muted
 
         var soundState = NotificationChannelManager.SoundState.Normal
-        if (shouldBeQuiet)
-            soundState = NotificationChannelManager.SoundState.Silent
-        else if (notificationSettings.useAlarmStream)
-            soundState = NotificationChannelManager.SoundState.Alarm
+        if (!isReminder) {
+            if (shouldBeQuiet)
+                soundState = NotificationChannelManager.SoundState.Silent
+            else if (notificationSettings.useAlarmStream)
+                soundState = NotificationChannelManager.SoundState.Alarm
+        }
+        else {
+            if (forceAlarmStream)
+                soundState = NotificationChannelManager.SoundState.Alarm
+            else if (shouldBeQuiet)
+                soundState = NotificationChannelManager.SoundState.Silent
+        }
 
         val channel = NotificationChannelManager.createNotificationChannelForPurpose(
                 ctx,
                 soundState = soundState,
-                isReminder = false,
+                isSeparateReminderNotification = false,
+                isInLineReminder =  isReminder,
                 isRepost = isRepost
         )
 
@@ -978,7 +1065,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setShowWhen(false)
                 .setSortKey(sortKey)
                 .setCategory(Notification.CATEGORY_EVENT)
-                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(!(isReminder && (soundState != NotificationChannelManager.SoundState.Silent)))
 
         builder.setGroup(NOTIFICATION_GROUP)
 
@@ -1256,7 +1343,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toString()
 
         val channel = NotificationChannelManager.createNotificationChannelForPurpose(
-                context, isReminder = false,
+                context, isSeparateReminderNotification = false, isInLineReminder = false,
                 soundState = NotificationChannelManager.SoundState.Silent,
                 isRepost = true
         )

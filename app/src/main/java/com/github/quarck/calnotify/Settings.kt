@@ -31,21 +31,11 @@ data class NotificationSettingsSnapshot
 (
         val notificationSwipeDoesSnooze: Boolean,
         val enableNotificationMute: Boolean,
-//        val ringtoneUri: Uri?,
-//        val vibrationOn: Boolean,
-//        val vibrationPattern: LongArray,
-//        val ledNotificationOn: Boolean,
-//        val ledColor: Int,
-//        val ledPattern: IntArray,
-//        val headsUpNotification: Boolean,
-//        val forwardEventToPebble: Boolean,
-//        val pebbleOldFirmware: Boolean,
-//        val forwardReminderToPebble: Boolean,
-        //val showColorInNotification: Boolean,
         val notificationOpensSnooze: Boolean,
         val useAlarmStream: Boolean,
         val showDescription: Boolean,
-        val appendEmptyAction: Boolean
+        val appendEmptyAction: Boolean,
+        val needsSeparateReminderNotification: Boolean
 )
 
 class Settings(context: Context) : PersistentStorageBase(context) {
@@ -85,7 +75,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, false)
 
     var notificationSwipeDoesSnooze: Boolean
-        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
+        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, true)
         set(value) = setBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, value)
 
     val snoozeTapOpensCalendar: Boolean
@@ -387,21 +377,11 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = NotificationSettingsSnapshot(
                 notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 enableNotificationMute = enableNotificationMute && remindersEnabled,
-//                ringtoneUri = ringtoneURI,
-//                vibrationOn = vibraOn,
-//                vibrationPattern = vibrationPattern,
-//                ledNotificationOn = ledNotificationOn,
-//                ledColor = ledColor,
-//                ledPattern = ledPattern,
-//                headsUpNotification = headsUpNotification,
-//                forwardEventToPebble = forwardEventToPebble,
-//                pebbleOldFirmware = pebbleOldFirmware,
-//                forwardReminderToPebble = forwardReminderToPebble,
-//                showColorInNotification = showColorInNotification,
                 notificationOpensSnooze = notificationOpensSnooze,
                 useAlarmStream = notificationUseAlarmStream,
                 showDescription = showEventDescInTheNotification,
-                appendEmptyAction = notificationAddEmptyAction
+                appendEmptyAction = notificationAddEmptyAction,
+                needsSeparateReminderNotification = reminderCustomRingtone || reminderCustomVibra
         )
 
     companion object {

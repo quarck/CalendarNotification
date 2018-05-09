@@ -40,7 +40,7 @@ interface CalendarMonitorInterface {
 
     fun onEventEditedByUs(context: Context, eventId: Long)
 
-    fun onRescanFromService(context: Context, intent: Intent?)
+    fun onRescanFromService(context: Context)
 
     fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>
 
@@ -56,7 +56,6 @@ interface CalendarMonitorInterface {
             context: Context,
             delayed: Int = 0,
             reloadCalendar: Boolean =  false,
-            rescanMonitor: Boolean = true,
             userActionUntil: Long = 0
     )
 }

@@ -43,6 +43,7 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifierService
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorJobService
 import com.github.quarck.calnotify.utils.detailed
 
 
@@ -119,14 +120,8 @@ object ApplicationController : EventMovedHandler {
 
         // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, EventFormatter(context), true, null);
-
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
-        calendarMonitorInternal.launchRescanService(
-                context,
-                reloadCalendar = true,
-                rescanMonitor = true
-        )
+        CalendarMonitorJobService.schedule(context)
     }
 
     fun onBootComplete(context: Context) {
@@ -138,23 +133,19 @@ object ApplicationController : EventMovedHandler {
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-        calendarMonitorInternal.launchRescanService(
-                context,
-                reloadCalendar = true,
-                rescanMonitor = true
-        )
+        CalendarMonitorJobService.schedule(context)
     }
 
     fun onCalendarChanged(context: Context) {
 
         DevLog.info(context, LOG_TAG, "onCalendarChanged")
 
-        calendarMonitorInternal.launchRescanService(
-                context,
-                delayed = 2000,
-                reloadCalendar = true,
-                rescanMonitor = true
-        )
+//        calendarMonitorInternal.launchRescanService(
+//                context,
+//                delayed = 2000,
+//                reloadCalendar = true,
+//                rescanMonitor = true
+//        )
     }
 
     fun onCalendarRescanForRescheduledFromService(context: Context, userActionUntil: Long) {
@@ -799,6 +790,8 @@ object ApplicationController : EventMovedHandler {
 
     @Suppress("UNUSED_PARAMETER")
     fun onMainActivityStarted(context: Context?) {
+        if (context != null)
+            CalendarMonitorJobService.schedule(context)
     }
 
     fun onMainActivityResumed(

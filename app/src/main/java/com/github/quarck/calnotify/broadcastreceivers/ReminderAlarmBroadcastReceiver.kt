@@ -194,7 +194,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         DevLog.info(context, LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
 
-        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
+        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms,
+                separateReminderNotification);
 
         ReminderState(context).onReminderFired(currentTime)
     }

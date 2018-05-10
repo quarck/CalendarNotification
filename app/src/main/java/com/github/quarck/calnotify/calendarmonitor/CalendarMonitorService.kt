@@ -133,8 +133,76 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
     }
 }
 
+class CalendarMonitorOneTimeJobService : JobService()  {
 
-class CalendarMonitorJobService : JobService()  {
+    override fun onStartJob(params: JobParameters): Boolean {
+
+        DevLog.info(this, LOG_TAG, "onStartJob ")
+
+        try  {
+            ApplicationController.onCalendarRescanForRescheduledFromService(this, 0)
+        }
+        catch (ex: Exception) {
+            DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
+        }
+
+        try  {
+            ApplicationController.onCalendarReloadFromService(this, 0)
+        }
+        catch (ex: Exception) {
+            DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
+        }
+
+        try {
+            ApplicationController.CalendarMonitor.onRescanFromService(this)
+        }
+        catch (ex: Exception) {
+            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+        }
+
+        try {
+            ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
+        }
+        catch (ex: Exception) {
+            DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
+        }
+
+        return false
+    }
+
+    override fun onStopJob(params: JobParameters): Boolean {
+        return false
+    }
+
+    companion object {
+        private const val LOG_TAG = "CalendarMonitorSvc"
+
+        private fun getJobInfo(delayMillis: Long): JobInfo {
+            val component = ComponentName(
+                    "com.github.quarck.calnotify",
+                    CalendarMonitorOneTimeJobService::class.java.name)
+            val builder =
+                    JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN_ONCE, component)
+                            .setPersisted(false)
+                            .setMinimumLatency(delayMillis)
+                            .setRequiresDeviceIdle(false)
+
+            return builder.build()
+        }
+
+        fun schedule(context: Context, delayMillis: Long) {
+            val js = context.getSystemService(JobScheduler::class.java) ?: return
+            val jobs = js.allPendingJobs ?: return
+            if (jobs.any { j -> j.id == Consts.JobIDS.CALENDAR_RESCAN_ONCE })
+                return
+
+            context.getSystemService(JobScheduler::class.java)?.schedule(getJobInfo(delayMillis))
+        }
+
+    }
+}
+
+class CalendarMonitorPeriodicJobService : JobService()  {
 
     override fun onStartJob(params: JobParameters): Boolean {
 
@@ -181,7 +249,7 @@ class CalendarMonitorJobService : JobService()  {
         private fun getJobInfo(): JobInfo {
             val component = ComponentName(
                     "com.github.quarck.calnotify",
-                    CalendarMonitorJobService::class.java.name)
+                    CalendarMonitorPeriodicJobService::class.java.name)
             val builder =
                     JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN, component)
                             .setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,

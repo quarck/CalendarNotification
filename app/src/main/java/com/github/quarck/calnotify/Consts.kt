@@ -23,6 +23,7 @@ object Consts {
 
     object JobIDS {
         const val CALENDAR_RESCAN = 0
+        const val CALENDAR_RESCAN_ONCE = 1
     }
 
     const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"

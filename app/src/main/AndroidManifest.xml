@@ -130,9 +130,7 @@
         </provider>
 
         <service android:name=".calendarmonitor.CalendarMonitorIntentService" />
-        <service android:name=".calendarmonitor.CalendarMonitorOneTimeJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service android:name=".calendarmonitor.CalendarMonitorPeriodicJobService"
+        <service android:name=".calendarmonitor.CalendarMonitorJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />

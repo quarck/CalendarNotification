@@ -316,7 +316,7 @@ class EventListAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         //
         if (position < 0 || position >= events.size || holder == null)
             return
@@ -415,7 +415,7 @@ class EventListAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
         val view = LayoutInflater.from(parent?.context).inflate(cardVewResourceId, parent, false);
         return ViewHolder(view);
     }

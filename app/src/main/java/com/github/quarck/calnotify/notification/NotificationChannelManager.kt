@@ -24,6 +24,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.notificationManager
@@ -87,8 +88,7 @@ object NotificationChannelManager {
 
     fun createNotificationChannelForPurpose(
             context: Context,
-            isSeparateReminderNotification: Boolean,
-            isInLineReminder: Boolean,
+            isReminder: Boolean,
             soundState: SoundState,
             isRepost: Boolean
     ): String {
@@ -101,10 +101,10 @@ object NotificationChannelManager {
 
         var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        if (!isSeparateReminderNotification) {
+        if (!isReminder) {
             // Regular notification - NOT a reminder
 
-            if (!isRepost || isInLineReminder) {
+            if (!isRepost) {
                 // Non-repost - initial notification
                 when (soundState) {
                     NotificationChannelManager.SoundState.Normal -> {
@@ -152,7 +152,7 @@ object NotificationChannelManager {
                 }
             }
         }
-        else { // if (!isSeparateReminderNotification) {
+        else { // if (!isReminder) {
             // Reminder notification
             // isRepost is ignored
             if (soundState == SoundState.Alarm) {
@@ -197,7 +197,7 @@ object NotificationChannelManager {
         }
 
         if (soundState != SoundState.Silent) {
-            if (!isSeparateReminderNotification) {
+            if (!isReminder) {
                 notificationChannel.setSound(settings.ringtoneURI, attribBuilder.build())
 
                 if (settings.vibraOn) {
@@ -219,7 +219,7 @@ object NotificationChannelManager {
             }
         }
 
-        if (isSeparateReminderNotification) {
+        if (isReminder) {
             notificationChannel.setShowBadge(false)
         }
 

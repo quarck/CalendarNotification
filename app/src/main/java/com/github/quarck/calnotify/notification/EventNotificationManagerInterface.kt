@@ -42,7 +42,7 @@ interface EventNotificationManagerInterface {
 
     fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);
 
-    fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean, separateNotification: Boolean)
+    fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean)
 
     fun cleanupEventReminder(context: Context)
 

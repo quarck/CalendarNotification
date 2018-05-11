@@ -32,6 +32,4 @@ interface EventFormatterInterface {
     fun formatSnoozedUntil(event: EventAlertRecord): String
 
     fun formatTimePoint(time: Long): String
-
-    fun formatTimeDuration(time: Long, granularity: Long = 1L): String
 }

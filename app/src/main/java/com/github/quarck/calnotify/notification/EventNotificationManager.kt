@@ -1133,7 +1133,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         builder.extend(extender)
 
-        builder.setColor(event.color.adjustCalendarColor(false))
+        if (notificationSettings.showColorInNotification) {
+            builder.setColor(event.color.adjustCalendarColor(false))
+        }
 
         try {
             DevLog.info(ctx, LOG_TAG, "adding: notificationId=${event.notificationId}")

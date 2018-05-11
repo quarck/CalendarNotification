@@ -108,6 +108,8 @@
     <string name="max_reminders_summary">Maximale Anzahl der Erinnerungen, 0 für Unendlich.</string>
 
     <string name="pebble_notification_title">Kalender</string>
+    <string name="heads_up_notification">Benachrichtigungen</string>
+    <string name="heads_up_notification_summary">Zeige eine kurze Benachrichtigung als Hauptelement.</string>
     <string name="projectPageOnGitHub">GitHub Projektseite</string>
     <string name="snooze_all">Alle Termine schlummern</string>
     <string name="change_all">Alle Termine bearbeiten</string>

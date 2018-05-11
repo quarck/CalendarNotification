@@ -458,8 +458,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setNumber(numEvents)
                         .setShowWhen(false)
-                        .setOnlyAlertOnce(true)
-
 
         if (shouldPlayAndVibrate) {
             if (notificationsSettings.ringtoneUri != null
@@ -922,7 +920,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setWhen(System.currentTimeMillis())
                 .setShowWhen(false)
                 .setNumber(numTotalEvents)
-                .setOnlyAlertOnce(true)
 
         if (numTotalEvents > 1) {
             groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar_multiple)
@@ -1062,9 +1059,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 )
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
-                )
-                .setOnlyAlertOnce(
-                        true
                 )
 
         builder.setGroup(NOTIFICATION_GROUP)
@@ -1401,8 +1395,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setOngoing(true)
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setShowWhen(false)
-                        .setOnlyAlertOnce(true)
-
 
         builder.setGroup(NOTIFICATION_GROUP)
 
@@ -1440,7 +1432,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_ERROR)
                 .setLights(Consts.DEFAULT_LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
-                .setOnlyAlertOnce(true)
 
         val notification = builder.build()
 

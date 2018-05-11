@@ -25,6 +25,7 @@ import android.content.Intent
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.isLollipopOrAbove
 
 
 object CalendarIntents {
@@ -36,7 +37,8 @@ object CalendarIntents {
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
         val intent = Intent(action).setData(uri)
 
-        val shouldAddEventTime = event.isRepeating
+        val shouldAddEventTime =
+                event.isRepeating || !isLollipopOrAbove
 
         val canAddEventTime =
                 event.instanceStartTime != 0L &&

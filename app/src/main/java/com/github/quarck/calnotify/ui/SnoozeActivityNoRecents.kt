@@ -657,8 +657,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
                     val time = Calendar.getInstance()
                     time.timeInMillis = state.timeAMillis
-                    time.set(Calendar.HOUR_OF_DAY, timePicker.hour)
-                    time.set(Calendar.MINUTE, timePicker.minute)
+                    time.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+                    time.set(Calendar.MINUTE, timePicker.minuteCompat)
 
                     state.timeBMillis = time.timeInMillis
                 }
@@ -788,7 +788,7 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
         snoozeUntil_DatePicker = datePicker
 
         val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1)
+        if (firstDayOfWeek != -1 && isLollipopOrAbove)
             snoozeUntil_DatePicker?.firstDayOfWeek = firstDayOfWeek
 
         if (initialValueForDate != 0L) {
@@ -847,8 +847,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
             val cal = Calendar.getInstance()
             cal.timeInMillis = initialTimeValue
 
-            timePicker.hour = cal.get(Calendar.HOUR_OF_DAY)
-            timePicker.minute = cal.get(Calendar.MINUTE)
+            timePicker.hourCompat = cal.get(Calendar.HOUR_OF_DAY)
+            timePicker.minuteCompat = cal.get(Calendar.MINUTE)
         }
 
         val title = dialogTime.findOrThrow<TextView>(R.id.textViewSnoozeUntilDate)
@@ -869,8 +869,8 @@ open class SnoozeActivityNoRecents : AppCompatActivity() {
 
             // grab time from timePicker + date picker
 
-            date.set(Calendar.HOUR_OF_DAY, timePicker.hour)
-            date.set(Calendar.MINUTE, timePicker.minute)
+            date.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+            date.set(Calendar.MINUTE, timePicker.minuteCompat)
 
             val snoozeFor = date.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
 

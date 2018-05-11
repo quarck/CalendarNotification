@@ -138,6 +138,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context.notificationManager.cancelAll()
     }
 
+    @Suppress("DEPRECATION")
+    private fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
+
+        if (settings.notificationWakeScreen) {
+            //
+            backgroundWakeLocked(
+                    ctx.powerManager,
+                    PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                    SCREEN_WAKE_LOCK_NAME) {
+                // Screen would actually be turned on for a duration of screen timeout set by the user
+                // So don't need to keep wakelock for too long
+                Thread.sleep(Consts.WAKE_SCREEN_DURATION)
+            }
+        }
+
+    }
+
     private fun arrangeEvents(
             events: List<EventAlertRecord>,
             settings: Settings
@@ -151,6 +168,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val activeEvents = events.sortedBy { it.lastStatusChangeTime }
 
         val maxNotifications = settings.maxNotifications
+        val collapseEverything = settings.collapseEverything
 
         var recentEvents = activeEvents.takeLast(maxNotifications - 1)
         var collapsedEvents = activeEvents.take(activeEvents.size - recentEvents.size)
@@ -159,7 +177,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             recentEvents += collapsedEvents
             collapsedEvents = listOf()
         }
-        else if (!collapsedEvents.isEmpty()) {
+        else if (collapseEverything && !collapsedEvents.isEmpty()) {
             collapsedEvents = recentEvents + collapsedEvents
             recentEvents = listOf()
         }
@@ -254,6 +272,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
             }
         }
+
+        // If this is a new notification -- wake screen when required
+        if (primaryEventId != null || updatedAnything)
+            wakeScreenIfRequired(context, settings)
     }
 
     override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean) {
@@ -280,25 +302,93 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (numActiveEvents > 0) {
 
-                // TODO: test if this is necessary
-                if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
-                    postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+                if (settings.separateReminderNotification) {
 
-                postReminderNotification(
-                        context,
-                        numActiveEvents,
-                        lastStatusChange,
-                        notificationSettings,
-                        isQuietPeriodActive,
-                        itIsAfterQuietHoursReminder,
-                        hasActiveAlarms
-                )
+                    // TODO: test if this is necessary
+                    if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
+                        postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
+
+                    postReminderNotification(
+                            context,
+                            numActiveEvents,
+                            lastStatusChange,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            itIsAfterQuietHoursReminder,
+                            hasActiveAlarms
+                    )
+                }
+                else {
+                    fireEventReminderNoSeparateNotification(
+                            context,
+                            db,
+                            EventFormatter(context),
+                            settings,
+                            notificationSettings,
+                            isQuietPeriodActive,
+                            activeEvents
+                    )
+                }
+
+                wakeScreenIfRequired(context, settings)
             }
             else {
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
             }
         }
     }
+
+    private fun fireEventReminderNoSeparateNotification(
+            context: Context,
+            db: EventsStorage,
+            formatter: EventFormatterInterface,
+            settings: Settings,
+            notificationSettings: NotificationSettingsSnapshot,
+            quietPeriodActive: Boolean,
+            activeEvents: List<EventAlertRecord>
+    ) {
+        val (recentEvents, collapsedEvents) = arrangeEvents(activeEvents, settings)
+
+        val anyAlarms = activeEvents.any { it.isAlarm && !it.isTask && !it.isMuted }
+
+        if (!recentEvents.isEmpty()) {
+            // normal
+            val firstEvent = recentEvents.last()
+
+            context.notificationManager.cancel(firstEvent.notificationId)
+
+            postNotification(
+                    ctx = context,
+                    formatter = formatter,
+                    event = firstEvent,
+                    notificationSettings = notificationSettings,
+                    isForce = true,
+                    wasCollapsed = false, // force, so it won't randomly pop-up this notification
+                    snoozePresetsNotFiltered = settings.snoozePresets, // was collapsed
+                    isQuietPeriodActive = quietPeriodActive,
+                    isReminder = true,
+                    forceAlarmStream = anyAlarms
+            )
+        } else if (!collapsedEvents.isEmpty()) {
+            // collapsed
+            context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
+
+            postEverythingCollapsed(
+                    context = context,
+                    db = db,
+                    events = collapsedEvents,
+                    settings = settings,
+                    notificationsSettingsIn = notificationSettings,
+                    force = false,
+                    isQuietPeriodActive = quietPeriodActive,
+                    primaryEventId = null,
+                    playReminderSound = true,
+                    hasAlarms = anyAlarms
+            )
+        }
+    }
+
+
 
     override fun cleanupEventReminder(context: Context) {
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -581,13 +671,20 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val snoozePresets = settings.snoozePresets
 
-        postGroupNotification(
-                context,
-                notificationsSettingsQuiet,
-                snoozePresets,
-                summaryNotificationIsOngoing,
-                numTotalEvents
-        )
+        if (isMarshmallowOrAbove) {
+            if (notificationsSettings.useBundledNotifications) {
+                postGroupNotification(
+                        context,
+                        notificationsSettingsQuiet,
+                        snoozePresets,
+                        summaryNotificationIsOngoing,
+                        numTotalEvents
+                )
+            }
+            else {
+                removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
+            }
+        }
 
         var currentTime = System.currentTimeMillis()
 
@@ -1061,7 +1158,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         NotificationCompat.CATEGORY_EVENT
                 )
 
-        builder.setGroup(NOTIFICATION_GROUP)
+        if (notificationSettings.useBundledNotifications) {
+            builder.setGroup(NOTIFICATION_GROUP)
+        }
 
         var snoozePresets =
                 snoozePresetsNotFiltered
@@ -1396,7 +1495,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setShowWhen(false)
 
-        builder.setGroup(NOTIFICATION_GROUP)
+        if (settings.useBundledNotifications) {
+            builder.setGroup(NOTIFICATION_GROUP)
+        }
 
         if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
             if (settings.ledPattern.size == 2)

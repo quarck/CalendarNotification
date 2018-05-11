@@ -67,6 +67,12 @@
     <PreferenceCategory
         android:title="@string/notification_behavior"
         android:key="_notifications_behavior">
+        <CheckBoxPreference
+            android:key="pref_enable_bundled_notifications"
+            android:title="@string/bundle_notifications_title"
+            android:summary="@string/bundle_notifications_summary"
+            android:defaultValue="false"
+            />
 
         <CheckBoxPreference
             android:key="pref_key_enable_swipe_to_snooze"
@@ -79,6 +85,12 @@
             android:title="@string/heads_up_notification"
             android:summary="@string/heads_up_notification_summary"
             android:defaultValue="true" />
+
+        <CheckBoxPreference android:key="notification_wake_screen"
+            android:title="@string/wake_screen_title"
+            android:summary="@string/wake_screen_summary"
+            android:defaultValue="false"
+            />
 
         <CheckBoxPreference android:key="notification_cal_color"
             android:title="@string/event_color_notification"
@@ -108,7 +120,13 @@
             android:key="max_notifications_before_collapse"
             android:title="@string/max_notifications_before_collapse"
             android:summary="@string/max_notifications_before_collapse_summary"
-            android:defaultValue="32"/>
+            android:defaultValue="8"/>
+
+        <CheckBoxPreference
+            android:key="max_notifications_collapse_everything"
+            android:title="@string/collapse_everything"
+            android:summary="@string/collapse_everything_summary"
+            android:defaultValue="false"/>
 
         <CheckBoxPreference
             android:key="show_event_desc_in_the_notification"

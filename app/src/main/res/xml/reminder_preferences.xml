@@ -60,4 +60,12 @@
             android:defaultValue="0"
             android:dependency="reminders_custom_vibration"/>
 
+        <CheckBoxPreference
+                android:key="separate_reminder_notification"
+                android:title="@string/separate_reminder_notification_title"
+                android:summary="@string/separate_reminder_notification_summary"
+                android:defaultValue="false"
+                android:dependency="enable_reminding_key"
+            />
+
 </PreferenceScreen>

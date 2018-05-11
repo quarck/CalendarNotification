@@ -176,6 +176,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         currentTime = currentTime,
                         itIsAfterQuietHoursReminder = itIsAfterQuietHoursReminder,
                         reminderInterval = Math.min(currentReminderInterval, nextReminderInterval),
+                        separateReminderNotification = settings.separateReminderNotification,
                         hasActiveAlarms = hasActiveAlarms
                 )
             }
@@ -187,6 +188,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             currentTime: Long,
             itIsAfterQuietHoursReminder: Boolean,
             reminderInterval: Long,
+            separateReminderNotification: Boolean,
             hasActiveAlarms: Boolean
     ) {
 
@@ -195,6 +197,19 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
 
         ReminderState(context).onReminderFired(currentTime)
+
+        if (separateReminderNotification) {
+            // auto-remove reminder notification after 15 seconds. All we need it for is to
+            // play a sound
+            val delayInMilliseconds = Math.min(reminderInterval - 2000L, 15000L)
+
+            Handler().postDelayed(
+                    {
+                        ApplicationController.cleanupEventReminder(context)
+                    },
+                    delayInMilliseconds
+            )
+        }
     }
 
     companion object {

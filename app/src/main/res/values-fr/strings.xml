@@ -131,6 +131,8 @@
     <string name="change_all_title">"Modifier tous les événements"</string>
 
     <string name="led_color">"Couleur de la LED"</string>
+    <string name="wake_screen_title">"Réveil de l'écran"</string>
+    <string name="wake_screen_summary">"Réveil l'écran pendant un court laps de temps lorsqu'une notification arrive"</string>
 
     <string name="error_cannot_parse_pattern">"Ne peut pas analyser ce modèle"</string>
     <string name="quiet_time_from">"Heure de début"</string>
@@ -367,6 +369,8 @@
     <string name="reminders_play_directly_summary">"Ne pas afficher la notifications de rappel"</string>
     <string name="allow_notification_swipe_title">"Autoriser le glissement des notifications"</string>
     <string name="allow_notification_swipe_summary">Le glissement de la notificaton \'rejètera\' l\'événement</string>
+    <string name="separate_reminder_notification_title">Notification de rappel séparée</string>
+    <string name="separate_reminder_notification_summary">Rappel avec une notification de courte durée séparée (auto-rejet quelques secondes plus tard)</string>
 </resources>
 
 

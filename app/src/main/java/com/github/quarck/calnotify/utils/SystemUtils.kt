@@ -87,6 +87,15 @@ inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: Strin
     }
 }
 
+val isMarshmallowOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+
+val isLollipopOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
+
+val isKitkatOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT
+
 @SuppressLint("NewApi")
 fun AlarmManager.setExactAndAlarm(
         context: Context,
@@ -98,39 +107,56 @@ fun AlarmManager.setExactAndAlarm(
 ) {
     val LOG_TAG = "AlarmManager.setExactAndAlarm"
 
-    // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
-    // so set it as a "first thing", followed by more precise alarm
-    val intent = Intent(context, roughIntentClass);
-    val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis + Consts.ALARM_THRESHOLD / 3, pendingIntent);
+    if (isMarshmallowOrAbove) {
+        // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
+        // so set it as a "first thing", followed by more precise alarm
+        val intent = Intent(context, roughIntentClass);
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis + Consts.ALARM_THRESHOLD / 3, pendingIntent);
 
 
-    // add more precise alarm, depending on the setting it is a setAlarmClock or "setExact"
-    // setAlarmClock is very precise, but it shows UI indicating that alarm is pending
-    // on the other hand setExact is more precise than setExactAndAllowWhileIdle, but it can't
-    // fire during doze / standby
+        // add more precise alarm, depending on the setting it is a setAlarmClock or "setExact"
+        // setAlarmClock is very precise, but it shows UI indicating that alarm is pending
+        // on the other hand setExact is more precise than setExactAndAllowWhileIdle, but it can't
+        // fire during doze / standby
 
-    val intentExact = Intent(context, exactIntentClass);
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intentExact = Intent(context, exactIntentClass);
+        val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
 
-    //if (settings.useSetAlarmClock) {
-    if (useSetAlarmClock) {
+        //if (settings.useSetAlarmClock) {
+        if (useSetAlarmClock) {
 
-        val intentInfo = Intent(context, alarmInfoIntent);
-        val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
+            val intentInfo = Intent(context, alarmInfoIntent);
+            val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntentInfo)
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntentInfo)
 
-        setAlarmClock(
-                alarmClockInfo,
-                pendingIntentExact)
+            setAlarmClock(
+                    alarmClockInfo,
+                    pendingIntentExact)
 
-        DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+        }
+        else {
+            setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
+
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+        }
     }
     else {
-        setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
+        val intent = Intent(context, exactIntentClass);
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+        if (isKitkatOrAbove) {
+            // KitKat way
+            setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExact(T+0)")
+        }
+        else {
+            // Ancient way
+            set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using set(T+0)")
+        }
     }
 }
 
@@ -146,13 +172,44 @@ fun AlarmManager.cancelExactAndAlarm(
     val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     cancel(pendingIntent);
 
-    val intentExact = Intent(context, exactIntentClass);
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
-    cancel(pendingIntentExact)
+    if (isMarshmallowOrAbove) {
+        val intentExact = Intent(context, exactIntentClass);
+        val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
+        cancel(pendingIntentExact)
+    }
 
     DevLog.info(context, LOG_TAG, "Cancelled alarm")
 }
 
+@Suppress("DEPRECATION")
+var TimePicker.hourCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour
+        else
+            this.currentHour
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour = value
+        else
+            this.currentHour = value
+    }
+
+@Suppress("DEPRECATION")
+var TimePicker.minuteCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute
+        else
+            this.currentMinute
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute = value
+        else
+            this.currentMinute = value
+    }
 
 val Exception.detailed: String
     get() {

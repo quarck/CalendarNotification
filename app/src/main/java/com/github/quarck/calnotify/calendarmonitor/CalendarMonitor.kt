@@ -81,6 +81,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         launchRescanService(
                 context,
                 reloadCalendar = true,
+                rescanMonitor = doMonitorRescan,
                 userActionUntil = System.currentTimeMillis() + Consts.MAX_USER_ACTION_DELAY
         )
     }
@@ -127,13 +128,15 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             }
 
             launchRescanService(
-                context,
-                reloadCalendar = true
+                    context,
+                    reloadCalendar = true,
+                    rescanMonitor = true
             )
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
         }
+
     }
 
     // proper broadcast from the Calendar Provider. Normally this is a proper
@@ -212,7 +215,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         launchRescanService(
                 context,
-                reloadCalendar = true
+                reloadCalendar = true,
+                rescanMonitor = true
         )
     }
 
@@ -221,11 +225,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             context: Context,
             delayed: Int,
             reloadCalendar: Boolean,
+            rescanMonitor: Boolean,
             userActionUntil: Long
     ) {
         lastScan = System.currentTimeMillis()
 
-        CalendarMonitorIntentService.startRescanService(context, delayed, reloadCalendar, userActionUntil)
+        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, userActionUntil)
     }
 
     override fun onEventEditedByUs(context: Context, eventId: Long) {
@@ -280,7 +285,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             ApplicationController.afterCalendarEventFired(context)
     }
 
-    override fun onRescanFromService(context: Context) {
+    override fun onRescanFromService(context: Context, intent: Intent?) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")

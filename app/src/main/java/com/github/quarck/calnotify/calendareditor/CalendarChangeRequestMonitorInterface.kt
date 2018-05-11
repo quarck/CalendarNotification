@@ -23,5 +23,5 @@ import android.content.Context
 import android.content.Intent
 
 interface CalendarChangeRequestMonitorInterface {
-    fun onRescanFromService(context: Context)
+    fun onRescanFromService(context: Context, intent: Intent)
 }

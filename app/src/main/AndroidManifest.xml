@@ -129,9 +129,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <service android:name=".calendarmonitor.CalendarMonitorIntentService" />
-        <service android:name=".calendarmonitor.CalendarMonitorJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".calendarmonitor.CalendarMonitorService" />
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".notification.NotificationActionMuteToggleService" />

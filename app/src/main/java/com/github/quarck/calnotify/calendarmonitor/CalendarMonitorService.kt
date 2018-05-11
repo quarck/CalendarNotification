@@ -23,19 +23,14 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.wakeLocked
-import android.app.job.JobParameters
-import android.app.job.JobScheduler
-import android.app.job.JobInfo
-import android.content.ComponentName
-import android.app.job.JobService
-import com.github.quarck.calnotify.Consts
 
-class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService") {
+class CalendarMonitorService : IntentService("CalendarMonitor") {
 
     override fun onHandleIntent(intent: Intent?) {
 
@@ -47,12 +42,14 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
         var startDelay = intent.getIntExtra(START_DELAY, 0)
 
         val shouldReloadCalendar = intent.getBooleanExtra(RELOAD_CALENDAR, false)
+        val shouldRescanMonitor = intent.getBooleanExtra(RESCAN_MONITOR, true)
         val userActionUntil = intent.getLongExtra(USER_ACTION_UNTIL, 0)
 
         DevLog.info(this, LOG_TAG,
                 "onHandleIntent: " +
-                        "startDelay=$startDelay, " +
-                        "shouldReloadCalendar=$shouldReloadCalendar, "
+                "startDelay=$startDelay, " +
+                "shouldReloadCalendar=$shouldReloadCalendar, " +
+                "shouldRescanMonitor=$shouldRescanMonitor, "
         )
 
         wakeLocked(powerManager, PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_NAME) {
@@ -82,9 +79,18 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 }
             }
 
+            if (shouldRescanMonitor) {
+                try {
+                    ApplicationController.CalendarMonitor.onRescanFromService(this, intent)
+                }
+                catch (ex: Exception) {
+                    DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+                }
+            }
+
             // Always rescan CalendarChangeRequestMonitor
             try {
-                ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
+                ApplicationController.AddEventMonitorInstance.onRescanFromService(this, intent)
             }
             catch (ex: Exception) {
                 DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
@@ -106,6 +112,7 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
         private const val WAKE_LOCK_NAME = "CalendarMonitor"
         private const val START_DELAY = "start_delay"
         private const val RELOAD_CALENDAR = "reload_calendar"
+        private const val RESCAN_MONITOR = "rescan_monitor"
         private const val USER_ACTION_UNTIL = "user_action_until"
 
         private const val MAX_TIME_WITHOUT_QUICK_RESCAN = 1000
@@ -115,91 +122,17 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 context: Context,
                 startDelay: Int = 0,
                 reloadCalendar: Boolean = false, // should reload existing reminders
+                rescanMonitor: Boolean = true,   // should perform calendar monitor rescan
                 userActionUntil: Long = 0 // Time in millis - max deadline to treat as a user action
         ) {
-            val intent = Intent(context, CalendarMonitorIntentService::class.java)
+            val intent = Intent(context, CalendarMonitorService::class.java)
 
             intent.putExtra(START_DELAY, startDelay)
             intent.putExtra(RELOAD_CALENDAR, reloadCalendar)
+            intent.putExtra(RESCAN_MONITOR, rescanMonitor)
             intent.putExtra(USER_ACTION_UNTIL, userActionUntil)
 
-            try {
-                context.startService(intent)
-            }
-            catch (ex: Exception){
-                DevLog.error(context, LOG_TAG, "Failed to start rescan service, ex: $ex, ${ex.stackTrace}")
-            }
+            context.startService(intent)
         }
-    }
-}
-
-
-class CalendarMonitorJobService : JobService()  {
-
-    override fun onStartJob(params: JobParameters): Boolean {
-
-        DevLog.info(this, LOG_TAG, "onStartJob ")
-
-        try  {
-            ApplicationController.onCalendarRescanForRescheduledFromService(this, 0)
-        }
-        catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
-        }
-
-        try  {
-            ApplicationController.onCalendarReloadFromService(this, 0)
-        }
-        catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
-        }
-
-        try {
-            ApplicationController.CalendarMonitor.onRescanFromService(this)
-        }
-        catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
-        }
-
-        try {
-            ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
-        }
-        catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
-        }
-
-        return false
-    }
-
-    override fun onStopJob(params: JobParameters): Boolean {
-        return false
-    }
-
-    companion object {
-        private const val LOG_TAG = "CalendarMonitorSvc"
-
-        private fun getJobInfo(): JobInfo {
-            val component = ComponentName(
-                    "com.github.quarck.calnotify",
-                    CalendarMonitorJobService::class.java.name)
-            val builder =
-                    JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN, component)
-                            .setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,
-                                    Consts.CALENDAR_RESCAN_INTERVAL/2)
-                            .setPersisted(true)
-                            .setRequiresDeviceIdle(false)
-
-            return builder.build()
-        }
-
-        fun schedule(context: Context) {
-            val js = context.getSystemService(JobScheduler::class.java) ?: return
-            val jobs = js.allPendingJobs ?: return
-            if (jobs.any { j -> j.id == Consts.JobIDS.CALENDAR_RESCAN })
-                return
-
-            context.getSystemService(JobScheduler::class.java)?.schedule(getJobInfo())
-        }
-
     }
 }

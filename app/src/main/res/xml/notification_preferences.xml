@@ -75,10 +75,17 @@
             />
 
         <CheckBoxPreference
+            android:key="pref_key_enable_allow_swipe"
+            android:title="@string/allow_notification_swipe_title"
+            android:summary="@string/allow_notification_swipe_summary"
+            android:defaultValue="false"  />
+
+        <CheckBoxPreference
             android:key="pref_key_enable_swipe_to_snooze"
             android:title="@string/snooze_on_swipe"
             android:summary="@string/snooze_on_swipe_summary"
             android:defaultValue="false"
+            android:dependency="pref_key_enable_allow_swipe"
             />
 
         <CheckBoxPreference android:key="heads_up_notification"

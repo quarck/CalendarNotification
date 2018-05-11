@@ -178,10 +178,15 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 // - Swipe would snooze
 
                 if (settings.showDismissButtonDepricated && settings.notificationSwipeDoesSnooze) {
+
+                    settings.allowNotificationSwipe = true
                     settings.notificationSwipeDoesSnooze = true
                 } else if (settings.showDismissButtonDepricated && !settings.notificationSwipeDoesSnooze) {
+
+                    settings.allowNotificationSwipe = false
                     settings.notificationSwipeDoesSnooze = false
                 } else {
+                    settings.allowNotificationSwipe = true
                     settings.notificationSwipeDoesSnooze = false
                 }
 

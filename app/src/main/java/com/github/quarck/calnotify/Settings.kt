@@ -416,7 +416,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         //private const val REMINDER_SETTINGS_MIGRATED_KEY = "reminder_settings_migrated"
         private const val REMINDER_SETTINGS_MIGRATED_TO_PATTERN_KEY = "reminder_pattern_settings_migrated"
 
-        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_swipe_does_snooze2"
+        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
         private const val RINGTONE_KEY = "pref_key_ringtone"
         private const val VIBRATION_ENABLED_KEY = "vibra_on"

@@ -193,6 +193,9 @@
     <string name="vibration_pattern">"Motif de vibration"</string>
     <string name="_100ms">"100ms"</string>
     <string name="_2500ms">"2500ms"</string>
+    <string name="led_on_time">"Temps de la LED activée:"</string>
+    <string name="led_off_time">"Temps de la LED éteinte:"</string>
+    <string name="led_pattern">"Paramètre LED"</string>
 
     <string name="milliseconds_suffix">"ms"</string>
     <string name="compact_layout">"Utiliser une vue compacte"</string>
@@ -293,6 +296,8 @@
     <string name="reminder_fallback_method_summary">"Essayez de sélectionner ceci si le son des rappels ne fonctionne pas"</string>
     <string name="reminder_custom_ringtone">"Sonnerie personnalisée"</string>
     <string name="reminder_custom_vibration">"Vibration personnalisée"</string>
+    <string name="quiet_hours_mute_led">"Désactivée LED"</string>
+    <string name="quiet_hours_mute_led_summary">"La notification par LED sera désactivée pendant les heures de tranquillité"</string>
 
     <string name="reminder_you_have_missed_event">"Rappel: vous avez manqué l'événement"</string>
     <string name="reminder_you_have_missed_events">"Rappel: vous avez manqué des événements"</string>

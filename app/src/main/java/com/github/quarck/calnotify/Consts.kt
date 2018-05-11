@@ -82,6 +82,13 @@ object Consts {
 
     const val WAKE_SCREEN_DURATION = 100L
 
+    const val LED_DURATION_ON = 300
+    const val LED_DURATION_OFF = 2000
+    const val DEFAULT_LED_PATTERN = "$LED_DURATION_ON,$LED_DURATION_OFF"
+    const val LED_MIN_DURATION = 100
+    const val LED_MAX_DURATION = 2500
+    const val LED_DURATION_GRANULARITY = 100
+
     const val DEFAULT_LED_COLOR = 0x7f0000ff
 
     const val ALARM_THRESHOLD = 24 * 1000L // multiple of both, 2 and 3
@@ -114,6 +121,9 @@ object Consts {
 
     const val MAX_DUE_ALERTS_FOR_MANUAL_SCAN = 100
     const val MAX_SCAN_BACKWARD_DAYS = 31L
+
+    const val MIN_INTERVAL_BETWEEN_SOUNDS = 1000L
+    const val MIN_INTERVAL_BETWEEN_VIBRATIONS = 1000L
 
     const val FAILBACK_SHORT_SNOOZE = 60000L
     const val LOG_CLEANUP_INTERVAL: Long = 3600L * 24L * 3L * 1000L // every 3 days

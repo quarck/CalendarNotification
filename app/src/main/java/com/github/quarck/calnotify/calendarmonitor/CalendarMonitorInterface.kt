@@ -32,15 +32,13 @@ interface CalendarMonitorInterface {
 
     fun onAlarmBroadcast(context: Context, intent: Intent)
 
-    fun onPeriodicRescanBroadcast(context: Context, intent: Intent)
-
     fun onAppResumed(context: Context, monitorSettingsChanged: Boolean)
 
     fun onProviderReminderBroadcast(context: Context, intent: Intent)
 
     fun onEventEditedByUs(context: Context, eventId: Long)
 
-    fun onRescanFromService(context: Context, intent: Intent?)
+    fun onRescanFromService(context: Context)
 
     fun getAlertsAt(context: Context, time: Long): List<MonitorEventAlertEntry>
 
@@ -51,12 +49,4 @@ interface CalendarMonitorInterface {
     fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean
 
     fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean
-
-    fun launchRescanService(
-            context: Context,
-            delayed: Int = 0,
-            reloadCalendar: Boolean =  false,
-            rescanMonitor: Boolean = true,
-            userActionUntil: Long = 0
-    )
 }

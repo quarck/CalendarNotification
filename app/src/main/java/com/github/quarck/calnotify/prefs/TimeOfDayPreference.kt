@@ -19,10 +19,14 @@
 
 package com.github.quarck.calnotify.prefs
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.TimePicker
@@ -31,111 +35,71 @@ import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.hourCompat
-import com.github.quarck.calnotify.utils.minuteCompat
 import java.text.DateFormat
 import java.util.*
 
-class TimeOfDayPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
+// val context: Context, val settings: Settings, var inflater: LayoutInflater
 
-    internal var timeValue = Pair(0, 0) // hr, min
+class TimeOfDayPreference(
+        val context: Context,
+        var inflater:
+        LayoutInflater,
+        var timeValue: Pair<Int, Int>,
+        val onNewValue: (Pair<Int, Int>) -> Unit) {
 
     // UI representation
     internal lateinit var picker: TimePicker
 
     internal var isTwentyFourHour: Boolean = true
 
-    internal var widgetView: TextView? = null
+    fun create(): Dialog {
 
-    init {
-        val settings = Settings(getContext())
+        val builder = AlertDialog.Builder(context)
 
-        dialogLayoutResource =
-                if (settings.haloLightTimePicker)
-                    R.layout.dialog_time_of_day_halo_light
-                else
-                    R.layout.dialog_time_of_day
-
-        widgetLayoutResource = R.layout.dialog_time_of_day_widget
-
-        setPositiveButtonText(android.R.string.ok)
-        setNegativeButtonText(android.R.string.cancel)
-
-        dialogIcon = null
         isTwentyFourHour = android.text.format.DateFormat.is24HourFormat(context)//  context.is24HoursClock()
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        val rootView: View = inflater.inflate(R.layout.dialog_time_of_day, null)
+
+        onBindDialogView(rootView)
+
+        builder.setView(rootView)
+
+        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(true)
+        })
+
+        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(false)
+        })
+
+        return builder.create()
     }
 
-    override fun onBindView(view: View) {
-        super.onBindView(view)
-
-        widgetView = view.find<TextView?>(R.id.dialog_time_of_day_widget)
-
-        updateWidgetView()
-    }
-
-    override fun onBindDialogView(view: View) {
-        super.onBindDialogView(view)
-
+    fun onBindDialogView(view: View) {
         picker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_time_of_day)
 
         picker.setIs24HourView(isTwentyFourHour)
-        picker.hourCompat = timeValue.component1()
-        picker.minuteCompat = timeValue.component2()
-
-        updateWidgetView()
+        picker.hour = timeValue.component1()
+        picker.minute = timeValue.component2()
     }
 
-    override fun onClick() {
-        super.onClick()
-        picker.clearFocus()
-    }
+//    override fun onClick() {
+//        super.onClick()
+//        picker.clearFocus()
+//    }
 
-    override fun onDialogClosed(positiveResult: Boolean) {
+    fun onDialogClosed(positiveResult: Boolean) {
 
         // When the user selects "OK", persist the new value
         if (positiveResult) {
             picker.clearFocus()
-
-            timeValue = Pair(picker.hourCompat, picker.minuteCompat)
-            persistInt(PreferenceUtils.packTime(timeValue))
-            updateWidgetView()
+            timeValue = Pair(picker.hour, picker.minute)
+            onNewValue(timeValue)
         }
-    }
-
-    @Suppress("DEPRECATION")
-    fun formatTime(time: Pair<Int, Int>): String {
-        val timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT)
-        val date = Date(1, 1, 1, time.component1(), time.component2(), 0)
-        return timeFormatter.format(date)
-    }
-
-    fun updateWidgetView() {
-
-        val wv = widgetView
-        if (wv != null)
-            wv.text = formatTime(timeValue)
-    }
-
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-
-        var timeValueInt: Int = 0
-
-        if (restorePersistedValue) {
-            // Restore existing state
-            timeValueInt = this.getPersistedInt(0)
-
-        }
-        else if (defaultValue != null && defaultValue is Int) {
-            // Set default state from the XML attribute
-            timeValueInt = defaultValue
-            persistInt(defaultValue)
-        }
-
-        timeValue = PreferenceUtils.unpackTime(timeValueInt)
-    }
-
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInteger(index, 0)
     }
 
     companion object {

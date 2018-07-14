@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.calendar
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
@@ -27,6 +28,7 @@ import android.database.Cursor
 import android.os.Build
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -268,6 +270,7 @@ object CalendarProvider : CalendarProviderInterface {
 //        return ret
 //    }
 
+    @SuppressLint("MissingPermission")
     override fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
 
         val ret = mutableListOf<EventReminderRecord>()
@@ -1176,9 +1179,7 @@ object CalendarProvider : CalendarProviderInterface {
                     CalendarContract.Calendars.VISIBLE
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                fields.add(CalendarContract.Calendars.IS_PRIMARY)
-            }
+            fields.add(CalendarContract.Calendars.IS_PRIMARY)
 
             val uri = CalendarContract.Calendars.CONTENT_URI
 
@@ -1270,6 +1271,112 @@ object CalendarProvider : CalendarProviderInterface {
         return alarmTime
     }
 
+    override fun getCalendarById(context: Context, calendarId: Long): CalendarRecord? {
+        var ret: CalendarRecord? = null
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(context, LOG_TAG, "getCalendarById: no permissions")
+            return null
+        }
+
+        try {
+
+            val fields = mutableListOf(
+                    CalendarContract.Calendars._ID,
+                    CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                    CalendarContract.Calendars.NAME,
+                    CalendarContract.Calendars.OWNER_ACCOUNT,
+                    CalendarContract.Calendars.ACCOUNT_NAME,
+                    CalendarContract.Calendars.ACCOUNT_TYPE,
+                    CalendarContract.Calendars.CALENDAR_COLOR,
+
+                    CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
+                    CalendarContract.Calendars.CALENDAR_TIME_ZONE,
+                    CalendarContract.Calendars.SYNC_EVENTS,
+                    CalendarContract.Calendars.VISIBLE
+            )
+
+            fields.add(CalendarContract.Calendars.IS_PRIMARY)
+
+            val uri = CalendarContract.Calendars.CONTENT_URI
+
+            val selection = CalendarContract.Calendars._ID + "=?"
+
+            val cursor = context.contentResolver.query(
+                    uri,
+                    fields.toTypedArray(),
+                    selection,
+                    arrayOf(calendarId.toString()),
+                    null)
+
+            while (cursor != null && cursor.moveToNext()) {
+
+                // Get the field values
+                val calID: Long? = cursor.getLong(0)
+                val displayName: String? = cursor.getString(1)
+                val name: String? = cursor.getString(2)
+                val ownerAccount: String? = cursor.getString(3)
+                val accountName: String? = cursor.getString(4)
+                val accountType: String? = cursor.getString(5)
+                val color: Int? = cursor.getInt(6)
+                val accessLevel: Int? = cursor.getInt(7)
+                val timeZone: String? = cursor.getString(8)
+                val syncEvents: Int? = cursor.getInt(9)
+                val visible: Int? = cursor.getInt(10)
+
+                val isPrimary: Int? =cursor.getInt(11)
+
+                val isEditable =
+                        when(accessLevel ?: 0) {
+                            CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR -> true
+                            CalendarContract.Calendars.CAL_ACCESS_OWNER -> true
+                            CalendarContract.Calendars.CAL_ACCESS_ROOT -> true
+                            else -> false
+                        }
+
+                ret = CalendarRecord(
+                        calendarId = calID ?: -1L,
+                        owner = ownerAccount ?: "",
+                        accountName = accountName ?: "",
+                        accountType = accountType ?: "",
+                        displayName = displayName ?: "",
+                        name = name ?: "",
+                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                        isPrimary = (isPrimary ?: 0) != 0,
+                        isReadOnly = !isEditable,
+                        isVisible = (visible ?: 0) != 0,
+                        isSynced = (syncEvents ?: 0) != 0,
+                        timeZone = timeZone ?: TimeZone.getDefault().getID()
+                )
+                break
+            }
+
+            cursor?.close()
+
+        }
+        catch (ex: Exception) {
+            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
+        }
+
+        return ret
+    }
+
+    override fun createCalendarNotFoundCal(context: Context): CalendarRecord {
+        return CalendarRecord(
+                calendarId = -1,
+                owner = context.getString(R.string.owner_dummy_local),
+                displayName = context.getString(R.string.calendar_not_found),
+                name = context.getString(R.string.calendar_not_found),
+                accountName = context.getString(R.string.no_account),
+                accountType = context.getString(R.string.dummy),
+                timeZone = context.getString(R.string.unknown),
+                color = Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                isVisible = true,
+                isPrimary = false,
+                isReadOnly = true,
+                isSynced = false)
+    }
+
     override fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long> {
         val handledCalendars =
                 getCalendars(context)
@@ -1307,10 +1414,10 @@ object CalendarProvider : CalendarProviderInterface {
         val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
 
         val defaultReminderTimeForEventWithNoReminder =
-                settings.defaultReminderTimeForEventWithNoReminder
+                settings.defaultReminderTimeForEventWithNoReminderMillis
 
         val defaultReminderTimeForAllDayEventWithNoreminder =
-                settings.defaultReminderTimeForAllDayEventWithNoreminder
+                settings.defaultReminderTimeForAllDayEventWithNoreminderMillis
 
         try {
             val timezone = TimeZone.getDefault()
@@ -1431,10 +1538,10 @@ object CalendarProvider : CalendarProviderInterface {
         val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
 
         val defaultReminderTimeForEventWithNoReminder =
-                settings.defaultReminderTimeForEventWithNoReminder
+                settings.defaultReminderTimeForEventWithNoReminderMillis
 
         val defaultReminderTimeForAllDayEventWithNoreminder =
-                settings.defaultReminderTimeForAllDayEventWithNoreminder
+                settings.defaultReminderTimeForAllDayEventWithNoreminderMillis
 
         try {
             val timezone = TimeZone.getDefault()

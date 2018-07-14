@@ -158,6 +158,56 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         return ret
     }
 
+    override fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
+
+        if (!PermissionsManager.hasAllPermissions(context)) {
+            DevLog.error(context, LOG_TAG, "moveRepeatingAsCopy: no permissions");
+            return -1L
+        }
+
+        // Get full event details from the provider, if failed - construct a failback version
+        val oldEvent = provider.getEvent(context, event.eventId) ?: return -1L
+
+        val newStartTime: Long
+        val newEndTime: Long
+
+        val currentTime = System.currentTimeMillis()
+
+        val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.instanceStartTime
+
+        if (numSecondsInThePast > 0) {
+            val addUnits = numSecondsInThePast / addTimeMillis + 1
+
+            newStartTime = event.instanceStartTime + addTimeMillis * addUnits
+            newEndTime = event.instanceEndTime + addTimeMillis * addUnits
+
+            DevLog.warn(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
+        }
+        else {
+            newStartTime = event.instanceStartTime + addTimeMillis
+            newEndTime = event.instanceEndTime + addTimeMillis
+        }
+
+        DevLog.info(context, LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
+
+        val details = oldEvent.details.copy(
+                startTime = newStartTime,
+                endTime = newEndTime,
+                repeatingRule = "",
+                repeatingRDate = "",
+                repeatingExRule = "",
+                repeatingExRDate = ""
+        )
+
+        val ret = createEvent(context, calendar.calendarId, calendar.owner, details)
+        if (ret != -1L) {
+            event.startTime = newStartTime
+            event.endTime = newEndTime
+        }
+
+        return ret
+    }
+
     override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {

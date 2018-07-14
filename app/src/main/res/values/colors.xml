@@ -20,6 +20,7 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="divider_light">#C6C6C6</color>
 
     <color name="primary_text_inverse">#3f737272</color>
     <color name="secondary_text_inverse">#3fb0b0b0</color>

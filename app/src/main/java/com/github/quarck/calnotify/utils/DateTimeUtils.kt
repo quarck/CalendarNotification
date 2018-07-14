@@ -60,6 +60,23 @@ object DateTimeUtils {
             left.get(Calendar.YEAR) == right.get(Calendar.YEAR)
                     && left.get(Calendar.DAY_OF_YEAR) == right.get(Calendar.DAY_OF_YEAR)
 
+    fun calendarDayEqualsOrLess(left: Calendar, right: Calendar): Boolean {
+        val leftYear = left.get(Calendar.YEAR)
+        val rightYear = right.get(Calendar.YEAR)
+
+        if (leftYear < rightYear)
+            return true
+        if (leftYear > rightYear)
+            return false
+
+        val leftDay = left.get(Calendar.DAY_OF_YEAR)
+        val rightDay = right.get(Calendar.DAY_OF_YEAR)
+
+        if (leftDay <= rightDay)
+            return true
+        return false
+    }
+
     fun calendarDayEquals(timeMillisLeft: Long, timeMillisRight: Long) =
             calendarDayEquals(createCalendarTime(timeMillisLeft), createCalendarTime(timeMillisRight))
 
@@ -72,6 +89,12 @@ object DateTimeUtils {
     // it with event time in UTC converted to year / day of year
     fun isUTCToday(timeInUTC: Long) =
             calendarDayEquals(createUTCCalendarTime(timeInUTC), createCalendarTime(System.currentTimeMillis()))
+
+    fun isUTCTodayOrInThePast(timeInUTC: Long): Boolean {
+        val time = createUTCCalendarTime(timeInUTC)
+        val now = createCalendarTime(System.currentTimeMillis())
+        return calendarDayEqualsOrLess(time, now)
+    }
 }
 
 var Calendar.year: Int

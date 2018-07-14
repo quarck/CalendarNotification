@@ -49,14 +49,9 @@ class TagsManager : TagsManagerInterface {
 
     override fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
 
-        if (settings.enableNotificationMuteTags)
-            event.isMuted = event.hasTag(MUTE_TAG)
-
-        if (settings.enableNotificationTaskTags)
-            event.isTask = event.hasTag(TASK_TAG)
-
-        if (settings.enableNotificationAlarmTags)
-            event.isAlarm = event.hasTag(ALARM_TAG)
+        event.isMuted = event.hasTag(MUTE_TAG)
+        event.isTask = event.hasTag(TASK_TAG)
+        event.isAlarm = event.hasTag(ALARM_TAG)
     }
 
     companion object {

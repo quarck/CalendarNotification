@@ -120,7 +120,7 @@ data class EventAlertRecord(
         var alertTime: Long,
         var notificationId: Int,
         var title: String,
-        val desc: String,
+        var desc: String,
         var startTime: Long,
         var endTime: Long,
         var instanceStartTime: Long,
@@ -148,6 +148,9 @@ data class EventAlertRecord(
         get() = flags.isFlagSet(EventAlertFlags.IS_ALARM)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_ALARM, value) }
 
+    val isUnmutedAlarm: Boolean
+        get() = isAlarm && !isMuted
+
     val key: EventAlertRecordKey
         get() = EventAlertRecordKey(eventId, instanceStartTime)
 }
@@ -157,6 +160,11 @@ fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
 
     if (title != newEvent.title) {
         title = newEvent.title
+        ret = true
+    }
+
+    if (desc != newEvent.desc) {
+        desc = newEvent.desc
         ret = true
     }
 
@@ -174,6 +182,17 @@ fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {
         endTime = newEvent.endTime
         ret = true
     }
+
+    if (instanceStartTime != newEvent.instanceStartTime) {
+        instanceStartTime = newEvent.instanceStartTime
+        ret = true
+    }
+
+    if (instanceEndTime != newEvent.instanceEndTime) {
+        instanceEndTime = newEvent.instanceEndTime
+        ret = true
+    }
+
 
     if (isAllDay != newEvent.isAllDay) {
         isAllDay = newEvent.isAllDay
@@ -213,6 +232,16 @@ fun EventAlertRecord.updateFrom(newEvent: EventRecord): Boolean {
 
     if (title != newEvent.title) {
         title = newEvent.title
+        ret = true
+    }
+
+    if (desc != newEvent.desc) {
+        desc = newEvent.desc
+        ret = true
+    }
+
+    if (location != newEvent.location) {
+        location = newEvent.location
         ret = true
     }
 

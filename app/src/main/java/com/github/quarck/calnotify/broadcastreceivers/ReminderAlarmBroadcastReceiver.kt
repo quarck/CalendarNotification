@@ -22,14 +22,11 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.isActiveAlarm
-import com.github.quarck.calnotify.calendar.isNotSnoozed
-import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
@@ -141,13 +138,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         shouldFire = true
 
                         DevLog.info(context, LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval[next]: ${nextReminderInterval}, next fire expected at $nextFireAt")
-
-                        if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
-                            DevLog.error(context, LOG_TAG, "WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
-                                    "received $currentTime, ${(currentTime - reminderState.nextFireExpectedAt) / 1000L}s late")
-
-                            ApplicationController.onReminderAlarmLate(context, currentTime, reminderState.nextFireExpectedAt)
-                        }
                     }
                 }
                 else {
@@ -175,8 +165,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         context = context,
                         currentTime = currentTime,
                         itIsAfterQuietHoursReminder = itIsAfterQuietHoursReminder,
-                        reminderInterval = Math.min(currentReminderInterval, nextReminderInterval),
-                        separateReminderNotification = settings.separateReminderNotification,
                         hasActiveAlarms = hasActiveAlarms
                 )
             }
@@ -187,8 +175,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             context: Context,
             currentTime: Long,
             itIsAfterQuietHoursReminder: Boolean,
-            reminderInterval: Long,
-            separateReminderNotification: Boolean,
             hasActiveAlarms: Boolean
     ) {
 
@@ -197,19 +183,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
 
         ReminderState(context).onReminderFired(currentTime)
-
-        if (separateReminderNotification) {
-            // auto-remove reminder notification after 15 seconds. All we need it for is to
-            // play a sound
-            val delayInMilliseconds = Math.min(reminderInterval - 2000L, 15000L)
-
-            Handler().postDelayed(
-                    {
-                        ApplicationController.cleanupEventReminder(context)
-                    },
-                    delayInMilliseconds
-            )
-        }
     }
 
     companion object {

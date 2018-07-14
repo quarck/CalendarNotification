@@ -24,6 +24,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -52,18 +53,13 @@ interface EventListCallback {
     fun onScrollPositionChange(newPos: Int)
 }
 
-@Suppress("DEPRECATION")
 class EventListAdapter(
         val context: Context,
-        val useCompactView: Boolean,
-        val cardVewResourceId: Int,
         val callback: EventListCallback)
 
     : RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
 
-    val darkerCalendarColors: Boolean by lazy {
-        Settings(context).darkerCalendarColors
-    }
+    val cardVewResourceId: Int = R.layout.event_card_compact
 
     inner class ViewHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView) {
@@ -71,18 +67,15 @@ class EventListAdapter(
 
         var eventHolder: RelativeLayout?
         var eventTitleText: TextView
-        var eventTitleLayout: RelativeLayout?
         var eventDateText: TextView
         var eventTimeText: TextView
-        var eventLocatoinText: TextView?
+
         var snoozedUntilText: TextView?
         val compactViewCalendarColor: View?
 
         val compactViewContentLayout: RelativeLayout?
         var undoLayout: RelativeLayout?
 
-        var snoozeButton: Button?
-        var dismissButton: Button?
         var undoButton: Button?
 
         var muteImage: ImageView?
@@ -94,16 +87,10 @@ class EventListAdapter(
         init {
             eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
             eventTitleText = itemView.findOrThrow<TextView>(R.id.card_view_event_name)
-            eventTitleLayout = itemView.find<RelativeLayout?>(R.id.card_view_event_title_layout)
 
             eventDateText = itemView.findOrThrow<TextView>(R.id.card_view_event_date)
             eventTimeText = itemView.findOrThrow<TextView>(R.id.card_view_event_time)
             snoozedUntilText = itemView.find<TextView>(R.id.card_view_snoozed_until)
-
-            eventLocatoinText = itemView.find<TextView?>(R.id.card_view_location)
-
-            snoozeButton = itemView.find<Button?>(R.id.card_view_button_reschedule)
-            dismissButton = itemView.find<Button?>(R.id.card_view_button_dismiss)
 
             undoLayout = itemView.find<RelativeLayout?>(R.id.event_card_undo_layout)
 
@@ -123,17 +110,8 @@ class EventListAdapter(
             }
 
             eventHolder?.setOnClickListener(itemClickListener)
-            eventLocatoinText?.setOnClickListener(itemClickListener)
             eventDateText.setOnClickListener(itemClickListener)
             eventTimeText.setOnClickListener(itemClickListener)
-
-            dismissButton?.setOnClickListener {
-                callback.onItemDismiss(itemView, adapterPosition, eventId);
-            }
-
-            snoozeButton?.setOnClickListener {
-                callback.onItemSnooze(itemView, adapterPosition, eventId);
-            }
         }
     }
 
@@ -162,7 +140,7 @@ class EventListAdapter(
         get() = currentScrollPosition
 
     init {
-        primaryColor = context.resources.getColor(R.color.primary)
+        primaryColor = ContextCompat.getColor(context, R.color.primary)
         changeString = context.resources.getString(R.string.card_view_btn_change);
         snoozeString = context.resources.getString(R.string.card_view_btn_snooze);
     }
@@ -177,8 +155,7 @@ class EventListAdapter(
                     }
                 })
 
-        if (useCompactView)
-            setUpItemTouchHelper(_recyclerView, context)
+        setUpItemTouchHelper(_recyclerView, context)
     }
 
     private fun setUpItemTouchHelper(_recyclerView: RecyclerView?, context: Context) {
@@ -188,8 +165,8 @@ class EventListAdapter(
 
                     internal val escapeVelocityMultiplier = 5.0f
 
-                    internal val background = ColorDrawable(context.resources.getColor(R.color.material_red))
-                    internal var xMark = context.resources.getDrawable(R.drawable.ic_clear_white_24dp)
+                    internal val background = ColorDrawable(ContextCompat.getColor(context, R.color.material_red))
+                    internal var xMark = ContextCompat.getDrawable(context, R.drawable.ic_clear_white_24dp) ?: throw Exception("Now x-mark")
                     internal var xMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
 
                     init {
@@ -316,9 +293,9 @@ class EventListAdapter(
     }
 
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //
-        if (position < 0 || position >= events.size || holder == null)
+        if (position < 0 || position >= events.size)
             return
 
         val event = events[position]
@@ -352,71 +329,42 @@ class EventListAdapter(
 
             holder.alarmImage?.visibility = if (event.isAlarm) View.VISIBLE else View.GONE
 
-            if (useCompactView) {
-                holder.undoLayout?.visibility = View.GONE
-                holder.compactViewContentLayout?.visibility = View.VISIBLE
+            holder.undoLayout?.visibility = View.GONE
+            holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-                if (!event.isSpecial) {
-                    val time = eventFormatter.formatDateTimeOneLine(event)
-                    holder.eventDateText.text = time
-                    holder.eventTimeText.text = ""
-                }
-                else {
-                    val (detail1, detail2) = event.getSpecialDetail(context)
-                    holder.eventDateText.text = detail1
-                    holder.eventTimeText.text = detail2
-                }
+            if (!event.isSpecial) {
+                val time = eventFormatter.formatDateTimeOneLine(event)
+                holder.eventDateText.text = time
+                holder.eventTimeText.text = ""
             }
             else {
-
-                if (!event.isSpecial) {
-                    val (date, time) = eventFormatter.formatDateTimeTwoLines(event)
-
-                    holder.eventDateText.text = date
-                    holder.eventTimeText.text = time
-                }
-                else {
-                    val (detail1, detail2) = event.getSpecialDetail(context)
-                    holder.eventDateText.text = detail1
-                    holder.eventTimeText.text = detail2
-                }
-
-                holder.eventLocatoinText?.text = event.location
-
-                if (event.location != "")
-                    holder.eventLocatoinText?.visibility = View.VISIBLE;
-                else
-                    holder.eventLocatoinText?.visibility = View.GONE;
+                val (detail1, detail2) = event.getSpecialDetail(context)
+                holder.eventDateText.text = detail1
+                holder.eventTimeText.text = detail2
             }
 
             if (event.snoozedUntil != 0L) {
                 holder.snoozedUntilText?.text =
-                        context.resources.getString(R.string.snoozed_until_string) + " " +
-                                eventFormatter.formatSnoozedUntil(event);
+                        context.resources.getString(R.string.snoozed_until_string) + " " + eventFormatter.formatSnoozedUntil(event);
 
                 holder.snoozedUntilText?.visibility = View.VISIBLE;
-                holder.snoozeButton?.text = changeString
             }
             else {
                 holder.snoozedUntilText?.text = "";
                 holder.snoozedUntilText?.visibility = View.GONE;
-                holder.snoozeButton?.text = snoozeString
             }
 
             holder.calendarColor.color =
                     if (event.color != 0)
-                        event.color.adjustCalendarColor(darkerCalendarColors)
+                        event.color.adjustCalendarColor()
                     else
                         primaryColor
-            if (useCompactView)
-                holder.compactViewCalendarColor?.background = holder.calendarColor
-            else
-                holder.eventTitleLayout?.background = holder.calendarColor
+            holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
-        val view = LayoutInflater.from(parent?.context).inflate(cardVewResourceId, parent, false);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(cardVewResourceId, parent, false);
         return ViewHolder(view);
     }
 
@@ -508,7 +456,7 @@ class EventListAdapter(
 
                                 val foundByManual =
                                         events.withIndex().find {
-                                            (i, ev) ->
+                                            (_, ev) ->
                                             ev.eventId == event.eventId && ev.instanceStartTime == event.instanceStartTime
                                         }
 

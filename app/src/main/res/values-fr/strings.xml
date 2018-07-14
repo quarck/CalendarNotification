@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">"Calendar Notifications Plus"</string>
+    <string name="app_name">"Calendar Notifications"</string>
 
-    <string name="main_activity_title">"Calendar Notifications Plus"</string>
+    <string name="main_activity_title">"Calendar Notifications"</string>
 
     <string name="settings">"Paramètres"</string>
     <string name="application_has_no_access">"Cette application nécessite des autorisations spéciales pour pouvoir accéder aux notifications du calendrier\n\nMerci d'accorder les permissions READ_CALENDAR et WRITE_CALENDAR\n\nWRITE_CALENDAR est nécessaires pour cacher la notification du calendrier d'origine"</string>
@@ -113,8 +113,6 @@
     <string name="max_reminders_summary">"Nombre maximal de rappels, 0 pour durée infinie"</string>
 
     <string name="pebble_notification_title">"Calendrier"</string>
-    <string name="heads_up_notification">"Notification 'Heads-up'"</string>
-    <string name="heads_up_notification_summary">"Affiche brièvement la notification en haut de l'écran"</string>
     <string name="projectPageOnGitHub">"Page de projet sur GitHub"</string>
     <string name="snooze_all">"Tout répéter"</string>
     <string name="change_all">"Changer tout"</string>
@@ -131,8 +129,6 @@
     <string name="change_all_title">"Modifier tous les événements"</string>
 
     <string name="led_color">"Couleur de la LED"</string>
-    <string name="wake_screen_title">"Réveil de l'écran"</string>
-    <string name="wake_screen_summary">"Réveil l'écran pendant un court laps de temps lorsqu'une notification arrive"</string>
 
     <string name="error_cannot_parse_pattern">"Ne peut pas analyser ce modèle"</string>
     <string name="quiet_time_from">"Heure de début"</string>
@@ -175,7 +171,6 @@
     <string name="power_optimisation_warning">"&lt;b&gt;Informations importantes pour les utilisateurs de Samsung:&lt;/b&gt;\n\nDans de nombreux appareils récents, Samsung a mis en œuvre l'optimisation de l'alimentation de l'application\nSi cette optimisation est activée pour Calendar Notifications Plus, les rappels d'événements peuvent se déclencher avec un certain délai du temps de rappel prévu\n\nIl n'existe aucun moyen pour l'application de vérifier si elle est optimisée ou pas, il est conseillé de le vérifier manuellement\n\nDésactiver l'optimisation de l'alimentation pour cette application ne provoquera aucun drain de batterie\n\nVeuillez ouvrir\nParamètres -&gt; Batterie -&gt; Optimisation apllication -&gt; Rechercher «Calendar Notifications Plus»\net définissez-le sur «Désactivé»\n\n Ces informations ne s'appliquent pas si vous utilisez une ROM personnalisée sans TouchWiz personnalisée"</string>
     <string name="never_show_again">"Ne plus afficher"</string>
 
-
     <string name="dialog_snooze_text_label_v2">"La liste des préréglages de répétition doit êtres séparée par des virgules\n\nLes valeurs prises en charge sont '15m', '2h' ou '3d' ainsi que des valeurs négatives comme '-5m' (\"5 minutes avant l'événement\")\n\nLimite de 6 éléments dans la liste\n\nLaisser vide pour utiliser les valeurs par défaut"</string>
 
     <string name="before_event">"avant"</string>
@@ -195,9 +190,6 @@
     <string name="vibration_pattern">"Motif de vibration"</string>
     <string name="_100ms">"100ms"</string>
     <string name="_2500ms">"2500ms"</string>
-    <string name="led_on_time">"Temps de la LED activée:"</string>
-    <string name="led_off_time">"Temps de la LED éteinte:"</string>
-    <string name="led_pattern">"Paramètre LED"</string>
 
     <string name="milliseconds_suffix">"ms"</string>
     <string name="compact_layout">"Utiliser une vue compacte"</string>
@@ -298,8 +290,6 @@
     <string name="reminder_fallback_method_summary">"Essayez de sélectionner ceci si le son des rappels ne fonctionne pas"</string>
     <string name="reminder_custom_ringtone">"Sonnerie personnalisée"</string>
     <string name="reminder_custom_vibration">"Vibration personnalisée"</string>
-    <string name="quiet_hours_mute_led">"Désactivée LED"</string>
-    <string name="quiet_hours_mute_led_summary">"La notification par LED sera désactivée pendant les heures de tranquillité"</string>
 
     <string name="reminder_you_have_missed_event">"Rappel: vous avez manqué l'événement"</string>
     <string name="reminder_you_have_missed_events">"Rappel: vous avez manqué des événements"</string>
@@ -369,8 +359,6 @@
     <string name="reminders_play_directly_summary">"Ne pas afficher la notifications de rappel"</string>
     <string name="allow_notification_swipe_title">"Autoriser le glissement des notifications"</string>
     <string name="allow_notification_swipe_summary">Le glissement de la notificaton \'rejètera\' l\'événement</string>
-    <string name="separate_reminder_notification_title">Notification de rappel séparée</string>
-    <string name="separate_reminder_notification_summary">Rappel avec une notification de courte durée séparée (auto-rejet quelques secondes plus tard)</string>
 </resources>
 
 

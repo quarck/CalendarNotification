@@ -54,8 +54,6 @@ class EventsStorage(val context: Context)
 
         val implOld =
                 when (oldVersion) {
-                    DATABASE_VERSION_V6 -> EventsStorageImplV6()
-                    DATABASE_VERSION_V7 -> EventsStorageImplV7()
                     DATABASE_VERSION_V8 -> EventsStorageImplV8(context)
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }

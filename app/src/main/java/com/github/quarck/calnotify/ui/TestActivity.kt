@@ -62,8 +62,6 @@ class TestActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
         findOrThrow<TextView>(R.id.todo).visibility = View.VISIBLE;
-        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked = settings.debugNotificationAutoDismiss
-        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked = settings.debugAlarmDelays
         findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
     }
 
@@ -259,12 +257,10 @@ class TestActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAutoDismissDebugClick(v: View) {
-        settings.debugNotificationAutoDismiss = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAutoDismiss).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAlarmDelayDebugClick(v: View) {
-        settings.debugAlarmDelays = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugAlarmDelays).isChecked
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.SettingsActivityNew"
+    >
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
+
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
+            <!--app:titleTextAppearance="@style/ToolbarTitle"-->
+            <!--android:elevation="@dimen/toolbar_elevation"-->
+            <!--tools:targetApi="m"/>-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".ui.EventViewActivityNoRecents"
+        tools:showIn="@layout/activity_view"
+        android:background="@color/background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonHandledCalendars"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/title_calendars_activity"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonNotificaitonSettings"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/notification_settings"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonSnoozeSettings"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/snooze_presets"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonQuietHoursSettings"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/quiet_hours_section"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonBehaviourSettings"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/app_behavior"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:onClick="onButtonMiscSettings"
+                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
+                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
+                android:paddingStart="@dimen/dimen_main_settings_padding_start"
+                android:paddingTop="@dimen/dimen_main_settings_padding_top"
+                android:text="@string/misc_settings"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:focusable="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/divider_light"
+                android:padding="0dp"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

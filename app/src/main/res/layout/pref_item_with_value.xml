@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/pref_item_generic_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_text"
+        android:text="@string/quiet_time_to"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp"
+        android:clickable="true"
+        android:focusable="true"
+        />
+
+    <TextView
+        android:id="@+id/pref_item_generic_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/accent"
+        android:textStyle="bold"
+        android:text="06:00"
+
+        android:clickable="true"
+        android:focusable="true"
+
+        android:paddingStart="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp"
+        android:layout_alignParentEnd="true"
+
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/pref_item_generic_text_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/secondary_text"
+        android:text="Summary"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="0dp"
+        tools:ignore="HardcodedText"
+        android:visibility="visible"
+        android:layout_below="@id/pref_item_generic_text"
+        />
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0.5dp"-->
+        <!--android:background="@color/divider_light"-->
+        <!--android:padding="0dp"-->
+        <!--android:layout_below="@id/pref_item_generic_text_summary"-->
+        <!--/>-->
+
+</RelativeLayout>

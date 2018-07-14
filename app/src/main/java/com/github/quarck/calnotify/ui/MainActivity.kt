@@ -35,7 +35,6 @@ import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.Consts
@@ -44,7 +43,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
-import com.github.quarck.calnotify.calendar.CalendarIntents
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
@@ -84,7 +82,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var lastEventDismissalScrollPosition: Int? = null
 
-    private var useCompactView = true
     private var calendarRescanEnabled = true
 
     private var shouldRemindForEventsWithNoReminders = true
@@ -119,18 +116,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             reloadData()
         }
 
-        useCompactView = settings.useCompactView
         shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
 
         adapter =
-                EventListAdapter(
-                        this,
-                        useCompactView,
-                        if (useCompactView)
-                            R.layout.event_card_compact
-                        else
-                            R.layout.event_card,
-                        this)
+                EventListAdapter(this, this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
@@ -145,60 +134,17 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         newStyleMessageLayout = findOrThrow<View>(R.id.activity_main_new_style_message_layout)
 
-        if (useCompactView && settings.showNewStyleMessage) {
-            newStyleMessageLayout.visibility = View.VISIBLE
-            if (settings.versionCodeFirstInstalled >= Consts.COMPACT_VIEW_DEFAULT_SINCE_VER) {
-                findOrThrow<Button>(R.id.activity_main_button_hate_new_style).visibility = View.GONE
-                findOrThrow<TextView>(R.id.text_view_style_message).text = resources.getString(R.string.usage_hints)
-            }
-        }
-
         calendarRescanEnabled = settings.enableCalendarRescan
 
         floatingAddEvent = findOrThrow<FloatingActionButton>(R.id.action_btn_add_event)
 
-        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
+        //floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
         floatingAddEvent.setOnClickListener {
             startActivity(
                     Intent(this, EditEventActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )
-        }
-
-        if (settings.versionCodeFirstInstalled < Consts.NEW_NOTIFICATION_SWIPE_SETTINGS_VER) {
-
-            if (!settings.notificationSettingsMigrated) {
-                // Previous behavior:
-                // Show Dismiss On & Swipe does snooze Off
-                // - Don't allow swiping
-                // Show Dismiss Off & Swipe does snooze Off
-                // - Swipe would dismiss
-                // Show Dismiss Off & Swipe does snooze On
-                // - Swipe would snooze
-
-                if (settings.showDismissButtonDepricated && settings.notificationSwipeDoesSnooze) {
-
-                    settings.allowNotificationSwipe = true
-                    settings.notificationSwipeDoesSnooze = true
-                } else if (settings.showDismissButtonDepricated && !settings.notificationSwipeDoesSnooze) {
-
-                    settings.allowNotificationSwipe = false
-                    settings.notificationSwipeDoesSnooze = false
-                } else {
-                    settings.allowNotificationSwipe = true
-                    settings.notificationSwipeDoesSnooze = false
-                }
-
-                settings.notificationSettingsMigrated = true;
-            }
-        }
-
-        if (settings.versionCodeFirstInstalled < Consts.REMINDER_PATTERNS_SETTINGS_VER) {
-            if (!settings.reminderSettingsMigratedToPattern) {
-                settings.remindersIntervalMillisPattern = settings.remindersIntervalMillisPattern
-                settings.reminderSettingsMigratedToPattern = true;
-            }
         }
     }
 
@@ -225,13 +171,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         checkPermissions()
 
-        if (settings.useCompactView != useCompactView) {
-            val intent = intent
-            finish()
-            startActivity(intent)
-        }
-
-        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
+//        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
         DevLog.refreshIsEnabled(context = this);
         if (!settings.shouldKeepLogs) {
@@ -311,11 +251,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     override fun onRequestPermissionsResult(requestCode: Int, @NotNull permissions: Array<out String>, @NotNull grantResults: IntArray) {
 
-        var granted = true
-
+//        var granted = true
+//
         for (result in grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED)
-                granted = false
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                DevLog.error(this, LOG_TAG, "Permission is not granted!")
+            }
         }
 
         //find<TextView>(R.id.no_permissions_view).visibility = if (granted) View.GONE else View.VISIBLE;
@@ -395,14 +336,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
         if (muteAllMenuItem != null) {
-            muteAllMenuItem.isVisible = settings.enableNotificationMute
+            muteAllMenuItem.isVisible = true
             muteAllMenuItem.isEnabled = adapter.anyForMute
         }
 
         val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
         if (dismissedEventsMenuItem != null) {
-            dismissedEventsMenuItem.isEnabled = settings.keepHistory
-            dismissedEventsMenuItem.isVisible = settings.keepHistory
+            dismissedEventsMenuItem.isEnabled = true
+            dismissedEventsMenuItem.isVisible = true
         }
 
         val dismissAll = menu.findItem(R.id.action_dismiss_all)
@@ -425,7 +366,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         when (item.itemId) {
             R.id.action_snooze_all ->
                 startActivity(
-                        Intent(this, SnoozeActivity::class.java)
+                        Intent(this, SnoozeAllActivity::class.java)
                                 .putExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, !adapter.hasActiveEvents)
                                 .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -441,7 +382,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             R.id.action_settings -> {
                 shouldForceRepost = true // so onResume would re-post everything
                 startActivity(
-                        Intent(this, SettingsActivity::class.java)
+                        Intent(this, SettingsActivityNew::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
@@ -470,12 +411,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun reloadData() {
 
         background {
-            if (!settings.keepHistory) {
-                DismissedEventsStorage(this).use { it.clearHistory() }
-            }
-            else {
-                DismissedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), settings.keepHistoryMilliseconds) }
-            }
+            DismissedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
 
             val events =
                     EventsStorage(this).use {
@@ -532,36 +468,13 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         reloadData()
     }
 
-//    @Suppress("unused", "UNUSED_PARAMETER")
-//    fun onReloadButtonClick(v: View) {
-//        reloadLayout.visibility = View.GONE;
-//        reloadData();
-//    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onRevertToCardViewClick(v: View) {
-        settings.useCompactView = false
-        settings.showNewStyleMessage = false
-
-        val intent = intent
-        finish()
-        startActivity(intent)
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onOKWithNewStyleClick(v: View) {
-        settings.showNewStyleMessage = false
-        newStyleMessageLayout.visibility = View.GONE
-    }
-
     override fun onScrollPositionChange(newPos: Int) {
 
         val undoSense = lastEventDismissalScrollPosition
         if (undoSense != null) {
             if (Math.abs(undoSense - newPos) > undoDisappearSensitivity) {
                 lastEventDismissalScrollPosition = null
-                if (useCompactView)
-                    adapter.clearUndoState()
+                adapter.clearUndoState()
             }
         }
     }
@@ -579,20 +492,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         val event = adapter.getEventAtPosition(position, eventId)
 
         if (event != null && !event.isSpecial) {
+           startActivity(
+                    Intent(this, ViewEventActivity::class.java)
+                            .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
+                            .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
+                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
+                            .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-            if (settings.useCompactView) {
-                startActivity(
-                        Intent(this, SnoozeActivity::class.java)
-                                .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
-                                .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
-                                .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)
-                                .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-            }
-            else {
-                CalendarIntents.viewCalendarEvent(this, event)
-            }
         }
     }
 
@@ -646,7 +553,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             startActivity(
-                    Intent(this, SnoozeActivity::class.java)
+                    Intent(this, ViewEventActivity::class.java)
                             .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
                             .putExtra(Consts.INTENT_EVENT_ID_KEY, event.eventId)
                             .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, event.instanceStartTime)

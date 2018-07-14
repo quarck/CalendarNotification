@@ -20,15 +20,28 @@
 package com.github.quarck.calnotify.notification
 
 import android.app.IntentService
+import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.widget.Toast
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.textutils.EventFormatter
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifierService
 
+class DisplayToast(private val context: Context, internal var text: String) : Runnable {
+    override fun run() {
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    }
+}
+
 class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeService") {
+
+    var handler = Handler()
 
     override fun onHandleIntent(intent: Intent?) {
         DevLog.debug(LOG_TAG, "onHandleIntent")
@@ -36,38 +49,63 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
         if (intent != null) {
 
             val isSnoozeAll = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_KEY, false)
+            val isSnoozeAllCollapsed = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_COLLAPSED_KEY, false)
 
-            if (!isSnoozeAll) {
+            if (isSnoozeAll){
+                DevLog.info(this, LOG_TAG, "Snooze all from notification request")
+
+                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
+
+                if (ApplicationController.snoozeAllEvents(this, snoozeDelay, false, true) != null) {
+                    DevLog.info(this, LOG_TAG, "all visible snoozed by $snoozeDelay")
+                    onSnoozedBy(snoozeDelay)
+                }
+
+                UINotifierService.notifyUI(this, true);
+            }
+            else if (isSnoozeAllCollapsed) {
+                DevLog.info(this, LOG_TAG, "Snooze all collapsed from notification request")
+
+                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
+
+                if (ApplicationController.snoozeAllCollapsedEvents(this, snoozeDelay, false, true) != null) {
+                    DevLog.info(this, LOG_TAG, "all collapsed snoozed by $snoozeDelay")
+                    onSnoozedBy(snoozeDelay)
+                }
+
+                UINotifierService.notifyUI(this, true);
+            }
+            else {
                 val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
                 val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
                 val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
                 val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
 
                 if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
-                    if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null)
+                    if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null) {
                         DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime snoozed by $snoozeDelay")
+                        onSnoozedBy(snoozeDelay)
+                    }
 
                     UINotifierService.notifyUI(this, true);
                 } else {
                     DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
                 }
             }
-            else {
-                DevLog.info(this, LOG_TAG, "Snooze all from notification request")
 
-                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
-
-                if (ApplicationController.snoozeAllEvents(this, snoozeDelay, false, true) != null)
-                    DevLog.info(this, LOG_TAG, "all visible snoozed by $snoozeDelay")
-
-                UINotifierService.notifyUI(this, true);
-            }
         }
         else {
             DevLog.error(this, LOG_TAG, "Intent is null!")
         }
 
         ApplicationController.cleanupEventReminder(this)
+    }
+
+    private fun onSnoozedBy(duration: Long) {
+        val formatter = EventFormatter(this)
+        val format = getString(R.string.event_snoozed_by)
+        val text = String.format(format, formatter.formatTimeDuration(duration, 60L))
+        handler.post(DisplayToast(this, text))
     }
 
     companion object {

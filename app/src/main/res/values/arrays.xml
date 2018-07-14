@@ -29,7 +29,7 @@
         <item>Sunday</item>
     </string-array>
 
-    <string-array
+    <integer-array
         name="days_of_week_values">
         <item>2</item>
         <item>3</item>
@@ -38,7 +38,7 @@
         <item>6</item>
         <item>7</item>
         <item>1</item>
-    </string-array>
+    </integer-array>
 
     <integer-array
         name="default_reminder_intervals_milliseconds_values">

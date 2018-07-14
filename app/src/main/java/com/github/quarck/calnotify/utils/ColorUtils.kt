@@ -61,7 +61,7 @@ data class RGB(val r: Int, val g: Int, val b: Int) {
 }
 
 
-fun Int.adjustCalendarColor(darker: Boolean): Int {
+fun Int.adjustCalendarColor(darker: Boolean = true): Int {
 
     var (r, g, b) = RGB(this)
 

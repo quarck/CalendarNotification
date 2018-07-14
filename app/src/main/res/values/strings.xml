@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Calendar Notifications</string>
 
@@ -60,9 +60,11 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="yesterday">Yesterday</string>
     <string name="change_event_time">Change event time</string>
+    <string name="change_event_time_repeating_event">Change event time (creates event copy for repeating events)</string>
     <string name="one_hour_from_now">Move next hour</string>
     <string name="same_time_tomorrow">Move next day</string>
     <string name="next_week_same_day">Move next week</string>
+    <string name="move_four_weeks">Move by 4 weeks</string>
     <string name="custom_pick_a_date">Custom (pick a date)</string>
     <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
@@ -113,8 +115,6 @@
     <string name="max_reminders_summary">Maximum number of reminders to fire, 0 for indefinite</string>
 
     <string name="pebble_notification_title">Calendar</string>
-    <string name="heads_up_notification">Heads-up Notification</string>
-    <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
     <string name="change_all">Change All</string>
@@ -130,8 +130,6 @@
     <string name="change_all_title">Change all events</string>
 
     <string name="led_color">LED Color</string>
-    <string name="wake_screen_title">Wake screen</string>
-    <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
 
     <string name="error_cannot_parse_pattern">Cannot parse this pattern</string>
     <string name="quiet_time_from">Quiet time from</string>
@@ -201,9 +199,6 @@
     <string name="vibration_pattern">Vibration pattern</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2500ms</string>
-    <string name="led_on_time">LED On Time:</string>
-    <string name="led_off_time">LED Off Time:</string>
-    <string name="led_pattern">LED Pattern</string>
 
     <string name="milliseconds_suffix">ms</string>
     <string name="compact_layout">Use compact view</string>
@@ -251,7 +246,8 @@
     <string name="collapse_everything">Collapse everything on exceeding</string>
     <string name="collapse_everything_summary">When number of total active notifications exceeds max notifications, everything would be collapsed into a single group notification</string>
 
-    <string name="multiple_events_single_notification">%d calendar events</string>
+    <string name="multiple_events_single_notification" formatted="false">%d calendar events</string>
+    <string name="reminder_at" formatted="false"> (reminder at %s)</string>
     <string name="advanced">Advanced</string>
 
     <string name="open_wiki">OPEN WIKI</string>
@@ -306,8 +302,6 @@
     <string name="reminder_fallback_method_summary">Try selecting this if reminders sound doesn\'t work</string>
     <string name="reminder_custom_ringtone">Custom ringtone</string>
     <string name="reminder_custom_vibration">Custom vibration</string>
-    <string name="quiet_hours_mute_led">Mute LED</string>
-    <string name="quiet_hours_mute_led_summary">Led notification would be disabled during quiet hours</string>
 
     <string name="reminder_you_have_missed_event">Reminder: you have missed event</string>
     <string name="reminder_you_have_missed_events">Reminder: you have missed events</string>
@@ -325,8 +319,8 @@
     <string name="default_all_day_reminder_time">Default all day reminder</string>
     <string name="default_all_day_reminder_time_summary">Default reminder time for all day events with no reminders, in hours before the event time (00:00:00 of the day of event)\nExample:\n\n * \'-8\' means notify at 8am on the day of event\n\n * \'7\' means seven hours before 00:00 of the day of event, e.g. 5pm on the day before</string>
     <string name="default_all_day_reminder_time_summary_short">Default reminder time for all day events with no reminders</string>
-    <string name="reminder_custom_ringtone_summary">Use custom ringtone for notifications</string>
-    <string name="reminder_custom_vibration_summary">Use custom vibration for notifications</string>
+    <string name="reminder_custom_ringtone_summary">Use custom ringtone for notifications\n\nNOTE: custom ringtone requires separate reminder notification to be used</string>
+    <string name="reminder_custom_vibration_summary">Use custom vibration for notificationsn\nNOTE: custom vibration requires separate reminder notification to be used</string>
 
     <string name="special_event_title">Warning: due events skipped</string>
     <string name="special_event_detail_format" formatted="false">Only %d of %d due events displayed</string>
@@ -378,8 +372,6 @@
     <string name="reminders_play_directly_summary">Do not post reminder notifications</string>
     <string name="allow_notification_swipe_title">Allow notification swipe</string>
     <string name="allow_notification_swipe_summary">Use notification swipe instead of \'dismiss\' action to dismiss the event</string>
-    <string name="separate_reminder_notification_title">Separate reminder notification</string>
-    <string name="separate_reminder_notification_summary">Would remind via posting a sepaarate short-living reminder notification (auto-dismissed in a few seconds)</string>
 
     <string name="instructions_for_android_wear">Instructions for Android Wear</string>
     <string name="android_wear_actual_instruction">
@@ -543,6 +535,42 @@
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
     <string name="create_event">Create Event</string>
+
+    <string name="notification_channel_default">Calendar Events</string>
+    <string name="notification_channel_default_desc">Default channel for calendar events</string>
+    <string name="notification_channel_alarm">Alarm Notifications</string>
+    <string name="notification_channel_alarm_desc">Notifications using Alarm tone</string>
+    <string name="notification_channel_silent">Silent Notifications</string>
+    <string name="notification_channel_silent_desc">Notifications using no sound or vibration</string>
+
+    <string name="notification_channel_reminders">Reminder notifications</string>
+    <string name="notification_channel_reminders_desc">Reminders for missed events</string>
+    <string name="notification_channel_alarm_reminders">Alarm Reminders</string>
+    <string name="notification_channel_alarm_reminders_desc">Reminders for missed events played with alarm volume</string>
+    <string name="event_snoozed_by" formatted="false">Event snoozed by %s</string>
+    <string name="debug_notifications">Debug notifications</string>
+    <string name="debug_notifications_description">Used for app debugging</string>
+    <string name="plus_more" formatted="false">+%d more events</string>
+    <string name="delete_event">Delete</string>
+    <string name="delete_event_question">Delete Event?</string>
+    <string name="view_event">View Event</string>
+    <string name="content_desc_menu">menu</string>
+    <string name="regular_notification_settings">Main channel</string>
+    <string name="quiet_hours_notification_settings">Quiet hours channel</string>
+    <string name="alarm_notification_settings">Alarms channel</string>
+    <string name="reminder_notification_settings">Reminders channel</string>
+    <string name="alarm_reminder_notification_settings">Alarm reminders channel</string>
+    <string name="content_desc_navigate_back">navigate back</string>
+    <string name="main_notifications">Main notifications</string>
+    <string name="reminder_notifications">Reminder notifications</string>
+    <string name="other">Other…</string>
+    <string name="owner_dummy_local">Local</string>
+    <string name="no_account">No account</string>
+    <string name="dummy">Dummy</string>
+    <string name="unknown">Unknown</string>
+
+    <!-- do not translate the line below - only used for debugging -->
+    <string name="debug_long_long_title" translatable="false" tools:ignore="Typos">Long long long long long long long long long long long long long long long long long long long long title</string>
 
 </resources>
 

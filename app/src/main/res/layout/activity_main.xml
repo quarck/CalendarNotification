@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right|end"
         android:layout_margin="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:elevation="@dimen/toolbar_elevation"
         app:backgroundTint="#134093"
         tools:targetApi="m"

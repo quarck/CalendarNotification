@@ -343,7 +343,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return formatTimePoint(event.snoozedUntil)
     }
 
-    fun formatTimeDuration(time: Long, granularity: Long = 1L): String {
+    override fun formatTimeDuration(time: Long, granularity: Long): String {
         val num: Long
         val unit: String
         var timeSeconds = time / 1000L;

@@ -19,13 +19,18 @@
 
 package com.github.quarck.calnotify.prefs
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
@@ -56,54 +61,54 @@ class NumberPickerController(val view: View, val minValue: Int, val maxValue: In
         }
 }
 
-class MaxRemindersPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
+class MaxRemindersPreference(val context: Context, val settings: Settings, var inflater: LayoutInflater) {
 
-    internal var value = 0
+    internal var value = settings.maxNumberOfReminders
 
     internal lateinit var picker: NumberPickerController
 
-    init {
-        dialogLayoutResource = R.layout.dialog_max_reminders
-        setPositiveButtonText(android.R.string.ok)
-        setNegativeButtonText(android.R.string.cancel)
-        dialogIcon = null
+    fun create(): Dialog {
+
+        val builder = AlertDialog.Builder(context)
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        val rootView: View = inflater.inflate(R.layout.dialog_max_reminders, null)
+
+        onBindDialogView(rootView)
+
+        builder.setView(rootView)
+
+        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(true)
+        })
+
+        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(false)
+        })
+
+        return builder.create()
     }
 
-    override fun onBindDialogView(view: View) {
-        super.onBindDialogView(view)
-
+    fun onBindDialogView(view: View) {
         picker = NumberPickerController(view, 0, 999)
         picker.value = value
     }
 
-    override fun onClick() {
-        super.onClick()
-        picker.clearFocus()
-    }
+//    override fun onClick() {
+//        super.onClick()
+//        picker.clearFocus()
+//    }
 
-    override fun onDialogClosed(positiveResult: Boolean) {
+    fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
             picker.clearFocus()
             value = picker.value
-            persistString("$value") // backward compatibility
+            settings.maxNumberOfReminders = value
         }
-    }
-
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        if (restorePersistedValue) {
-            // Restore existing state
-            value = this.getPersistedString("").toIntOrNull() ?: 0
-        }
-        else if (defaultValue != null && defaultValue is String) {
-            // Set default state from the XML attribute
-            value = defaultValue.toIntOrNull() ?: 0
-            persistString("$value")
-        }
-    }
-
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getString(index)
     }
 
     companion object {

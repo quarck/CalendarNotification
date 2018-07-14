@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -30,6 +29,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
@@ -382,23 +382,23 @@ open class EditEventActivity : AppCompatActivity() {
 
         tagsLayout = find<LinearLayout?>(R.id.add_event_layout_buttons) ?: throw Exception("Can't find add_event_layout_buttons")
 
-        updateTags(settings, true)
+        updateTags(true)
 
-        if (originalEvent == null && settings.enableTagButtons) {
+        if (originalEvent == null) {
 
             taskTagButton.setOnClickListener( {
                 isTask = !isTask
-                updateTags(settings, false)
+                updateTags(false)
             })
 
             muteTagButton.setOnClickListener( {
                 isMuted = !isMuted
-                updateTags(settings, false)
+                updateTags(false)
             })
 
             alarmTagButton.setOnClickListener( {
                 isAlarm = !isAlarm
-                updateTags(settings, false)
+                updateTags(false)
             })
         }
 
@@ -468,12 +468,10 @@ open class EditEventActivity : AppCompatActivity() {
             accountName.text = calendar.name
 
             val color = originalEvent?.color ?: calendar.color
-            eventTitleLayout.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
-            eventTitleText.background = ColorDrawable(color.adjustCalendarColor(settings.darkerCalendarColors))
+            eventTitleLayout.background = ColorDrawable(color.adjustCalendarColor())
+            eventTitleText.background = ColorDrawable(color.adjustCalendarColor())
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = color.scaleColor(0.7f)
-            }
+            window.statusBarColor = color.scaleColor(0.7f)
 
             from = state.from
             to = state.to
@@ -497,7 +495,7 @@ open class EditEventActivity : AppCompatActivity() {
 
             updateDateTimeUI();
             updateReminders()
-            updateTags(settings, true)
+            updateTags(true)
         }
         else if (eventToEdit != null) {
 
@@ -516,12 +514,10 @@ open class EditEventActivity : AppCompatActivity() {
             switchAllDay.isEnabled = false
 
             accountName.text = calendar.name
-            eventTitleLayout.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
-            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor(settings.darkerCalendarColors))
+            eventTitleLayout.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
+            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
-            }
+            window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
 
             eventTitleText.setText(eventToEdit.title)
             note.setText(eventToEdit.desc)
@@ -559,16 +555,14 @@ open class EditEventActivity : AppCompatActivity() {
         else {
             // Initialize default values
             accountName.text = calendar.name
-            eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
-            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+            eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor())
+            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor())
 
             if (receivedSharedText.isNotEmpty()) {
                 eventTitleText.setText(receivedSharedText)
             }
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = calendar.color.scaleColor(0.7f)
-            }
+            window.statusBarColor = calendar.color.scaleColor(0.7f)
 
             // Set default date and time
             var currentTime = System.currentTimeMillis()
@@ -580,7 +574,7 @@ open class EditEventActivity : AppCompatActivity() {
             from.second = 0
 
             to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-            to.addMinutes(settings.defaultNewEventDurationMinutes)
+            to.addMinutes(Consts.DEFAULT_NEW_EVENT_DURATION_MINUTES)
 
             DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
@@ -663,9 +657,9 @@ open class EditEventActivity : AppCompatActivity() {
         }
     }
 
-    fun updateTags(settings: Settings, updateLayouts: Boolean) {
+    fun updateTags(updateLayouts: Boolean) {
 
-        val enableTags = originalEvent == null && settings.enableTagButtons
+        val enableTags = originalEvent == null
 
         if (updateLayouts) {
             tagsLayout.visibility = if (enableTags) View.VISIBLE else View.GONE
@@ -674,25 +668,17 @@ open class EditEventActivity : AppCompatActivity() {
         if (enableTags) {
 
             if (updateLayouts) {
-                taskTagButton.visibility = if (settings.enableNotificationTaskTags) View.VISIBLE else View.GONE
-                muteTagButton.visibility = if (settings.enableNotificationMuteTags) View.VISIBLE else View.GONE
-                alarmTagButton.visibility = if (settings.enableNotificationAlarmTags) View.VISIBLE else View.GONE
+                taskTagButton.visibility = View.VISIBLE
+                muteTagButton.visibility = View.VISIBLE
+                alarmTagButton.visibility = View.VISIBLE
             }
 
-            if (isTask)
-                taskTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-            else
-                taskTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+            val selectedColor = ContextCompat.getColor(this, R.color.event_selected_tag_color)
+            val unselectedColor = ContextCompat.getColor(this, R.color.event_unselected_tag_color)
 
-            if (isMuted)
-                muteTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-            else
-                muteTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
-
-            if (isAlarm)
-                alarmTagButton.setTextColor(resources.getColor(R.color.event_selected_tag_color))
-            else
-                alarmTagButton.setTextColor(resources.getColor(R.color.event_unselected_tag_color))
+            taskTagButton.setTextColor(if (isTask) selectedColor else unselectedColor)
+            muteTagButton.setTextColor(if (isMuted) selectedColor else unselectedColor)
+            alarmTagButton.setTextColor(if (isAlarm) selectedColor else unselectedColor)
         }
     }
 
@@ -769,13 +755,10 @@ open class EditEventActivity : AppCompatActivity() {
 //                eventTitleText.background = ColorDrawable(
 //                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
+                window.statusBarColor = calendar.color.scaleColor(0.7f)
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    window.statusBarColor = calendar.color.scaleColor(0.7f)
-                }
-
-                eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
-                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
+                eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor())
+                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor())
 
             }
         }
@@ -884,7 +867,7 @@ open class EditEventActivity : AppCompatActivity() {
         }
         else {
             to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-            to.addMinutes(settings.defaultNewEventDurationMinutes)
+            to.addMinutes(Consts.DEFAULT_NEW_EVENT_DURATION_MINUTES)
         }
 
         updateDateTimeUI()
@@ -1148,8 +1131,8 @@ open class EditEventActivity : AppCompatActivity() {
 
         val (hr, min) = currentReminder.allDayHourOfDayAndMinute
 
-        timePicker.hourCompat = hr
-        timePicker.minuteCompat = min
+        timePicker.hour = hr
+        timePicker.minute = min
 
 
         val builder = AlertDialog.Builder(this)
@@ -1163,8 +1146,8 @@ open class EditEventActivity : AppCompatActivity() {
             timePicker.clearFocus()
 
             val daysBefore = numberPicker.value
-            val pickerHr = timePicker.hourCompat
-            val pickerMin = timePicker.minuteCompat
+            val pickerHr = timePicker.hour
+            val pickerMin = timePicker.minute
 
             val daysInMilliseconds = daysBefore * Consts.DAY_IN_MILLISECONDS
             val hrMinInMilliseconds = pickerHr * Consts.HOUR_IN_MILLISECONDS + pickerMin * Consts.MINUTE_IN_MILLISECONDS
@@ -1303,31 +1286,16 @@ open class EditEventActivity : AppCompatActivity() {
 
         textView.setOnClickListener (this::onNotificationClick)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            textView.setTextAppearance(android.R.style.TextAppearance_Medium)
-        }
-        else {
-            @Suppress("DEPRECATION")
-            textView.setTextAppearance(this, android.R.style.TextAppearance_Medium)
-        }
+        textView.setTextAppearance(android.R.style.TextAppearance_Medium)
 
         textView.setTextColor(notificationPrototype.textColors)
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            textView.setPaddingRelative(
-                    notificationPrototype.paddingStart,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingEnd,
-                    notificationPrototype.paddingBottom)
-        }
-        else {
-            textView.setPadding(
-                    notificationPrototype.paddingLeft,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingRight,
-                    notificationPrototype.paddingBottom)
-        }
+        textView.setPaddingRelative(
+                notificationPrototype.paddingStart,
+                notificationPrototype.paddingTop,
+                notificationPrototype.paddingEnd,
+                notificationPrototype.paddingBottom)
 
         textView.isClickable = true
         textView.background = notificationPrototype.background

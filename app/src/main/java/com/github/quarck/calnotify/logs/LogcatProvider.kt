@@ -41,10 +41,10 @@ object LogcatProvider {
                     "logcat",
                     "-v", "threadtime",
                     "-d",
-                    "-b", "main",
-                    "-b", "requests",
-                    "-b", "system",
-                    "*:V")
+//                    "-b", "main",
+//                    "-b", "requests",
+//                    "-b", "system",
+                    "*:D")
 
             val logcatProc: Process? = Runtime.getRuntime().exec(args)
 

@@ -41,14 +41,3 @@ class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiv
 
 class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
 }
-
-class ManualEventAlarmPerioidicRescanBroadcastReceiver : BroadcastReceiver() {
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-
-        if (context == null || intent == null)
-            return
-
-        ApplicationController.CalendarMonitor.onPeriodicRescanBroadcast(context, intent)
-    }
-}

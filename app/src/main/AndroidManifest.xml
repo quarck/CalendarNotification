@@ -30,51 +30,48 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:label="@string/settings_name"
-            android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme" />
+        <!--<activity-->
+            <!--android:name=".ui.SettingsActivity"-->
+            <!--android:label="@string/settings_name"-->
+            <!--android:parentActivityName=".ui.MainActivity"-->
+            <!--android:theme="@style/AppTheme" />-->
         <activity
             android:name=".ui.HelpAndFeedbackActivity"
             android:label="@string/help_feedback"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.SnoozeActivityNoRecents"
+            android:name=".ui.ViewEventActivityNoRecents"
             android:excludeFromRecents="true"
-            android:label="@string/title_activity_activity_snooze"
+            android:label="@string/view_event"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.SnoozeActivity"
-            android:label="@string/title_activity_activity_snooze"
+            android:name=".ui.ViewEventActivity"
+            android:label="@string/view_event"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
+            />
+
+        <activity
+            android:name=".ui.SnoozeAllActivity"
+            android:label="@string/snooze_all"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
-            android:parentActivityName=".ui.SettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme.NoActionBar">
-            >
             <intent-filter>
                 <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".prefs.AppStylePrefActivity"
-            android:label="@string/appearance"
-            android:parentActivityName=".ui.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            >
-            <intent-filter>
-                <action android:name="com.github.quarck.calnotify.prefs.AppStylePrefActivity" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".ui.TestActivity"
             android:label="@string/title_activity_activity_test_buttons_and_to_do"
@@ -109,9 +106,43 @@
             android:parentActivityName=".ui.MainActivity"
             android:label="@string/create_event"
             >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
+        <activity android:name=".ui.SettingsActivityNew"
+            android:label="@string/settings_name"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme"
+            />
 
-
+        <activity android:name=".prefs.activities.BehaviorSettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
+            android:theme="@style/AppTheme"
+            android:label="@string/app_behavior"
+            />
+        <activity android:name=".prefs.activities.MiscSettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
+            android:theme="@style/AppTheme"
+            android:label="@string/misc_settings"
+            />
+        <activity android:name=".prefs.activities.NotificationSettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
+            android:theme="@style/AppTheme"
+            android:label="@string/notification_settings"
+            />
+        <activity android:name=".prefs.activities.QuietHoursSettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
+            android:label="@string/quiet_hours_section"
+            android:theme="@style/AppTheme"
+            />
+        <activity android:name=".prefs.activities.SnoozeSettingsActivity"
+            android:parentActivityName=".ui.SettingsActivityNew"
+            android:theme="@style/AppTheme"
+            android:label="@string/snooze_presets"
+            />
 
 
         <provider
@@ -124,12 +155,15 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <service android:name=".calendarmonitor.CalendarMonitorService" />
+        <service android:name=".calendarmonitor.CalendarMonitorIntentService" />
+        <service android:name=".calendarmonitor.CalendarMonitorOneTimeJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".calendarmonitor.CalendarMonitorPeriodicJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".notification.NotificationActionMuteToggleService" />
         <service android:name=".ui.UINotifierService" />
-        <service android:name=".notification.TextToSpeechService" />
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>
@@ -190,7 +224,6 @@
         <receiver android:name=".broadcastreceivers.SnoozeExactAlarmBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.ReminderExactAlarmBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.ManualEventExactAlarmBroadcastReceiver" />
-        <receiver android:name=".broadcastreceivers.ManualEventAlarmPerioidicRescanBroadcastReceiver" />
         <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />

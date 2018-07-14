@@ -40,7 +40,13 @@ interface EventNotificationManagerInterface {
 
     fun onAllEventsSnoozed(context: Context)
 
-    fun postEventNotifications(context: Context, formatter: EventFormatterInterface, force: Boolean, primaryEventId: Long?);
+    fun postEventNotifications(
+            context: Context,
+            formatter: EventFormatterInterface? = null,
+            isRepost: Boolean = false,
+            primaryEventId: Long? = null,
+            isReminder: Boolean = false
+    );
 
     fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean)
 

@@ -39,7 +39,6 @@ import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.isKitkatOrAbove
 import java.io.File
 import java.io.PrintWriter
 
@@ -56,14 +55,9 @@ class HelpAndFeedbackActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        val isKK = isKitkatOrAbove
         val shouldKeepLogs = Settings(this).shouldKeepLogs
 
-        if (!isKK || !shouldKeepLogs) {
-            // this is to comply with privacy policy. KitKat and above
-            // would allow us accessing only our own logs
-            // we don't want to grab any other logs accidently and too lazy
-            // to implement proper filter :)
+        if (!shouldKeepLogs) {
             findOrThrow<CheckBox>(R.id.checkboxIncludeLogs).visibility = View.GONE
             findOrThrow<TextView>(R.id.textViewLogFileNote).visibility = View.GONE
         } else {

@@ -25,20 +25,26 @@ import android.content.Intent
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.utils.isLollipopOrAbove
 
 
 object CalendarIntents {
 
     private const val LOG_TAG = "CalendarIntents"
 
+    private fun intentForAction(action: String, eventId: Long): Intent {
+
+        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
+        val intent = Intent(action).setData(uri)
+
+        return intent
+    }
+
     private fun intentForAction(action: String, event: EventAlertRecord): Intent {
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
         val intent = Intent(action).setData(uri)
 
-        val shouldAddEventTime =
-                event.isRepeating || !isLollipopOrAbove
+        val shouldAddEventTime = event.isRepeating
 
         val canAddEventTime =
                 event.instanceStartTime != 0L &&
@@ -55,15 +61,9 @@ object CalendarIntents {
         return intent
     }
 
-    fun getCalendarViewIntent(event: EventAlertRecord)
-            = intentForAction(Intent.ACTION_VIEW, event)
-
-    fun getCalendarEditIntent(event: EventAlertRecord)
-            = intentForAction(Intent.ACTION_EDIT, event)
-
     fun viewCalendarEvent(context: Context, event: EventAlertRecord)
-            = context.startActivity(getCalendarViewIntent(event))
+            = context.startActivity(intentForAction(Intent.ACTION_VIEW, event))
 
-    fun editCalendarEvent(context: Context, event: EventAlertRecord)
-            = context.startActivity(getCalendarEditIntent(event))
+    fun viewCalendarEvent(context: Context, eventId: Long)
+            = context.startActivity(intentForAction(Intent.ACTION_VIEW, eventId))
 }

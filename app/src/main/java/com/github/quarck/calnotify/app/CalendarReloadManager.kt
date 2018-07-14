@@ -63,7 +63,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
         val currentTime = System.currentTimeMillis()
 
-        val settings = Settings(context)
+        //val settings = Settings(context)
 
         val eventsToAutoDismiss = arrayListOf<ReloadCalendarResult>()
         val eventsToUpdate = arrayListOf<ReloadCalendarResult>()
@@ -72,7 +72,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         for (event in events) {
 
             try {
-                val reloadResult = reloadCalendarEventAlert(context, settings, calendar, event, currentTime, movedHandler)
+                val reloadResult = reloadCalendarEventAlert(context, calendar, event, currentTime, movedHandler)
 
                 when (reloadResult.code) {
                 // nothing required
@@ -110,10 +110,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                     EventDismissType.AutoDismissedDueToCalendarMove,
                     true
             )
-
-            if (settings.debugNotificationAutoDismiss) {
-                ApplicationController.postNotificationsAutoDismissedDebugMessage(context)
-            }
         }
 
         if (!eventsToUpdate.isEmpty()) {
@@ -173,10 +169,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
             movedHandler: EventMovedHandler
     ): Boolean {
 
-        val settings = Settings(context)
-
-        if (!settings.notificationAutoDismissOnReschedule)
-            return false
+        //val settings = Settings(context)
 
         val events = db.events.filter {
             event ->
@@ -222,9 +215,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
                     true
             )
 
-            if (settings.debugNotificationAutoDismiss) {
-                ApplicationController.postNotificationsAutoDismissedDebugMessage(context)
-            }
         }
 
         return changedDetected
@@ -243,7 +233,6 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
     fun reloadCalendarEventAlert(
             context: Context,
-            settings: Settings,
             calendarProvider: CalendarProviderInterface,
             event: EventAlertRecord,
             currentTime: Long,
@@ -252,8 +241,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
         // Quick short-cut for non-repeating requests: quickly check if instance time is different now
         // - can't use the same for repeating requests
-        if (settings.notificationAutoDismissOnReschedule &&
-                movedHandler != null &&
+        if (movedHandler != null &&
                 !event.isRepeating) {
 
             val newEvent = calendarProvider.getEvent(context, event.eventId)

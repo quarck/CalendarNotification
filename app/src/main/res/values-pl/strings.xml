@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Calendar Notifications Plus</string>
+    <string name="app_name">Calendar Notifications</string>
 
     <string name="main_activity_title">Powiadomienia kalendarza</string>
 
@@ -113,9 +113,7 @@
     <string name="max_reminders_summary">Ustawia maksymalną liczbę przypomnień. \n\'Zero\' oznacza przypominanie bez końca, aż do odrzucenia.</string>
 
     <string name="pebble_notification_title">Kalendarz</string>
-    <string name="heads_up_notification">Powiadomienia na górze ekranu</string>
-    <string name="heads_up_notification_summary">Wyświetlaj zanikające powiadomienia w górnej części ekranu.</string>
-	
+
     <string name="projectPageOnGitHub">Strona projektu na GitHub</string>
 	
     <string name="snooze_all">Odłóż wszystkie</string>
@@ -125,8 +123,6 @@
     <string name="change_all_title">Zmień wszystkie wydarzenia</string>
 
     <string name="led_color">Kolor diody</string>
-    <string name="wake_screen_title">Wybudzanie ekranu</string>
-    <string name="wake_screen_summary">Wybudzaj ekran na krótki czas, gdy nadejdzie powiadomienie.</string>
 
     <string name="error_cannot_parse_pattern">Nie można przetworzyć z powodu błędnych danych</string>
     <string name="quiet_time_from">Początek godzin ciszy</string>
@@ -201,9 +197,6 @@
     <string name="vibration_pattern">Wzór dla wibracji</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2500ms</string>
-    <string name="led_on_time">Włącz diodę na:</string>
-    <string name="led_off_time">Wyłącz diodę na:</string>
-    <string name="led_pattern">Wzór dla diody</string>
 
     <string name="milliseconds_suffix">ms</string>
     <string name="compact_layout">Użyj układu skróconego</string>
@@ -307,8 +300,6 @@
     <string name="reminder_fallback_method_summary">Spróbuj tego ustawienia jeśli dźwięk przypomnień nie działa.</string>
     <string name="reminder_custom_ringtone">Dzwonek niestandardowy</string>
     <string name="reminder_custom_vibration">Wibracje niestandardowe</string>
-    <string name="quiet_hours_mute_led">Wyłącz diodę</string>
-    <string name="quiet_hours_mute_led_summary">Powiadomienia diodą nie będą aktywne podczas godzin ciszy.</string>
 
     <string name="reminder_you_have_missed_event">Przypomnienie: przeoczyłeś wydarzenie</string>
     <string name="reminder_you_have_missed_events">Przypomnienie: przeoczyłeś wydarzenia</string>
@@ -380,8 +371,6 @@
     <string name="reminders_play_directly_summary">Nie przesyłaj przypomnień powiadomień</string>
     <string name="allow_notification_swipe_title">Przesuń, aby odrzucić</string>
     <string name="allow_notification_swipe_summary">Przesuwaj powiadomienie, aby je odrzucić. Wyłącza przycisk \'Odrzuć\' w powiadomieniu.</string>
-    <string name="separate_reminder_notification_title">Osobne przypomnienia</string>
-    <string name="separate_reminder_notification_summary">Wyświetlaj dodatkowe, zanikające powiadomienia o przeoczonych powiadomieniach.</string>
 
     <string name="instructions_for_android_wear">Instrukcje dla Android Wear</string>
     <string name="android_wear_actual_instruction">

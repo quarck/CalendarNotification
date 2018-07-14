@@ -19,23 +19,31 @@
 
 package com.github.quarck.calnotify.prefs
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioButton
 import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.hourCompat
-import com.github.quarck.calnotify.utils.minuteCompat
 
-class DefaultManualAllDayNotificationPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
+class DefaultManualAllDayNotificationPreference(
+        val context: Context,
+        var inflater: LayoutInflater,
+        defaultValue: Int,
+        val onNewValue: (Int)->Unit
+) {
 
-    internal var settingValue = 0
+    internal var settingValue = defaultValue
 
     internal lateinit var timePicker: TimePicker
     internal lateinit var radioButtonDayBefore: RadioButton
@@ -43,16 +51,31 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
 
     internal var isTwentyFourHour: Boolean = true
 
-    init {
-        dialogLayoutResource = R.layout.dialog_default_manual_all_day_notification
-        setPositiveButtonText(android.R.string.ok)
-        setNegativeButtonText(android.R.string.cancel)
-        dialogIcon = null
+    fun create(): Dialog {
+        val builder = AlertDialog.Builder(context)
 
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        val rootView: View = inflater.inflate(R.layout.dialog_default_manual_all_day_notification, null)
+
+        onBindDialogView(rootView)
+
+        builder.setView(rootView)
+
+        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(true)
+        })
+
+        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(false)
+        })
+
+        return builder.create()
     }
 
-    override fun onBindDialogView(view: View) {
-        super.onBindDialogView(view)
+    fun onBindDialogView(view: View) {
 
         timePicker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_notification_time_of_day)
         radioButtonDayBefore = view.findOrThrow<RadioButton>(R.id.radio_button_day_before)
@@ -64,55 +87,39 @@ class DefaultManualAllDayNotificationPreference(context: Context, attrs: Attribu
         if (settingValue < 0) {
             // Reminder on the day before
             val hrMin = Consts.DAY_IN_MINUTES + settingValue
-            timePicker.hourCompat = hrMin / 60
-            timePicker.minuteCompat = hrMin % 60
+            timePicker.hour = hrMin / 60
+            timePicker.minute = hrMin % 60
 
             radioButtonDayBefore.isChecked = true
             radioButtonDayOfEvent.isChecked = false
         }
         else {
             // Reminder at the day of event
-            timePicker.hourCompat = settingValue / 60
-            timePicker.minuteCompat = settingValue % 60
+            timePicker.hour = settingValue / 60
+            timePicker.minute = settingValue % 60
 
             radioButtonDayBefore.isChecked = false
             radioButtonDayOfEvent.isChecked = true
         }
     }
 
-    override fun onClick() {
-        super.onClick()
-        timePicker.clearFocus()
-    }
+//    override fun onClick() {
+//        super.onClick()
+//        timePicker.clearFocus()
+//    }
 
-    override fun onDialogClosed(positiveResult: Boolean) {
+    fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
             timePicker.clearFocus()
 
             val isDayBefore = radioButtonDayBefore.isChecked
-            val hrMin = timePicker.hourCompat * 60 + timePicker.minuteCompat
+            val hrMin = timePicker.hour * 60 + timePicker.minute
 
             settingValue = if (isDayBefore) hrMin - Consts.DAY_IN_MINUTES else hrMin
 
-            persistInt(settingValue)
+            onNewValue(settingValue)
         }
-    }
-
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        if (restorePersistedValue) {
-            // Restore existing state
-            settingValue = this.getPersistedInt(0)
-        }
-        else if (defaultValue != null && defaultValue is Int) {
-            // Set default state from the XML attribute
-            settingValue = defaultValue
-            persistInt(settingValue)
-        }
-    }
-
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        return a.getInteger(index, -480)
     }
 
     companion object {

@@ -39,7 +39,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         JustSkipRequest
     }
 
-    override fun onRescanFromService(context: Context, intent: Intent) {
+    override fun onRescanFromService(context: Context) {
 
         DevLog.debug(LOG_TAG, "onRescanFromService")
 

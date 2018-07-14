@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Calendar Notifications Plus</string>
+    <string name="app_name">Calendar Notifications</string>
 
     <string name="main_activity_title">Kalenderbenachrichtungen</string>
 
@@ -108,8 +108,6 @@
     <string name="max_reminders_summary">Maximale Anzahl der Erinnerungen, 0 für Unendlich.</string>
 
     <string name="pebble_notification_title">Kalender</string>
-    <string name="heads_up_notification">Benachrichtigungen</string>
-    <string name="heads_up_notification_summary">Zeige eine kurze Benachrichtigung als Hauptelement.</string>
     <string name="projectPageOnGitHub">GitHub Projektseite</string>
     <string name="snooze_all">Alle Termine schlummern</string>
     <string name="change_all">Alle Termine bearbeiten</string>
@@ -125,8 +123,6 @@
     <string name="change_all_title">Alle Termine bearbeiten</string>
 
     <string name="led_color">LED Farbe</string>
-    <string name="wake_screen_title">Bildschirm aktivieren</string>
-    <string name="wake_screen_summary">Bildschirm kurz aktivieren wenn eine Benachrichtigung fällig wird.</string>
 
     <string name="error_cannot_parse_pattern">Fehler beim Einlesen des Schemas</string>
     <string name="quiet_time_from">Ruhezeit von</string>
@@ -196,9 +192,6 @@
     <string name="vibration_pattern">Vibrationsmuster</string>
     <string name="_100ms">100ms</string>
     <string name="_2500ms">2,5s</string>
-    <string name="led_on_time">LED An:</string>
-    <string name="led_off_time">LED Aus:</string>
-    <string name="led_pattern">LED Muster</string>
 
     <string name="milliseconds_suffix">ms</string>
     <string name="compact_layout">Kompaktansicht verwenden</string>
@@ -300,8 +293,6 @@
     <string name="reminder_fallback_method_summary">Versuche dies, wenn der Benachrichtungs-Ton nicht funktioniert.</string>
     <string name="reminder_custom_ringtone">Benutzerdefinierter Klingelton</string>
     <string name="reminder_custom_vibration">Benutzerdefinierter Vibration</string>
-    <string name="quiet_hours_mute_led">Benachrichtungs-LED</string>
-    <string name="quiet_hours_mute_led_summary">Die LED wird in der Ruhezeit ausgeschaltet</string>
 
     <string name="reminder_you_have_missed_event">Erinnerung: Sie haben einen verpassten Termin</string>
     <string name="reminder_you_have_missed_events">Erinnerung: Sie haben verpasste Termine</string>
@@ -372,8 +363,6 @@
     <string name="reminders_play_directly_summary">Erinnerungenbenarchtigungen nicht anzeigen</string>
     <string name="allow_notification_swipe_title">Ablehnen Wischgeste</string>
     <string name="allow_notification_swipe_summary">Benachrichtigung wegwischen anstatt \'Schließen\'</string>
-    <string name="separate_reminder_notification_title">Extra Benachrichtigung</string>
-    <string name="separate_reminder_notification_summary">Zusätzlich mit einer kurzen extra Erinnerung benachrichtigen (diese extra Benachrichtigung schließt sich nach einigen Sekunden selbstständig)</string>
 
     <string name="instructions_for_android_wear">Beschreibung für Android Wear</string>
     <string name="android_wear_actual_instruction">

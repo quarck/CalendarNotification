@@ -20,10 +20,13 @@
 package com.github.quarck.calnotify.prefs
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
@@ -33,11 +36,9 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
-import com.github.quarck.calnotify.utils.isMarshmallowOrAbove
 
-class ReminderPatternPreference(context: Context, attrs: AttributeSet)
-    : DialogPreference(context, attrs)
-    , AdapterView.OnItemSelectedListener
+class ReminderPatternPreference(val context: Context, val settings: Settings, val inflater: LayoutInflater)
+    : AdapterView.OnItemSelectedListener
 {
     val SecondsIndex = 0
     val MinutesIndex = 1
@@ -45,7 +46,7 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     val DaysIndex = 3
 
     //internal var timeValueSeconds = 0
-    internal var reminderPatternMillis = longArrayOf(0)
+    internal var reminderPatternMillis = settings.remindersIntervalMillisPattern
     internal var simpleIntervalMode = true
 
     internal lateinit var view: View
@@ -57,15 +58,35 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     internal lateinit var layoutSimpleInterval: LinearLayout
     internal lateinit var layoutCustomPattern: LinearLayout
 
-    init {
-        dialogLayoutResource = R.layout.dialog_reminder_interval_configuration
-        setPositiveButtonText(android.R.string.ok)
-        setNegativeButtonText(android.R.string.cancel)
-        dialogIcon = null
+    fun create(): Dialog {
+
+        val builder = AlertDialog.Builder(context)
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        val rootView: View = inflater.inflate(R.layout.dialog_reminder_interval_configuration, null)
+
+        onBindDialogView(rootView)
+
+        builder.setView(rootView)
+
+        // Add action buttons
+        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(true)
+            // sign in the user ...
+        })
+
+        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener {
+            _, _ ->
+            onDialogClosed(false)
+            //this@LoginDialogFragment.getDialog().cancel()
+        })
+
+        return builder.create()
     }
 
-    override fun onBindDialogView(view: View) {
-        super.onBindDialogView(view)
+    fun onBindDialogView(view: View) {
 
         numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerTimeInterval)
         timeUnitsSpinners = view.findOrThrow<Spinner>(R.id.spinnerTimeIntervalUnit)
@@ -96,7 +117,7 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         updateLayout()
 
         checkboxCustomPattern.setOnClickListener {
-            v ->
+            _ ->
             simpleIntervalMode = !checkboxCustomPattern.isChecked
             updateLayout()
         }
@@ -118,17 +139,12 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
         }
     }
 
-    override fun onClick() {
-        super.onClick()
-        clearFocus()
-    }
-
     fun clearFocus() {
         numberPicker.clearFocus()
         timeUnitsSpinners.clearFocus()
     }
 
-    override fun onDialogClosed(positiveResult: Boolean) {
+    fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
             clearFocus()
@@ -143,7 +159,8 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
                 }
 
                 reminderPatternMillis = longArrayOf(simpleIntervalMillis)
-                persistString(PreferenceUtils.formatPattern(reminderPatternMillis))
+
+                settings.remindersIntervalMillisPattern = reminderPatternMillis
             }
             else {
                 val text = editTextCustomPattern.text.toString()
@@ -153,41 +170,13 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
                     reminderPatternMillis =
                             pattern.map { Math.max(it, Consts.MIN_REMINDER_INTERVAL_SECONDS*1000L) }
                                     .toLongArray()
-                    persistString(PreferenceUtils.formatPattern(reminderPatternMillis)) // some kind of 'cleanup' from user input
+                    settings.remindersIntervalMillisPattern = reminderPatternMillis// some kind of 'cleanup' from user input
                 }
                 else {
                     Toast.makeText(context, R.string.error_cannot_parse_pattern, Toast.LENGTH_LONG).show()
                 }
             }
         }
-    }
-
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        if (restorePersistedValue) {
-            // Restore existing state
-
-            val value = PreferenceUtils.parseSnoozePresets(this.getPersistedString("10m"))
-
-            if (value != null) {
-                reminderPatternMillis = value
-            }
-        }
-        else if (defaultValue != null && defaultValue is String) {
-            // Set default state from the XML attribute
-
-            val value = PreferenceUtils.parseSnoozePresets(defaultValue)
-
-            if (value != null) {
-                reminderPatternMillis = value
-            }
-            persistString(defaultValue)
-        }
-    }
-
-    @Suppress("UseExpressionBody")
-    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-        val ret = a.getString(index)
-        return ret ?: "10m"
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -223,6 +212,7 @@ class ReminderPatternPreference(context: Context, attrs: AttributeSet)
     override fun onNothingSelected(parent: AdapterView<*>) {
 
     }
+
 
     private var simpleIntervalSeconds: Int
         get() {

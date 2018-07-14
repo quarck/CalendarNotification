@@ -69,4 +69,8 @@ interface CalendarProviderInterface {
     fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean
 
     fun deleteEvent(context: Context, eventId: Long): Boolean
+
+    fun getCalendarById(context: Context, calendarId: Long): CalendarRecord?
+
+    fun createCalendarNotFoundCal(context: Context): CalendarRecord
 }

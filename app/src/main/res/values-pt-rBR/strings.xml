@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Calendar Notifications Plus</string>
+    <string name="app_name">Calendar Notifications</string>
 
     <string name="main_activity_title">Calendar Notifications</string>
 
@@ -107,8 +107,5 @@
 <!-- 'Akira Nóis ;) -->
 
     <string name="pebble_notification_title">Calendário</string>
-
-    <string name="heads_up_notification">Notificações Heads-up</string>
-    <string name="heads_up_notification_summary">Mostra brevemente o balão de notificação no topo da tela</string>
 
 </resources>

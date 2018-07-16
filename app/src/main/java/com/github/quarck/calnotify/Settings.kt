@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.utils.toIntOrNull
 
 data class NotificationSettingsSnapshot
 (
+        val notificationSwipeDoesSnooze: Boolean,
         val enableNotificationMute: Boolean,
         val appendEmptyAction: Boolean,
         val useAlarmStream: Boolean,
@@ -63,6 +64,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
             return ret;
         }
+
+    var notificationSwipeDoesSnooze: Boolean
+        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
+        set(value) = setBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, value)
 
     var notificationUseAlarmStream: Boolean
         get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
@@ -214,7 +219,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                ////notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
+                notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
                 enableNotificationMute = remindersEnabled,
                 appendEmptyAction = notificationAddEmptyAction,
                 useAlarmStream = notificationUseAlarmStream,
@@ -275,6 +280,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATION_ADD_EMPTY_ACTION_KEY = "add_empty_action_to_the_end"
 
         private const val FORWARD_REMINDERS_TO_PEBBLE = "forward_reminders_to_pebble"
+
+        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

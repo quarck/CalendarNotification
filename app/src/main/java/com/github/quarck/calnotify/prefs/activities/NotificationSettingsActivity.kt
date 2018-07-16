@@ -38,6 +38,12 @@ class NotificationSettingsActivity : AppCompatActivity(){
         settings = Settings(this)
 
         preferences(this) {
+
+            switch(R.string.snooze_on_swipe, R.string.snooze_on_swipe_summary_v2) {
+                initial(settings.notificationSwipeDoesSnooze)
+                onChange{settings.notificationSwipeDoesSnooze = it }
+            }
+
             header(R.string.main_notifications)
 
             item(R.string.regular_notification_settings) {

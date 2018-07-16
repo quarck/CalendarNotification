@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.notification
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.support.v4.app.NotificationCompat
 import android.text.format.DateUtils
 import com.github.quarck.calnotify.pebble.PebbleUtils
@@ -416,7 +415,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         // now build actual notification and notify
         val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE)
+        val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, clearTop = true)
 
         val numEvents = events.size
 
@@ -498,12 +497,21 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         DevLog.info(context, LOG_TAG, "Building collapsed notification: alertOnlyOnce=$alertOnlyOnce, contentTitle=$contentTitle, number=$numEvents, channel=$channel")
 
-        val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
-        snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
-        snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+        if (settings.notificationSwipeDoesSnooze) {
+            val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
-        val pendingSnoozeIntent = pendingServiceIntent(context, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
-        builder.setDeleteIntent(pendingSnoozeIntent)
+            val pendingSnoozeIntent = pendingServiceIntent(context, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+            builder.setDeleteIntent(pendingSnoozeIntent)
+        }
+        else {
+            val dismissIntent = Intent(context, NotificationActionDismissService::class.java)
+            dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+
+            val pendingDismissIntent = pendingServiceIntent(context, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+            builder.setDeleteIntent(pendingDismissIntent)
+        }
 
         val notification = builder.build()
 
@@ -588,7 +596,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         postGroupNotification(
                 context,
-                notificationRecords.size
+                notificationRecords.size,
+                settings
         )
 
 
@@ -655,12 +664,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun postGroupNotification(
             ctx: Context,
-            numTotalEvents: Int
+            numTotalEvents: Int,
+            settings: Settings
     ) {
         val notificationManager = ctx.notificationManager
 
         val intent = Intent(ctx, MainActivity::class.java)
-        val pendingIntent = pendingActivityIntent(ctx, intent, MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE)
+        val pendingIntent = pendingActivityIntent(ctx, intent, MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE, clearTop = true)
 
         val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
 
@@ -691,14 +701,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         // swipe does snooze
-        val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
-        snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
-        snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+        if (settings.notificationSwipeDoesSnooze) {
+            val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
+            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
-        val pendingSnoozeIntent =
-                pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+            val pendingSnoozeIntent =
+                    pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
 
-        groupBuilder.setDeleteIntent(pendingSnoozeIntent)
+            groupBuilder.setDeleteIntent(pendingSnoozeIntent)
+        }
+        else {
+            val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
+            dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+
+            val pendingDismissIntent = pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+            groupBuilder.setDeleteIntent(pendingDismissIntent)
+        }
 
         try {
             notificationManager.notify(
@@ -872,18 +891,24 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         // swipe does snooze
-        val defaultSnooze0PendingIntent =
-                pendingServiceIntent(ctx,
-                        defaultSnoozeIntent(ctx,
-                                event.eventId,
-                                event.instanceStartTime,
-                                event.notificationId,
-                                Consts.DEFAULT_SNOOZE_TIME_IF_NONE),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET
-                )
+        if (notificationSettings.notificationSwipeDoesSnooze) {
+            val defaultSnooze0PendingIntent =
+                    pendingServiceIntent(ctx,
+                            defaultSnoozeIntent(ctx,
+                                    event.eventId,
+                                    event.instanceStartTime,
+                                    event.notificationId,
+                                    Consts.DEFAULT_SNOOZE_TIME_IF_NONE),
+                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET
+                    )
 
-        builder.setDeleteIntent(defaultSnooze0PendingIntent)
-        builder.addAction(dismissAction)
+            builder.setDeleteIntent(defaultSnooze0PendingIntent)
+
+            builder.addAction(dismissAction)
+        }
+        else {
+            builder.setDeleteIntent(dismissPendingIntent)
+        }
 
         if (notificationSettings.appendEmptyAction) {
             builder.addAction(
@@ -1001,9 +1026,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
             = PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-    private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int): PendingIntent {
+    private fun pendingActivityIntent(ctx: Context, intent: Intent, id: Int, clearTop: Boolean = false): PendingIntent {
 
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                (if (clearTop) Intent.FLAG_ACTIVITY_CLEAR_TOP else 0)
+
         return PendingIntent.getActivity(ctx, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
     }
@@ -1039,7 +1068,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 //        DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} requests")
 //
 //        val intent = Intent(context, MainActivity::class.java)
-//        val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE)
+//        val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, clearTop = true)
 //
 //        val numEvents = events.size
 //
@@ -1101,7 +1130,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notificationManager = context.notificationManager
 
         val appPendingIntent = pendingActivityIntent(context,
-                Intent(context, MainActivity::class.java), notificationId)
+                Intent(context, MainActivity::class.java), notificationId, clearTop = true)
 
         val builder = NotificationCompat.Builder(context, NotificationChannelManager.createDefaultNotificationChannelDebug(context))
                 .setContentTitle(title)

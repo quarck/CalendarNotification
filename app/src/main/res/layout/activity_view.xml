@@ -876,7 +876,7 @@
                         android:paddingEnd="@dimen/snooze_view_padding_end"
                         android:layout_below="@id/snooze_view_reschedule_present3"
                         android:clickable="true"
-                        android:onClick="OnButtonRescheduleCustomClick"
+                        android:onClick="OnButtonRescheduleClick"
                         android:background="?android:attr/selectableItemBackground"
                         android:focusable="true" />
 

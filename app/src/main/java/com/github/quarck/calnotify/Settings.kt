@@ -251,7 +251,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         set(value) = setBoolean(FORWARD_REMINDERS_TO_PEBBLE, value)
 
     var notificationSwipeBehavior: NotificationSwipeBehavior
-        get() = NotificationSwipeBehavior.fromInt(getInt(NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.DismissEvent.code))
+        get() = NotificationSwipeBehavior.fromInt(getInt(NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.SwipeDisallowed.code))
         set(value) = setInt(NOTIFICATION_SWIPE_BEHAVIOR, value.code)
 
     var groupNotificationSwipeBehavior: NotificationSwipeBehavior

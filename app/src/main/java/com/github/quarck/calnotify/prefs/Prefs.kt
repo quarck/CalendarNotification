@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.Switch
 import android.widget.TextView
+import com.github.quarck.calnotify.NotificationSwipeBehavior
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.findOrThrow
 import java.text.DateFormat
@@ -178,10 +180,78 @@ class PrefsItem(
     }
 }
 
+
+class PrefsNotificationBehavior(
+        val context: Context,
+        inflater: LayoutInflater,
+        root: LinearLayout,
+        titleText: String?,
+        dismissTitle: String?,
+        snoozeTitle: String?,
+        disallowTitle: String?,
+        initialValue: NotificationSwipeBehavior,
+        val onChange: (NotificationSwipeBehavior) -> Unit
+) {
+    val radioDismiss: RadioButton
+    val radioSnooze: RadioButton
+    val radioDisallow: RadioButton
+
+    val title: TextView
+
+    init {
+        val child = inflater.inflate(R.layout.pref_notification_behavior, null)
+
+        radioDismiss = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_dismiss)
+        radioSnooze = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_snoozes)
+        radioDisallow = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_disallowed)
+        title = child.findOrThrow<TextView>(R.id.pref_item_notification_swipe_behavior_title)
+
+        dismissTitle?.apply { radioDismiss.text = this }
+        snoozeTitle?.apply { radioSnooze.text = this }
+        disallowTitle?.apply { radioDisallow.text = this }
+        titleText?.apply { title.text = this }
+
+        radioDismiss.setOnClickListener({ onRadioClick() })
+        radioSnooze.setOnClickListener({ onRadioClick() })
+        radioDisallow.setOnClickListener({ onRadioClick() })
+
+        when (initialValue) {
+            NotificationSwipeBehavior.DismissEvent ->
+                radioDismiss.isChecked = true
+
+            NotificationSwipeBehavior.SnoozeEvent ->
+                radioSnooze.isChecked = true
+
+            NotificationSwipeBehavior.SwipeDisallowed ->
+                radioDisallow.isChecked = true
+        }
+
+        root.addView(child)
+    }
+
+    fun onRadioClick() {
+        if (radioDisallow.isChecked)
+            onChange(NotificationSwipeBehavior.SwipeDisallowed)
+        else if (radioSnooze.isChecked)
+            onChange(NotificationSwipeBehavior.SnoozeEvent)
+        else if (radioDismiss.isChecked)
+            onChange(NotificationSwipeBehavior.DismissEvent)
+    }
+}
+
+
 class PrefsHeader(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
     init {
         val child = inflater.inflate(R.layout.pref_header, null)
         child.findOrThrow<TextView>(R.id.pref_header_generic_text).text = text
+        root.addView(child)
+    }
+}
+
+class PrefsSmallprint(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
+    init {
+        val child = inflater.inflate(R.layout.pref_smallprint, null)
+        child.findOrThrow<TextView>(R.id.pref_smallprint_text).text = text
         root.addView(child)
     }
 }
@@ -219,6 +289,25 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
 
     fun switch(textMainId: Int, fn: PrefsSwitch.() -> Unit): PrefsSwitch  {
         return switch(context.resources.getString(textMainId), fn)
+    }
+
+    fun notificationBehavior(
+            initialValue: NotificationSwipeBehavior,
+            onChange: (NotificationSwipeBehavior) -> Unit
+    ): PrefsNotificationBehavior {
+        return PrefsNotificationBehavior(context, inflater, root, null, null, null, null, initialValue, onChange)
+    }
+
+    fun groupNotificationBehavior(
+            initialValue: NotificationSwipeBehavior,
+            onChange: (NotificationSwipeBehavior) -> Unit
+    ): PrefsNotificationBehavior {
+        return PrefsNotificationBehavior(context, inflater, root,
+                context.resources.getString(R.string.notificaiton_group_swipe_prefix),
+                context.resources.getString(R.string.notificaiton_group_swipe_dismisses_the_event),
+                context.resources.getString(R.string.notificaiton_group_swipe_snoozes_the_event),
+                context.resources.getString(R.string.notificaiton_group_swipe_disallowed),
+                initialValue, onChange)
     }
 
     private fun item(textMain: String, textSecondary: String, onClick: PrefsItem.() -> Unit): PrefsItem  {
@@ -380,6 +469,14 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
 
     fun header(textId: Int): PrefsHeader {
         return header(context.resources.getString(textId))
+    }
+
+    fun smallprint(text: String): PrefsSmallprint {
+        return PrefsSmallprint(inflater, root, text)
+    }
+
+    fun smallprint(textId: Int): PrefsSmallprint {
+        return smallprint(context.resources.getString(textId))
     }
 
     fun separator(): PrefsSeparator {

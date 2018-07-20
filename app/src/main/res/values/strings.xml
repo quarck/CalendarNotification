@@ -562,8 +562,8 @@
     <string name="reminder_notification_settings">Reminders channel settings</string>
     <string name="alarm_reminder_notification_settings">Alarm reminders channel settings</string>
     <string name="content_desc_navigate_back">navigate back</string>
-    <string name="main_notifications">Main notifications - channels</string>
-    <string name="reminder_notifications">Reminder notifications - channels</string>
+    <string name="main_notifications">Notification channels</string>
+    <string name="reminder_notifications">Reminder notificaiton channels</string>
     <string name="other">Other…</string>
     <string name="owner_dummy_local">Local</string>
     <string name="no_account">No account</string>
@@ -572,6 +572,19 @@
 
     <!-- do not translate the line below - only used for debugging -->
     <string name="debug_long_long_title" translatable="false" tools:ignore="Typos">Long long long long long long long long long long long long long long long long long long long long title</string>
+    <string name="notificaiton_swipe_prefix">Swiping the notification:</string>
+
+    <string name="notificaiton_swipe_dismisses_the_event">Dismisses the event</string>
+    <string name="notificaiton_swipe_snoozes_the_event">Snoozes the event using 1st preset</string>
+    <string name="notificaiton_swipe_disallowed">Not allowed (ongoing notification)</string>
+
+    <string name="notificaiton_group_swipe_prefix">Swiping group notificaiton:</string>
+    <string name="notificaiton_group_swipe_dismisses_the_event">Dismisses all the events</string>
+    <string name="notificaiton_group_swipe_snoozes_the_event">Snoozes all the events using 1st preset</string>
+    <string name="notificaiton_group_swipe_disallowed">Not allowed</string>
+
+    <string name="group_notifications">Group notifications</string>
+    <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
 
 </resources>
 

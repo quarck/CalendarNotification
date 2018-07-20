@@ -39,11 +39,6 @@ class NotificationSettingsActivity : AppCompatActivity(){
 
         preferences(this) {
 
-            switch(R.string.snooze_on_swipe, R.string.snooze_on_swipe_summary_v2) {
-                initial(settings.notificationSwipeDoesSnooze)
-                onChange{settings.notificationSwipeDoesSnooze = it }
-            }
-
             header(R.string.main_notifications)
 
             item(R.string.regular_notification_settings) {
@@ -96,6 +91,31 @@ class NotificationSettingsActivity : AppCompatActivity(){
                     }
                 }
             }
+
+            header(R.string.notification_behavior)
+
+            notificationBehavior(settings.notificationSwipeBehavior) {
+                settings.notificationSwipeBehavior = it
+            }
+
+            separator()
+
+            switch (R.string.group_notifications, R.string.group_notifications_summary) {
+                initial (settings.postGroupNotification)
+                onChange { settings.postGroupNotification = it }
+                depending {
+                    groupNotificationBehavior(settings.groupNotificationSwipeBehavior) {
+                        settings.groupNotificationSwipeBehavior = it
+                    }
+                    separator()
+                }
+            }
+
+//            switch(R.string.snooze_on_swipe, R.string.snooze_on_swipe_summary_v2) {
+//                initial(settings.notificationSwipeDoesSnooze)
+//                onChange{settings.notificationSwipeDoesSnooze = it }
+//            }
+
 
             header(R.string.other)
 

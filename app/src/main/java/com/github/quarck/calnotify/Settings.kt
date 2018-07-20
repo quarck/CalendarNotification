@@ -25,14 +25,41 @@ import com.github.quarck.calnotify.utils.PersistentStorageBase
 import com.github.quarck.calnotify.utils.toIntOrNull
 
 
+enum class NotificationSwipeBehavior(val code: Int)
+{
+    DismissEvent(0),
+    SnoozeEvent(1),
+    SwipeDisallowed(2);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
+
 data class NotificationSettingsSnapshot
 (
-        val notificationSwipeDoesSnooze: Boolean,
+        val notificationSwipeBehavior: NotificationSwipeBehavior,
+        val groupNotificationSwipeBehavior: NotificationSwipeBehavior,
+        val postGroupNotification: Boolean,
         val enableNotificationMute: Boolean,
         val appendEmptyAction: Boolean,
         val useAlarmStream: Boolean,
         val forwardReminersToPebble: Boolean
-)
+) {
+    val ongoingIndividual: Boolean
+        get() = notificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
+
+    val ongoingGroup: Boolean
+        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
+
+    val swipeSnoozeIndividual: Boolean
+        get() = notificationSwipeBehavior == NotificationSwipeBehavior.SnoozeEvent
+
+    val swipeSnoozeGroup: Boolean
+        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SnoozeEvent
+}
+
 
 class Settings(context: Context) : PersistentStorageBase(context) {
 
@@ -65,9 +92,15 @@ class Settings(context: Context) : PersistentStorageBase(context) {
             return ret;
         }
 
-    var notificationSwipeDoesSnooze: Boolean
-        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
-        set(value) = setBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, value)
+    val firstNonNegativeSnoozeTime: Long
+        get() {
+            val result = snoozePresets.firstOrNull { snoozeTimeInMillis -> snoozeTimeInMillis >= 0 }
+            return result ?: Consts.DEFAULT_SNOOZE_TIME
+        }
+
+//    var notificationSwipeDoesSnooze: Boolean
+//        get() = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false)
+//        set(value) = setBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, value)
 
     var notificationUseAlarmStream: Boolean
         get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
@@ -217,9 +250,23 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(FORWARD_REMINDERS_TO_PEBBLE, false)
         set(value) = setBoolean(FORWARD_REMINDERS_TO_PEBBLE, value)
 
+    var notificationSwipeBehavior: NotificationSwipeBehavior
+        get() = NotificationSwipeBehavior.fromInt(getInt(NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.DismissEvent.code))
+        set(value) = setInt(NOTIFICATION_SWIPE_BEHAVIOR, value.code)
+
+    var groupNotificationSwipeBehavior: NotificationSwipeBehavior
+        get() = NotificationSwipeBehavior.fromInt(getInt(GROUP_NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.SwipeDisallowed.code))
+        set(value) = setInt(GROUP_NOTIFICATION_SWIPE_BEHAVIOR, value.code)
+
+    var postGroupNotification: Boolean
+        get() = getBoolean(GROUP_NOTIFICAITONS, true)
+        set(value) = setBoolean(GROUP_NOTIFICAITONS, value)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
-                notificationSwipeDoesSnooze = notificationSwipeDoesSnooze,
+                notificationSwipeBehavior = notificationSwipeBehavior,
+                groupNotificationSwipeBehavior = groupNotificationSwipeBehavior,
+                postGroupNotification = postGroupNotification,
                 enableNotificationMute = remindersEnabled,
                 appendEmptyAction = notificationAddEmptyAction,
                 useAlarmStream = notificationUseAlarmStream,
@@ -282,6 +329,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val FORWARD_REMINDERS_TO_PEBBLE = "forward_reminders_to_pebble"
 
         private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
+
+        private const val NOTIFICATION_SWIPE_BEHAVIOR = "notification_swipe_behavior"
+        private const val GROUP_NOTIFICATION_SWIPE_BEHAVIOR = "group_notification_swipe_behavior"
+        private const val GROUP_NOTIFICAITONS = "group_notifications"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

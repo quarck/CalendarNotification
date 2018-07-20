@@ -106,7 +106,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 alertOnlyOnce = true,
                 snoozePresetsNotFiltered = settings.snoozePresets,
                 soundState = NotificationChannelManager.SoundState.Silent,
-                isReminder = false
+                isReminder = false,
+                snooze0Time = settings.firstNonNegativeSnoozeTime
         )
 
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -482,6 +483,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val alertOnlyOnce = notificationRecords.all{it.alertOnlyOnce}
         val contentText = if (lines.size > 0) lines[0] else ""
 
+        val notificationBehavior = settings.groupNotificationSwipeBehavior
+
         val builder =
                 NotificationCompat.Builder(context, channel)
                         .setContentTitle(contentTitle)
@@ -489,7 +492,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setSmallIcon(R.drawable.stat_notify_calendar_multiple)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
-                        .setOngoing(false)
+                        .setOngoing(notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed)
                         .setStyle(notificationStyle)
                         .setNumber(numEvents)
                         .setShowWhen(false)
@@ -497,20 +500,24 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         DevLog.info(context, LOG_TAG, "Building collapsed notification: alertOnlyOnce=$alertOnlyOnce, contentTitle=$contentTitle, number=$numEvents, channel=$channel")
 
-        if (settings.notificationSwipeDoesSnooze) {
-            val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
-            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
-            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+        when (notificationBehavior) {
+            NotificationSwipeBehavior.SwipeDisallowed -> {
+            }
+            NotificationSwipeBehavior.DismissEvent -> {
+                val dismissIntent = Intent(context, NotificationActionDismissService::class.java)
+                dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
 
-            val pendingSnoozeIntent = pendingServiceIntent(context, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
-            builder.setDeleteIntent(pendingSnoozeIntent)
-        }
-        else {
-            val dismissIntent = Intent(context, NotificationActionDismissService::class.java)
-            dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+                val pendingDismissIntent = pendingServiceIntent(context, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+                builder.setDeleteIntent(pendingDismissIntent)
+            }
+            NotificationSwipeBehavior.SnoozeEvent -> {
+                val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
-            val pendingDismissIntent = pendingServiceIntent(context, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
-            builder.setDeleteIntent(pendingDismissIntent)
+                val pendingSnoozeIntent = pendingServiceIntent(context, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+                builder.setDeleteIntent(pendingSnoozeIntent)
+            }
         }
 
         val notification = builder.build()
@@ -594,14 +601,19 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
 
-        postGroupNotification(
-                context,
-                notificationRecords.size,
-                settings
-        )
+        if (settings.postGroupNotification)
+            postGroupNotification(
+                    context,
+                    notificationRecords.size,
+                    settings
+            )
+        else
+            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
 
 
 //        var currentTime = System.currentTimeMillis()
+
+        val snooze0time = settings.firstNonNegativeSnoozeTime
 
         for (ntf in notificationRecords) {
 
@@ -620,7 +632,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     snoozePresetsNotFiltered = snoozePresets,
                     isReminder = ntf.isReminder,
                     alertOnlyOnce = ntf.alertOnlyOnce,
-                    soundState = ntf.soundState
+                    soundState = ntf.soundState,
+                    snooze0Time = snooze0time
             )
 
         }
@@ -678,6 +691,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 NotificationChannelManager.SoundState.Silent,
                 false)
 
+        val notificationBehavior = settings.groupNotificationSwipeBehavior
+
         val groupBuilder = NotificationCompat.Builder(ctx, channel)
                 .setContentTitle(ctx.resources.getString(R.string.calendar))
                 .setContentText(text)
@@ -692,6 +707,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setShowWhen(false)
                 .setNumber(numTotalEvents)
                 .setOnlyAlertOnce(true)
+                .setOngoing(notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed)
 
         if (numTotalEvents > 1) {
             groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar_multiple)
@@ -700,23 +716,29 @@ class EventNotificationManager : EventNotificationManagerInterface {
             groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar)
         }
 
-        // swipe does snooze
-        if (settings.notificationSwipeDoesSnooze) {
-            val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
-            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
-            snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+        when (notificationBehavior) {
+            NotificationSwipeBehavior.SnoozeEvent -> {
+                val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
-            val pendingSnoozeIntent =
-                    pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+                val pendingSnoozeIntent =
+                        pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
 
-            groupBuilder.setDeleteIntent(pendingSnoozeIntent)
-        }
-        else {
-            val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
-            dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+                groupBuilder.setDeleteIntent(pendingSnoozeIntent)
+            }
 
-            val pendingDismissIntent = pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
-            groupBuilder.setDeleteIntent(pendingDismissIntent)
+            NotificationSwipeBehavior.DismissEvent ->  {
+                val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
+                dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+
+                val pendingDismissIntent = pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+                groupBuilder.setDeleteIntent(pendingDismissIntent)
+            }
+
+            NotificationSwipeBehavior.SwipeDisallowed -> {
+
+            }
         }
 
         try {
@@ -738,7 +760,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             snoozePresetsNotFiltered: LongArray,
             isReminder: Boolean,
             alertOnlyOnce: Boolean,
-            soundState: NotificationChannelManager.SoundState
+            soundState: NotificationChannelManager.SoundState,
+            snooze0Time: Long
     ) {
         val notificationManager = ctx.notificationManager
 
@@ -803,13 +826,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 isReminder = isReminder
         )
 
+        val notificationBehavior = notificationSettings.notificationSwipeBehavior
+
         val builder = NotificationCompat.Builder(ctx, channel)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
                 .setSmallIcon(iconId)
                 .setContentIntent(primaryPendingIntent)
                 .setAutoCancel(false)
-                .setOngoing(false)
+                .setOngoing(notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(notificationTextString))
                 .setWhen(event.lastStatusChangeTime)
                 .setShowWhen(false)
@@ -829,7 +854,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .toLongArray()
 
         if (snoozePresets.isEmpty())
-            snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME_IF_NONE)
+            snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME)
 
 //        val snoozeAction =
 //                NotificationCompat.Action.Builder(
@@ -891,23 +916,31 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
 
         // swipe does snooze
-        if (notificationSettings.notificationSwipeDoesSnooze) {
-            val defaultSnooze0PendingIntent =
-                    pendingServiceIntent(ctx,
-                            defaultSnoozeIntent(ctx,
-                                    event.eventId,
-                                    event.instanceStartTime,
-                                    event.notificationId,
-                                    Consts.DEFAULT_SNOOZE_TIME_IF_NONE),
-                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET
-                    )
 
-            builder.setDeleteIntent(defaultSnooze0PendingIntent)
+        when (notificationBehavior) {
+            NotificationSwipeBehavior.SwipeDisallowed -> {
+                builder.addAction(dismissAction)
+            }
 
-            builder.addAction(dismissAction)
-        }
-        else {
-            builder.setDeleteIntent(dismissPendingIntent)
+            NotificationSwipeBehavior.DismissEvent -> {
+                builder.setDeleteIntent(dismissPendingIntent)
+            }
+
+            NotificationSwipeBehavior.SnoozeEvent -> {
+                val defaultSnooze0PendingIntent =
+                        pendingServiceIntent(ctx,
+                                defaultSnoozeIntent(ctx,
+                                        event.eventId,
+                                        event.instanceStartTime,
+                                        event.notificationId,
+                                        snooze0Time),
+                                event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET
+                        )
+
+                builder.setDeleteIntent(defaultSnooze0PendingIntent)
+
+                builder.addAction(dismissAction)
+            }
         }
 
         if (notificationSettings.appendEmptyAction) {

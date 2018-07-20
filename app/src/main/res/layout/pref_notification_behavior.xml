@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/pref_item_notification_swipe_behavior_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primary_text"
+        android:text="@string/notificaiton_swipe_prefix"
+
+        android:clickable="true"
+        android:focusable="true"
+
+        android:paddingStart="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp"
+        />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="24dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="18dp"
+        android:paddingTop="0dp"
+        >
+
+        <RadioButton
+            android:id="@+id/pref_notification_swipe_dismiss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificaiton_swipe_dismisses_the_event" />
+
+        <RadioButton
+            android:id="@+id/pref_notification_swipe_snoozes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificaiton_swipe_snoozes_the_event" />
+
+        <RadioButton
+            android:id="@+id/pref_notification_swipe_disallowed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificaiton_swipe_disallowed" />
+
+    </RadioGroup>
+
+</LinearLayout>

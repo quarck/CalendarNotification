@@ -20,7 +20,10 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -37,9 +40,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
@@ -49,7 +50,6 @@ import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -61,7 +61,16 @@ import com.github.quarck.calnotify.utils.findOrThrow
 import org.jetbrains.annotations.NotNull
 import java.util.*
 
+class DataUpdatedReceiver(val activity: MainActivity): BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+        val isUserCaused = intent?.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, false) ?: false
+        activity.onDataUpdated(causedByUser = isUserCaused)
+    }
+}
+
 class MainActivity : AppCompatActivity(), EventListCallback {
+
 
     private val settings: Settings by lazy { Settings(this) }
 
@@ -78,8 +87,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private lateinit var adapter: EventListAdapter
 
-    private val svcClient by lazy { UINotifierServiceClient() }
-
     private var lastEventDismissalScrollPosition: Int? = null
 
     private var calendarRescanEnabled = true
@@ -91,6 +98,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private val undoDisappearSensitivity: Float by lazy {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
+
+    private val dataUpdatedReceiver = DataUpdatedReceiver(this)
 
     private val undoManager by lazy { UndoManager }
 
@@ -171,20 +180,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         checkPermissions()
 
-//        floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
+        registerReceiver(dataUpdatedReceiver, IntentFilter(Consts.DATA_UPDATED_BROADCAST));
 
         DevLog.refreshIsEnabled(context = this);
         if (!settings.shouldKeepLogs) {
             DevLog.clear(context = this)
-        }
-
-        svcClient.bindService(this) {
-            // Service callback on data update
-            causedByUser ->
-            if (causedByUser)
-                reloadData()
-            else
-                runOnUiThread { reloadLayout.visibility = View.VISIBLE }
         }
 
         if (calendarRescanEnabled != settings.enableCalendarRescan) {
@@ -267,9 +267,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         refreshReminderLastFired()
 
-        svcClient.unbindService(this)
-
         undoManager.clearUndoState()
+
+        unregisterReceiver(dataUpdatedReceiver)
 
         super.onPause()
     }
@@ -306,7 +306,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun doDismissAll() {
 
-        ApplicationController.dismissAllButRecentAndSnoozed(this, EventDismissType.ManuallyDismissedFromActivity);
+        ApplicationController.dismissAllButRecentAndSnoozed(
+                this, EventDismissType.ManuallyDismissedFromActivity)
 
         reloadData()
         lastEventDismissalScrollPosition = null
@@ -511,7 +512,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             DevLog.info(this, LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event);
+            ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
 
             undoManager.addUndoState(
                     UndoState(
@@ -560,6 +561,13 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
+    }
+
+    fun onDataUpdated(causedByUser: Boolean) {
+        if (causedByUser)
+            reloadData()
+        else
+            runOnUiThread { reloadLayout.visibility = View.VISIBLE }
     }
 
     companion object {

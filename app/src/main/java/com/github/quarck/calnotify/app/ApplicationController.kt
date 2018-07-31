@@ -40,7 +40,7 @@ import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.ui.UINotifierService
+import com.github.quarck.calnotify.ui.UINotifier
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorOneTimeJobService
@@ -154,7 +154,7 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             val isUserAction = (System.currentTimeMillis() < userActionUntil)
-            UINotifierService.notifyUI(context, isUserAction);
+            UINotifier.notify(context, isUserAction)
         }
         else {
             DevLog.debug(LOG_TAG, "No calendar changes detected")
@@ -177,7 +177,7 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
 
             val isUserAction = (System.currentTimeMillis() < userActionUntil)
-            UINotifierService.notifyUI(context, isUserAction)
+            UINotifier.notify(context, isUserAction)
         }
         else {
             DevLog.debug(LOG_TAG, "No calendar changes detected")
@@ -206,7 +206,7 @@ object ApplicationController : EventMovedHandler {
 
                 if (alertRecord != null) {
 
-                    ApplicationController.dismissEvent(
+                    dismissEvent(
                             context,
                             db,
                             alertRecord,
@@ -217,14 +217,14 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
-        UINotifierService.notifyUI(context, true);
+        UINotifier.notify(context, true)
     }
 
     // some housekeeping that we have to do after firing calendar event
     fun afterCalendarEventFired(context: Context) {
 
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-        UINotifierService.notifyUI(context, false);
+        UINotifier.notify(context, false)
     }
 
     fun postEventNotifications(context: Context, events: Collection<EventAlertRecord>) {
@@ -791,7 +791,8 @@ object ApplicationController : EventMovedHandler {
             db: EventsStorageInterface,
             events: Collection<EventAlertRecord>,
             dismissType: EventDismissType,
-            notifyActivity: Boolean) {
+            notifyActivity: Boolean
+    ) {
 
         DevLog.info(context, LOG_TAG, "Dismissing ${events.size}  requests")
 
@@ -814,7 +815,7 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             if (notifyActivity)
-                UINotifierService.notifyUI(context, true);
+                UINotifier.notify(context, true)
         }
     }
 
@@ -876,7 +877,8 @@ object ApplicationController : EventMovedHandler {
             db: EventsStorageInterface,
             event: EventAlertRecord,
             dismissType: EventDismissType,
-            notifyActivity: Boolean) {
+            notifyActivity: Boolean
+    ) {
 
         DevLog.info(context, LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
@@ -897,7 +899,7 @@ object ApplicationController : EventMovedHandler {
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
             if (notifyActivity)
-                UINotifierService.notifyUI(context, true);
+                UINotifier.notify(context, true)
         }
         else {
             DevLog.error(context, LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
@@ -933,7 +935,8 @@ object ApplicationController : EventMovedHandler {
             eventId: Long,
             instanceStartTime: Long,
             notificationId: Int,
-            notifyActivity: Boolean = true) {
+            notifyActivity: Boolean = true
+    ) {
 
         EventsStorage(context).use {
             db ->
@@ -992,7 +995,8 @@ object ApplicationController : EventMovedHandler {
                         db,
                         event,
                         EventDismissType.EventMovedUsingApp,
-                        true)
+                        true
+                )
             }
         }
 
@@ -1013,7 +1017,8 @@ object ApplicationController : EventMovedHandler {
                         db,
                         event,
                         EventDismissType.EventMovedUsingApp,
-                        true)
+                        true
+                )
             }
 
         } else {

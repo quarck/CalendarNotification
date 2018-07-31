@@ -31,7 +31,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 //import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.ui.UINotifierService
+import com.github.quarck.calnotify.ui.UINotifier
 
 class DisplayToast(private val context: Context, internal var text: String) : Runnable {
     override fun run() {
@@ -61,7 +61,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                     onSnoozedBy(snoozeDelay)
                 }
 
-                UINotifierService.notifyUI(this, true);
+                UINotifier.notify(this, true)
             }
             else if (isSnoozeAllCollapsed) {
                 DevLog.info(this, LOG_TAG, "Snooze all collapsed from notification request")
@@ -73,7 +73,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                     onSnoozedBy(snoozeDelay)
                 }
 
-                UINotifierService.notifyUI(this, true);
+                UINotifier.notify(this, true)
             }
             else {
                 val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
@@ -87,7 +87,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                         onSnoozedBy(snoozeDelay)
                     }
 
-                    UINotifierService.notifyUI(this, true);
+                    UINotifier.notify(this, true)
                 } else {
                     DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
                 }

@@ -163,7 +163,6 @@
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".notification.NotificationActionMuteToggleService" />
-        <service android:name=".ui.UINotifierService" />
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>

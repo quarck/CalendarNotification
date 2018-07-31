@@ -27,6 +27,7 @@ object Consts {
     }
 
     const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
+    const val DATA_UPDATED_BROADCAST = "com.github.quarck.calnotify.dataupdated"
 
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
@@ -131,4 +132,5 @@ object Consts {
 
     const val BIN_KEEP_HISTORY_DAYS = 3L
     const val BIN_KEEP_HISTORY_MILLISECONDS = BIN_KEEP_HISTORY_DAYS * DAY_IN_MILLISECONDS
+
 }

@@ -24,7 +24,7 @@ import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.ui.UINotifierService
+import com.github.quarck.calnotify.ui.UINotifier
 
 
 class NotificationActionMuteToggleService: IntentService("NotificationActionMuteToggleService") {
@@ -42,7 +42,7 @@ class NotificationActionMuteToggleService: IntentService("NotificationActionMute
                 if (ApplicationController.toggleMuteForEvent(this, eventId, instanceStartTime, muteAction))
                     DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime mute toggled from $muteAction")
 
-                UINotifierService.notifyUI(this, true);
+                UINotifier.notify(this, true)
             } else {
                 DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
             }

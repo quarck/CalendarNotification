@@ -60,7 +60,10 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 sleep(QUICK_RESCAN_SLEEP_BEFORE)
                 startDelay -= QUICK_RESCAN_SLEEP_BEFORE
 
-                ApplicationController.onCalendarRescanForRescheduledFromService(this, userActionUntil)
+                ApplicationController.onCalendarRescanForRescheduledFromService(
+                        this,
+                        userActionUntil
+                )
             }
             catch (ex: Exception) {
                 DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
@@ -73,7 +76,10 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
 
         if (shouldReloadCalendar) {
             try  {
-                ApplicationController.onCalendarReloadFromService(this, userActionUntil)
+                ApplicationController.onCalendarReloadFromService(
+                        this,
+                        userActionUntil
+                )
             }
             catch (ex: Exception) {
                 DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
@@ -137,7 +143,10 @@ class CalendarMonitorOneTimeJobService : JobService()  {
         DevLog.info(this, LOG_TAG, "onStartJob ")
 
         try  {
-            ApplicationController.onCalendarRescanForRescheduledFromService(this, 0)
+            ApplicationController.onCalendarRescanForRescheduledFromService(
+                    this,
+                    0
+            )
         }
         catch (ex: Exception) {
             DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
@@ -195,7 +204,6 @@ class CalendarMonitorOneTimeJobService : JobService()  {
 
             context.getSystemService(JobScheduler::class.java)?.schedule(getJobInfo(delayMillis))
         }
-
     }
 }
 
@@ -206,7 +214,10 @@ class CalendarMonitorPeriodicJobService : JobService()  {
         DevLog.info(this, LOG_TAG, "onStartJob ")
 
         try  {
-            ApplicationController.onCalendarRescanForRescheduledFromService(this, 0)
+            ApplicationController.onCalendarRescanForRescheduledFromService(
+                    this,
+                    0
+            )
         }
         catch (ex: Exception) {
             DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")

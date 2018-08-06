@@ -321,7 +321,7 @@ class EventListAdapter(
         else {
             holder.eventId = event.eventId;
 
-            holder.eventTitleText.text = event.title
+            holder.eventTitleText.text = event.titleAsOneLine
 
             holder.muteImage?.visibility = if (event.isMuted) View.VISIBLE else View.GONE
 

@@ -153,6 +153,8 @@ data class EventAlertRecord(
 
     val key: EventAlertRecordKey
         get() = EventAlertRecordKey(eventId, instanceStartTime)
+
+    val titleAsOneLine: String by lazy { title.replace("\r\n", " | ").replace("\n", " | ")}
 }
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {

@@ -279,7 +279,7 @@ object NotificationChannelManager {
         val importance = NotificationManager.IMPORTANCE_HIGH
 
         val channelId = NOTIFICATION_CHANNEL_ID_REAL_ALARM
-        val channelName = context.getString(R.string.real_alarm_clock_title)
+        val channelName = context.getString(R.string.real_alarms_title_please_dont_translate)
         val channelDesc = context.getString(R.string.empty)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {

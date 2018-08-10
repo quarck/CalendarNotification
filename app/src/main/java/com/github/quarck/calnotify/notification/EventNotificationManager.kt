@@ -529,7 +529,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             DevLog.error(context, LOG_TAG, "Error posting notification: $ex, ${ex.stackTrace}")
         }
 
-        if (isReminder && settings.forwardReminersToPebble) {
+        val isOngoing = notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed
+        if ((isReminder || isOngoing) && settings.forwardReminersToPebble) {
             PebbleUtils.forwardNotificationToPebble(context, contentTitle, contentText, false)
         }
     }
@@ -802,11 +803,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 
-        val primaryPendingIntent = snoozeActivityIntent
-//                if (notificationSettings.notificationOpensSnooze)
-//                    snoozeActivityIntent
-//                else
-//                    calendarPendingIntent
+        val primaryPendingIntent =
+                if (!notificationSettings.showSnoozeButton)
+                    snoozeActivityIntent
+                else
+                    pendingActivityIntent(ctx,
+                            CalendarIntents.calendarViewIntent(ctx, event),
+                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
+                    )
 
         var iconId = R.drawable.stat_notify_calendar
         if (event.isTask)
@@ -856,12 +860,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         if (snoozePresets.isEmpty())
             snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME)
 
-//        val snoozeAction =
-//                NotificationCompat.Action.Builder(
-//                        Icon.createWithResource(ctx, R.drawable.ic_update_white_24dp),
-//                        ctx.getString(com.github.quarck.calnotify.R.string.snooze),
-//                        snoozeActivityIntent
-//                ).build()
+
 
         val dismissAction =
                 NotificationCompat.Action.Builder(
@@ -870,11 +869,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         dismissPendingIntent
                 ).build()
 
+        if (notificationSettings.showSnoozeButton) {
+            val snoozeAction =
+                    NotificationCompat.Action.Builder(
+                            R.drawable.ic_update_white_24dp,
+                            ctx.getString(com.github.quarck.calnotify.R.string.snooze),
+                            snoozeActivityIntent
+                    ).build()
 
-//        if (!notificationSettings.notificationOpensSnooze) {
-//            DevLog.debug(LOG_TAG, "adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
-//            builder.addAction(snoozeAction)
-//        }
+            DevLog.debug(LOG_TAG, "adding pending intent for snooze, event id ${event.eventId}, notificationId ${event.notificationId}")
+            builder.addAction(snoozeAction)
+        }
 
         val extender = NotificationCompat.WearableExtender()
 
@@ -1010,7 +1015,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             DevLog.error(ctx, LOG_TAG, "Exception on notificationId=${event.notificationId}: ${ex.detailed}")
         }
 
-        if (isReminder && notificationSettings.forwardReminersToPebble) {
+        val isOngoing = notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed
+        if ((isReminder || isOngoing) && notificationSettings.forwardReminersToPebble) {
             PebbleUtils.forwardNotificationToPebble(ctx, title, notificationTextString, false)
         }
     }

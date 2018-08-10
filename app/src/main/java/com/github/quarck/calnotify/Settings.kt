@@ -45,7 +45,8 @@ data class NotificationSettingsSnapshot
         val enableNotificationMute: Boolean,
         val appendEmptyAction: Boolean,
         val useAlarmStream: Boolean,
-        val forwardReminersToPebble: Boolean
+        val forwardReminersToPebble: Boolean,
+        val showSnoozeButton: Boolean
 ) {
     val ongoingIndividual: Boolean
         get() = notificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
@@ -262,6 +263,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(GROUP_NOTIFICAITONS, true)
         set(value) = setBoolean(GROUP_NOTIFICAITONS, value)
 
+    var showSnoozeButton: Boolean
+        get() = getBoolean(SHOW_SNOOZE_BUTTON, false)
+        set(value) = setBoolean(SHOW_SNOOZE_BUTTON, value)
+
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 notificationSwipeBehavior = notificationSwipeBehavior,
@@ -270,8 +275,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 enableNotificationMute = remindersEnabled,
                 appendEmptyAction = notificationAddEmptyAction,
                 useAlarmStream = notificationUseAlarmStream,
-                forwardReminersToPebble = forwardReminersToPebble
+                forwardReminersToPebble = forwardReminersToPebble,
+                showSnoozeButton = showSnoozeButton
         )
+    var alwaysUseExternalEditor: Boolean
+        get() = getBoolean(ALWAYS_USE_EXTERNAL_EDITOR, false)
+        set(value) = setBoolean(ALWAYS_USE_EXTERNAL_EDITOR, value)
 
     companion object {
 
@@ -333,6 +342,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATION_SWIPE_BEHAVIOR = "notification_swipe_behavior"
         private const val GROUP_NOTIFICATION_SWIPE_BEHAVIOR = "group_notification_swipe_behavior"
         private const val GROUP_NOTIFICAITONS = "group_notifications"
+
+        private const val SHOW_SNOOZE_BUTTON = "show_snooze_btn_0001"
+
+        private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor_0001"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

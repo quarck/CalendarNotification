@@ -358,7 +358,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         val fab = findOrThrow<FloatingActionButton>(R.id.floating_edit_button)
 
         if (!calendar.isReadOnly) {
-            if (!event.isRepeating) {
+            if (!event.isRepeating && !settings.alwaysUseExternalEditor) {
 
                 fab.setOnClickListener { _ ->
                     val intent = Intent(this, EditEventActivity::class.java)

@@ -585,6 +585,11 @@
 
     <string name="group_notifications">Group notifications</string>
     <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
+    <string name="show_snooze_button">Show SNOOZE button</string>
+    <string name="show_snooze_button_desc">Brings back \'SNOOZE\' button, thus click on the notification would open even int the calendar, and click on SNOOZE will bring the snooze activity</string>
+    <string name="real_alarms_title_please_dont_translate">Real alarms</string>
+    <string name="always_use_extenal_editor">Always use external editor</string>
+    <string name="always_use_external_editor_summary">Edit button on the snooze activity will always bring the external event editor / view</string>
 
 </resources>
 

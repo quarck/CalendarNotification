@@ -54,7 +54,12 @@ class SnoozeSettingsActivity : AppCompatActivity() {
                 onCreateSnoozePresetsDialog().show()
             }
 
-            switch(R.string.view_after_edit) {
+            switch (R.string.always_use_extenal_editor, R.string.always_use_external_editor_summary) {
+                initial (settings.alwaysUseExternalEditor)
+                onChange { settings.alwaysUseExternalEditor = it }
+            }
+
+            switch(R.string.view_after_edit, R.string.view_after_edit_summary) {
                 initial(settings.viewAfterEdit)
                 onChange { settings.viewAfterEdit = it }
             }

@@ -46,6 +46,8 @@ object NotificationChannelManager {
     const val NOTIFICATION_CHANNEL_ID_REMINDER = "com.github.calnotify.notify.v1.rem"
     const val NOTIFICAITON_CHANNEL_ID_REMINDER_ALARM = "com.github.calnotify.notify.v1.remalrm"
 
+    const val NOTIFICATION_CHANNEL_ID_REAL_ALARM = "com.github.calnotify.notify.realalarm"
+
     fun createDefaultNotificationChannelDebug(context: Context): String {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -229,9 +231,10 @@ object NotificationChannelManager {
 
         if (soundState == SoundState.Alarm) {
             attribBuilder
-                    //.setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                    .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                     .setLegacyStreamType(AudioManager.STREAM_ALARM)
                     .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
 
             notificationChannel.setBypassDnd(true)
 
@@ -267,6 +270,54 @@ object NotificationChannelManager {
             createNotificationChannelForSoundState(context, soundState)
         else
             createReminderNotificationChannelForSoundState(context, soundState)
+    }
+
+    fun createNotificationChannelForRealAlarms(
+            context: Context
+    ): String {
+
+        val importance = NotificationManager.IMPORTANCE_HIGH
+
+        val channelId = NOTIFICATION_CHANNEL_ID_REAL_ALARM
+        val channelName = context.getString(R.string.real_alarm_clock_title)
+        val channelDesc = context.getString(R.string.empty)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return channelId
+        }
+
+        // Configure the notification channel.
+        val notificationChannel = NotificationChannel(channelId, channelName, importance)
+        notificationChannel.description = channelDesc
+
+        // If we don't enable it now (at channel creation) - no way to enable it later
+        notificationChannel.enableLights(true)
+        notificationChannel.lightColor = Consts.DEFAULT_LED_COLOR
+
+        val attribBuilder = AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+
+        attribBuilder
+                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+
+        notificationChannel.setBypassDnd(true)
+
+        DevLog.info(context, LOG_TAG, "Alarm attributes applied")
+
+        notificationChannel.setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+                attribBuilder.build()
+        )
+
+        notificationChannel.enableVibration(true)
+
+        notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_REAL_ALARM
+
+        context.notificationManager.createNotificationChannel(notificationChannel)
+
+        return channelId
     }
 
     fun launchSystemSettingForChannel(context: Context, soundState: SoundState, isReminder: Boolean) {

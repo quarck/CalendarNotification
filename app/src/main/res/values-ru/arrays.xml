@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="pref_vibration_pattern_entries">
+        <item>Длинная</item>
+        <item>Очень длинная</item>
+        <item>Кор. Кор. Кор.</item>
+        <item>Длин. Кор. Кор. Кор.</item>
+        <item>Кор. Кор. Кор. Длин.</item>
+    </string-array>
+    <string-array
+        name="days_of_week_entries">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+</resources>

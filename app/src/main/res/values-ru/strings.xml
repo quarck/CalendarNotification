@@ -80,8 +80,6 @@
     <string name="max_reminders">Количество напоминаний</string>
     <string name="max_reminders_summary">Максимальное количество напоминаний, 0 - постоянно</string>
     <string name="pebble_notification_title">Календарь</string>
-    <string name="heads_up_notification">Всплывающее уведомление</string>
-    <string name="heads_up_notification_summary">Показывать всплывающее уведомление вверху экрана</string>
     <string name="projectPageOnGitHub">Страница проекта на GitHub</string>
     <string name="snooze_all">Отсрочить все</string>
     <string name="change_all">Изменить все</string>
@@ -93,8 +91,6 @@
     <string name="snooze_all_title">Отсрочить все события</string>
     <string name="change_all_title">Изменить все события</string>
     <string name="led_color">Цвет светодиода</string>
-    <string name="wake_screen_title">Пробуждать экран</string>
-    <string name="wake_screen_summary">Кратковременно пробуждать экран при уведомлении</string>
     <string name="error_cannot_parse_pattern">Неверный формат шаблона</string>
     <string name="quiet_time_from">Начало</string>
     <string name="quiet_time_to">Конец</string>
@@ -149,9 +145,6 @@
     <string name="vibration_pattern">Шаблон вибрации</string>
     <string name="_100ms">100мс</string>
     <string name="_2500ms">2500мс</string>
-    <string name="led_on_time">Включение:</string>
-    <string name="led_off_time">Выключение:</string>
-    <string name="led_pattern">Шаблон индикации</string>
     <string name="milliseconds_suffix">мс</string>
     <string name="compact_layout">Использовать компактный вид</string>
     <string name="needs_app_restart">(нужен перезапуск приложения)</string>
@@ -227,8 +220,6 @@
     <string name="reminder_fallback_method_summary">Попробуйте это метод, если нет звука напоминания</string>
     <string name="reminder_custom_ringtone">Своя мелодия</string>
     <string name="reminder_custom_vibration">Своя вибрация</string>
-    <string name="quiet_hours_mute_led">Отключать светодиод</string>
-    <string name="quiet_hours_mute_led_summary">Не уведомлять светодиодом во время тихого часа</string>
     <string name="reminder_you_have_missed_event">Напоминание: вы пропустили событие</string>
     <string name="reminder_you_have_missed_events">Напоминание: вы пропустили события</string>
     <string name="last_notification_s_ago" formatted="false">Последнее уведомление: %s назад, напоминание %d из %d</string>
@@ -292,8 +283,6 @@
     <string name="reminders_play_directly_summary">Не публиковать напоминания событий</string>
     <string name="allow_notification_swipe_title">Смахивать уведомление</string>
     <string name="allow_notification_swipe_summary">Использовать смахивание вместо кнопки \'Отклонить\' для отклонения уведомления</string>
-    <string name="separate_reminder_notification_title">Продублировать напоминание</string>
-    <string name="separate_reminder_notification_summary">Добавить дополнительное уведомление с напоминанием, которое исчезнет автоматически через несколько секунд</string>
     <string name="instructions_for_android_wear">Инструкции для Android Wear</string>
     <string name="android_wear_actual_instruction">
         Чтобы включить уведомления для Android Wear устройства, включите \'Смахивать уведомления\' в настройках уведомлений

@@ -301,8 +301,9 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         title.setMovementMethod(ScrollingMovementMethod())
         title.post {
-            val y = title.getLayout().getLineTop(0)
-            title.scrollTo(0, y)
+            val y = title.getLayout()?.getLineTop(0)
+            if (y != null)
+                title.scrollTo(0, y)
         }
         title.setTextIsSelectable(true)
 

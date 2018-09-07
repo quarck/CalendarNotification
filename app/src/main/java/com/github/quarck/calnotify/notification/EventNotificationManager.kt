@@ -540,6 +540,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
+        builder.applyChannelAttributes(channel)
+
         val notification = builder.build()
 
         try {
@@ -1024,6 +1026,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         builder.setColor(event.color.adjustCalendarColor(false))
 
+        builder.applyChannelAttributes(channel)
+
         try {
             DevLog.info(ctx, LOG_TAG, "adding: notificationId=${event.notificationId}")
 
@@ -1174,6 +1178,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 //                        .setOnlyAlertOnce(true)
 //
 //
+//        builder.applyChannelAttributes(channel)
 //        builder.setGroup(NOTIFICATION_GROUP)
 //
 //        val notification = builder.build()
@@ -1206,6 +1211,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setOnlyAlertOnce(true)
 
         builder.setGroup(NOTIFICATION_GROUP)
+
+        builder.applyChannelAttributes(channel)
 
         val notification = builder.build()
 

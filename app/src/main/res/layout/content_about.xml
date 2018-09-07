@@ -347,7 +347,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Sergiy"
+            android:text="Андрей Бондаренко"
             android:textColor="@color/primary_text"
             android:paddingLeft="@dimen/activity_help_credits_padding_left"
             android:paddingStart="@dimen/activity_help_credits_padding_left"

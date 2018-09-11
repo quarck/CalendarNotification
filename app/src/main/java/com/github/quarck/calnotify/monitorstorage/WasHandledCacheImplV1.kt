@@ -45,7 +45,7 @@ class WasHandledCacheImplV1(val context: Context) : WasHandledCacheImplInterface
                         "$KEY_RESERVED_INT1 INTEGER, " +
                         "$KEY_RESERVED_INT2 INTEGER, " +
                         "$KEY_RESERVED_STR1 TEXT, " +
-                        "$KEY_RESERVED_STR2 TEXT " +
+                        "$KEY_RESERVED_STR2 TEXT, " +
                         "PRIMARY KEY ($KEY_EVENT_MD5)" +
                         " )"
 
@@ -121,6 +121,8 @@ class WasHandledCacheImplV1(val context: Context) : WasHandledCacheImplInterface
         finally {
             cursor?.close()
         }
+
+        DevLog.info(context, LOG_TAG, "getAlertWasHandled: $ret for ${entry.toPublicString()}")
 
         return ret
     }

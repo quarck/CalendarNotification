@@ -136,6 +136,9 @@ data class EventAlertRecord(
         var attendanceStatus: AttendanceStatus = AttendanceStatus.None,
         var flags: Long = 0
 ) {
+    fun toPublicString() =
+            "EventAlertRecord($calendarId,$eventId,$isAllDay,$isRepeating,$alertTime,$notificationId,$startTime,$endTime,$instanceStartTime,$instanceEndTime,$lastStatusChangeTime,$snoozedUntil,$displayStatus,$origin,$timeFirstSeen,$flags)"
+
     var isMuted: Boolean
         get() = flags.isFlagSet(EventAlertFlags.IS_MUTED)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_MUTED, value) }

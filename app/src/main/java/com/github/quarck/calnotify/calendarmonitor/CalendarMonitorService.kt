@@ -93,6 +93,14 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
         catch (ex: Exception) {
             DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
         }
+
+        try {
+            ApplicationController.CalendarMonitor.onRescanFromService(this)
+        }
+        catch (ex: Exception) {
+            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+        }
+
     }
 
     fun sleep(time: Int) {

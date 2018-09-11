@@ -17,22 +17,23 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.calendarmonitor
+package com.github.quarck.calnotify.monitorstorage
 
-import android.content.Context
-import com.github.quarck.calnotify.utils.PersistentStorageBase
+import android.database.sqlite.SQLiteDatabase
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 
-class CalendarMonitorState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
+interface WasHandledCacheImplInterface {
+    fun createDb(db: SQLiteDatabase)
 
-    var nextEventFireFromScan by LongProperty(Long.MAX_VALUE, "C")
-    var prevEventFireFromScan by LongProperty(Long.MAX_VALUE, "D")
-    var prevEventScanTo by LongProperty(Long.MAX_VALUE, "E")
+    fun addHandledAlert(db: SQLiteDatabase, entry: EventAlertRecord)
+    fun addHandledAlerts(db: SQLiteDatabase, entries: Collection<EventAlertRecord>)
 
-    var firstScanEver by BooleanProperty(true, "F")
+    fun getAlertWasHandled(db: SQLiteDatabase, entry: EventAlertRecord): Boolean
+    fun getAlertsWereHandled(db: SQLiteDatabase, entries: Collection<EventAlertRecord>): BooleanArray
 
-    companion object {
-        const val PREFS_NAME: String = "cal_monitor"
-    }
-
+    /**
+     * @return number of items removed
+     */
+    fun removeOldEntries(db: SQLiteDatabase, minAge: Long): Int
 }
-

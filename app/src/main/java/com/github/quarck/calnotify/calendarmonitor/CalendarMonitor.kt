@@ -42,10 +42,6 @@ import com.github.quarck.calnotify.utils.setExactAndAlarm
 class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         CalendarMonitorInterface {
 
-    private val providerScanner: CalendarMonitorProvider by lazy {
-        CalendarMonitorProvider(calendarProvider, this)
-    }
-
     private val manualScanner: CalendarMonitorManual by lazy {
         CalendarMonitorManual(calendarProvider, this)
     }
@@ -91,24 +87,21 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val currentTime = System.currentTimeMillis()
 
-            var firedProvider = false
-            var firedManual = false
-
-            val nextEventFireFromProvider = state.nextEventFireFromProvider
-            if (nextEventFireFromProvider < currentTime + Consts.ALARM_THRESHOLD) {
-                DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromProvider $nextEventFireFromProvider < current time $currentTime + THRS, checking what to fire")
-                firedProvider = providerScanner.manualFireEventsAt_NoHousekeeping(context, state, state.nextEventFireFromProvider, state.prevEventFireFromProvider)
-            }
-
             val nextEventFireFromScan = state.nextEventFireFromScan
             if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
-                DevLog.info(context, LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current time $currentTime + THRS, checking what to fire")
-                firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+
+                DevLog.info(context, LOG_TAG,
+                        "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current" +
+                                " time $currentTime + THRS, checking what to fire")
+
+                val firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(
+                        context, state.nextEventFireFromScan, state.prevEventFireFromScan)
+
+                if (firedManual) {
+                    ApplicationController.afterCalendarEventFired(context)
+                }
             }
 
-            if (firedProvider || firedManual) {
-                ApplicationController.afterCalendarEventFired(context)
-            }
 
 //            launchRescanService(
 //                context,
@@ -275,28 +268,24 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         try {
 
-            val scanStart = System.currentTimeMillis()
+            val t0 = System.currentTimeMillis()
 
             val state = CalendarMonitorState(context)
 
-            val scanPh1 = System.currentTimeMillis()
-
-            val (nextAlarmFromProvider, firedEventsProvider) = providerScanner.scanNextEvent(context, state)
-
-            val scanPh2 = System.currentTimeMillis()
+            val t1 = System.currentTimeMillis()
 
             val (nextAlarmFromManual, firedEventsManual) = manualScanner.scanNextEvent(context, state)
 
-            val scanPh3 = System.currentTimeMillis()
+            val t2 = System.currentTimeMillis()
 
-            setOrCancelAlarm(context, Math.min(nextAlarmFromProvider, nextAlarmFromManual))
+            setOrCancelAlarm(context, nextAlarmFromManual)
 
-            val scanPh4 = System.currentTimeMillis()
+            val t3 = System.currentTimeMillis()
 
-            DevLog.info(context, LOG_TAG, "Next alarm from provider: $nextAlarmFromProvider, manual: $nextAlarmFromManual, " +
-                    "perf: ${scanPh4 - scanStart}, ${scanPh1 - scanStart}, ${scanPh2 - scanPh1}, ${scanPh3 - scanPh2}, ${scanPh4 - scanPh3}")
+            DevLog.info(context, LOG_TAG, "Manual scan, next alarm: $nextAlarmFromManual, " +
+                    "timings: ${t3-t2},${t2-t1},${t1-t0}")
 
-            firedAnything = firedEventsProvider || firedEventsManual
+            firedAnything = firedEventsManual
         }
         catch (ex: java.lang.SecurityException) {
             DevLog.error(context, LOG_TAG, "onRescanFromService: SecurityException, ${ex.detailed}")
@@ -341,19 +330,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                     )
         }
     }
-
-//    private fun schedulePeriodicRescanAlarm(context: Context) {
-//
-//        val interval = Consts.CALENDAR_RESCAN_INTERVAL
-//        val next = System.currentTimeMillis() + interval
-//
-//        DevLog.debug(LOG_TAG, "schedulePeriodicRescanAlarm, interval: $interval");
-//
-//        val intent = Intent(context, ManualEventAlarmPerioidicRescanBroadcastReceiver::class.java);
-//        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//
-//        context.alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, next, interval, pendingIntent)
-//    }
 
     override fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
 

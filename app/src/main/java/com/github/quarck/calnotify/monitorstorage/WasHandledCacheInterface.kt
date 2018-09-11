@@ -1,6 +1,6 @@
 //
 //   Calendar Notifications Plus
-//   Copyright (C) 2016 Sergey Parshin (s.parshin.sc@gmail.com)
+//   Copyright (C) 2017 Sergey Parshin (s.parshin.sc@gmail.com)
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -17,26 +17,18 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
+package com.github.quarck.calnotify.monitorstorage
 
-package com.github.quarck.calnotify
+import com.github.quarck.calnotify.calendar.EventAlertRecord
+import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 
-import android.content.Context
-import com.github.quarck.calnotify.utils.PersistentStorageBase
+interface WasHandledCacheInterface {
 
-class PersistentState(private val ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
+    fun addHandledAlert(entry: EventAlertRecord)
+    fun addHandledAlerts(entries: Collection<EventAlertRecord>)
 
-    var notificationLastFireTime by LongProperty(0, "A") // give a short name to simplify XML parsing
-    var nextSnoozeAlarmExpectedAt by LongProperty(0, "B")
+    fun getAlertWasHandled(entry: EventAlertRecord): Boolean
+    fun getAlertsWereHandled(entries: Collection<EventAlertRecord>): BooleanArray
 
-    var lastCustomSnoozeIntervalMillis by LongProperty(Consts.HOUR_IN_SECONDS * 1000L, "C")
-
-    var lastWasHandledCacheCleanup by LongProperty(0, "D")
-
-    companion object {
-        const val PREFS_NAME: String = "persistent_state"
-    }
+    fun removeOldEntries(minAge: Long): Int
 }
-
-val Context.persistentState: PersistentState
-    get() = PersistentState(this)
-

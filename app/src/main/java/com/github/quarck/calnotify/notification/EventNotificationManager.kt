@@ -38,26 +38,6 @@ import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.ViewEventActivityNoRecents
 import com.github.quarck.calnotify.utils.*
 
-fun NotificationManager.notifyIntoChannel(channel: NotificationChannelAttributes, id: Int, notification: Notification) {
-    notify(null, id, notification)
-
-    for (chNum in 0 until NotificationChannelManager.NUM_CHANNELS) {
-        val offset = NotificationChannelManager.MAX_NOTIFICATION_IDS * chNum
-        if (offset == channel.channelIdOffset)
-            this.notify(id + offset, notification)
-        else
-            this.cancel(id + offset)
-    }
-}
-
-fun NotificationManager.cancelAllChannels(id: Int) {
-
-    for (chNum in 0 until NotificationChannelManager.NUM_CHANNELS) {
-        val offset = NotificationChannelManager.MAX_NOTIFICATION_IDS * chNum
-        this.cancel(id + offset)
-    }
-}
-
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager : EventNotificationManagerInterface {
 
@@ -130,7 +110,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 snooze0Time = settings.firstNonNegativeSnoozeTime
         )
 
-        context.notificationManager.cancelAllChannels(Consts.NOTIFICATION_ID_REMINDER)
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
     }
 
     override fun onAllEventsSnoozed(context: Context) {
@@ -265,13 +245,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 postEventNotifications(context, isReminder = true)
             }
             else {
-                context.notificationManager.cancelAllChannels(Consts.NOTIFICATION_ID_REMINDER)
+                context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
             }
         }
     }
 
     override fun cleanupEventReminder(context: Context) {
-        context.notificationManager.cancelAllChannels(Consts.NOTIFICATION_ID_REMINDER)
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
     }
 
     data class EventAlertNotificationRecord(
@@ -545,8 +525,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notification = builder.build()
 
         try {
-            context.notificationManager.notifyIntoChannel(
-                    channel, Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
+            context.notificationManager.notify(
+                    Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "Error posting notification: $ex, ${ex.stackTrace}")
@@ -1031,8 +1011,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         try {
             DevLog.info(ctx, LOG_TAG, "adding: notificationId=${event.notificationId}")
 
-            notificationManager.notifyIntoChannel(
-                    channel,
+            notificationManager.notify(
                     event.notificationId,
                     builder.build()
             )
@@ -1104,7 +1083,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun removeNotification(ctx: Context, notificationId: Int) {
         val notificationManager = ctx.notificationManager
-        notificationManager.cancelAllChannels(notificationId)
+        notificationManager.cancel(notificationId)
     }
 
     private fun removeNotifications(context: Context, events: Collection<EventAlertRecord>) {
@@ -1113,14 +1092,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
         DevLog.info(context, LOG_TAG, "Removing 'full' notifications for  ${events.size} events")
 
         for (event in events)
-            notificationManager.cancelAllChannels(event.notificationId)
+            notificationManager.cancel(event.notificationId)
     }
 
     private fun removeVisibleNotifications(ctx: Context, events: Collection<EventAlertRecord>) {
         val notificationManager = ctx.notificationManager
 
         events.filter { it.displayStatus != EventDisplayStatus.Hidden }
-                .forEach { notificationManager.cancelAllChannels(it.notificationId) }
+                .forEach { notificationManager.cancel(it.notificationId) }
     }
 
 //    private fun postNumNotificationsCollapsed(
@@ -1183,12 +1162,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
 //
 //        val notification = builder.build()
 //
-//        context.notificationManager.notifyIntoChannel(channel, Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
+//        context.notificationManager.notify(Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
 //    }
 
     private fun hideCollapsedEventsNotification(context: Context) {
         DevLog.debug(LOG_TAG, "Hiding collapsed view notification")
-        context.notificationManager.cancelAllChannels(Consts.NOTIFICATION_ID_COLLAPSED)
+        context.notificationManager.cancel(Consts.NOTIFICATION_ID_COLLAPSED)
     }
 
     private fun postDebugNotification(context: Context, notificationId: Int, title: String, text: String) {
@@ -1217,7 +1196,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val notification = builder.build()
 
         try {
-            notificationManager.notifyIntoChannel(channel, notificationId, notification)
+            notificationManager.notify(notificationId, notification)
         }
         catch (ex: Exception) {
             DevLog.error(context, LOG_TAG, "Exception: ${ex.detailed}")

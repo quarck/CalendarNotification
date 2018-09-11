@@ -45,6 +45,8 @@ import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorOneTimeJobService
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorPeriodicJobService
+import com.github.quarck.calnotify.monitorstorage.WasHandledCache
+import com.github.quarck.calnotify.monitorstorage.WasHandledCacheInterface
 import com.github.quarck.calnotify.utils.detailed
 
 
@@ -344,8 +346,13 @@ object ApplicationController : EventMovedHandler {
             DevLog.error(context, LOG_TAG, "Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
                     "instance st ${event.instanceStartTime}, repeating: " +
                     "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
-        else
-            DevLog.debug(LOG_TAG, "event added: ${event.eventId} (cal id: ${event.calendarId})");
+        else {
+            DevLog.debug(LOG_TAG, "event added: ${event.eventId} (cal id: ${event.calendarId})")
+
+            WasHandledCache(context).use {
+                cache -> cache.addHandledAlert(event)
+            }
+        }
 
         ReminderState(context).onNewEventFired()
 
@@ -354,6 +361,7 @@ object ApplicationController : EventMovedHandler {
 
     fun registerNewEvents(
             context: Context,
+            wasHandledCache: WasHandledCacheInterface,
             pairs: List<Pair<MonitorEventAlertEntry, EventAlertRecord>>
     ): ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
 
@@ -368,6 +376,8 @@ object ApplicationController : EventMovedHandler {
 
         val pairsToAdd = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
         val eventsToDismiss = arrayListOf<EventAlertRecord>()
+
+        var eventsToAdd: List<EventAlertRecord>? = null
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -426,11 +436,13 @@ object ApplicationController : EventMovedHandler {
                 for ((_, event) in pairsToAdd)
                     event.lastStatusChangeTime = currentTime++
 
-                val eventsToAdd = pairsToAdd.map {
+                eventsToAdd = pairsToAdd.map {
                     it.second
                 }
 
-                db.addEvents(eventsToAdd) // ignoring result of add - here we are using another way to validate succesfull add
+                eventsToAdd?.let {
+                    db.addEvents(it)  // ignoring result of add - here we are using another way to validate succesfull add
+                }
             }
         }
 
@@ -475,8 +487,12 @@ object ApplicationController : EventMovedHandler {
             }
         }
 
-        if (pairs.size != validPairs.size)
+        if (pairs.size == validPairs.size) {
+            eventsToAdd?.let { wasHandledCache.addHandledAlerts(it) }
+        }
+        else {
             DevLog.warn(context, LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
+        }
 
         ReminderState(context).onNewEventFired()
 
@@ -778,7 +794,22 @@ object ApplicationController : EventMovedHandler {
             // this might fire new notifications
             // This would automatically launch the rescan of calendar and monitor
             calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
+
+            checkAndCleanupWasHandledCache(context)
         }
+    }
+
+    fun checkAndCleanupWasHandledCache(context: Context) {
+
+        val prState = context.persistentState
+        val now = System.currentTimeMillis()
+
+        if (now - prState.lastWasHandledCacheCleanup < Consts.WAS_HANDLED_CACHE_CLEANUP_INTERVALS)
+            return
+
+        WasHandledCache(context).use { it.removeOldEntries( Consts.WAS_HANDLED_CACHE_MAX_AGE_MILLIS )}
+
+        prState.lastWasHandledCacheCleanup = now
     }
 
     fun onTimeChanged(context: Context) {

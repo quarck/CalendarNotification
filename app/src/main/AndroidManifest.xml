@@ -186,10 +186,27 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".broadcastreceivers.EventReminderBroadcastReceiver">
-            <intent-filter android:priority="1122334455">
+            <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER" />
 
                 <data android:mimeType="vnd.android.cursor.item/calendar-alert" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENTEX_REMINDER" />
+
+                <data android:mimeType="vnd.android.cursor.item/calendarEx-alert" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENT_REMINDER" />
+
+                <data android:scheme="content" />
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.EVENT_REMINDER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/calendar_alert_time" />
             </intent-filter>
         </receiver>
         <receiver android:name=".broadcastreceivers.CalendarChangedBroadcastReceiver">

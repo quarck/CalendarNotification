@@ -22,18 +22,21 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 
-class EventReminderBroadcastReceiver : BroadcastReceiver() {
+open class EventReminderBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        if (context == null || intent == null)
-            return;
+        if (context == null || intent == null) {
+            Log.e(LOG_TAG, "either context or intent is null!!")
+            return
+        }
 
-        DevLog.debug(LOG_TAG, "Event reminder received, ${intent.data}, ${intent.action}");
+        DevLog.info(context, LOG_TAG,"Event reminder received, ${intent.data}, ${intent.action}");
 
         ApplicationController.CalendarMonitor.onProviderReminderBroadcast(context, intent)
     }

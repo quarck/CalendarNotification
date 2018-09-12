@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.broadcastreceivers
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,8 +27,9 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 
-class TimeSetBroadcastReceiver : BroadcastReceiver() {
+open class TimeSetBroadcastReceiver : BroadcastReceiver() {
 
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context?, intent: Intent?) {
         DevLog.info(context, LOG_TAG, "onReceive")
         if (context != null)

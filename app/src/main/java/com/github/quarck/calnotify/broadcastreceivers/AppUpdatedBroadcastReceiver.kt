@@ -26,7 +26,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 
-class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
+open class AppUpdatedBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         DevLog.debug(LOG_TAG, "onReceive");

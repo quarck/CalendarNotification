@@ -191,10 +191,10 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-class ReminderAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
+open class ReminderAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
 }
 
-class ReminderExactAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
+open class ReminderExactAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
 }

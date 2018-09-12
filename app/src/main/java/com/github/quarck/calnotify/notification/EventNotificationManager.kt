@@ -886,7 +886,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val extender = NotificationCompat.WearableExtender()
 
-        if ((notificationSettings.enableNotificationMute && !event.isTask) || event.isMuted) {
+        if ((notificationSettings.enableNotificationMute || event.isMuted) && !event.isTask) {
             // build and append
 
             val muteTogglePendingIntent =

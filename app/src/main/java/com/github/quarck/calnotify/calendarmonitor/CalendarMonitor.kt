@@ -31,6 +31,7 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroad
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
+import com.github.quarck.calnotify.monitorstorage.WasHandledCache
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -387,10 +388,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     }
 
     override fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
-        return MonitorStorage(context).use {
+        var ret = MonitorStorage(context).use {
             db ->
             getAlertWasHandled(db, ev)
         }
+        if (ret) {
+            ret = WasHandledCache(context).use {
+                db -> db.getAlertWasHandled(ev)
+            }
+        }
+
+        return ret
     }
 
     companion object {

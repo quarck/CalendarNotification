@@ -36,8 +36,8 @@ open class ManualEventAlarmGenericBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
+open class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
 }
 
-class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
+open class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
 }

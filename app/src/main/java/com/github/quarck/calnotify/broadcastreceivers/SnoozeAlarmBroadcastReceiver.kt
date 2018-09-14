@@ -31,10 +31,3 @@ open class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-open class SnoozeExactAlarmBroadcastReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null)
-            ApplicationController.onEventAlarm(context)
-    }
-}
-

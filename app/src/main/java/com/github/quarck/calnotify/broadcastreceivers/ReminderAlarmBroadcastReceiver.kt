@@ -40,7 +40,7 @@ import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 import com.github.quarck.calnotify.utils.wakeLocked
 
-open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
+open class ReminderAlarmBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -153,9 +153,8 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         context,
                         settings.useSetAlarmClock,
                         nextFireAt,
-                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                        ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java)
+                        ReminderAlarmBroadcastReceiver::class.java
+                )
 
                 reminderState.nextFireExpectedAt = nextFireAt
             }
@@ -189,12 +188,4 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         private const val LOG_TAG = "BroadcastReceiverReminderAlarm"
         private const val REMINDER_WAKE_LOCK_NAME = "ReminderWakeLock"
     }
-}
-
-open class ReminderAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
-}
-
-open class ReminderExactAlarmBroadcastReceiver : ReminderAlarmGenericBroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) = super.onReceive(context, intent)
 }

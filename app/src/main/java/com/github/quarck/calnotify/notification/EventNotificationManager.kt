@@ -504,14 +504,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
             NotificationSwipeBehavior.SwipeDisallowed -> {
             }
             NotificationSwipeBehavior.DismissEvent -> {
-                val dismissIntent = Intent(context, NotificationActionDismissService::class.java)
+                val dismissIntent = NotificationActionIntentService.getIntentForDismiss(context)
                 dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
 
                 val pendingDismissIntent = pendingServiceIntent(context, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
                 builder.setDeleteIntent(pendingDismissIntent)
             }
             NotificationSwipeBehavior.SnoozeEvent -> {
-                val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
+                val snoozeIntent = NotificationActionIntentService.getIntentForSnooze(context)
                 snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
                 snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
@@ -722,7 +722,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         when (notificationBehavior) {
             NotificationSwipeBehavior.SnoozeEvent -> {
-                val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+                val snoozeIntent = NotificationActionIntentService.getIntentForSnooze(ctx)
                 snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
                 snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
 
@@ -733,7 +733,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
 
             NotificationSwipeBehavior.DismissEvent ->  {
-                val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
+                val dismissIntent = NotificationActionIntentService.getIntentForDismiss(ctx)
                 dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
 
                 val pendingDismissIntent = pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
@@ -1041,7 +1041,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
-        val intent = Intent(ctx, NotificationActionDismissService::class.java)
+        val intent = NotificationActionIntentService.getIntentForDismiss(ctx)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
@@ -1050,7 +1050,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     private fun defaultSnoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, snoozePreset: Long): Intent {
 
-        val intent = Intent(ctx, NotificationActionSnoozeService::class.java)
+        val intent = NotificationActionIntentService.getIntentForSnooze(ctx)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
@@ -1059,7 +1059,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
     private fun defaultMuteToggleIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, muteAction: Int): Intent {
-        val intent = Intent(ctx, NotificationActionMuteToggleService::class.java)
+        val intent = NotificationActionIntentService.getIntentForMute(ctx)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)

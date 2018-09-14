@@ -23,9 +23,7 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
-import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
-import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.isNotSnoozed
 import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.calendar.isSnoozed
@@ -72,9 +70,8 @@ object AlarmScheduler : AlarmSchedulerInterface {
                         context,
                         settings.useSetAlarmClock,
                         nextEventAlarm,
-                        SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                        SnoozeExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java)
+                        SnoozeAlarmBroadcastReceiver::class.java
+                )
 
                 context.persistentState.nextSnoozeAlarmExpectedAt = nextEventAlarm
 
@@ -85,8 +82,8 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
                 context.alarmManager.cancelExactAndAlarm(
                         context,
-                        SnoozeAlarmBroadcastReceiver::class.java,
-                        SnoozeExactAlarmBroadcastReceiver::class.java)
+                        SnoozeAlarmBroadcastReceiver::class.java
+                )
             }
 
             val reminderState = ReminderState(context)
@@ -141,9 +138,8 @@ object AlarmScheduler : AlarmSchedulerInterface {
                         context,
                         settings.useSetAlarmClock,
                         reminderAlarmNextFire,
-                        ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
-                        ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java)
+                        ReminderAlarmBroadcastReceiver::class.java
+                )
 
                 reminderState.nextFireExpectedAt = reminderAlarmNextFire
 
@@ -151,8 +147,8 @@ object AlarmScheduler : AlarmSchedulerInterface {
             else {
                 context.alarmManager.cancelExactAndAlarm(
                         context,
-                        ReminderAlarmBroadcastReceiver::class.java,
-                        ReminderExactAlarmBroadcastReceiver::class.java)
+                        ReminderAlarmBroadcastReceiver::class.java
+                )
             }
         }
     }

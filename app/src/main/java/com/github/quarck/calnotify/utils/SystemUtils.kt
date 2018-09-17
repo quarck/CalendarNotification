@@ -32,8 +32,6 @@ import android.os.Vibrator
 import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.ui.MainActivity
-
 //import com.github.quarck.calnotify.logs.Logger
 
 
@@ -94,14 +92,15 @@ fun AlarmManager.setExactAndAlarm(
         context: Context,
         useSetAlarmClock: Boolean, // settings: Settings,
         triggerAtMillis: Long,
-        receiverIntentClass: Class<*>
+        roughIntentClass: Class<*>, // ignored on KitKat and below
+        exactIntentClass: Class<*>,
+        alarmInfoIntent: Class<*>
 ) {
     val LOG_TAG = "AlarmManager.setExactAndAlarm"
 
     // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
     // so set it as a "first thing", followed by more precise alarm
-    val intent = Intent(context, receiverIntentClass)
-
+    val intent = Intent(context, roughIntentClass);
     val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis + Consts.ALARM_THRESHOLD / 3, pendingIntent);
 
@@ -111,14 +110,14 @@ fun AlarmManager.setExactAndAlarm(
     // on the other hand setExact is more precise than setExactAndAllowWhileIdle, but it can't
     // fire during doze / standby
 
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    val intentExact = Intent(context, exactIntentClass);
+    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
 
     //if (settings.useSetAlarmClock) {
     if (useSetAlarmClock) {
 
-        val intentInfo = Intent(context, MainActivity::class.java)
-        val pendingIntentInfo = PendingIntent.getActivity(context, 666,
-                intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intentInfo = Intent(context, alarmInfoIntent);
+        val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntentInfo)
 
@@ -130,23 +129,25 @@ fun AlarmManager.setExactAndAlarm(
     }
     else {
         setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
+
         DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
     }
 }
 
 fun AlarmManager.cancelExactAndAlarm(
         context: Context,
-        receiverIntentClass: Class<*>
+        roughIntentClass: Class<*>,
+        exactIntentClass: Class<*>
 ) {
     val LOG_TAG = "AlarmManager.cancelExactAndAlarm"
     // reverse of the prev guy
 
-    val intent = Intent(context, receiverIntentClass)
-
+    val intent = Intent(context, roughIntentClass);
     val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     cancel(pendingIntent);
 
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    val intentExact = Intent(context, exactIntentClass);
+    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
     cancel(pendingIntentExact)
 
     DevLog.info(context, LOG_TAG, "Cancelled alarm")

@@ -155,19 +155,20 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <!-- IntentService -->
         <service android:name=".calendarmonitor.CalendarMonitorIntentService" />
-        <!-- JobService -->
         <service android:name=".calendarmonitor.CalendarMonitorOneTimeJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <!-- JobService, but need another one here -->
         <service android:name=".calendarmonitor.CalendarMonitorPeriodicJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".notification.NotificationActionDismissService" />
+        <service android:name=".notification.NotificationActionSnoozeService" />
+        <service android:name=".notification.NotificationActionMuteToggleService" />
 
-        <service android:name=".notification.NotificationActionIntentService" />
-
-        <!-- Keeping receiver for BOOT_COMPLETED separate, as it has lots of flags
-            that we don't want to apply to other receivers -->
+        <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".broadcastreceivers.BootCompleteBroadcastReceiver"
             android:enabled="true"
@@ -184,9 +185,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
-        <!-- Big catch-all receiver for everything (pretty much) -->
-        <receiver android:name=".broadcastreceivers.ActionBroadcastReceiver">
+        <receiver android:name=".broadcastreceivers.EventReminderBroadcastReceiver">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.EVENT_REMINDER" />
 
@@ -209,29 +208,27 @@
 
                 <data android:mimeType="vnd.android.cursor.item/calendar_alert_time" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-
+        </receiver>
+        <receiver android:name=".broadcastreceivers.CalendarChangedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PROVIDER_CHANGED" />
 
                 <data android:scheme="content" />
                 <data android:host="com.android.calendar" />
             </intent-filter>
-
+        </receiver>
+        <receiver android:name=".broadcastreceivers.SnoozeAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ManualEventAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.SnoozeExactAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ReminderExactAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.ManualEventExactAlarmBroadcastReceiver" />
+        <receiver android:name=".broadcastreceivers.TimeSetBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
-
         </receiver>
-
-        <!-- Alarm receivers for different call / receiver sites -->
-        <receiver android:name=".broadcastreceivers.SnoozeAlarmBroadcastReceiver" />
-        <receiver android:name=".broadcastreceivers.ReminderAlarmBroadcastReceiver" />
-        <receiver android:name=".broadcastreceivers.ManualEventAlarmBroadcastReceiver" />
 
     </application>
 

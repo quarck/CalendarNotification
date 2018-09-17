@@ -23,18 +23,21 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
-open class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
+open class CalendarChangedBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null)
-            ApplicationController.onEventAlarm(context)
+        DevLog.debug(LOG_TAG, "onReceive")
+
+        if (context == null)
+            return
+
+        ApplicationController.onCalendarChanged(context)
+    }
+
+    companion object {
+        private const val LOG_TAG = "BroadcastReceiverCalendarChanged"
     }
 }
-
-open class SnoozeExactAlarmBroadcastReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null)
-            ApplicationController.onEventAlarm(context)
-    }
-}
-

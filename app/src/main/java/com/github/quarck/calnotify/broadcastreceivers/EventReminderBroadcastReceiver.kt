@@ -22,19 +22,26 @@ package com.github.quarck.calnotify.broadcastreceivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.logs.DevLog
+//import com.github.quarck.calnotify.logs.Logger
 
-open class SnoozeAlarmBroadcastReceiver : BroadcastReceiver() {
+open class EventReminderBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null)
-            ApplicationController.onEventAlarm(context)
+
+        if (context == null || intent == null) {
+            Log.e(LOG_TAG, "either context or intent is null!!")
+            return
+        }
+
+        DevLog.info(context, LOG_TAG,"Event reminder received, ${intent.data}, ${intent.action}");
+
+        ApplicationController.CalendarMonitor.onProviderReminderBroadcast(context, intent)
+    }
+
+    companion object {
+        private const val LOG_TAG = "BroadcastReceiverEventReminder"
     }
 }
-
-open class SnoozeExactAlarmBroadcastReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null)
-            ApplicationController.onEventAlarm(context)
-    }
-}
-

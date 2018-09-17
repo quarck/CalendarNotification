@@ -27,6 +27,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
+import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
@@ -315,15 +316,18 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                     context,
                     settings.useSetAlarmClockForFailbackEventPaths,
                     exactTime,
-                    ManualEventAlarmBroadcastReceiver::class.java
-            )
+                    ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
+                    ManualEventExactAlarmBroadcastReceiver::class.java,
+                    MainActivity::class.java // alarm info intent
+                    )
         }
         else {
             DevLog.info(context, LOG_TAG, "No next alerts, cancelling")
             context.alarmManager.cancelExactAndAlarm(
                     context,
-                    ManualEventAlarmBroadcastReceiver::class.java
-            )
+                    ManualEventAlarmBroadcastReceiver::class.java,
+                    ManualEventExactAlarmBroadcastReceiver::class.java
+                    )
         }
     }
 

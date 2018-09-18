@@ -153,4 +153,6 @@ object Consts {
     const val BIN_KEEP_HISTORY_DAYS = 3L
     const val BIN_KEEP_HISTORY_MILLISECONDS = BIN_KEEP_HISTORY_DAYS * DAY_IN_MILLISECONDS
 
+
+    const val REMOTE_COMMAND_MUTE_ALL = "com.github.quarck.calnotify.remote_mute_all"
 }

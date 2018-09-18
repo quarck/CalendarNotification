@@ -229,6 +229,12 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".broadcastreceivers.RemoteCommandBroadcastReceiver"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.github.quarck.calnotify.remote_mute_all" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

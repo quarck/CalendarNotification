@@ -285,9 +285,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     companion object {
 
         // Preferences keys
-
-        const val VIBRATION_PATTERN_KEY = "pref_vibration_pattern"
-
         private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
 
         private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"

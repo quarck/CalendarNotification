@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.prefs.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.github.quarck.calnotify.R
@@ -41,22 +42,28 @@ class NotificationSettingsActivity : AppCompatActivity(){
 
             header(R.string.main_notifications)
 
-            item(R.string.regular_notification_settings) {
-                NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
-                        NotificationChannelManager.SoundState.Normal,
-                        false)
-            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            item(R.string.quiet_hours_notification_settings){
-                NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
-                        NotificationChannelManager.SoundState.Silent,
-                        false)
-            }
+                item(R.string.regular_notification_settings) {
+                    NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
+                            NotificationChannelManager.SoundState.Normal,
+                            false)
+                }
 
-            item (R.string.alarm_notification_settings) {
-                NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
-                        NotificationChannelManager.SoundState.Alarm,
-                        false)
+                item(R.string.quiet_hours_notification_settings){
+                    NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
+                            NotificationChannelManager.SoundState.Silent,
+                            false)
+                }
+
+                item (R.string.alarm_notification_settings) {
+                    NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
+                            NotificationChannelManager.SoundState.Alarm,
+                            false)
+                }
+            }
+            else {
+                red_notice(R.string.pre_oreo_notification_channels_explanation)
             }
 
             header(R.string.reminder_notifications)
@@ -68,16 +75,19 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 onChange{settings.remindersEnabled = it}
 
                 depending {
-                    item(R.string.reminder_notification_settings) {
-                        NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
-                                NotificationChannelManager.SoundState.Normal, true)
 
-                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        item(R.string.reminder_notification_settings) {
+                            NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
+                                    NotificationChannelManager.SoundState.Normal, true)
 
-                    item(R.string.alarm_reminder_notification_settings) {
-                        NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
-                                NotificationChannelManager.SoundState.Alarm, true)
+                        }
 
+                        item(R.string.alarm_reminder_notification_settings) {
+                            NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
+                                    NotificationChannelManager.SoundState.Alarm, true)
+
+                        }
                     }
 
                     item(R.string.remind_interval) {

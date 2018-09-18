@@ -248,6 +248,14 @@ class PrefsHeader(val inflater: LayoutInflater, val root: LinearLayout, text: St
     }
 }
 
+class RedNotice(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
+    init {
+        val child = inflater.inflate(R.layout.red_notice, null)
+        child.findOrThrow<TextView>(R.id.red_notice_text).text = text
+        root.addView(child)
+    }
+}
+
 class PrefsSmallprint(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
     init {
         val child = inflater.inflate(R.layout.pref_smallprint, null)
@@ -469,6 +477,14 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
 
     fun header(textId: Int): PrefsHeader {
         return header(context.resources.getString(textId))
+    }
+
+    fun red_notice(text: String ): RedNotice {
+        return RedNotice(inflater, root, text)
+    }
+
+    fun red_notice(textId: Int): RedNotice {
+        return red_notice(context.resources.getString(textId))
     }
 
     fun smallprint(text: String): PrefsSmallprint {

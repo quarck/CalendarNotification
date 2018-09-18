@@ -591,5 +591,7 @@
     <string name="always_use_extenal_editor">Always use external editor</string>
     <string name="always_use_external_editor_summary">Edit button on the snooze activity will always bring the external event editor / view</string>
 
+    <string name="pre_oreo_notification_channels_explanation">Attention pre-Oreo users:\n\nThis app is running in compatibility mode on your device\n\nMultiple users has requested F-Droid built to be installable on pre-Oreo devices, thus this change was made. But sound / vibration / LED control are all now migrated to notification channel settings which are absent on pre-Oreo devices, so you would not be able to control these. To get these settings back - please revert to an older version (Google Play will serve older version for pre-Oreo devices, or ask me directly).</string>
+
 </resources>
 

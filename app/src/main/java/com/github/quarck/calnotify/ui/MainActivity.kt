@@ -276,6 +276,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 settings.doNotShowBatteryOptimisationWarning = true
                             }
                             .create()
+                            .show()
                 }
             }
         }

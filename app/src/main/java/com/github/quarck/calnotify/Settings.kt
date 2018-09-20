@@ -261,7 +261,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         set(value) = setInt(GROUP_NOTIFICATION_SWIPE_BEHAVIOR, value.code)
 
     var postGroupNotification: Boolean
-        get() = getBoolean(GROUP_NOTIFICAITONS, true)
+        get() = getBoolean(GROUP_NOTIFICAITONS, false)
         set(value) = setBoolean(GROUP_NOTIFICAITONS, value)
 
     val allowMuteAndAlarm: Boolean

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Calendar Notifications Plus</string>
+    <string name="app_name">Calendar Notifications</string>
 
     <string name="main_activity_title">Powiadomienia kalendarza</string>
 
@@ -513,30 +513,84 @@
     <string name="reminder_pattern">Wzór cyklu przypomnień - lista rozdzielana przecinkami. Dopuszczalne są wartości takie jak: \'15s\' (min. wartość), \'15m\', \'2h\' lub \'3d\'\nWzór będzie powtarzany cyklicznie.\nNowe lub \'odświeżone\' wydarzenia będą uruchamiać cykl od nowa.</string>
 
     <string name="enable_mute_title">Włącz wyciszanie</string>
-    <string name="enable_mute_summary">Włącza możliwość wyciszania powiadomień:\n* dodaje klawisz \'wycisz\' w powiadomieniu \n* włącza powiązaną fukcjonalność na głównym ekranie.\n Wyciszone powiadomienia nie będą uruchamiały przypomnień. Wyciszane, odłożone przypomnienia pojawią się ponownie bez dźwięku lub wibracji.</string>
+    <string name="enable_mute_summary">Włącza wyciszanie wydarzeń:\n* dodaje przycisk \'wycisz\' w powiadomieniu \n* włącza powiązaną funkcjonalność w głównym menu\nWyciszone powiadomienia nie będą generowały przypomnień, wyciszone, odłożone wydarzenia pojawią w trybie wyciszenia, bez wibracji</string>
 
     <string name="enable_mute_tag_title">Obsługuj znacznik #mute</string>
-    <string name="enable_mute_tag_summary">Wymusza domyślne wyciszenie powiadomień dla wydarzeń z wpisanym w temacie lub opisie znacznikiem #mute. Wyciszenie może zostać cofnięte ręcznie po uruchomieniu powiadomienia (następne instancje powtarzanego powiadomienia będzie także domyślnie wyciszona).\n Powiadomienie zostanie wyciszone nawet wtedy, gdy ustawienie \'Włącz wyciszanie\' będzie wyłączone.</string>
+    <string name="enable_mute_tag_summary">Dodanie znacznika #mute do tytułu lub opisu wydarzenia wycisza go domyślnie, ale możliwe jest ręczne wyłączenie wyciszenia po wyzwoleniu powiadomienia (kolejne instancje powtarzanego wydarzenia będą nadal domyślnie wyciszone)\nWydarzenie będzie wyciszone nawet wtedy jeśli ustawienie \'wycisz\' jest wyłączone.</string>
 
     <string name="enable_task_tag_title">Obsługuj znacznik #task</string>
-    <string name="enable_task_tag_summary">Działanie podobne jak w przypadku znacznika #mute, ale tu pierwsze powiadomienie lub powiadomienie po odłożeniu nie zostaną wyciszone.\nPowtarzające się przypomnienia nie są generowane.</string>
+    <string name="enable_task_tag_summary">Znacznik podobny do #mute, z tym że pierwsze powiadomienie oraz powiadomienie po odłożeniu nie będzie wyciszone\nPOwtarzane przypomnienia nie są generowane</string>
 
-    <string name="un_mute_notification">Cofnij wyciszenie</string>
+    <string name="un_mute_notification">Wyłącz wyciszenie</string>
     <string name="mute_notification">Wycisz</string>
-    <string name="mute_all">Wycisz wszystkie widoczne</string>
-    <string name="mute_all_events_question">Wycisza wszystkie widoczne wydarzenia (nie dotyczy zadań)</string>
+    <string name="mute_all">Wycisz widoczne</string>
+    <string name="mute_all_events_question">Czy wyciszyć wszystkie widoczne wydarzenia?? (z wyłączeniem zadań)</string>
 
     <string name="done">Wykonane</string>
-    <string name="notification_is_muted">Powiadomienie wyciszone</string>
+    <string name="notification_is_muted">Powiadomienie jest wyciszone</string>
     <string name="mute_options">Opcje wyciszania</string>
     <string name="calendar_handling_options">Opcje obsługi kalendarza</string>
     <string name="enable_alarm_tag_title">Obsługuj znacznik #alarm</string>
-    <string name="enable_alarm_tag_summary">Wymusza użycie poziomu głośności alarmów dla wydarzeń z wpisanym w temacie lub opisie znacznikiem #alarm.\n UWAGA! Ustawienie godzin ciszy przy tak oznaczonych wydarzeniach jest ignorowane.</string>
-    <string name="task_tag">Znacznik #task</string>
-    <string name="mute_tag">Znacznik #mute</string>
-    <string name="alarm_tag">Znacznik #alarm</string>
-    <string name="create_event">Utwórz wydarzenie</string>
+    <string name="enable_alarm_tag_summary">Dodanie znacznika #alarm do tytułu lub opisu wydarzenia wymusi użycie systemowej głośności alarmu dla tego wydarzenia\nDla wydarzeń z tym znacznikiem ustawienie godzin ciszy jest ignorowane</string>
+    <string name="task_tag">#task</string>
+    <string name="mute_tag">#mute</string>
+    <string name="alarm_tag">#alarm</string>
+    <string name="create_event">Dodaj wydarzenie</string>
 
+    <string name="notification_channel_default">Wydarzenia kalendarza</string>
+    <string name="notification_channel_default_desc">Domyślny kanał wydarzeń kalendarza</string>
+    <string name="notification_channel_alarm">Powiadomienia alarmowe</string>
+    <string name="notification_channel_alarm_desc">Powiadomienia wykorzystujące dźwięk alarmu</string>
+    <string name="notification_channel_silent">Ciche powiadomienia</string>
+    <string name="notification_channel_silent_desc">Powiadomienia bez dźwięku lub wibracji</string>
+
+    <string name="notification_channel_reminders">Powiadomienia przypomnień</string>
+    <string name="notification_channel_reminders_desc">Przypomnienia przeoczonych wydarzeń</string>
+    <string name="notification_channel_alarm_reminders">Przypomnienia alarmowe</string>
+    <string name="notification_channel_alarm_reminders_desc">Przypomnienia przeoczonych wydarzeń z ustawioną głośnością alarmu systemowego</string>
+    <string name="event_snoozed_by" formatted="false">Wydarzenie odłożone na %s</string>
+    <string name="debug_notifications">Debug notifications</string>
+    <string name="debug_notifications_description">Used for app debugging</string>
+    <string name="plus_more" formatted="false">+%d więcej wydarzeń</string>
+    <string name="delete_event">Skasuj</string>
+    <string name="delete_event_question">Czy skasować wydarzenie?</string>
+    <string name="view_event">Zobacz wydarzenie</string>
+    <string name="content_desc_menu">menu</string>
+    <string name="regular_notification_settings">Ustawienia kanału standardowego</string>
+    <string name="quiet_hours_notification_settings">Ustawienia kanału godzin ciszy</string>
+    <string name="alarm_notification_settings">Ustawienia kanału alarmowego</string>
+    <string name="reminder_notification_settings">Ustawienia kanału standardowego</string>
+    <string name="alarm_reminder_notification_settings">Ustawienia kanału alarmowego</string>
+    <string name="content_desc_navigate_back">Cofnij</string>
+    <string name="main_notifications">Zarządzanie kanałami powiadomień</string>
+    <string name="reminder_notifications">Zarządzanie kanałami przypomnień</string>
+    <string name="other">Inne…</string>
+    <string name="owner_dummy_local">Local</string>
+    <string name="no_account">Brak konta</string>
+    <string name="dummy">Dummy</string>
+    <string name="unknown">Unknown</string>
+
+    <!-- do not translate the line below - only used for debugging -->
+    <string name="notificaiton_swipe_prefix">Przesuwanie powiadomień:</string>
+
+    <string name="notificaiton_swipe_dismisses_the_event">Odwołuje wydarzenie</string>
+    <string name="notificaiton_swipe_snoozes_the_event">Odkłada na okres pierwszej ustalonej wartości</string>
+    <string name="notificaiton_swipe_disallowed">Nie dozwolone (trwające powiadominie)</string>
+
+    <string name="notificaiton_group_swipe_prefix">Przesuwanie powiadomień grupowych:</string>
+    <string name="notificaiton_group_swipe_dismisses_the_event">Odwołuje wszystkie wydarzenia</string>
+    <string name="notificaiton_group_swipe_snoozes_the_event">Odkłada na okres pierwszej ustalonej wartości</string>
+    <string name="notificaiton_group_swipe_disallowed">Nie dozwolone</string>
+
+    <string name="group_notifications">Powiadomienia grupowe</string>
+    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia\r\nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu; ustawienie zabezpiecza aplikację przed awarią aplikacji w przypadku przekroczenia limitu powiadomień</string>
+    <string name="show_snooze_button">Pokaż klawisz ODŁÓŻ</string>
+    <string name="show_snooze_button_desc">Przywraca klawisz \'ODŁÓŻ\';w ten sposób kliknięcie powiadomienia będzie otwierać je w kalendarzu, a klawisz odłoży na wybrany czas</string>
+    <string name="real_alarms_title_please_dont_translate">Real alarms</string>
+    <string name="always_use_extenal_editor">Always use external editor</string>
+    <string name="always_use_external_editor_summary">Edit button on the snooze activity will always bring the external event editor / view</string>
 
 </resources>
+
+
 

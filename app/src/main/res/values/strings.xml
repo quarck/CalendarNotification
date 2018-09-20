@@ -594,6 +594,11 @@
     <string name="pre_oreo_notification_channels_explanation">Attention pre-Oreo users:\n\nThis app is running in compatibility mode on your device\n\nMultiple users has requested F-Droid build to be installable on pre-Oreo devices, thus this change was made. But sound / vibration / LED control are all now migrated to notification channel settings which are absent on pre-Oreo devices, so you would not be able to control these. To get these settings back - please revert to an older version (Google Play will serve older version for pre-Oreo devices, or ask me directly).</string>
 
     <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
+    <string name="battery_optimisation_title">Battery optimisation</string>
+    <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
+    <string name="you_can_do_it">DO IT</string>
+    <string name="you_can_do_it_later">LATER</string>
+    <string name="you_cannot_do_it">DISMISS</string>
 
 </resources>
 

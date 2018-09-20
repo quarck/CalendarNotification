@@ -267,6 +267,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val allowMuteAndAlarm: Boolean
         get() = (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) || !postGroupNotification
 
+    var doNotShowBatteryOptimisationWarning: Boolean
+        get() = getBoolean(DO_NOT_SHOW_BATTERY_OPTIMISATION, false)
+        set(value) = setBoolean(DO_NOT_SHOW_BATTERY_OPTIMISATION, value)
+
     var showSnoozeButton: Boolean
         get() = getBoolean(SHOW_SNOOZE_BUTTON, false)
         set(value) = setBoolean(SHOW_SNOOZE_BUTTON, value)
@@ -338,8 +342,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val FORWARD_REMINDERS_TO_PEBBLE = "forward_reminders_to_pebble"
 
-        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
-
         private const val NOTIFICATION_SWIPE_BEHAVIOR = "notification_swipe_behavior"
         private const val GROUP_NOTIFICATION_SWIPE_BEHAVIOR = "group_notification_swipe_behavior"
         private const val GROUP_NOTIFICAITONS = "group_notifications_001"
@@ -347,6 +349,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val SHOW_SNOOZE_BUTTON = "show_snooze_btn_0001"
 
         private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor_0001"
+
+        private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

@@ -19,12 +19,15 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
@@ -58,6 +61,7 @@ import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
+import com.github.quarck.calnotify.utils.powerManager
 import org.jetbrains.annotations.NotNull
 import java.util.*
 
@@ -245,6 +249,34 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             }
             else {
                 PermissionsManager.requestPermissions(this)
+            }
+        }
+        else {
+            // if we have essential permissions - now check for power manager optimisations
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !settings.doNotShowBatteryOptimisationWarning) {
+                if (!powerManager.isIgnoringBatteryOptimizations(BuildConfig.APPLICATION_ID)) {
+
+                    AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.battery_optimisation_title))
+                            .setMessage(getString(R.string.battery_optimisation_details))
+                            .setPositiveButton(getString(R.string.you_can_do_it)) @TargetApi(Build.VERSION_CODES.M) {
+                                _, _ ->
+                                val intent = Intent(
+                                        android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                        Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                                )
+                                if (intent.resolveActivity(packageManager) != null)
+                                    startActivity(intent)
+                            }
+                            .setNeutralButton(getString(R.string.you_can_do_it_later)) {
+                                _, _ ->
+                            }
+                            .setNegativeButton(getString(R.string.you_cannot_do_it)) {
+                                _, _ ->
+                                settings.doNotShowBatteryOptimisationWarning = true
+                            }
+                            .create()
+                }
             }
         }
     }

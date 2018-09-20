@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify
 
 import android.content.Context
+import android.os.Build
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 import com.github.quarck.calnotify.utils.toIntOrNull
@@ -263,6 +264,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(GROUP_NOTIFICAITONS, true)
         set(value) = setBoolean(GROUP_NOTIFICAITONS, value)
 
+    val allowMuteAndAlarm: Boolean
+        get() = (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) || !postGroupNotification
+
     var showSnoozeButton: Boolean
         get() = getBoolean(SHOW_SNOOZE_BUTTON, false)
         set(value) = setBoolean(SHOW_SNOOZE_BUTTON, value)
@@ -272,7 +276,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
                 notificationSwipeBehavior = notificationSwipeBehavior,
                 groupNotificationSwipeBehavior = groupNotificationSwipeBehavior,
                 postGroupNotification = postGroupNotification,
-                enableNotificationMute = remindersEnabled,
+                enableNotificationMute = remindersEnabled && allowMuteAndAlarm,
                 appendEmptyAction = notificationAddEmptyAction,
                 useAlarmStream = notificationUseAlarmStream,
                 forwardReminersToPebble = forwardReminersToPebble,
@@ -338,7 +342,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val NOTIFICATION_SWIPE_BEHAVIOR = "notification_swipe_behavior"
         private const val GROUP_NOTIFICATION_SWIPE_BEHAVIOR = "group_notification_swipe_behavior"
-        private const val GROUP_NOTIFICAITONS = "group_notifications"
+        private const val GROUP_NOTIFICAITONS = "group_notifications_001"
 
         private const val SHOW_SNOOZE_BUTTON = "show_snooze_btn_0001"
 

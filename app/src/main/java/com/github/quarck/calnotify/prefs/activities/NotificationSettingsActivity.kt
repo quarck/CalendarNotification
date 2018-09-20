@@ -120,6 +120,11 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 initial (settings.postGroupNotification)
                 onChange { settings.postGroupNotification = it }
                 depending {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        red_notice(R.string.group_notifications_android_oreo_gore)
+                    }
+
                     groupNotificationBehavior(settings.groupNotificationSwipeBehavior) {
                         settings.groupNotificationSwipeBehavior = it
                     }
@@ -142,9 +147,11 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 onChange{ settings.notificationAddEmptyAction = it }
             }
 
-            switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
-                initial(settings.notificationUseAlarmStream)
-                onChange{settings.notificationUseAlarmStream = it}
+            if (settings.allowMuteAndAlarm) {
+                switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
+                    initial(settings.notificationUseAlarmStream)
+                    onChange { settings.notificationUseAlarmStream = it }
+                }
             }
         }
     }

@@ -107,7 +107,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 snoozePresetsNotFiltered = settings.snoozePresets,
                 soundState = NotificationChannelManager.SoundState.Silent,
                 isReminder = false,
-                snooze0Time = settings.firstNonNegativeSnoozeTime
+                snooze0Time = settings.firstNonNegativeSnoozeTime,
+                settings = settings
         )
 
         context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -447,7 +448,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 else
                     soundState
 
-        val channel = NotificationChannelManager.createNotificationChannel(context, activeSoundState, isReminder)
+        val channel = NotificationChannelManager.createNotificationChannel(context, activeSoundState, isReminder, settings)
 
         val notificationStyle = NotificationCompat.InboxStyle()
 
@@ -637,7 +638,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     isReminder = ntf.isReminder,
                     alertOnlyOnce = ntf.alertOnlyOnce,
                     soundState = ntf.soundState,
-                    snooze0Time = snooze0time
+                    snooze0Time = snooze0time,
+                    settings = settings
             )
 
         }
@@ -693,7 +695,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val channel = NotificationChannelManager.createNotificationChannel(ctx,
                 NotificationChannelManager.SoundState.Silent,
-                false)
+                false, settings)
 
         val notificationBehavior = settings.groupNotificationSwipeBehavior
 
@@ -765,7 +767,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             isReminder: Boolean,
             alertOnlyOnce: Boolean,
             soundState: NotificationChannelManager.SoundState,
-            snooze0Time: Long
+            snooze0Time: Long,
+            settings: Settings
     ) {
         val notificationManager = ctx.notificationManager
 
@@ -830,7 +833,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val channel = NotificationChannelManager.createNotificationChannel(
                 ctx,
                 soundState = activeSoundState,
-                isReminder = isReminder
+                isReminder = isReminder,
+                settings = settings
         )
 
         val notificationBehavior = notificationSettings.notificationSwipeBehavior
@@ -886,7 +890,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val extender = NotificationCompat.WearableExtender()
 
-        if ((notificationSettings.enableNotificationMute || event.isMuted) && !event.isTask) {
+        if ((notificationSettings.enableNotificationMute || event.isMuted) && !event.isTask && settings.allowMuteAndAlarm) {
             // build and append
 
             val muteTogglePendingIntent =

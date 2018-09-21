@@ -350,7 +350,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
 
         private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor_0001"
 
-        private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas"
+        private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas_"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

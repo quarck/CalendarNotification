@@ -261,12 +261,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             .setMessage(getString(R.string.battery_optimisation_details))
                             .setPositiveButton(getString(R.string.you_can_do_it)) @TargetApi(Build.VERSION_CODES.M) {
                                 _, _ ->
-                                val intent = Intent(
-                                        android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                        Uri.parse("package:" + BuildConfig.APPLICATION_ID)
-                                )
-                                if (intent.resolveActivity(packageManager) != null)
-                                    startActivity(intent)
+
+                                val intent = Intent()
+                                        .setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                        .setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID))
+                                startActivity(intent)
                             }
                             .setNeutralButton(getString(R.string.you_can_do_it_later)) {
                                 _, _ ->

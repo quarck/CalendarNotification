@@ -33,6 +33,8 @@ import android.app.job.JobScheduler
 import android.app.job.JobInfo
 import android.content.ComponentName
 import android.app.job.JobService
+import android.os.Build
+import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.Consts
 
 class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService") {
@@ -264,14 +266,19 @@ class CalendarMonitorPeriodicJobService : JobService()  {
 
         private fun getJobInfo(): JobInfo {
             val component = ComponentName(
-                    "com.github.quarck.calnotify",
+                    BuildConfig.APPLICATION_ID,
                     CalendarMonitorPeriodicJobService::class.java.name)
-            val builder =
-                    JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN, component)
-                            .setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,
-                                    Consts.CALENDAR_RESCAN_INTERVAL/2)
-                            .setPersisted(true)
-                            .setRequiresDeviceIdle(false)
+            val builder =  JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN, component)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,
+                                        Consts.CALENDAR_RESCAN_INTERVAL/2)
+            }
+            else {
+                builder.setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL)
+            }
+            builder.setPersisted(true)
+            builder.setRequiresDeviceIdle(false)
 
             return builder.build()
         }

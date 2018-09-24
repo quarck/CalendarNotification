@@ -28,8 +28,8 @@ object Consts {
         const val CALENDAR_RESCAN_ONCE = 1
     }
 
-    const val FILE_PROVIDER_ID = "com.github.quarck.calnotify.fileprovider"
-    const val DATA_UPDATED_BROADCAST = "com.github.quarck.calnotify.dataupdated"
+    const val FILE_PROVIDER_ID = BuildConfig.APPLICATION_ID + ".fileprovider"
+    const val DATA_UPDATED_BROADCAST = BuildConfig.APPLICATION_ID + ".dataupdated"
 
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
@@ -154,5 +154,5 @@ object Consts {
     const val BIN_KEEP_HISTORY_MILLISECONDS = BIN_KEEP_HISTORY_DAYS * DAY_IN_MILLISECONDS
 
 
-    const val REMOTE_COMMAND_MUTE_ALL = "com.github.quarck.calnotify.remote_mute_all"
+    const val REMOTE_COMMAND_MUTE_ALL = BuildConfig.APPLICATION_ID + ".remote_mute_all"
 }

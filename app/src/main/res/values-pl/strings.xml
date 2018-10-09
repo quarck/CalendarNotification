@@ -18,7 +18,7 @@
     <string name="dismiss_event">Odrzuć wydarzenie</string> <!-- to distinguish from dismissing the notification -->
     <string name="snooze">Odłóż</string>
 
-    <string name="show_dismiss_button">Pokaż przycisk \'Odrzuć\'</string>
+    <string name="show_dismiss_button">Pokaż przycisk \'ODRZUĆ\'</string>
     <string name="show_dismiss_summary">Przycisk \'Odrzuć\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku.</string>
 
     <string name="play_reminder_sound">Dźwięk powiadomień</string>
@@ -48,7 +48,7 @@
     <string name="title_activity_activity_snooze">Odłóż</string>
 
     <string name="empty_title">(Brak tytułu)</string>
-    <string name="snooze_event_for">Odłóż wydarzenie na:</string>
+    <string name="snooze_event_for">Odłóż powiadomienie na:</string>
 
     <string name="snooze_preset_15_min">15 minut</string>
     <string name="snooze_preset_1_hour">1 godzinę</string>
@@ -148,7 +148,7 @@
     <string name="for_a_custom_time">Niestandardowy okres</string>
     <string name="until_specific_time">Konkretna data i godzina</string>
     <string name="snooze_for">Odłóż na:</string>
-    <string name="selected_time_is_in_the_past"><b>Nie można odłożyć powiadomienia do przeszłości</b></string>
+    <string name="selected_time_is_in_the_past"><b>Powiadomienia nie można odłożyć do przeszłości</b></string>
     <string name="snooze_until_string">Odłóż do daty / godziny:</string>
     <string name="custom_snooze_options_title">Niestandardowe opcje odłożenia</string>
     <string name="custom_snooze_options_summary">Pokazuj niestandardowe opcje odłożenia.</string>
@@ -185,7 +185,7 @@
     <string name="translation_contributors">Tłumaczenie:</string>
 
     <!-- NOTE: 'gplv3_notice' is a part of standard GPLv3 notice text. Most likely there is already official version of this text translated to Polish language somewhere -->
-    <string name="gplv3_notice">Niniejszy program jest wolnym oprogramowaniem; możesz go rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej Licencji Publicznej GNU, wydanej przez Fundację Wolnego Oprogramowania - według wersji 3 tej Licencji lub którejś z późniejszych wersji. Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH ZASTOSOWAŃ. W celu uzyskania bliższych informacji - Powszechna Licencja Publiczna GNU.</string>
+    <string name="gplv3_notice">Niniejszy program jest wolnym oprogramowaniem; możesz go rozprowadzać dalej lub modyfikować na warunkach Powszechnej Licencji Publicznej GNU, wydanej przez Fundację Wolnego Oprogramowania - według wersji 3 tej Licencji lub którejś z późniejszych wersji. Niniejszy program rozpowszechniany jest z nadzieją, iż będzie użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH ZASTOSOWAŃ. W celu uzyskania bliższych informacji - patrz Powszechna Licencja Publiczna GNU.</string>
 
     <string name="gplv3_src_comment">\nPełna treść licencji GPLv3 oraz kod źródłowy dla programu:</string>
     <string name="credits">Podziękowania:</string>
@@ -258,7 +258,7 @@
 
     <string name="edit_event">Edytuj wydarzenie</string>
 
-    <string name="dismissed_events">Odrzucone wydarzenia</string>
+    <string name="dismissed_events">Odrzucone powiadomienia</string>
     <string name="deleted_events">Kosz</string>
     <string name="enable_bin">Włącz kosz</string>
     <string name="keep_bin_events_days">Dni przechowywania wydarzeń w koszu</string>
@@ -267,9 +267,9 @@
     <string name="bin_setting_group_name">Ustawienia kosza</string>
 
     <string name="dismissed_general" formatted="false">Odrzucono %s</string>
-    <string name="dismissed_from_the_app" formatted="false">Odrzucono z aplikacji %s</string>
-    <string name="dismissed_from_notification" formatted="false">Odrzucono z powiadomienia %s</string>
-    <string name="event_moved_new_time" formatted="false">Przesunięte na %s</string>
+    <string name="dismissed_from_the_app" formatted="false">Odrzucone z aplikacji %s</string>
+    <string name="dismissed_from_notification" formatted="false">Odrzucone z powiadomienia %s</string>
+    <string name="event_moved_new_time" formatted="false">Przełożone na %s</string>
     <string name="restore">Przywróć powiadomienie</string>
     <string name="delete">Usuń z historii</string>
     <string name="swipe_to_delete">Przesuń, aby usunąć z hisorii</string>
@@ -307,7 +307,7 @@
     <string name="last_event_s_ago" formatted="false">Ostatnie wydarzenie: %s temu</string>
 
     <string name="build_time_string_format" formatted="false">Wydanie: %s</string>
-    <string name="dismiss_all_events">Odrzuć wydarzenia</string>
+    <string name="dismiss_all_events">Odrzuć widoczne</string>
     <string name="dismiss_all_events_confirmation">Czy odrzucić WSZYSTKIE wydarzenia?\n\nTEJ OPERACJI NIE MOŻNA COFNĄĆ!\n\nOdłożone wydarzenia nie zostaną usunięte</string>
     <string name="handle_events_with_no_reminders">Wydarzenia bez przypomnień</string>
     <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustawionych przypomnień.</string>
@@ -362,7 +362,7 @@
     <string name="ringtone">Dzwonek</string>
     <string name="vibration">Wibracja</string>
     <string name="led">LED</string>
-    <string name="notification_behavior">Zachowanie powiadomienia</string>
+    <string name="notification_behavior">Zachowanie powiadomień</string>
     <string name="pebble">Pebble</string>
     <string name="pebble_forward_reminders">Przekaż przypomnienia do Pebble</string>
     <string name="pebble_forward_reminders_summary">Przekazuj wszystkie przypomnienia. Domyślnie przekazywane są tylko powiadomienia pierwotne.</string>
@@ -468,10 +468,10 @@
     <string name="new_event_failed_to_create_event">Utworzenie wydarzenia nie powiodło się!</string>
     <string name="no_active_calendars">Nieaktywne / obsługiwane kalendarze</string>
 
-    <string name="enable_add_event">Włącz przycisk \'Dodaj wydarzenie\'</string>
+    <string name="enable_add_event">Pokaż przycisk \'Dodaj wydarzenie\'</string>
     <string name="enable_add_event_summary">Włącza przycisk umożliwiający dodawanie wydarzeń kalendarza z poziomu tej aplikacji. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne. Aplikacja będzie monitorowała nowo dodane wydarzenia, aby nie zniknęły w trakcie synchronizacji.</string>
 
-    <string name="enable_edit_event">Włącz przycisk \'Edytuj wydarzenie\'</string>
+    <string name="enable_edit_event">Pokaż przycisk \'Edytuj wydarzenie\'</string>
     <string name="enable_edit_event_summary">Włącza przycisk umożliwiający edycję szczegółów wydarzenia bezpośrednio z widoku przypomnienia. Obecnie obsługiwane są tylko wydarzenia bez powtórzeń i nie wszystkie pola są edytowalne.</string>
 
 
@@ -503,8 +503,8 @@
     <string name="snooze_hide_event_description_summary">Nie wyświetlaj opisu wydarzenia w powiadomieniu.</string>
     <string name="show_event_desc_in_the_notification_title">Wyświetl opis wydarzenia</string>
     <string name="show_event_desc_in_the_notification_summary">Wyświetlaj w powiadomieniu opis wydarzenia.</string>
-    <string name="add_empty_action_to_the_end_title">Dodaj pusty klawisz</string>
-    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok klawisza wywołuje działanie takie jak kliknięcie w ten klawisz np. odrzucenie powiadomienia. Opcja ta dodaje pusty klawisz akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
+    <string name="add_empty_action_to_the_end_title">Pokaż pusty przycisk</string>
+    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok przycisku wywołuje działanie takie jak kliknięcie w t np. odrzucenie powiadomienia. Opcja ta dodaje pusty przycisk akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
     <string name="notifications_pure_hacks">Nietypowe rozwiązania</string>
     <string name="enable_dismiss_and_delete_title">Włącz opcję \'Odrzuć i usuń\'</string>
     <string name="enable_dismiss_and_delete_summary">Dodaje opcję \'Odrzuć i usuń\' w menu ekranu odłożeń. Jedno kliknięcie odrzuci powiadomienie i jednocześnie usunie wydarzenie z kalendarza. Opcja dostępna tylko dla wydarzeń niecyklicznych.</string>
@@ -513,10 +513,10 @@
     <string name="reminder_pattern">Wzór cyklu przypomnień - lista rozdzielana przecinkami. Dopuszczalne są wartości takie jak: \'15s\' (min. wartość), \'15m\', \'2h\' lub \'3d\'\nWzór będzie powtarzany cyklicznie.\nNowe lub \'odświeżone\' wydarzenia będą uruchamiać cykl od nowa.</string>
 
     <string name="enable_mute_title">Włącz wyciszanie</string>
-    <string name="enable_mute_summary">Włącza wyciszanie wydarzeń:\n* dodaje przycisk \'wycisz\' w powiadomieniu \n* włącza powiązaną funkcjonalność w głównym menu\nWyciszone powiadomienia nie będą generowały przypomnień, wyciszone, odłożone wydarzenia pojawią w trybie wyciszenia, bez wibracji</string>
+    <string name="enable_mute_summary">Włącza wyciszanie wydarzeń:\n* dodaje przycisk \'WYCISZ\' w powiadomieniu \n* włącza powiązaną funkcjonalność w głównym menu\nWyciszone powiadomienia nie będą generowały przypomnień, wyciszone, odłożone wydarzenia pojawią w trybie wyciszenia, bez wibracji</string>
 
     <string name="enable_mute_tag_title">Obsługuj znacznik #mute</string>
-    <string name="enable_mute_tag_summary">Dodanie znacznika #mute do tytułu lub opisu wydarzenia wycisza go domyślnie, ale możliwe jest ręczne wyłączenie wyciszenia po wyzwoleniu powiadomienia (kolejne instancje powtarzanego wydarzenia będą nadal domyślnie wyciszone)\nWydarzenie będzie wyciszone nawet wtedy jeśli ustawienie \'wycisz\' jest wyłączone.</string>
+    <string name="enable_mute_tag_summary">Dodanie znacznika #mute do tytułu lub opisu wydarzenia wycisza go domyślnie, ale możliwe jest ręczne wyłączenie wyciszenia po wyzwoleniu powiadomienia (kolejne instancje powtarzanego wydarzenia będą nadal domyślnie wyciszone)\nWydarzenie będzie wyciszone nawet wtedy jeśli ustawienie \'Wycisz\' jest wyłączone.</string>
 
     <string name="enable_task_tag_title">Obsługuj znacznik #task</string>
     <string name="enable_task_tag_summary">Znacznik podobny do #mute, z tym że pierwsze powiadomienie oraz powiadomienie po odłożeniu nie będzie wyciszone\nPOwtarzane przypomnienia nie są generowane</string>
@@ -524,7 +524,7 @@
     <string name="un_mute_notification">Wyłącz wyciszenie</string>
     <string name="mute_notification">Wycisz</string>
     <string name="mute_all">Wycisz widoczne</string>
-    <string name="mute_all_events_question">Czy wyciszyć wszystkie widoczne wydarzenia?? (z wyłączeniem zadań)</string>
+    <string name="mute_all_events_question">Czy wyciszyć wszystkie widoczne wydarzenia?\n\nOdłożone wydarzenia nie zostaną wyciszone</string>
 
     <string name="done">Wykonane</string>
     <string name="notification_is_muted">Powiadomienie jest wyciszone</string>
@@ -540,14 +540,14 @@
     <string name="notification_channel_default">Wydarzenia kalendarza</string>
     <string name="notification_channel_default_desc">Domyślny kanał wydarzeń kalendarza</string>
     <string name="notification_channel_alarm">Powiadomienia alarmowe</string>
-    <string name="notification_channel_alarm_desc">Powiadomienia wykorzystujące dźwięk alarmu</string>
+    <string name="notification_channel_alarm_desc">Powiadomienia wykorzystujące dźwięk alarmów</string>
     <string name="notification_channel_silent">Ciche powiadomienia</string>
     <string name="notification_channel_silent_desc">Powiadomienia bez dźwięku lub wibracji</string>
 
     <string name="notification_channel_reminders">Powiadomienia przypomnień</string>
     <string name="notification_channel_reminders_desc">Przypomnienia przeoczonych wydarzeń</string>
     <string name="notification_channel_alarm_reminders">Przypomnienia alarmowe</string>
-    <string name="notification_channel_alarm_reminders_desc">Przypomnienia przeoczonych wydarzeń z ustawioną głośnością alarmu systemowego</string>
+    <string name="notification_channel_alarm_reminders_desc">Przypomnienia przeoczonych wydarzeń z ustawioną głośnością alarmów</string>
     <string name="event_snoozed_by" formatted="false">Wydarzenie odłożone na %s</string>
     <string name="debug_notifications">Debug notifications</string>
     <string name="debug_notifications_description">Used for app debugging</string>
@@ -556,41 +556,41 @@
     <string name="delete_event_question">Czy skasować wydarzenie?</string>
     <string name="view_event">Zobacz wydarzenie</string>
     <string name="content_desc_menu">menu</string>
-    <string name="regular_notification_settings">Ustawienia kanału standardowego</string>
-    <string name="quiet_hours_notification_settings">Ustawienia kanału godzin ciszy</string>
-    <string name="alarm_notification_settings">Ustawienia kanału alarmowego</string>
-    <string name="reminder_notification_settings">Ustawienia kanału standardowego</string>
-    <string name="alarm_reminder_notification_settings">Ustawienia kanału alarmowego</string>
+    <string name="regular_notification_settings">Wydarzenia kalendarza</string>
+    <string name="quiet_hours_notification_settings">Powiadomienia w godzinach ciszy</string>
+    <string name="alarm_notification_settings">Powiadomienia alarmowe</string>
+    <string name="reminder_notification_settings">Przypomnienia powiadomień</string>
+    <string name="alarm_reminder_notification_settings">Przypomnienia alarmowe</string>
     <string name="content_desc_navigate_back">Cofnij</string>
     <string name="main_notifications">Zarządzanie kanałami powiadomień</string>
     <string name="reminder_notifications">Zarządzanie kanałami przypomnień</string>
-    <string name="other">Inne…</string>
+    <string name="other">Inne</string>
+    <!-- 4 strings below not translated according to Sergey's advice -->
     <string name="owner_dummy_local">Local</string>
-    <string name="no_account">Brak konta</string>
+    <string name="no_account">No account</string>
     <string name="dummy">Dummy</string>
     <string name="unknown">Unknown</string>
 
     <!-- do not translate the line below - only used for debugging -->
-    <string name="notificaiton_swipe_prefix">Przesuwanie powiadomień:</string>
+    <string name="notificaiton_swipe_prefix">Przesunięcie powiadomienia:</string>
 
-    <string name="notificaiton_swipe_dismisses_the_event">Odwołuje wydarzenie</string>
-    <string name="notificaiton_swipe_snoozes_the_event">Odkłada na okres pierwszej ustalonej wartości</string>
-    <string name="notificaiton_swipe_disallowed">Nie dozwolone (trwające powiadominie)</string>
+    <string name="notificaiton_swipe_dismisses_the_event">Odrzuca powiadomienie</string>
+    <string name="notificaiton_swipe_snoozes_the_event">Odkłada na okres pierwszej wartości ustalonej w Definicjach odłożeń</string>
+    <string name="notificaiton_swipe_disallowed">Niedozwolone dla trwających powiadomień</string>
 
-    <string name="notificaiton_group_swipe_prefix">Przesuwanie powiadomień grupowych:</string>
-    <string name="notificaiton_group_swipe_dismisses_the_event">Odwołuje wszystkie wydarzenia</string>
-    <string name="notificaiton_group_swipe_snoozes_the_event">Odkłada na okres pierwszej ustalonej wartości</string>
-    <string name="notificaiton_group_swipe_disallowed">Nie dozwolone</string>
+    <string name="notificaiton_group_swipe_prefix">Przesunięcie powiadomienia grupowego:</string>
+    <string name="notificaiton_group_swipe_dismisses_the_event">Odrzuca wszystkie powiadomienia</string>
+    <string name="notificaiton_group_swipe_snoozes_the_event">Odkłada na okres pierwszej wartości ustalonej w Definicjach odłożeń</string>
+    <string name="notificaiton_group_swipe_disallowed">Niedozwolone</string>
 
     <string name="group_notifications">Powiadomienia grupowe</string>
-    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia\r\nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu; ustawienie zabezpiecza aplikację przed awarią aplikacji w przypadku przekroczenia limitu powiadomień</string>
-    <string name="show_snooze_button">Pokaż klawisz ODŁÓŻ</string>
-    <string name="show_snooze_button_desc">Przywraca klawisz \'ODŁÓŻ\';w ten sposób kliknięcie powiadomienia będzie otwierać je w kalendarzu, a klawisz odłoży na wybrany czas</string>
+    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia \nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu, ustawienie zabezpiecza jedynie aplikację przed awarią w przypadku przekroczenia limitu powiadomień</string>
+    <string name="show_snooze_button">Pokaż przycisk  \'ODŁÓŻ\'</string>
+    <string name="show_snooze_button_desc">Przycisk \'Odłóż\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku; przy tym ustawieniu kliknięcie powiadomienia będzie otwierać je w kalendarzu</string>
     <string name="real_alarms_title_please_dont_translate">Real alarms</string>
-    <string name="always_use_extenal_editor">Always use external editor</string>
-    <string name="always_use_external_editor_summary">Edit button on the snooze activity will always bring the external event editor / view</string>
+    <string name="always_use_extenal_editor">Zawsze edytuj w kalendarzu</string>
+    <string name="always_use_external_editor_summary">Przycisk edycji na ekranie odłożeń będzie uruchamiał aplikację kalendarza zamiast wewnętrznego edytora</string>
+
+    <string name="group_notifications_android_oreo_gore">UWAGA:\nWłączenie grupowania powiadomień w Androidzie Oreo i nowszych może wyłączyć lub ograniczyć funkcjonalność powiadomień związaną z ich wyciszaniem, obsługą wydarzeń ze znacznikiem #alarm i korzystaniem z godzin ciszy. Związane jest to z niemożliwością ustalenia zachowania zgrupowanych powiadomień pochodzących z różnych kanałów powiadomień (powiadomienia wyciszone i oznaczone znacznikiem #alarm należą do innego kanału powiadomień niż kanał wydarzeń kalendarza)</string>
 
 </resources>
-
-
-

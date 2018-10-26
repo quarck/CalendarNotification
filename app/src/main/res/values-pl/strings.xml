@@ -7,7 +7,7 @@
 
     <string name="settings">Ustawienia</string>
 
-    <string name="application_has_no_access">Aplikacja wymaga specjalnych uprawnień, aby mieć dostęp do powiadomień kalendarza.\n\nProszę udzielić uprawnień READ_CALENDAR i WRITE_CALENDAR \n\nWRITE_CALENDAR, aby ukryć pierwotne powiadomienia z kalendarza.</string>
+    <string name="application_has_no_access">Aplikacja wymaga specjalnych uprawnień, aby mieć dostęp do powiadomień kalendarza.\n\nProszę udzielić uprawnień READ_CALENDAR i WRITE_CALENDAR \n\nWRITE_CALENDAR, aby ukryć pierwsze powiadomienia z kalendarza.</string>
 
     <string name="cancel">Anuluj</string>
 
@@ -110,7 +110,7 @@
     <string name="remind_interval">Czas między przypomnieniami</string>
     <string name="invalid_reminder_interval">Interwał przypomnień nie może wynosić 0, przywrócono wartość 1 minuty</string>
     <string name="max_reminders">Maksymalna liczba przypomnień</string>
-    <string name="max_reminders_summary">Ustawia maksymalną liczbę przypomnień. \n\'Zero\' oznacza przypominanie bez końca, aż do odrzucenia.</string>
+    <string name="max_reminders_summary">Ustawia liczbę przypomnień.\n\'Zero\' oznacza przypominanie bez końca, aż do odrzucenia.</string>
 
     <string name="pebble_notification_title">Kalendarz</string>
 
@@ -134,7 +134,7 @@
     <string name="quiet_hours">Godziny ciszy</string>
 
     <string name="snoozed_time_inside_quiet_hours" formatted="false">UWAGA: Następne odłożone wydarzenie przypada na godziny ciszy - żadne dźwięki i wibracje nie będą odtwarzane do %s</string>
-    <string name="quiet_hours_summary">Użyj godzin ciszy do wyciszenia wszystkich przypomnień i odłożonych wydarzeń w określonym czasie. Podstawowe powiadomienia o wydarzeniach będą nadal odtwarzane zgodnie z ustawieniami.</string>
+    <string name="quiet_hours_summary">Użyj godzin ciszy do wyciszenia wszystkich przypomnień i odłożonych wydarzeń. Pierwsze powiadomienia o wydarzeniach będą nadal odtwarzane zgodnie z ustawieniami.</string>
 
     <string name="quiet_hours_mute_primary">Wycisz podstawowe powiadomienia</string>
     <string name="quiet_hours_mute_primary_summary">Wyciszaj podstawowe powiadomienia podczas godzin ciszy, aby aplikacja pozostała całkowicie wyciszona. Podstawowe powiadomienie jest pierwszym powiadomieniem o wydarzeniu.</string>
@@ -236,9 +236,9 @@
 
 
     <string name="halo_light_theme_date_picker">Motyw Halo.Light dla okna wyboru daty</string>
-    <string name="halo_light_theme_date_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru daty.</string>
+    <string name="halo_light_theme_date_picker_summary">Użyj stylu Androida Jellybean dla okna wyboru daty.</string>
     <string name="halo_light_theme_time_picker">Motyw Halo.Light dla okna wyboru godziny</string>
-    <string name="halo_light_theme_time_picker_summary">Użyj stylu Androida 4 Jellybean dla okna wyboru godziny.</string>
+    <string name="halo_light_theme_time_picker_summary">Użyj stylu Androida Jellybean dla okna wyboru godziny.</string>
 
     <string name="max_notifications_before_collapse">Maksymalna liczba powiadomień</string>
     <string name="max_notifications_before_collapse_summary">Maksymalna liczba powiadomień, które mogą być wyświetlone naraz.\nUwaga: ze względu na możliwość nieprawidłowego działania na niektórych urządzeniach maksymalną liczbę powiadomień ograniczono do 8.</string>
@@ -295,7 +295,7 @@
     <string name="attach_applicatoin_log">Dołącz logi aplikacji</string>
     <string name="attach_applicatoin_log_perm">Logi dotyczą tylko samej aplikacji\n\nNie jest w nich zawarta żadna tekstowa informacja o wydarzeniach (np. tytuł wydarzenia, lokalizacja itp.) \n\nŻadne pliki wysłane mailem nie zostaną przekazane osobom trzecim!</string>
     <string name="use_set_alarm_clock_title">setAlarmClock dla powiadomień</string>
-    <string name="use_set_alarm_clock_summary">Dotyczy tylko Androida 6 i nowszych.\n \nWłączenie poprawia dokładność czasu uruchamiania powiadomień.\nEfektem ubocznym jest widoczna ikona \'alarm\' na pasku stanu, gdy aktywne są odłożone wydarzenia lub powiadomienia.</string>
+    <string name="use_set_alarm_clock_summary">Dotyczy tylko Androida Marshmallow i nowszych.\n \nWłączenie poprawia dokładność czasu uruchamiania powiadomień.\nEfektem ubocznym jest widoczna ikona \'alarm\' na pasku stanu, gdy aktywne są odłożone wydarzenia lub powiadomienia.</string>
     <string name="reminder_fallback_method_title">Awaryjna metoda odtwarzania dźwięku</string>
     <string name="reminder_fallback_method_summary">Spróbuj tego ustawienia jeśli dźwięk przypomnień nie działa.</string>
     <string name="reminder_custom_ringtone">Dzwonek niestandardowy</string>
@@ -313,7 +313,7 @@
     <string name="handle_events_with_no_reminders_summary">Powiadamiaj o wydarzeniach, które nie mają ustawionych przypomnień.</string>
     <string name="default_reminder_time">Domyślny czas przypomnienia</string>
     <string name="default_reminder_time_summary">Ustaw czas przypomnienia dla wydarzeń bez ustawionych przypomnień.</string>
-    <string name="default_reminder_time_summary_short">Czas przypomnienia dla wydarzeń bez przypomnień.</string>
+    <string name="default_reminder_time_summary_short">Czas przypomnienia dla wydarzeń, które nie mają ustawionych przypomnień.</string>
     <string name="default_all_day_reminder_time">Wydarzenia całodzienne</string>
     <string name="default_all_day_reminder_time_summary">Ustaw domyślny czas przypomnień dla wydarzeń całodziennych, które nie mają ustawionych przypomnień; w godzinach przed czasem wydarzenia (godziną 00:00 dnia wydarzenia).\nPrzykładowo:\n\n * \'-8\' oznacza powiadomienie o 8 rano w dniu wydarzenia.\n\n * \'7\' oznacza siedem godzin przed 00:00, czyli o 17 dzień wcześniej.</string>
     <string name="default_all_day_reminder_time_summary_short">Ustaw domyślny czas przypomnień dla wydarzeń całodziennych, które nie mają ustawionych przypomnień.</string>
@@ -325,11 +325,11 @@
     <string name="special_event_detail2" formatted="false">Urządzenie było wyłączone przez długi czas</string>
     <string name="reminder_after_quiet_time">Przypomnienie: wydarzenia uruchomione podczas godzin ciszy</string>
     <string name="ignore_declined_events">Ignoruj odrzucone wydarzenia</string>
-    <string name="ignore_declined_events_summary">Ignoruj wydarzenia, które zostały odrzucone (declined).</string>
+    <string name="ignore_declined_events_summary">Ignoruj wydarzenia, które zostały odrzucone.</string>
     <string name="ignore_cancelled_events">Ignoruj anulowane wydarzenia</string>
-    <string name="ignore_cancelled_events_summary">Ignoruj wydarzenia, które zostały anulowane przez organizatora (organizer).</string>
+    <string name="ignore_cancelled_events_summary">Ignoruj wydarzenia, które zostały anulowane przez organizatora.</string>
     <string name="first_day_of_week">Pierwszy dzień tygodnia</string>
-    <string name="first_day_of_week_summary">Dotyczy tylko Androida 5 i nowszych.</string>
+    <string name="first_day_of_week_summary">Dotyczy tylko Androida Lollipop i nowszych.</string>
     <string name="use_alarm_stream">Użyj głośności alarmów</string>
     <string name="use_alarm_stream_summary">Odtwarzaj dźwięk powiadomienia z głośnością ustawioną dla alarmów zamiast głośności przypisanej powiadomieniom.</string>
 
@@ -351,11 +351,11 @@
     <string name="keep_logs_title">Zachowaj logi</string>
     <string name="keep_logs_summary">Nie włączaj dopóki nie zostaniesz o to poproszony przez autora aplikacji.</string>
     <string name="manual_event_rescan_title">Ręczne skanowanie kalendarza</string>
-    <string name="manual_event_rescan_summary">Poprawiaj niezawodność działania przypomnień o wydarzeniach i pozwalaj na obsługę wydarzeń bez ustawionych przypomnień.</string>
+    <string name="manual_event_rescan_summary">Poprawiaj niezawodność działania powiadomień i pozwalaj na obsługę wydarzeń bez ustawionych przypomnień.</string>
     <string name="handle_email_only_events_title">Wydarzenia z powiadomieniem email</string>
-    <string name="handle_email_only_events_summary">Powiadamiaj o wydarzeniach z ustawionym tylko przypomnieniem email.</string>
+    <string name="handle_email_only_events_summary">Powiadamiaj o wydarzeniach, które mają ustawione przypomnienie tylko za pomocą email.</string>
     <string name="bundle_notifications_title">Powiadomienia grupowe</string>
-    <string name="bundle_notifications_summary">Używaj powiadomień grupowych (dotyczy Androida 6 i nowszych).</string>
+    <string name="bundle_notifications_summary">Używaj powiadomień grupowych (dotyczy Androida Marshmallow i nowszych).</string>
 
     <string name="calendar">Kalendarz</string>
     <string name="N_calendar_events" formatted="false">%d wydarzenia</string>
@@ -365,7 +365,7 @@
     <string name="notification_behavior">Zachowanie powiadomień</string>
     <string name="pebble">Pebble</string>
     <string name="pebble_forward_reminders">Przekaż przypomnienia do Pebble</string>
-    <string name="pebble_forward_reminders_summary">Przekazuj wszystkie przypomnienia. Domyślnie przekazywane są tylko powiadomienia pierwotne.</string>
+    <string name="pebble_forward_reminders_summary">Przekazuj wszystkie przypomnienia. Domyślnie przekazywane są tylko pierwsze powiadomienia.</string>
     <string name="android_wear">Android Wear</string>
     <string name="reminders_play_directly_title">Powiadomienia odtwarzaj bezpośrednio</string>
     <string name="reminders_play_directly_summary">Nie przesyłaj przypomnień powiadomień</string>
@@ -504,7 +504,7 @@
     <string name="show_event_desc_in_the_notification_title">Wyświetl opis wydarzenia</string>
     <string name="show_event_desc_in_the_notification_summary">Wyświetlaj w powiadomieniu opis wydarzenia.</string>
     <string name="add_empty_action_to_the_end_title">Pokaż pusty przycisk</string>
-    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok przycisku wywołuje działanie takie jak kliknięcie w t np. odrzucenie powiadomienia. Opcja ta dodaje pusty przycisk akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
+    <string name="add_empty_action_to_the_end_summary">W niektórych nakładkach kliknięcie w powiadomieniu pustej przestrzeni obok przycisku wywołuje działanie takie jak kliknięcie w ten przycisk np. odrzucenie powiadomienia. Opcja ta dodaje pusty przycisk akcji w powiadomieniu, aby w ten sposób wyeliminować problem.</string>
     <string name="notifications_pure_hacks">Nietypowe rozwiązania</string>
     <string name="enable_dismiss_and_delete_title">Włącz opcję \'Odrzuć i usuń\'</string>
     <string name="enable_dismiss_and_delete_summary">Dodaje opcję \'Odrzuć i usuń\' w menu ekranu odłożeń. Jedno kliknięcie odrzuci powiadomienie i jednocześnie usunie wydarzenie z kalendarza. Opcja dostępna tylko dla wydarzeń niecyklicznych.</string>
@@ -513,25 +513,25 @@
     <string name="reminder_pattern">Wzór cyklu przypomnień - lista rozdzielana przecinkami. Dopuszczalne są wartości takie jak: \'15s\' (min. wartość), \'15m\', \'2h\' lub \'3d\'\nWzór będzie powtarzany cyklicznie.\nNowe lub \'odświeżone\' wydarzenia będą uruchamiać cykl od nowa.</string>
 
     <string name="enable_mute_title">Włącz wyciszanie</string>
-    <string name="enable_mute_summary">Włącza wyciszanie wydarzeń:\n* dodaje przycisk \'WYCISZ\' w powiadomieniu \n* włącza powiązaną funkcjonalność w głównym menu\nWyciszone powiadomienia nie będą generowały przypomnień, wyciszone, odłożone wydarzenia pojawią w trybie wyciszenia, bez wibracji</string>
+    <string name="enable_mute_summary">Włącza wyciszanie wydarzeń:\n* dodaje przycisk \'WYCISZ\' w powiadomieniu \n* włącza powiązaną funkcjonalność w głównym menu\nWyciszone powiadomienia nie będą generowały przypomnień, wyciszone, odłożone wydarzenia pojawią w trybie wyciszenia, bez wibracji.</string>
 
     <string name="enable_mute_tag_title">Obsługuj znacznik #mute</string>
     <string name="enable_mute_tag_summary">Dodanie znacznika #mute do tytułu lub opisu wydarzenia wycisza go domyślnie, ale możliwe jest ręczne wyłączenie wyciszenia po wyzwoleniu powiadomienia (kolejne instancje powtarzanego wydarzenia będą nadal domyślnie wyciszone)\nWydarzenie będzie wyciszone nawet wtedy jeśli ustawienie \'Wycisz\' jest wyłączone.</string>
 
     <string name="enable_task_tag_title">Obsługuj znacznik #task</string>
-    <string name="enable_task_tag_summary">Znacznik podobny do #mute, z tym że pierwsze powiadomienie oraz powiadomienie po odłożeniu nie będzie wyciszone\nPOwtarzane przypomnienia nie są generowane</string>
+    <string name="enable_task_tag_summary">Znacznik podobny do #mute, z tym że pierwsze powiadomienie oraz powiadomienie po odłożeniu nie będzie wyciszone\nPOwtarzane przypomnienia nie są generowane.</string>
 
     <string name="un_mute_notification">Wyłącz wyciszenie</string>
     <string name="mute_notification">Wycisz</string>
     <string name="mute_all">Wycisz widoczne</string>
-    <string name="mute_all_events_question">Czy wyciszyć wszystkie widoczne wydarzenia?\n\nOdłożone wydarzenia nie zostaną wyciszone</string>
+    <string name="mute_all_events_question">Czy wyciszyć wszystkie widoczne wydarzenia?\n\nOdłożone wydarzenia nie zostaną wyciszone.</string>
 
     <string name="done">Wykonane</string>
     <string name="notification_is_muted">Powiadomienie jest wyciszone</string>
     <string name="mute_options">Opcje wyciszania</string>
     <string name="calendar_handling_options">Opcje obsługi kalendarza</string>
     <string name="enable_alarm_tag_title">Obsługuj znacznik #alarm</string>
-    <string name="enable_alarm_tag_summary">Dodanie znacznika #alarm do tytułu lub opisu wydarzenia wymusi użycie systemowej głośności alarmu dla tego wydarzenia\nDla wydarzeń z tym znacznikiem ustawienie godzin ciszy jest ignorowane</string>
+    <string name="enable_alarm_tag_summary">Dodanie znacznika #alarm do tytułu lub opisu wydarzenia wymusi użycie systemowej głośności alarmu dla tego wydarzenia\nDla wydarzeń z tym znacznikiem ustawienie godzin ciszy jest ignorowane.</string>
     <string name="task_tag">#task</string>
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
@@ -544,7 +544,7 @@
     <string name="notification_channel_silent">Ciche powiadomienia</string>
     <string name="notification_channel_silent_desc">Powiadomienia bez dźwięku lub wibracji</string>
 
-    <string name="notification_channel_reminders">Powiadomienia przypomnień</string>
+    <string name="notification_channel_reminders">Przypomnienia powiadomnień</string>
     <string name="notification_channel_reminders_desc">Przypomnienia przeoczonych wydarzeń</string>
     <string name="notification_channel_alarm_reminders">Przypomnienia alarmowe</string>
     <string name="notification_channel_alarm_reminders_desc">Przypomnienia przeoczonych wydarzeń z ustawioną głośnością alarmów</string>
@@ -557,7 +557,7 @@
     <string name="view_event">Zobacz wydarzenie</string>
     <string name="content_desc_menu">menu</string>
     <string name="regular_notification_settings">Wydarzenia kalendarza</string>
-    <string name="quiet_hours_notification_settings">Powiadomienia w godzinach ciszy</string>
+    <string name="quiet_hours_notification_settings">Ciche powiadomienia</string>
     <string name="alarm_notification_settings">Powiadomienia alarmowe</string>
     <string name="reminder_notification_settings">Przypomnienia powiadomień</string>
     <string name="alarm_reminder_notification_settings">Przypomnienia alarmowe</string>
@@ -565,7 +565,7 @@
     <string name="main_notifications">Zarządzanie kanałami powiadomień</string>
     <string name="reminder_notifications">Zarządzanie kanałami przypomnień</string>
     <string name="other">Inne</string>
-    <!-- 4 strings below not translated according to Sergey's advice -->
+    <!-- 4 strings below not translated according to developer's advice -->
     <string name="owner_dummy_local">Local</string>
     <string name="no_account">No account</string>
     <string name="dummy">Dummy</string>
@@ -584,13 +584,14 @@
     <string name="notificaiton_group_swipe_disallowed">Niedozwolone</string>
 
     <string name="group_notifications">Powiadomienia grupowe</string>
-    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia \nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu, ustawienie zabezpiecza jedynie aplikację przed awarią w przypadku przekroczenia limitu powiadomień</string>
+    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia \nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu a jedynie zabezpiecza aplikację przed awarią w przypadku przekroczenia limitu powiadomień.</string>
     <string name="show_snooze_button">Pokaż przycisk  \'ODŁÓŻ\'</string>
-    <string name="show_snooze_button_desc">Przycisk \'Odłóż\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku; przy tym ustawieniu kliknięcie powiadomienia będzie otwierać je w kalendarzu</string>
+    <string name="show_snooze_button_desc">Przycisk \'ODŁÓŻ\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku. Przy tym ustawieniu kliknięcie powiadomienia będzie otwierać je w kalendarzu.</string>
     <string name="real_alarms_title_please_dont_translate">Real alarms</string>
     <string name="always_use_extenal_editor">Zawsze edytuj w kalendarzu</string>
-    <string name="always_use_external_editor_summary">Przycisk edycji na ekranie odłożeń będzie uruchamiał aplikację kalendarza zamiast wewnętrznego edytora</string>
-
-    <string name="group_notifications_android_oreo_gore">UWAGA:\nWłączenie grupowania powiadomień w Androidzie Oreo i nowszych może wyłączyć lub ograniczyć funkcjonalność powiadomień związaną z ich wyciszaniem, obsługą wydarzeń ze znacznikiem #alarm i korzystaniem z godzin ciszy. Związane jest to z niemożliwością ustalenia zachowania zgrupowanych powiadomień pochodzących z różnych kanałów powiadomień (powiadomienia wyciszone i oznaczone znacznikiem #alarm należą do innego kanału powiadomień niż kanał wydarzeń kalendarza)</string>
+    <string name="always_use_external_editor_summary">Przycisk edycji na ekranie odłożeń będzie uruchamiał aplikację kalendarza zamiast wewnętrznego edytora.</string>
 
 </resources>
+
+
+

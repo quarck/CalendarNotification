@@ -37,7 +37,7 @@
     <string name="location">Место:</string>
     <string name="today">Сегодня</string>
     <string name="tomorrow">Завтра</string>
-    <string name="yesterday">Послезавтра</string>
+    <string name="yesterday">Вчера</string>
     <string name="change_event_time">Изменить время события</string>
     <string name="one_hour_from_now">Перенести на час</string>
     <string name="same_time_tomorrow">Перенести на след. день</string>
@@ -318,48 +318,48 @@
 
     <string-array
         name="default_reminder_intervals">
-        <item>1 хв.</item>
-        <item>15 хв.</item>
-        <item>30 хв.</item>
-        <item>1 год.</item>
-        <item>2 год.</item>
-        <item>4 год.</item>
-        <item>1 дн.</item>
-        <item>1 тиж.</item>
-        <item>Інше</item>
+        <item>1 минута</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+        <item>2 часа</item>
+        <item>4 часа</item>
+        <item>1 день</item>
+        <item>1 неделя</item>
+        <item>Настраиваемый</item>
     </string-array>
 
     <string-array
         name="default_reminder_intervals_all_day">
-        <item>Інше</item>
-        <item>За день о 8:00</item>
-        <item>За день о 12:00</item>
-        <item>За день о 18:00</item>
-        <item>За фактом о 21:00</item>
-        <item>За фактом о 8:00</item>
-        <item>За фактом о 12:00</item>
+        <item>Задать вручную</item>
+        <item>За день в 8:00</item>
+        <item>За день в 12:00</item>
+        <item>За день в 18:00</item>
+        <item>За день в 21:00</item>
+        <item>В тот же день в 8:00</item>
+        <item>В тот же день в 12:00</item>
     </string-array>
 
     <string-array
         name="default_snooze_intervals">
-        <item>Інше</item>
-        <item>15 хв.</item>
-        <item>30 хв.</item>
-        <item>45 хв.</item>
-        <item>1 год.</item>
-        <item>2 год.</item>
-        <item>3 год.</item>
-        <item>4 год.</item>
-        <item>6 год.</item>
-        <item>8 год.</item>
-        <item>12 год.</item>
-        <item>18 год.</item>
-        <item>1 дн.</item>
-        <item>1.5 дн.</item>
-        <item>2 дн.</item>
-        <item>3 дн.</item>
-        <item>4 дн.</item>
-        <item>7 дн.</item>
+        <item>Задать вручную</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>45 минут</item>
+        <item>1 час</item>
+        <item>2 часа</item>
+        <item>3 часа</item>
+        <item>4 часа</item>
+        <item>6 часов</item>
+        <item>8 часов</item>
+        <item>12 часов</item>
+        <item>18 часов</item>
+        <item>1 день</item>
+        <item>1.5 дня</item>
+        <item>2 дня</item>
+        <item>3 дня</item>
+        <item>4 дня</item>
+        <item>7 дней</item>
     </string-array>
 
     <string name="new_event_max_reminder_is_28_days">Максимальный интервал - 28 дней до события</string>

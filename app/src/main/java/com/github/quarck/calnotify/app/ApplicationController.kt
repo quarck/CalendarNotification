@@ -1082,13 +1082,17 @@ object ApplicationController : EventMovedHandler {
     /// Set quietForSeconds to 0 to disable
     fun applyCustomQuietHoursForSeconds(ctx: Context, quietForSeconds: Int) {
 
+        val settings = getSettings(ctx)
+
         if (quietForSeconds > 0) {
             quietHoursManager.startManualQuietPeriod(
-                    getSettings(ctx),
+                    settings,
                     System.currentTimeMillis() + quietForSeconds*1000L
             )
+            alarmScheduler.rescheduleAlarms(ctx, getSettings(ctx), quietHoursManager)
         } else {
-            quietHoursManager.stopManualQuietPeriod(getSettings(ctx))
+            quietHoursManager.stopManualQuietPeriod(settings)
+            alarmScheduler.rescheduleAlarms(ctx, getSettings(ctx), quietHoursManager)
         }
     }
 }

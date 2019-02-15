@@ -38,6 +38,12 @@
         app:showAsAction="never"
         android:title="@string/dismiss_all_events" />
 
+    <item android:id="@+id/action_custom_quiet_interval"
+        android:orderInCategory="127"
+        app:showAsAction="never"
+        android:title="@string/start_quiet_hours"
+        />
+
     <item
         android:id="@+id/action_feedback"
         android:orderInCategory="130"

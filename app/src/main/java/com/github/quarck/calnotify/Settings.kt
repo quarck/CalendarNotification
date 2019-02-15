@@ -290,6 +290,14 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(ALWAYS_USE_EXTERNAL_EDITOR, false)
         set(value) = setBoolean(ALWAYS_USE_EXTERNAL_EDITOR, value)
 
+    var notificationsAlwaysCollapsed: Boolean
+        get() = getBoolean(NOTIFICATIONS_ALWAYS_COLLAPSED, false)
+        set(value) = setBoolean(NOTIFICATIONS_ALWAYS_COLLAPSED, value)
+
+    var manualQuietPeriodUntil: Long
+        get() = getLong(MANUAL_QUIET_PERIOD_UNTIL, 0)
+        set(value) = setLong(MANUAL_QUIET_PERIOD_UNTIL, value)
+
     companion object {
 
         // Preferences keys
@@ -351,6 +359,10 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor_0001"
 
         private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas_"
+
+        private const val NOTIFICATIONS_ALWAYS_COLLAPSED = "cxiam_kolapsita"
+
+        private const val MANUAL_QUIET_PERIOD_UNTIL = "manual_quiet_until"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

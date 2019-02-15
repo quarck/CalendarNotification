@@ -32,21 +32,49 @@ object QuietHoursManager : QuietHoursManagerInterface {
     private fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
 
+    override fun startManualQuietPeriod(settings: Settings, until: Long) {
+        settings.manualQuietPeriodUntil = until
+    }
+
+    override fun stopManualQuietPeriod(settings: Settings) {
+        settings.manualQuietPeriodUntil = 0L
+    }
+
     override fun isInsideQuietPeriod(settings: Settings, time: Long) =
             getSilentUntil(settings, time) > 0L
 
     override fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
             getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
 
+    override fun isCustomQuietHoursActive(settings: Settings): Boolean =
+            (settings.manualQuietPeriodUntil > System.currentTimeMillis())
+
     // returns time in millis, when silent period ends,
     // or 0 if we are not on silent
     override fun getSilentUntil(settings: Settings, time: Long): Long {
-        var ret: Long = 0
 
-        if (!isEnabled(settings))
-            return 0
+        var ret = 0L
 
         val currentTime = if (time != 0L) time else System.currentTimeMillis()
+        val manualEnd = settings.manualQuietPeriodUntil
+
+        if (currentTime < manualEnd) {
+            // we are in the manual quiet hours, but by the end of it we could hit the regular - double
+            // check for that
+            ret = Math.max(manualEnd, getSilentUntilImpl(settings, manualEnd))
+        } else {
+            ret = getSilentUntilImpl(settings, currentTime)
+        }
+
+        return ret
+    }
+
+    private fun getSilentUntilImpl(settings: Settings, currentTime: Long): Long {
+        var ret: Long = 0
+
+        if (!isEnabled(settings)) {
+            return 0
+        }
 
         val cal = Calendar.getInstance()
         cal.timeInMillis = currentTime
@@ -57,15 +85,15 @@ object QuietHoursManager : QuietHoursManagerInterface {
         val to = settings.quietHoursTo
         val silentTo = DateTimeUtils.createCalendarTime(currentTime, to.component1(), to.component2())
 
-        DevLog.debug(LOG_TAG, "getSilentUntil: ct=$currentTime, $from to $to");
+        DevLog.debug(LOG_TAG, "getSilentUntil: ct=$currentTime, $from to $to")
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.addDays(-1);
-        silentTo.addDays(-1);
+        silentFrom.addDays(-1)
+        silentTo.addDays(-1)
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.addDays(1);
+            silentTo.addDays(1)
 
         var cnt = 0
 
@@ -75,20 +103,43 @@ object QuietHoursManager : QuietHoursManagerInterface {
                 // this hits silent period -- so it should be silent until 'silentTo'
                 ret = silentTo.timeInMillis
                 DevLog.debug(LOG_TAG, "Time hits silent period range, would be silent for ${(ret - currentTime) / 1000L} seconds since expected wake up time")
-                break;
+                break
             }
 
-            silentFrom.addDays(1);
-            silentTo.addDays(1);
+            silentFrom.addDays(1)
+            silentTo.addDays(1)
 
             if (++cnt > 1000)
-                break;
+                break
         }
 
         return ret
     }
 
     override fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
+
+        val manualEnd = settings.manualQuietPeriodUntil
+        val tmp = LongArray(currentTimes.size)
+
+        for (i in 0 until currentTimes.size) {
+            if (currentTimes[i] < manualEnd) {
+                tmp[i] = manualEnd
+            } else {
+                tmp[i] = currentTimes[i]
+            }
+        }
+
+        val ret = getSilentUntilImpl(settings, tmp)
+
+        for (i in 0 until currentTimes.size) {
+            if (ret[i] < manualEnd)
+                ret[i] = manualEnd
+        }
+
+        return ret
+    }
+
+    private fun getSilentUntilImpl(settings: Settings, currentTimes: LongArray): LongArray {
 
         val ret = LongArray(currentTimes.size)
 
@@ -99,12 +150,11 @@ object QuietHoursManager : QuietHoursManagerInterface {
             return ret
 
         val cals =
-                Array<Calendar>(ret.size, {
-                    idx ->
+                Array<Calendar>(ret.size) { idx ->
                     val cal = Calendar.getInstance()
                     cal.timeInMillis = currentTimes[idx]
                     cal
-                })
+                }
 
         val from = settings.quietHoursFrom
         val silentFrom: Calendar = DateTimeUtils.createCalendarTime(currentTimes[0], from.component1(), from.component2())
@@ -113,12 +163,12 @@ object QuietHoursManager : QuietHoursManagerInterface {
         val silentTo = DateTimeUtils.createCalendarTime(currentTimes[0], to.component1(), to.component2())
 
         // Current silent period could have started yesterday, so account for this by rolling it back to one day
-        silentFrom.addDays(-1);
-        silentTo.addDays(-1);
+        silentFrom.addDays(-1)
+        silentTo.addDays(-1)
 
         // Check if "from" is before "to", otherwise add an extra day to "to"
         if (silentTo.before(silentFrom))
-            silentTo.addDays(1);
+            silentTo.addDays(1)
 
         var cnt = 0
 
@@ -140,11 +190,11 @@ object QuietHoursManager : QuietHoursManagerInterface {
             if (allPassed)
                 break
 
-            silentFrom.addDays(1);
-            silentTo.addDays(1);
+            silentFrom.addDays(1)
+            silentTo.addDays(1)
 
             if (++cnt > 1000)
-                break;
+                break
         }
 
         return ret

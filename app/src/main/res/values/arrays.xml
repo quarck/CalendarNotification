@@ -88,4 +88,24 @@
     </integer-array>
 
 
+    <string-array name="custom_quiet_hours_interval_names">
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+    </string-array>
+
+    <integer-array name="custom_quiet_hours_interval_values">
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>14400</item>
+        <item>28800</item>
+        <item>43200</item>
+        <item>86400</item>
+    </integer-array>
+
 </resources>

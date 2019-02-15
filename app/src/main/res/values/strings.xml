@@ -600,5 +600,11 @@
     <string name="you_can_do_it_later">LATER</string>
     <string name="you_cannot_do_it">DISMISS</string>
 
+    <string name="always_collapse">Always collapse</string>
+    <string name="always_collapse_detail">Always collapse multiple notifications into large summary one</string>
+    <string name="start_quiet_hours">Start Quiet Period</string>
+    <string name="stop_quiet_hours">End Quiet Period</string>
+    <string name="start_quiet_hours_dialog_title">Start Quiet Hours for:</string>
+
 </resources>
 

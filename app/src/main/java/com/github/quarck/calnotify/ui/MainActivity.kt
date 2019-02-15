@@ -41,10 +41,12 @@ import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.app.ApplicationController.snoozeEvent
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
@@ -321,6 +323,33 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 .show()
     }
 
+    private fun onCustomQuietHours() {
+
+        if (!ApplicationController.isCustomQuietHoursActive(this)) {
+
+            val intervalValues: IntArray = resources.getIntArray(R.array.custom_quiet_hours_interval_values)
+            val intervalNames: Array<String> = resources.getStringArray(R.array.custom_quiet_hours_interval_names)
+
+            val builder = AlertDialog.Builder(this)
+            val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
+
+            builder.setTitle(getString(R.string.start_quiet_hours_dialog_title))
+            adapter.addAll(intervalNames.toMutableList())
+            builder.setCancelable(true)
+            builder.setAdapter(adapter) { _, which ->
+                if (which in 0 until intervalValues.size) {
+                    ApplicationController.applyCustomQuietHoursForSeconds(this, intervalValues[which])
+                    reloadData()
+                }
+            }
+
+            builder.show()
+
+        } else {
+            ApplicationController.applyCustomQuietHoursForSeconds(this, 0)
+        }
+    }
+
     private fun onMuteAll() {
         AlertDialog.Builder(this)
                 .setMessage(R.string.mute_all_events_question)
@@ -384,6 +413,16 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
         }
 
+        val customQuiet = menu.findItem(R.id.action_custom_quiet_interval)
+        if (customQuiet != null) {
+            customQuiet.title =
+                    resources.getString(
+                        if (ApplicationController.isCustomQuietHoursActive(this))
+                            R.string.stop_quiet_hours
+                        else
+                            R.string.start_quiet_hours)
+        }
+
         if (settings.devModeEnabled) {
             menu.findItem(R.id.action_test_page)?.isVisible = true
 //            menu.findItem(R.id.action_add_event)?.isVisible = true
@@ -431,6 +470,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_dismiss_all ->
                 onDismissAll()
+
+            R.id.action_custom_quiet_interval ->
+                onCustomQuietHours()
 
             R.id.action_test_page ->
                 startActivity(

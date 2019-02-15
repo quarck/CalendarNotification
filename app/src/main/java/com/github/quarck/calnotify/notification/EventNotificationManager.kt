@@ -123,12 +123,19 @@ class EventNotificationManager : EventNotificationManagerInterface {
      * @returns pair of boolean and list, boolean means "all collapsed"
      */
     private fun sortEvents(
-            events: List<EventAlertRecord>
+            events: List<EventAlertRecord>,
+            settings: Settings
     ): Pair<Boolean, List<EventAlertRecord>> {
 
         var allCollapsed = false
 
-        if (events.size > Consts.MAX_UNCOLLAPSED_NOTIFICATIONS)
+        val maxNotificationsBeforeCollapse =
+                if (settings.notificationsAlwaysCollapsed)
+                    0
+                else
+                    Consts.MAX_UNCOLLAPSED_NOTIFICATIONS
+
+        if (events.size > maxNotificationsBeforeCollapse)
             allCollapsed = true
         else if (events.any {it.displayStatus == EventDisplayStatus.DisplayedCollapsed})
             allCollapsed = true
@@ -151,11 +158,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
      */
     private fun processEvents(
             context: Context,
-            db: EventsStorage
+            db: EventsStorage,
+            settings: Settings
     ): Pair<Boolean, List<EventAlertRecord>> {
 
         //val events = getEventsAndUnSnooze(context, db)
-        return sortEvents(getEventsAndUnSnooze(context, db))
+        return sortEvents(getEventsAndUnSnooze(context, db), settings)
     }
 
     override fun postEventNotifications(
@@ -179,7 +187,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         EventsStorage(context).use {
             db ->
 
-            val (allCollapsed, events) = processEvents(context, db)
+            val (allCollapsed, events) = processEvents(context, db, settings)
 
             val notificationRecords = generateNotificationRecords(
                     context = context,

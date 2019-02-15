@@ -147,6 +147,12 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 onChange{ settings.notificationAddEmptyAction = it }
             }
 
+            switch(R.string.always_collapse, R.string.always_collapse_detail) {
+                initial(settings.notificationsAlwaysCollapsed)
+                onChange{settings.notificationsAlwaysCollapsed = it }
+            }
+
+
             if (settings.allowMuteAndAlarm) {
                 switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
                     initial(settings.notificationUseAlarmStream)

@@ -30,4 +30,10 @@ interface QuietHoursManagerInterface {
     fun getSilentUntil(settings: Settings, time: Long = 0L): Long
 
     fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray
+
+    fun startManualQuietPeriod(settings: Settings, until: Long)
+
+    fun stopManualQuietPeriod(settings: Settings)
+
+    fun isCustomQuietHoursActive(settings: Settings): Boolean
 }

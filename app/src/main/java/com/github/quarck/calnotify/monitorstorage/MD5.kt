@@ -124,5 +124,4 @@ fun EventAlertRecord.fullMD5() = toString().md5()
 
 fun EventAlertRecord.essenceMD5() =
         ("${title.length},${desc.length},${location.length}," +
-                "$startTime,$instanceStartTime,$isAllDay," +
-                "$title,$desc,$location").md5()
+                "$$instanceStartTime,$isAllDay,$title,$desc,$location").md5()

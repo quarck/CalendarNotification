@@ -1074,4 +1074,21 @@ object ApplicationController : EventMovedHandler {
     fun postNearlyMissedNotificationDebugMessage(context: Context) {
         notificationManager.postNearlyMissedNotificationDebugMessage(context)
     }
+
+    fun isCustomQuietHoursActive(ctx: Context): Boolean {
+        return quietHoursManager.isCustomQuietHoursActive(getSettings(ctx))
+    }
+
+    /// Set quietForSeconds to 0 to disable
+    fun applyCustomQuietHoursForSeconds(ctx: Context, quietForSeconds: Int) {
+
+        if (quietForSeconds > 0) {
+            quietHoursManager.startManualQuietPeriod(
+                    getSettings(ctx),
+                    System.currentTimeMillis() + quietForSeconds*1000L
+            )
+        } else {
+            quietHoursManager.stopManualQuietPeriod(getSettings(ctx))
+        }
+    }
 }

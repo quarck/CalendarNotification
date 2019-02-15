@@ -178,11 +178,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val settings = Settings(context)
 
-        //val currentTime = System.currentTimeMillis()
-
         val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
-
-        //var updatedAnything = false
 
         EventsStorage(context).use {
             db ->
@@ -330,11 +326,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             var soundState = NotificationChannelManager.SoundState.Normal
 
-            if (firstReminder) {
+            /*if (firstReminder) {
                 if (events.any { it.isUnmutedAlarm } )
                     soundState = NotificationChannelManager.SoundState.Alarm
             }
-            else if (!isQuietPeriodActive) {
+            else */if (!isQuietPeriodActive) {
                 if (event.isUnmutedAlarm)
                     soundState = NotificationChannelManager.SoundState.Alarm
                 else if (event.isMuted)

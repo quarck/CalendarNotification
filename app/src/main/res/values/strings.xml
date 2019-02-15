@@ -336,9 +336,6 @@
     <string name="use_alarm_stream_summary">Play notification on Alarm stream (instead of Notification)</string>
 
     <string name="restrict_swipe_to_dismiss">Restrict notification swipe</string>
-    <string name="snooze_on_swipe">Snooze on swipe</string>
-    <string name="snooze_on_swipe_summary">Swiping would snooze event instead of dismissing it (1st present is used)</string>
-    <string name="snooze_on_swipe_summary_v2">Swiping would snooze event instead of dismissing it (hard-coded 5 mins snooze)</string>
 
     <string name="on_the_day_before">On the day before</string>
     <string name="on_the_day_of_event">On the day of event</string>
@@ -583,8 +580,6 @@
     <string name="notificaiton_group_swipe_snoozes_the_event">Snoozes all the events using 1st preset</string>
     <string name="notificaiton_group_swipe_disallowed">Not allowed</string>
 
-    <string name="group_notifications">Group notifications</string>
-    <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
     <string name="show_snooze_button">Show SNOOZE button</string>
     <string name="show_snooze_button_desc">Brings back \'SNOOZE\' button, thus click on the notification would open even in the calendar, and click on SNOOZE will bring the snooze activity</string>
     <string name="real_alarms_title_please_dont_translate">Real alarms</string>
@@ -593,7 +588,6 @@
 
     <string name="pre_oreo_notification_channels_explanation">Attention pre-Oreo users:\n\nThis app is running in compatibility mode on your device\n\nMultiple users has requested F-Droid build to be installable on pre-Oreo devices, thus this change was made. But sound / vibration / LED control are all now migrated to notification channel settings which are absent on pre-Oreo devices, so you would not be able to control these. To get these settings back - please revert to an older version (Google Play will serve older version for pre-Oreo devices, or ask me directly).</string>
 
-    <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
     <string name="battery_optimisation_title">Battery optimisation</string>
     <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
     <string name="you_can_do_it">DO IT</string>

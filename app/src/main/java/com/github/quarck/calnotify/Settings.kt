@@ -41,8 +41,6 @@ enum class NotificationSwipeBehavior(val code: Int)
 data class NotificationSettingsSnapshot
 (
         val notificationSwipeBehavior: NotificationSwipeBehavior,
-        val groupNotificationSwipeBehavior: NotificationSwipeBehavior,
-        val postGroupNotification: Boolean,
         val enableNotificationMute: Boolean,
         val appendEmptyAction: Boolean,
         val useAlarmStream: Boolean,
@@ -52,14 +50,14 @@ data class NotificationSettingsSnapshot
     val ongoingIndividual: Boolean
         get() = notificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
 
-    val ongoingGroup: Boolean
-        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
+//    val ongoingGroup: Boolean
+//        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SwipeDisallowed
 
     val swipeSnoozeIndividual: Boolean
         get() = notificationSwipeBehavior == NotificationSwipeBehavior.SnoozeEvent
 
-    val swipeSnoozeGroup: Boolean
-        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SnoozeEvent
+//    val swipeSnoozeGroup: Boolean
+//        get() = groupNotificationSwipeBehavior == NotificationSwipeBehavior.SnoozeEvent
 }
 
 
@@ -256,16 +254,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = NotificationSwipeBehavior.fromInt(getInt(NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.SwipeDisallowed.code))
         set(value) = setInt(NOTIFICATION_SWIPE_BEHAVIOR, value.code)
 
-    var groupNotificationSwipeBehavior: NotificationSwipeBehavior
-        get() = NotificationSwipeBehavior.fromInt(getInt(GROUP_NOTIFICATION_SWIPE_BEHAVIOR, NotificationSwipeBehavior.SwipeDisallowed.code))
-        set(value) = setInt(GROUP_NOTIFICATION_SWIPE_BEHAVIOR, value.code)
-
-    var postGroupNotification: Boolean
-        get() = getBoolean(GROUP_NOTIFICAITONS, false)
-        set(value) = setBoolean(GROUP_NOTIFICAITONS, value)
-
-    val allowMuteAndAlarm: Boolean
-        get() = (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) || !postGroupNotification
+    // true
+//    val allowMuteAndAlarm: Boolean
+//        get() = (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) || !postGroupNotification
 
     var doNotShowBatteryOptimisationWarning: Boolean
         get() = getBoolean(DO_NOT_SHOW_BATTERY_OPTIMISATION, false)
@@ -278,9 +269,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val notificationSettingsSnapshot: NotificationSettingsSnapshot
         get() = NotificationSettingsSnapshot(
                 notificationSwipeBehavior = notificationSwipeBehavior,
-                groupNotificationSwipeBehavior = groupNotificationSwipeBehavior,
-                postGroupNotification = postGroupNotification,
-                enableNotificationMute = remindersEnabled && allowMuteAndAlarm,
+//                groupNotificationSwipeBehavior = groupNotificationSwipeBehavior,
+//                postGroupNotification = postGroupNotification,
+                enableNotificationMute = remindersEnabled /* && allowMuteAndAlarm */,
                 appendEmptyAction = notificationAddEmptyAction,
                 useAlarmStream = notificationUseAlarmStream,
                 forwardReminersToPebble = forwardReminersToPebble,
@@ -351,8 +342,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val FORWARD_REMINDERS_TO_PEBBLE = "forward_reminders_to_pebble"
 
         private const val NOTIFICATION_SWIPE_BEHAVIOR = "notification_swipe_behavior"
-        private const val GROUP_NOTIFICATION_SWIPE_BEHAVIOR = "group_notification_swipe_behavior"
-        private const val GROUP_NOTIFICAITONS = "group_notifications_001"
 
         private const val SHOW_SNOOZE_BUTTON = "show_snooze_btn_0001"
 

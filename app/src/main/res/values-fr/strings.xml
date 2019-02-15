@@ -324,8 +324,6 @@
     <string name="use_alarm_stream_summary">"Utiliser le volume de l'alarme (au lieu du volume de notification)"</string>
 
     <string name="restrict_swipe_to_dismiss">"Limiter le glissement de notification"</string>
-    <string name="snooze_on_swipe">"Glisser pour répéter"</string>
-    <string name="snooze_on_swipe_summary">"Le glissement de la notificaton 'répètera' l'évenement au lieu de le rejeter (le 1er paramètre sera utilisé)"</string>
 
     <string name="on_the_day_before">"La veille"</string>
     <string name="on_the_day_of_event">"Le jour de l'événement"</string>

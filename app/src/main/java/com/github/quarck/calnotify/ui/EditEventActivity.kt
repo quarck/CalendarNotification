@@ -230,8 +230,6 @@ open class EditEventActivity : AppCompatActivity() {
     private lateinit var taskTagButton: TextView
     private lateinit var alarmTagButton: TextView
 
-    private var muteAndAlarmAllowed: Boolean = true
-
     private lateinit var eventTitleLayout: RelativeLayout
     private lateinit var tagsLayout: LinearLayout
 
@@ -377,8 +375,6 @@ open class EditEventActivity : AppCompatActivity() {
 
         // settings
         settings = Settings(this)
-
-        muteAndAlarmAllowed = settings.allowMuteAndAlarm
 
         taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
         muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
@@ -673,8 +669,8 @@ open class EditEventActivity : AppCompatActivity() {
 
             if (updateLayouts) {
                 taskTagButton.visibility = View.VISIBLE
-                muteTagButton.visibility = if (muteAndAlarmAllowed) View.VISIBLE else View.GONE
-                alarmTagButton.visibility = if (muteAndAlarmAllowed) View.VISIBLE else View.GONE
+                muteTagButton.visibility = View.VISIBLE
+                alarmTagButton.visibility = View.VISIBLE
             }
 
             val selectedColor = ContextCompat.getColor(this, R.color.event_selected_tag_color)

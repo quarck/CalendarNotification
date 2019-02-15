@@ -327,8 +327,6 @@
     <string name="use_alarm_stream_summary">Erinnerungen über die Alarmfunktion abspielen (anstatt normal über die Erinnerungsfunktion)</string>
 
     <string name="restrict_swipe_to_dismiss">Ablehnen Wischgeste</string>
-    <string name="snooze_on_swipe">Schlummer Wischgeste</string>
-    <string name="snooze_on_swipe_summary">Wischgeste setzt Schlummern anstatt Ablehnen (erstes Auftreten wird verwendet)</string>
 
     <string name="on_the_day_before">Am Tage vorher</string>
     <string name="on_the_day_of_event">Am Tage des Termins</string>

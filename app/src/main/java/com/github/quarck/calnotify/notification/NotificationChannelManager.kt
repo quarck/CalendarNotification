@@ -31,7 +31,6 @@ import android.os.Build
 import android.support.v4.app.NotificationCompat
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.notificationManager
 
@@ -409,21 +408,12 @@ object NotificationChannelManager {
     fun createNotificationChannel(
             context: Context,
             soundState: SoundState,
-            isReminder: Boolean,
-            settings: Settings
-
-    ): NotificationChannelAttributes {
-
-        val allowedSoundState =
-                if (settings.allowMuteAndAlarm)
-                    soundState
-                else
-                    SoundState.Normal
-
-        return if (!isReminder)
-            createNotificationChannelForSoundState(context, allowedSoundState)
-        else
-            createReminderNotificationChannelForSoundState(context, allowedSoundState)
+            isReminder: Boolean
+    ) = when {
+        isReminder ->
+            createReminderNotificationChannelForSoundState(context, soundState)
+        else ->
+            createNotificationChannelForSoundState(context, soundState)
     }
 
 //    fun createNotificationChannelForRealAlarms(
@@ -473,7 +463,7 @@ object NotificationChannelManager {
     fun launchSystemSettingForChannel(context: Context, soundState: SoundState, isReminder: Boolean) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = createNotificationChannel(context, soundState, isReminder, Settings(context))
+            val channel = createNotificationChannel(context, soundState, isReminder)
             val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
             intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
             intent.putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, channel.channelId)

@@ -250,8 +250,6 @@
     <string name="use_alarm_stream">Використовувати гучність будильника</string>
     <string name="use_alarm_stream_summary">Використовувати гучність будильника замість гучності сповіщень</string>
     <string name="restrict_swipe_to_dismiss">Заборонити свайп сповіщення</string>
-    <string name="snooze_on_swipe">Відкласти при свайпі</string>
-    <string name="snooze_on_swipe_summary">Свайп буде відкладати подію замість її відхилення</string>
     <string name="on_the_day_before">За день до події</string>
     <string name="on_the_day_of_event">У день події</string>
     <string name="before_the_event">до події</string>

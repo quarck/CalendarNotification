@@ -116,28 +116,6 @@ class NotificationSettingsActivity : AppCompatActivity(){
 
             separator()
 
-            switch (R.string.group_notifications, R.string.group_notifications_summary) {
-                initial (settings.postGroupNotification)
-                onChange { settings.postGroupNotification = it }
-                depending {
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        red_notice(R.string.group_notifications_android_oreo_gore)
-                    }
-
-                    groupNotificationBehavior(settings.groupNotificationSwipeBehavior) {
-                        settings.groupNotificationSwipeBehavior = it
-                    }
-                    separator()
-                }
-            }
-
-//            switch(R.string.snooze_on_swipe, R.string.snooze_on_swipe_summary_v2) {
-//                initial(settings.notificationSwipeDoesSnooze)
-//                onChange{settings.notificationSwipeDoesSnooze = it }
-//            }
-
-
             header(R.string.other)
 
             switch(R.string.add_empty_action_to_the_end_title,
@@ -153,11 +131,9 @@ class NotificationSettingsActivity : AppCompatActivity(){
             }
 
 
-            if (settings.allowMuteAndAlarm) {
-                switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
-                    initial(settings.notificationUseAlarmStream)
-                    onChange { settings.notificationUseAlarmStream = it }
-                }
+            switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
+                initial(settings.notificationUseAlarmStream)
+                onChange { settings.notificationUseAlarmStream = it }
             }
         }
     }

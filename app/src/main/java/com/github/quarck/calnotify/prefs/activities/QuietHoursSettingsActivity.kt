@@ -41,10 +41,6 @@ class QuietHoursSettingsActivity : AppCompatActivity() {
 
                 depending {
 
-                    if (!settings.allowMuteAndAlarm) {
-                        red_notice(R.string.group_notifications_android_oreo_gore)
-                    }
-
                     timeOfDay(
                             R.string.quiet_time_from,
                             settings.quietHoursFrom) {

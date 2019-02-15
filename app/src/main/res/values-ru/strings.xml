@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- превед медвед! -->
     <string name="app_name">Уведомления календаря</string>
     <string name="main_activity_title">Уведомления календаря</string>
     <string name="settings">Настройки</string>
@@ -250,8 +251,6 @@
     <string name="use_alarm_stream">Использовать громкость будильника</string>
     <string name="use_alarm_stream_summary">Использовать громкость будильника вместо громкости уведомления</string>
     <string name="restrict_swipe_to_dismiss">Запретить смахивание уведомления</string>
-    <string name="snooze_on_swipe">Отсрочить при смахивании</string>
-    <string name="snooze_on_swipe_summary">Смахивание будет отсрочивать событие вместо его отклонения</string>
     <string name="on_the_day_before">За день до события</string>
     <string name="on_the_day_of_event">В день события</string>
     <string name="before_the_event">до события</string>

@@ -334,8 +334,6 @@
     <string name="use_alarm_stream_summary">Odtwarzaj dźwięk powiadomienia z głośnością ustawioną dla alarmów zamiast głośności przypisanej powiadomieniom.</string>
 
     <string name="restrict_swipe_to_dismiss">Ogranicz przesuwanie powiadomień</string>
-    <string name="snooze_on_swipe">Przesuń, aby odłożyć</string>
-    <string name="snooze_on_swipe_summary">Przesuwaj powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
 
     <string name="on_the_day_before">Dzień przed</string>
     <string name="on_the_day_of_event">W dniu wydarzenia</string>
@@ -583,8 +581,6 @@
     <string name="notificaiton_group_swipe_snoozes_the_event">Odkłada na okres pierwszej wartości ustalonej w Definicjach odłożeń</string>
     <string name="notificaiton_group_swipe_disallowed">Niedozwolone</string>
 
-    <string name="group_notifications">Powiadomienia grupowe</string>
-    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia \nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu a jedynie zabezpiecza aplikację przed awarią w przypadku przekroczenia limitu powiadomień.</string>
     <string name="show_snooze_button">Pokaż przycisk  \'ODŁÓŻ\'</string>
     <string name="show_snooze_button_desc">Przycisk \'ODŁÓŻ\' będzie wyświetlany na każdym powiadomieniu, powiadomienie może zostać odrzucone tylko za pomocą tego przycisku. Przy tym ustawieniu kliknięcie powiadomienia będzie otwierać je w kalendarzu.</string>
     <string name="real_alarms_title_please_dont_translate">Real alarms</string>

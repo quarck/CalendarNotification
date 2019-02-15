@@ -347,6 +347,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         } else {
             ApplicationController.applyCustomQuietHoursForSeconds(this, 0)
+            reloadData()
         }
     }
 

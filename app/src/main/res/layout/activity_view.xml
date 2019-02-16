@@ -69,6 +69,7 @@
                     android:gravity="start|bottom"
                     tools:ignore="HardcodedText"
                     android:ellipsize="end"
+                    android:autoLink="web|email|map"
                     />
 
                 <ImageView
@@ -325,6 +326,7 @@
                         android:paddingStart="@dimen/snooze_view_padding_start"
                         android:paddingEnd="@dimen/snooze_view_padding_end"
                         android:textIsSelectable="true"
+                        android:autoLink="web|email|map"
                         tools:ignore="HardcodedText"/>
 
                 </RelativeLayout>

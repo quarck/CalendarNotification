@@ -96,12 +96,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:textColor="@color/primary_text"
         android:textStyle="bold"
         android:text="@string/donation_offers_are_rejected"
-        android:layout_gravity="center_horizontal"
         />
 
 </LinearLayout>

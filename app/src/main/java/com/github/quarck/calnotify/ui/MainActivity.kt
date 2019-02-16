@@ -46,7 +46,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.app.ApplicationController.snoozeEvent
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
@@ -459,9 +458,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 
-            R.id.action_feedback ->
+            R.id.action_report_a_bug ->
                 startActivity(
-                        Intent(this, HelpAndFeedbackActivity::class.java)
+                        Intent(this, ReportABugActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_about ->

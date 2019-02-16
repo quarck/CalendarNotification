@@ -39,7 +39,7 @@
             <!--android:parentActivityName=".ui.MainActivity"-->
             <!--android:theme="@style/AppTheme" />-->
         <activity
-            android:name=".ui.HelpAndFeedbackActivity"
+            android:name=".ui.ReportABugActivity"
             android:label="@string/help_feedback"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />

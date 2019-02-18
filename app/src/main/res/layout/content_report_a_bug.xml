@@ -27,7 +27,6 @@
           android:textColor="@color/primary_text"
           android:textStyle="bold"
           android:text="@string/report_any_bugs_or_suggestions_directly_to_github"
-          android:id="@+id/report_a_bug_text_view"
           android:clickable="true"
           android:onClick="OnButtonEasterEgg"
         />

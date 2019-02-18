@@ -11,39 +11,11 @@
     <string name="cancel">Cancelar</string>
 
     <!-- string name="app_updated">App Updated</string -->
-    <string name="on">Ativado</string>
-    <string name="off">Desativado</string>
 
     <string name="dismiss">Dispensar</string>
     <string name="snooze">Adiar</string>
 
-    <string name="show_dismiss_button">Mostrar o botão \'Dispensar\'</string>
-    <string name="show_dismiss_summary">A ação \'Dispensar\' será mostrada em todas as notificações, que só poderão ser dispensadas por meio deste botão</string>
-
-    <string name="play_reminder_sound">Som da notificação</string>
-    <string name="play_reminder_sound_summary">Tocar o som de notificação</string>
-
-    <string name="ringtone_selection">Áudio de Notificação</string>
-    <string name="ringtone_selection_summary">Escolha o Áudio de Notificação</string>
-
-    <string name="vibra_on">Vibração</string>
-
-    <string name="notification_light_summary">Use o LED para alertar a respeito de notificações ativas</string>
-    <string name="notification_light_title">LED de Notificação</string>
-
     <string name="help_feedback">Ajuda e retorno</string>
-
-    <string name="feedback">Retorno</string>
-
-    <string name="help_title">Se você encontrou um erro, possuí uma questão, deseja sugerir uma funcionalidade ou mesmo dar um retorno - por favor, contate o desenvolvedor por email.\n\nPor favor, não espere uma resposta instantânea. Eu estou desenvolvendo essa aplicação em meu tempo livre e posso responder apenas quando tiver tempo para isso</string>
-    <string name="email_developer">EMAIL DEVELOPER</string>
-
-    <string name="forward_to_pebble">Enviar para o Pebble</string>
-    <string name="forward_to_pebble_summary">Se você possuí um Smart Watch Peeble - isso irá habilitar a aplicação a enviar notificações para o seu relógio</string>
-
-    <string name="multiple_events">%d eventos a mais</string>
-    <string name="multiple_events_details">Toque para ver detalhes</string>
-    <string name="title_activity_activity_snooze">Adiar</string>
 
     <string name="empty_title">(Sem título)</string>
     <string name="snooze_event_for">Adiar o evento por:</string>
@@ -56,25 +28,18 @@
     <string name="location">Local:</string>
     <string name="today">Hoje</string>
     <string name="tomorrow">Amanhã</string>
-    <string name="yesterday">Ontem</string>
     <string name="change_event_time">Altere o tempo do evento</string>
     <string name="one_hour_from_now">Mova para a hora seguinte</string>
     <string name="same_time_tomorrow">Mova para o dia seguinte</string>
     <string name="next_week_same_day">Mova para a semana seguinte</string>
-    <string name="custom_pick_a_date">Personalizada (escolha uma data)</string>
 
     <string name="snoozed_until_string">Adiar até</string>
     <string name="card_view_btn_change">ALTERAR</string>
     <string name="card_view_btn_snooze">ADIAR</string>
-    <string name="card_view_btn_dismiss">DISPENSAR</string>
-    <string name="new_events_detected">Recarregar para ver novos eventos</string>
-    <string name="button_reload">RECAREGAR</string>
     <string name="settings_name">Configurações</string>
-    <string name="app_icon_credit">Crédito do ícone da aplicação:</string>
     <string name="app_created_with">Aplicação criada com</string>
     <string name="notification_settings">Configurações de Notificação</string>
     <string name="snooze_presets">Configurações de adiamento</string>
-    <string name="smartwatch_support">Suporte a Smartwatch</string>
     <!-- string name="dialog_snooze_text_label">Lista das opções de adiamento separadas por vírgulas\n\nValores suportados como \'15m\', \'2h\' or \'3d\'\n\nAté 6 items na lista\n\nDeixe em branco para usar o padrão</string -->
 
     <string name="error_cannot_parse_preset">Desculpe, não foi possível processar sua entrada</string>
@@ -93,8 +58,6 @@
     <string name="view_after_edit">Visualizar depois de editar</string>
     <string name="view_after_edit_summary">Ative para vizualizar automaticamente o evento após alterar sua data utilizando a opção de Adiar</string>
     <string name="misc_settings">Outras configurações</string>
-    <string name="abort_broadcast">Abortar transmissão</string>
-    <string name="abort_broadcast_summary">Selecione esta opção, caso você esteja recebendo notificações do Calendário juntamente com as dessa aplicação</string>
 
 
     <string name="enable_reminders">Habilitar lembretes</string>

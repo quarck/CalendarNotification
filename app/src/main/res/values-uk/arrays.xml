@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array
-        name="pref_vibration_pattern_entries">
-        <item>Довга</item>
-        <item>Дуже довга</item>
-        <item>Дов. Кор. Кор.</item>
-        <item>Дов. Кор. Кор. Кор.</item>
-        <item>Кор. Кор. Кор. Дов.</item>
-    </string-array>
-    <string-array
         name="days_of_week_entries">
         <item>Понеділок</item>
         <item>Вівторок</item>

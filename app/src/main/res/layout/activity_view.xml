@@ -49,7 +49,6 @@
                 tools:targetApi="m">
 
                 <View
-                    android:id="@+id/menu_anker"
                     android:layout_width="match_parent"
                     android:layout_height="0dp" />
 
@@ -76,7 +75,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:longClickable="false"
-                    android:id="@+id/snooze_view_cancel"
                     android:src="@drawable/ic_navigate_before_white_24dp"
                     android:paddingTop="@dimen/snooze_view_img_padding_start"
                     android:paddingBottom="@dimen/snooze_view_img_padding_start"
@@ -119,9 +117,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top"
-                    android:id="@+id/layout_snooze_time"
-                    >
+                    android:paddingTop="@dimen/snooze_view_action_padding_top">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -169,7 +165,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_snoozed_until"
                         android:text="Snoozed until: 21 June 2999 18:00"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@color/secondary_text"
@@ -190,7 +185,6 @@
                     android:background="@color/background"
                     android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
                     android:paddingTop="0dp"
-                    android:id="@+id/layout_calendar_name"
                     android:visibility="visible"
                     >
                     <TextView
@@ -337,14 +331,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/divider"
-                    android:padding="0dp"
-                    android:id="@+id/view_snooze_divider"
-                    />
+                    android:padding="0dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/snooze_view_subtle_notice"
                     android:text="Subtle notice can be placed here"
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/primary"

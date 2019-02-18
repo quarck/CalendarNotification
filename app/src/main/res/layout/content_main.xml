@@ -45,8 +45,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:id="@+id/text_view_style_message"
-
                     android:text="@string/compact_view_is_a_default_style_now"
 
                     android:textAppearance="?android:textAppearanceMedium"
@@ -98,7 +96,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/switch_to_cards"
-                        android:id="@+id/activity_main_button_hate_new_style"
                         android:visibility="visible"
                         android:textColor="@color/accent"
                         android:textAppearance="?android:textAppearanceMedium"
@@ -120,7 +117,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ok"
-                        android:id="@+id/activity_main_button_new_style_ok"
                         android:visibility="visible"
                         android:textColor="@color/accent"
                         android:textAppearance="?android:textAppearanceMedium"
@@ -194,7 +190,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/activity_main_rationale"
                 android:text="@string/calendar_was_changed_pull_down_to_refresh"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/primary_text"
@@ -213,7 +208,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/activity_main_undo_layout"
             android:visibility="gone"
             android:background="@color/primary_text"
             android:elevation="4dp"
@@ -250,7 +244,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/activity_main_undo_text"
                 android:text="@string/event_dismissed"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/icons"
@@ -298,7 +291,6 @@
         />
 
     <TextView
-        android:id="@+id/no_permissions_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceLarge"

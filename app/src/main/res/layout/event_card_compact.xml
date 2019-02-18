@@ -184,7 +184,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/card_view_event_dismissed_text"
             android:text="@string/dismissed"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/icons"

@@ -88,7 +88,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             updateAlert(db, entry)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "addAlert($entry): exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "addAlert($entry): exception ${ex.detailed}")
         }
     }
 
@@ -118,7 +118,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
                     arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()))
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "deleteAlert($eventId, $alertTime): exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "deleteAlert($eventId, $alertTime): exception ${ex.detailed}")
         }
     }
 
@@ -152,7 +152,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             db.setTransactionSuccessful()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "deleteAlertsMatching: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "deleteAlertsMatching: exception ${ex.detailed}")
         }
         finally {
             db.endTransaction()
@@ -216,7 +216,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlert: exception $ex, stack: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlert: exception $ex, stack: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -244,7 +244,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getNextAlert: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getNextAlert: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -277,7 +277,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -310,7 +310,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -347,7 +347,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getInstanceAlerts: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getInstanceAlerts: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -383,7 +383,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -419,7 +419,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlertsAt: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()

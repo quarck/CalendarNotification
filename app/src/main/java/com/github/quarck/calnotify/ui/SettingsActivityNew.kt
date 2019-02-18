@@ -2,15 +2,12 @@ package com.github.quarck.calnotify.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.prefs.CalendarsActivity
 import com.github.quarck.calnotify.prefs.activities.*
-import com.github.quarck.calnotify.utils.find
 
 class SettingsActivityNew : AppCompatActivity() {
 
@@ -19,7 +16,7 @@ class SettingsActivityNew : AppCompatActivity() {
 
         setContentView(R.layout.activity_settings)
 
-        DevLog.info(this, LOG_TAG, "onCreate")
+        DevLog.info(LOG_TAG, "onCreate")
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

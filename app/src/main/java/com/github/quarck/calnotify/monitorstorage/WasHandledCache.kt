@@ -24,7 +24,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
@@ -43,7 +42,7 @@ class WasHandledCache(val context: Context)
             = impl.createDb(db)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion != newVersion) {
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")

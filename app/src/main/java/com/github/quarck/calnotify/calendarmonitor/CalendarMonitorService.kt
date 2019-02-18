@@ -22,12 +22,9 @@ package com.github.quarck.calnotify.calendarmonitor
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
-import com.github.quarck.calnotify.utils.powerManager
-import com.github.quarck.calnotify.utils.wakeLocked
 import android.app.job.JobParameters
 import android.app.job.JobScheduler
 import android.app.job.JobInfo
@@ -42,7 +39,7 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
     override fun onHandleIntent(intent: Intent?) {
 
         if (intent == null) {
-            DevLog.error(this, LOG_TAG, "Intent is null")
+            DevLog.error(LOG_TAG, "Intent is null")
             return
         }
 
@@ -51,10 +48,9 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
         val shouldReloadCalendar = intent.getBooleanExtra(RELOAD_CALENDAR, false)
         val userActionUntil = intent.getLongExtra(USER_ACTION_UNTIL, 0)
 
-        DevLog.info(this, LOG_TAG,
-                "onHandleIntent: " +
-                        "startDelay=$startDelay, " +
-                        "shouldReloadCalendar=$shouldReloadCalendar, "
+        DevLog.info(LOG_TAG, "onHandleIntent: " +
+                "startDelay=$startDelay, " +
+                "shouldReloadCalendar=$shouldReloadCalendar, "
         )
 
         if (shouldReloadCalendar && startDelay > MAX_TIME_WITHOUT_QUICK_RESCAN) {
@@ -68,7 +64,7 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 )
             }
             catch (ex: Exception) {
-                DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
+                DevLog.error(LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
             }
         }
 
@@ -84,7 +80,7 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 )
             }
             catch (ex: Exception) {
-                DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
+                DevLog.error(LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
             }
         }
 
@@ -93,14 +89,14 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
             ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
         }
 
         try {
             ApplicationController.CalendarMonitor.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
         }
 
     }
@@ -140,7 +136,7 @@ class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService
                 context.startService(intent)
             }
             catch (ex: Exception){
-                DevLog.error(context, LOG_TAG, "Failed to start rescan service, ex: $ex, ${ex.stackTrace}")
+                DevLog.error(LOG_TAG, "Failed to start rescan service, ex: $ex, ${ex.stackTrace}")
             }
         }
     }
@@ -150,7 +146,7 @@ class CalendarMonitorOneTimeJobService : JobService()  {
 
     override fun onStartJob(params: JobParameters): Boolean {
 
-        DevLog.info(this, LOG_TAG, "onStartJob ")
+        DevLog.info(LOG_TAG, "onStartJob ")
 
         try  {
             ApplicationController.onCalendarRescanForRescheduledFromService(
@@ -159,28 +155,28 @@ class CalendarMonitorOneTimeJobService : JobService()  {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
         }
 
         try  {
             ApplicationController.onCalendarReloadFromService(this, 0)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
         }
 
         try {
             ApplicationController.CalendarMonitor.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
         }
 
         try {
             ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
         }
 
         return false
@@ -221,7 +217,7 @@ class CalendarMonitorPeriodicJobService : JobService()  {
 
     override fun onStartJob(params: JobParameters): Boolean {
 
-        DevLog.info(this, LOG_TAG, "onStartJob ")
+        DevLog.info(LOG_TAG, "onStartJob ")
 
         try  {
             ApplicationController.onCalendarRescanForRescheduledFromService(
@@ -230,28 +226,28 @@ class CalendarMonitorPeriodicJobService : JobService()  {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reloading calendar: ${ex.detailed}")
         }
 
         try  {
             ApplicationController.onCalendarReloadFromService(this, 0)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while rescanning calendar: ${ex.detailed}")
         }
 
         try {
             ApplicationController.CalendarMonitor.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while re-scanning calendar: ${ex.detailed}")
         }
 
         try {
             ApplicationController.AddEventMonitorInstance.onRescanFromService(this)
         }
         catch (ex: Exception) {
-            DevLog.error(this, LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reloading calendar (2nd): ${ex.detailed}")
         }
 
         return false

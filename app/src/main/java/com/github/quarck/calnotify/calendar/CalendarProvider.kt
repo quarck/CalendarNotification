@@ -125,7 +125,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getAlertByTime: has no permissions")
+            DevLog.error(LOG_TAG, "getAlertByTime: has no permissions")
             return listOf()
         }
 
@@ -148,21 +148,21 @@ object CalendarProvider : CalendarProviderInterface {
 
                 if (state != null && event != null) {
                     if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
-                        DevLog.info(context, LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
+                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
                         ret.add(event)
                     }
                     else {
-                        DevLog.info(context, LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - already dismissed in provider, ignoring")
+                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - already dismissed in provider, ignoring")
                     }
                 }
                 else {
-                    DevLog.error(context, LOG_TAG, "Failed to interpret query output, alertTime=$alertTime")
+                    DevLog.error(LOG_TAG, "Failed to interpret query output, alertTime=$alertTime")
                 }
 
             } while (cursor.moveToNext())
         }
         else {
-            DevLog.error(context, LOG_TAG, "No requests at $alertTime")
+            DevLog.error(LOG_TAG, "No requests at $alertTime")
         }
 
         cursor?.close()
@@ -178,7 +178,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getAlertByEventIdAndTime: has no permissions")
+            DevLog.error(LOG_TAG, "getAlertByEventIdAndTime: has no permissions")
             return null
         }
 
@@ -207,7 +207,7 @@ object CalendarProvider : CalendarProviderInterface {
             } while (cursor.moveToNext())
         }
         else {
-            DevLog.error(context, LOG_TAG, "Event $eventId not found")
+            DevLog.error(LOG_TAG, "Event $eventId not found")
         }
 
         cursor?.close()
@@ -307,7 +307,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading event $eventId reminders: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading event $eventId reminders: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -382,7 +382,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEvent: has no permissions")
+            DevLog.error(LOG_TAG, "getEvent: has no permissions")
             return null
         }
 
@@ -477,7 +477,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         else {
-            DevLog.error(context, LOG_TAG, "Event $eventId not found")
+            DevLog.error(LOG_TAG, "Event $eventId not found")
         }
 
         cursor?.close()
@@ -487,7 +487,7 @@ object CalendarProvider : CalendarProviderInterface {
                 ret.reminders = getEventReminders(context, eventId)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while trying to read reminders for $eventId: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while trying to read reminders for $eventId: ${ex.detailed}")
         }
 
         return ret
@@ -498,7 +498,7 @@ object CalendarProvider : CalendarProviderInterface {
         val SYNC_IS_DIRTY = "dirty"
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEvent: has no permissions")
+            DevLog.error(LOG_TAG, "getEvent: has no permissions")
             return null
         }
 
@@ -523,7 +523,7 @@ object CalendarProvider : CalendarProviderInterface {
                 if (isDirty != null)
                     ret = isDirty != 0
             } else {
-                DevLog.error(context, LOG_TAG, "Event $eventId not found")
+                DevLog.error(LOG_TAG, "Event $eventId not found")
             }
 
             cursor?.close()
@@ -539,7 +539,7 @@ object CalendarProvider : CalendarProviderInterface {
     override fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
         if (!PermissionsManager.hasWriteCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "dismissNativeEventAlert: has no permissions")
+            DevLog.error(LOG_TAG, "dismissNativeEventAlert: has no permissions")
             return
         }
 
@@ -565,7 +565,7 @@ object CalendarProvider : CalendarProviderInterface {
             DevLog.debug(LOG_TAG, "dismissNativeEventReminder: eventId $eventId")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "dismissNativeReminder failed: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "dismissNativeReminder failed: ${ex.detailed}")
         }
     }
 
@@ -582,12 +582,12 @@ object CalendarProvider : CalendarProviderInterface {
         DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: no permissions")
+            DevLog.error(LOG_TAG, "cloneAndMoveEvent: no permissions")
             return -1
         }
 
         if (event.alertTime == 0L) {
-            DevLog.error(context, LOG_TAG, "cloneAndMoveEvent: alert time is zero")
+            DevLog.error(LOG_TAG, "cloneAndMoveEvent: alert time is zero")
             return -1
         }
 
@@ -694,7 +694,7 @@ object CalendarProvider : CalendarProviderInterface {
                     values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
                     values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
-                    DevLog.info(context, LOG_TAG, "Event details for calendarId: $calendarId / eventId: $eventId captured")
+                    DevLog.info(LOG_TAG, "Event details for calendarId: $calendarId / eventId: $eventId captured")
                     break
 
                 } while (cursor.moveToNext())
@@ -703,7 +703,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
         }
         finally {
             cursor?.close()
@@ -717,11 +717,11 @@ object CalendarProvider : CalendarProviderInterface {
                 ret = uri.lastPathSegment.toLong()
             }
             catch (ex: Exception) {
-                DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}")
+                DevLog.error(LOG_TAG, "Exception while adding new event: ${ex.detailed}")
             }
         }
         else {
-            DevLog.error(context, LOG_TAG, "Calendar event wasn't found")
+            DevLog.error(LOG_TAG, "Calendar event wasn't found")
         }
 
         if (ret != -1L) {
@@ -746,7 +746,7 @@ object CalendarProvider : CalendarProviderInterface {
         DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${details.startTime}, endTime: ${details.endTime}, reminder: ${details.reminders}")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "createEvent: no permissions")
+            DevLog.error(LOG_TAG, "createEvent: no permissions")
             return -1
         }
 
@@ -798,7 +798,7 @@ object CalendarProvider : CalendarProviderInterface {
             eventId = uri.lastPathSegment.toLong()
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while adding new event: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while adding new event: ${ex.detailed}")
         }
 
         if (eventId != -1L) {
@@ -873,7 +873,7 @@ object CalendarProvider : CalendarProviderInterface {
         DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "moveEvent: no permissions")
+            DevLog.error(LOG_TAG, "moveEvent: no permissions")
             return false
         }
 
@@ -889,7 +889,7 @@ object CalendarProvider : CalendarProviderInterface {
             ret = updated > 0
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
         }
 
         return ret
@@ -908,17 +908,17 @@ object CalendarProvider : CalendarProviderInterface {
         DevLog.debug(LOG_TAG, "Request to update event $eventId")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "updateEvent: no permissions")
+            DevLog.error(LOG_TAG, "updateEvent: no permissions")
             return false
         }
 
         if (oldDetails == newDetails) {
-            DevLog.error(context, LOG_TAG, "No changes requested")
+            DevLog.error(LOG_TAG, "No changes requested")
             return false
         }
 
         if (oldDetails.isAllDay != newDetails.isAllDay) {
-            DevLog.error(context, LOG_TAG, "Cannot change 'is all day'")
+            DevLog.error(LOG_TAG, "Cannot change 'is all day'")
             return false
         }
 
@@ -1021,7 +1021,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
         }
 
         return ret
@@ -1045,7 +1045,7 @@ object CalendarProvider : CalendarProviderInterface {
         DevLog.debug(LOG_TAG, "Request to delete event $eventId")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "deleteEvent: no permissions")
+            DevLog.error(LOG_TAG, "deleteEvent: no permissions")
             return false
         }
 
@@ -1069,7 +1069,7 @@ object CalendarProvider : CalendarProviderInterface {
             for (reminderId in remindersToRemove) {
                 val reminderUri = ContentUris.withAppendedId(CalendarContract.Reminders.CONTENT_URI, reminderId)
                 context.contentResolver.delete(reminderUri, null, null)
-                DevLog.info(context, LOG_TAG, "Removed reminder id $reminderId (of event $eventId)")
+                DevLog.info(LOG_TAG, "Removed reminder id $reminderId (of event $eventId)")
             }
 
             // Now - remove actual event
@@ -1079,7 +1079,7 @@ object CalendarProvider : CalendarProviderInterface {
                     null
             )
 
-            DevLog.info(context, LOG_TAG, "Removed $removedEvents events by event id $eventId")
+            DevLog.info(LOG_TAG, "Removed $removedEvents events by event id $eventId")
 
             ret = removedEvents > 0
 
@@ -1088,7 +1088,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while removing calendar event: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while removing calendar event: ${ex.detailed}")
         }
 
         return ret
@@ -1158,7 +1158,7 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = mutableListOf<CalendarRecord>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getCalendars: no permissions")
+            DevLog.error(LOG_TAG, "getCalendars: no permissions")
             return ret
         }
 
@@ -1236,7 +1236,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
         }
 
         return ret
@@ -1275,7 +1275,7 @@ object CalendarProvider : CalendarProviderInterface {
         var ret: CalendarRecord? = null
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getCalendarById: no permissions")
+            DevLog.error(LOG_TAG, "getCalendarById: no permissions")
             return null
         }
 
@@ -1355,7 +1355,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while reading list of calendars: ${ex.detailed}")
         }
 
         return ret
@@ -1403,7 +1403,7 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForEventId: no permissions")
+            DevLog.error(LOG_TAG, "getEventAlertsForEventId: no permissions")
             return ret
         }
 
@@ -1422,7 +1422,7 @@ object CalendarProvider : CalendarProviderInterface {
         try {
             val timezone = TimeZone.getDefault()
 
-            DevLog.info(context, LOG_TAG, "getEventAlertsForEventId(${event.eventId})")
+            DevLog.info(LOG_TAG, "getEventAlertsForEventId(${event.eventId})")
 
             val reminders =
                     getEventReminders(context, event.eventId)
@@ -1510,7 +1510,7 @@ object CalendarProvider : CalendarProviderInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
         }
 
         return ret
@@ -1525,7 +1525,7 @@ object CalendarProvider : CalendarProviderInterface {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
+            DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
             return ret
         }
 
@@ -1560,7 +1560,7 @@ object CalendarProvider : CalendarProviderInterface {
             val PROJECTION_INDEX_INST_END = 3
             val PROJECTION_INDEX_INST_ALL_DAY = 4
 
-            DevLog.info(context, LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
+            DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
 
 
             val intermitEvents = arrayListOf<EventEntry>()
@@ -1588,12 +1588,12 @@ object CalendarProvider : CalendarProviderInterface {
                     var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
 
                     if (instanceStart == null || eventId == null || calendarId == null) {
-                        DevLog.info(context, LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
+                        DevLog.info(LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
                         continue
                     }
 
                     if (!handledCalendars.contains(calendarId) || calendarId == -1L) {
-                        DevLog.info(context, LOG_TAG, "Event id $eventId / calId $calendarId - not handling")
+                        DevLog.info(LOG_TAG, "Event id $eventId / calId $calendarId - not handling")
                         continue
                     }
 
@@ -1726,10 +1726,10 @@ object CalendarProvider : CalendarProviderInterface {
 
             val scanEnd = System.currentTimeMillis()
 
-            DevLog.info(context, LOG_TAG, "getEventAlertsForInstancesInRange: found ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
+            DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: found ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
         }
 
         return ret

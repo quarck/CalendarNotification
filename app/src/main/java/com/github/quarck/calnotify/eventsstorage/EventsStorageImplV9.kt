@@ -108,7 +108,7 @@ class EventsStorageImplV9(val context: Context)
             ret = true
         }
         catch (ex: SQLException) {
-            DevLog.error(context, LOG_TAG, "dropAll: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "dropAll: ${ex.detailed}")
         }
 
 //        if (!ret) {
@@ -299,7 +299,7 @@ class EventsStorageImplV9(val context: Context)
         }
         catch (ex: SQLiteConstraintException) {
             // Ignore -- it is already there
-            DevLog.error(context, LOG_TAG, "updateEventsAndInstanceTimesImpl: hit SQLiteConstraintException: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "updateEventsAndInstanceTimesImpl: hit SQLiteConstraintException: ${ex.detailed}")
         }
         finally {
             db.endTransaction()

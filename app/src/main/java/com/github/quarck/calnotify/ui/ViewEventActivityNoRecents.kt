@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -207,13 +206,13 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     if (newDbEvent != null) {
                         dbEvent = newDbEvent
                     } else {
-                        DevLog.error(this, LOG_TAG, "ViewActivity: cannot find event after calendar reload, event $eventId, inst $instanceStartTime")
+                        DevLog.error(LOG_TAG, "ViewActivity: cannot find event after calendar reload, event $eventId, inst $instanceStartTime")
                     }
                 }
             }
 
             if (dbEvent == null) {
-                DevLog.error(this, LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
+                DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
                 finish()
                 return
             }
@@ -458,7 +457,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                             .setCancelable(false)
                             .setPositiveButton(android.R.string.yes) { _, _ ->
 
-                                DevLog.info(this, LOG_TAG, "Deleting event ${event.eventId} per user request")
+                                DevLog.info(LOG_TAG, "Deleting event ${event.eventId} per user request")
 
                                 val success = ApplicationController.dismissAndDeleteEvent(
                                         this, EventDismissType.ManuallyDismissedFromActivity, event
@@ -836,7 +835,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     fun reschedule(addTime: Long) {
 
-        DevLog.info(this, LOG_TAG, "Moving event ${event.eventId} by ${addTime / 1000L} seconds, isRepeating = ${event.isRepeating}");
+        DevLog.info(LOG_TAG, "Moving event ${event.eventId} by ${addTime / 1000L} seconds, isRepeating = ${event.isRepeating}");
 
         if (!event.isRepeating) {
             val moved = ApplicationController.moveEvent(this, event, addTime)
@@ -855,7 +854,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     finish();
                 }
             } else {
-                DevLog.info(this, LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
+                DevLog.info(LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
             }
         }
         else {
@@ -875,7 +874,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     finish();
                 }
             } else {
-                DevLog.info(this, LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
+                DevLog.info(LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
             }
         }
     }

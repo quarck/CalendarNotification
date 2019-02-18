@@ -102,7 +102,7 @@ class EventsStorageImplV8(val context: Context)
             ret = true
         }
         catch (ex: SQLException) {
-            DevLog.error(context, LOG_TAG, "dropAll: $ex")
+            DevLog.error(LOG_TAG, "dropAll: $ex")
         }
 
 //        if (!ret) {

@@ -102,7 +102,7 @@ object ApplicationController : EventMovedHandler {
 
     fun onEventAlarm(context: Context) {
 
-        DevLog.info(context, LOG_TAG, "onEventAlarm at ${System.currentTimeMillis()}");
+        DevLog.info(LOG_TAG, "onEventAlarm at ${System.currentTimeMillis()}");
 
         val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
         val currentTime = System.currentTimeMillis()
@@ -114,9 +114,7 @@ object ApplicationController : EventMovedHandler {
 
     fun onAppUpdated(context: Context) {
 
-        DevLog.clear(context)
-
-        DevLog.info(context, LOG_TAG, "Application updated")
+        DevLog.info(LOG_TAG, "Application updated")
 
         // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, isRepost = true);
@@ -126,7 +124,7 @@ object ApplicationController : EventMovedHandler {
 
     fun onBootComplete(context: Context) {
 
-        DevLog.info(context, LOG_TAG, "OS boot is complete")
+        DevLog.info(LOG_TAG, "OS boot is complete")
 
         // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, isRepost = true);
@@ -138,13 +136,13 @@ object ApplicationController : EventMovedHandler {
 
     fun onCalendarChanged(context: Context) {
 
-        DevLog.info(context, LOG_TAG, "onCalendarChanged")
+        DevLog.info(LOG_TAG, "onCalendarChanged")
         CalendarMonitorOneTimeJobService.schedule(context, 2000)
     }
 
     fun onCalendarRescanForRescheduledFromService(context: Context, userActionUntil: Long) {
 
-        DevLog.info(context, LOG_TAG, "onCalendarRescanForRescheduledFromService")
+        DevLog.info(LOG_TAG, "onCalendarRescanForRescheduledFromService")
 
         val changes = EventsStorage(context).use {
             db -> calendarReloadManager.rescanForRescheduledEvents(context, db, calendarProvider, this)
@@ -165,7 +163,7 @@ object ApplicationController : EventMovedHandler {
 
     fun onCalendarReloadFromService(context: Context, userActionUntil: Long) {
 
-        DevLog.info(context, LOG_TAG, "calendarReloadFromService")
+        DevLog.info(LOG_TAG, "calendarReloadFromService")
 
         val changes = EventsStorage(context).use {
             db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
@@ -244,18 +242,18 @@ object ApplicationController : EventMovedHandler {
 
         if (event.eventStatus == EventStatus.Cancelled && settings.dontShowCancelledEvents) {
             // indicate that we should mark as handled in the provider and skip
-            DevLog.info(context, LOG_TAG, "Event ${event.eventId}, status Cancelled - ignored")
+            DevLog.info(LOG_TAG, "Event ${event.eventId}, status Cancelled - ignored")
             return true
         }
 
         if (event.attendanceStatus == AttendanceStatus.Declined && settings.dontShowDeclinedEvents) {
             // indicate that we should mark as handled in the provider and skip
-            DevLog.info(context, LOG_TAG, "Event ${event.eventId}, status Declined - ignored")
+            DevLog.info(LOG_TAG, "Event ${event.eventId}, status Declined - ignored")
             return true
         }
 
         if (event.isAllDay && settings.dontShowAllDayEvents) {
-            DevLog.info(context, LOG_TAG, "Event ${event.eventId} is an all day event - ignored per user setting")
+            DevLog.info(LOG_TAG, "Event ${event.eventId} is an all day event - ignored per user setting")
             return true
         }
 
@@ -270,13 +268,13 @@ object ApplicationController : EventMovedHandler {
         val settings = getSettings(context)
 
         if (event.calendarId != -1L && !settings.getCalendarIsHandled(event.calendarId)) {
-            DevLog.info(context, LOG_TAG, "Event ${event.eventId} -> calendar ${event.calendarId} is not handled");
+            DevLog.info(LOG_TAG, "Event ${event.eventId} -> calendar ${event.calendarId} is not handled");
             return ret;
         }
 
         tagsManager.parseEventTags(context, settings, event)
 
-        DevLog.info(context, LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}, task: ${event.isTask}")
+        DevLog.info(LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}, task: ${event.isTask}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -296,7 +294,7 @@ object ApplicationController : EventMovedHandler {
                 // non-repeating event - make sure we don't create two records with the same eventId
                 val oldEvents = db.getEventInstances(event.eventId)
 
-                DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
+                DevLog.info(LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
 
                 try {
                     // delete old instances for the same event id (should be only one, but who knows)
@@ -309,7 +307,7 @@ object ApplicationController : EventMovedHandler {
                     }
                 }
                 catch (ex: Exception) {
-                    DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.detailed}");
+                    DevLog.error(LOG_TAG, "exception while removing old requests: ${ex.detailed}");
                 }
 
                 // add newly fired event
@@ -343,7 +341,7 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (!ret)
-            DevLog.error(context, LOG_TAG, "Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
+            DevLog.error(LOG_TAG, "Error adding event with id ${event.eventId}, cal id ${event.calendarId}, " +
                     "instance st ${event.instanceStartTime}, repeating: " +
                     "${event.isRepeating}, allDay: ${event.isAllDay}, alertTime=${event.alertTime}");
         else {
@@ -385,7 +383,7 @@ object ApplicationController : EventMovedHandler {
 
             for ((alert, event) in handledPairs) {
 
-                DevLog.info(context, LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
+                DevLog.info(LOG_TAG, "registerNewEvents: Event fired, calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime=${event.alertTime}")
 
                 tagsManager.parseEventTags(context, settings, event)
 
@@ -397,14 +395,14 @@ object ApplicationController : EventMovedHandler {
                     // non-repeating event - make sure we don't create two records with the same eventId
                     val oldEvents = db.getEventInstances(event.eventId)
 
-                    DevLog.info(context, LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
+                    DevLog.info(LOG_TAG, "Non-repeating event, already have ${oldEvents.size} old requests with same event id ${event.eventId}, removing old")
 
                     try {
                         // delete old instances for the same event id (should be only one, but who knows)
                         eventsToDismiss.addAll(oldEvents)
                     }
                     catch (ex: Exception) {
-                        DevLog.error(context, LOG_TAG, "exception while removing old requests: ${ex.detailed}");
+                        DevLog.error(LOG_TAG, "exception while removing old requests: ${ex.detailed}");
                     }
 
                     // add newly fired event
@@ -468,7 +466,7 @@ object ApplicationController : EventMovedHandler {
                         validPairs.add(Pair(alert, event))
                     }
                     else {
-                        DevLog.error(context, LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
+                        DevLog.error(LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
                     }
                 }
                 else {
@@ -481,7 +479,7 @@ object ApplicationController : EventMovedHandler {
                         validPairs.add(Pair(alert, event))
                     }
                     else {
-                        DevLog.error(context, LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
+                        DevLog.error(LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
                     }
                 }
             }
@@ -491,7 +489,7 @@ object ApplicationController : EventMovedHandler {
             eventsToAdd?.let { wasHandledCache.addHandledAlerts(it) }
         }
         else {
-            DevLog.warn(context, LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
+            DevLog.warn(LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
         }
 
         ReminderState(context).onNewEventFired()
@@ -566,11 +564,11 @@ object ApplicationController : EventMovedHandler {
         if (newStartTime - oldStartTime > Consts.EVENT_MOVE_THRESHOLD) {
             if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
 
-                DevLog.info(context, LOG_TAG, "Event ${eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
+                DevLog.info(LOG_TAG, "Event ${eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
                 ret = true
             }
             else {
-                DevLog.info(context, LOG_TAG, "Event ${eventId} moved by ${newStartTime - oldStartTime} ms - not enought to auto-dismiss")
+                DevLog.info(LOG_TAG, "Event ${eventId} moved by ${newStartTime - oldStartTime} ms - not enought to auto-dismiss")
             }
         }
 
@@ -606,10 +604,10 @@ object ApplicationController : EventMovedHandler {
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
-            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} mute toggled: ${mutedEvent.isMuted}: $ret")
+            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} mute toggled: ${mutedEvent.isMuted}: $ret")
         }
         else {
-            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $muteAction")
+            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $muteAction")
         }
 
         return ret
@@ -634,7 +632,7 @@ object ApplicationController : EventMovedHandler {
                                     event.displayedStartTime - Math.abs(snoozeDelay) // same as "event.instanceStart + snoozeDelay" but a little bit more readable
 
                         if (snoozedUntil < currentTime + Consts.ALARM_THRESHOLD) {
-                            DevLog.error(context, LOG_TAG, "snooze: $eventId / $instanceStartTime by $snoozeDelay: new time is in the past, snoozing by 1m instead")
+                            DevLog.error(LOG_TAG, "snooze: $eventId / $instanceStartTime by $snoozeDelay: new time is in the past, snoozing by 1m instead")
                             snoozedUntil = currentTime + Consts.FAILBACK_SHORT_SNOOZE
                         }
 
@@ -660,10 +658,10 @@ object ApplicationController : EventMovedHandler {
 
             ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil, silentUntil)
 
-            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} snoozed: by $snoozeDelay: $ret")
+            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} snoozed: by $snoozeDelay: $ret")
         }
         else {
-            DevLog.info(context, LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $snoozeDelay")
+            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $snoozeDelay")
         }
 
         return ret
@@ -731,10 +729,10 @@ object ApplicationController : EventMovedHandler {
 
             ret = SnoozeResult(SnoozeType.Snoozed, snoozedUntil, silentUntil)
 
-            DevLog.info(context, LOG_TAG, "Snooze all by $snoozeDelay: success, $ret")
+            DevLog.info(LOG_TAG, "Snooze all by $snoozeDelay: success, $ret")
         }
         else {
-            DevLog.info(context, LOG_TAG, "Snooze all by $snoozeDelay: failed")
+            DevLog.info(LOG_TAG, "Snooze all by $snoozeDelay: failed")
         }
 
         return ret
@@ -825,7 +823,7 @@ object ApplicationController : EventMovedHandler {
             notifyActivity: Boolean
     ) {
 
-        DevLog.info(context, LOG_TAG, "Dismissing ${events.size}  requests")
+        DevLog.info(LOG_TAG, "Dismissing ${events.size}  requests")
 
         if (dismissType.shouldKeep) {
             DismissedEventsStorage(context).use {
@@ -911,7 +909,7 @@ object ApplicationController : EventMovedHandler {
             notifyActivity: Boolean
     ) {
 
-        DevLog.info(context, LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
+        DevLog.info(LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
         if (dismissType.shouldKeep && event.isNotSpecial) {
             DismissedEventsStorage(context).use {
@@ -933,10 +931,10 @@ object ApplicationController : EventMovedHandler {
                 UINotifier.notify(context, true)
         }
         else {
-            DevLog.error(context, LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
-            DevLog.error(context, LOG_TAG, " -- known events / instances: ")
+            DevLog.error(LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
+            DevLog.error(LOG_TAG, " -- known events / instances: ")
             for (ev in db.events) {
-                DevLog.error(context, LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
+                DevLog.error(LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
             }
         }
     }
@@ -973,15 +971,15 @@ object ApplicationController : EventMovedHandler {
             db ->
             val event = db.getEvent(eventId, instanceStartTime)
             if (event != null) {
-                DevLog.info(context, LOG_TAG, "Dismissing event ${event.eventId} / ${event.instanceStartTime}")
+                DevLog.info(LOG_TAG, "Dismissing event ${event.eventId} / ${event.instanceStartTime}")
                 dismissEvent(context, db, event, dismissType, notifyActivity)
             }
             else {
-                DevLog.error(context, LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
+                DevLog.error(LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
 
-                DevLog.error(context, LOG_TAG, " -- known events / instances: ")
+                DevLog.error(LOG_TAG, " -- known events / instances: ")
                 for (ev in db.events) {
-                    DevLog.error(context, LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
+                    DevLog.error(LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
                 }
             }
         }
@@ -1017,7 +1015,7 @@ object ApplicationController : EventMovedHandler {
         val moved = calendarChangeManager.moveEvent(context, event, addTime)
 
         if (moved) {
-            DevLog.info(context, LOG_TAG, "moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
+            DevLog.info(LOG_TAG, "moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
 
             EventsStorage(context).use {
                 db ->
@@ -1039,7 +1037,7 @@ object ApplicationController : EventMovedHandler {
         val eventId = calendarChangeManager.moveRepeatingAsCopy(context, calendar, event, addTime)
 
         if (eventId != -1L) {
-            DevLog.debug(context, LOG_TAG, "Event created: id=${eventId}")
+            DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
 
             EventsStorage(context).use {
                 db ->
@@ -1053,7 +1051,7 @@ object ApplicationController : EventMovedHandler {
             }
 
         } else {
-            DevLog.error(context, LOG_TAG, "Failed to create event")
+            DevLog.error(LOG_TAG, "Failed to create event")
         }
 
         return eventId

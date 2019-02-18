@@ -61,11 +61,6 @@ class MiscSettingsActivity : AppCompatActivity() {
                 onChange{settings.useSetAlarmClockForFailbackEventPaths = it}
             }
 
-            switch(R.string.keep_logs_title, R.string.keep_logs_summary) {
-                initial(settings.shouldKeepLogs)
-                onChange{settings.shouldKeepLogs = it}
-            }
-
             header(R.string.other)
 
             switch(R.string.pebble_forward_reminders, R.string.pebble_forward_reminders_summary) {

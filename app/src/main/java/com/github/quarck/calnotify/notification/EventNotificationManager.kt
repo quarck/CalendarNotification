@@ -280,7 +280,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             if (event.snoozedUntil == 0L)
                 continue
 
-            DevLog.info(context, LOG_TAG, "Snoozed notification id ${event.notificationId}, eventId ${event.eventId}, switching to un-snoozed state")
+            DevLog.info(LOG_TAG, "Snoozed notification id ${event.notificationId}, eventId ${event.eventId}, switching to un-snoozed state")
 
             // Update this time before posting notification as this is now used as a sort-key
             currentTime++ // so last change times are not all the same
@@ -342,7 +342,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     soundState = NotificationChannelManager.SoundState.Silent
             }
 
-            DevLog.info(context, LOG_TAG, "Notification id ${event.notificationId}, eventId ${event.eventId}: primary=$isPrimary, new=$isNew, " +
+            DevLog.info(LOG_TAG, "Notification id ${event.notificationId}, eventId ${event.eventId}: primary=$isPrimary, new=$isNew, " +
                     "reminder=$isReminder, soundState=$soundState")
 
             ret.add(EventAlertNotificationRecord(
@@ -371,7 +371,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 if (!isReminder)
                     reminderState.numRemindersFired = 0
             } else if (needNotifyPostQuietHours && !didAnySound) {
-                DevLog.info(context, LOG_TAG, "Was quiet due to quiet hours - would remind after snooze period")
+                DevLog.info(LOG_TAG, "Was quiet due to quiet hours - would remind after snooze period")
 
                 if (!reminderState.quietHoursOneTimeReminderEnabled)
                     reminderState.quietHoursOneTimeReminderEnabled = true
@@ -398,7 +398,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             return
         }
 
-        DevLog.info(context, LOG_TAG, "Posting ${notificationRecords.size} notifications in collapsed view")
+        DevLog.info(LOG_TAG, "Posting ${notificationRecords.size} notifications in collapsed view")
 
         val events = notificationRecords.map{ it.event }
 
@@ -496,7 +496,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setShowWhen(false)
                         .setOnlyAlertOnce(alertOnlyOnce)
 
-        DevLog.info(context, LOG_TAG, "Building collapsed notification: alertOnlyOnce=$alertOnlyOnce, contentTitle=$contentTitle, number=$numEvents, channel=$channel")
+        DevLog.info(LOG_TAG, "Building collapsed notification: alertOnlyOnce=$alertOnlyOnce, contentTitle=$contentTitle, number=$numEvents, channel=$channel")
 
         builder.applyChannelAttributes(channel)
 
@@ -507,7 +507,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     Consts.NOTIFICATION_ID_COLLAPSED, notification) // would update if already exists
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Error posting notification: $ex, ${ex.stackTrace}")
+            DevLog.error(LOG_TAG, "Error posting notification: $ex, ${ex.stackTrace}")
         }
 
         if (isReminder && settings.forwardReminersToPebble) {
@@ -561,7 +561,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             primaryEventId: Long?,
             isReminder: Boolean
     ) {
-        DevLog.debug(context, LOG_TAG, "Posting ${notificationRecords.size} notifications")
+        DevLog.debug(LOG_TAG, "Posting ${notificationRecords.size} notifications")
 
         val notificationsSettings = settings.notificationSettingsSnapshot
 
@@ -695,7 +695,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val sortKey = lastStatusChangeToSortingKey(event.lastStatusChangeTime, event.eventId)
 
-        DevLog.info(ctx, LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
+        DevLog.info(LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 
         val primaryPendingIntent =
                 if (!notificationSettings.showSnoozeButton)
@@ -900,7 +900,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         builder.applyChannelAttributes(channel)
 
         try {
-            DevLog.info(ctx, LOG_TAG, "adding: notificationId=${event.notificationId}")
+            DevLog.info(LOG_TAG, "adding: notificationId=${event.notificationId}")
 
             notificationManager.notify(
                     event.notificationId,
@@ -908,7 +908,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
         catch (ex: Exception) {
-            DevLog.error(ctx, LOG_TAG, "Exception on notificationId=${event.notificationId}: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception on notificationId=${event.notificationId}: ${ex.detailed}")
         }
 
         val isOngoing = notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed
@@ -980,7 +980,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
     private fun removeNotifications(context: Context, events: Collection<EventAlertRecord>) {
         val notificationManager = context.notificationManager
 
-        DevLog.info(context, LOG_TAG, "Removing 'full' notifications for  ${events.size} events")
+        DevLog.info(LOG_TAG, "Removing 'full' notifications for  ${events.size} events")
 
         for (event in events)
             notificationManager.cancel(event.notificationId)
@@ -1090,7 +1090,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             notificationManager.notify(notificationId, notification)
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception: ${ex.detailed}")
         }
     }
 

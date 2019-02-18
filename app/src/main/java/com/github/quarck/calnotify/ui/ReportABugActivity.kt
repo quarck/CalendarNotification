@@ -19,28 +19,16 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.content.Intent
-import android.os.Build
+//import com.github.quarck.calnotify.logs.Logger
 import android.os.Bundle
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.CheckBox
-import android.widget.TextView
 import android.widget.Toast
-import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.logs.DevLoggerSettings
-import com.github.quarck.calnotify.logs.LogcatProvider
-import com.github.quarck.calnotify.utils.detailed
-//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
-import java.io.File
-import java.io.PrintWriter
 
 class ReportABugActivity : AppCompatActivity() {
     private var easterEggCount = 0;

@@ -42,7 +42,7 @@ class MonitorStorage(val context: Context)
             = impl.createDb(db)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion != newVersion) {
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")

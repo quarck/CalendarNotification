@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.calendareditor
 
 import android.content.Context
-import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
@@ -44,7 +43,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         DevLog.debug(LOG_TAG, "onRescanFromService")
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")
+            DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             return
         }
 
@@ -102,7 +101,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
                     }
                 }
                 catch (ex: Exception) {
-                    DevLog.error(context, LOG_TAG, "Failed to validate ${event.eventId}, type ${event.type}, ${ex.detailed}")
+                    DevLog.error(LOG_TAG, "Failed to validate ${event.eventId}, type ${event.type}, ${ex.detailed}")
                 }
 
             }
@@ -132,7 +131,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
     private fun reApplyRequest(context: Context, provider: CalendarProvider, event: CalendarChangeRequest) {
 
-        DevLog.info(context, LOG_TAG, "Re-Applying req, event id ${event.eventId}, type ${event.type}")
+        DevLog.info(LOG_TAG, "Re-Applying req, event id ${event.eventId}, type ${event.type}")
 
         val currentTime = System.currentTimeMillis()
 
@@ -186,7 +185,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Failed: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Failed: ${ex.detailed}")
         }
     }
 
@@ -198,37 +197,37 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
     ): ValidationResultCommand {
 
         if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
-            DevLog.info(context, LOG_TAG, "Scheduling event creation request for ${event.eventId} ${event.type} for removal from DB")
+            DevLog.info(LOG_TAG, "Scheduling event creation request for ${event.eventId} ${event.type} for removal from DB")
             return ValidationResultCommand.DeleteRequest
         }
 
         if (event.eventId == -1L) {
             event.onValidated(false)
-            DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} ${event.type} for re-creation: id is -1L")
+            DevLog.info(LOG_TAG, "Scheduling event creation request ${event.eventId} ${event.type} for re-creation: id is -1L")
             return ValidationResultCommand.ReApplyRequest
         }
 
         val calendarEvent = provider.getEvent(context, event.eventId)
         if (calendarEvent == null) {
             event.onValidated(false)
-            DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId} ${event.type} for re-creation: cant find provider event")
+            DevLog.info(LOG_TAG, "Scheduling event creation request ${event.eventId} ${event.type} for re-creation: cant find provider event")
             return ValidationResultCommand.ReApplyRequest
         }
 
         var ret = ValidationResultCommand.JustSkipRequest
 
         val isDirty = provider.getEventIsDirty(context, event.eventId)
-        DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
+        DevLog.info(LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
         if (isDirty != null) {
 
             event.onValidated(!isDirty)
 
             if (event.status == EventChangeStatus.Synced) {
-                DevLog.info(context, LOG_TAG, "Scheduling event creation request ${event.eventId}  ${event.type} for removal: it is fully synced now")
+                DevLog.info(LOG_TAG, "Scheduling event creation request ${event.eventId}  ${event.type} for removal: it is fully synced now")
                 ret = ValidationResultCommand.DeleteRequest
             }
             else {
-                DevLog.info(context, LOG_TAG, "Event creation request ${event.eventId}  ${event.type}: new status ${event.status}")
+                DevLog.info(LOG_TAG, "Event creation request ${event.eventId}  ${event.type}: new status ${event.status}")
                 ret = ValidationResultCommand.UpdateRequest
             }
         }
@@ -244,27 +243,27 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
     ): ValidationResultCommand {
 
         if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
             return ValidationResultCommand.DeleteRequest
         }
 
         val calendarEvent = provider.getEvent(context, event.eventId)
         if (calendarEvent == null) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for removal from DB -- no longer in the provider")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for removal from DB -- no longer in the provider")
             return ValidationResultCommand.DeleteRequest
         }
 
         if (event.oldDetails.startTime == event.details.startTime
                 && event.oldDetails.endTime == event.details.endTime) {
             // Bug
-            DevLog.info(context, LOG_TAG, "Bug left from the past")
+            DevLog.info(LOG_TAG, "Bug left from the past")
             return ValidationResultCommand.DeleteRequest
         }
 
         if (event.oldDetails.startTime == calendarEvent.startTime
                 || event.oldDetails.endTime == calendarEvent.endTime) {
 
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply: ${event.oldDetails.startTime} == ${calendarEvent.startTime} || ${event.oldDetails.endTime} == ${calendarEvent.endTime}")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply: ${event.oldDetails.startTime} == ${calendarEvent.startTime} || ${event.oldDetails.endTime} == ${calendarEvent.endTime}")
 
             event.onValidated(false)
             return ValidationResultCommand.ReApplyRequest
@@ -273,17 +272,17 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         var ret = ValidationResultCommand.JustSkipRequest
 
         val isDirty = provider.getEventIsDirty(context, event.eventId)
-        DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
+        DevLog.info(LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
         if (isDirty != null) {
 
             event.onValidated(!isDirty)
 
             if (event.status == EventChangeStatus.Synced) {
-                DevLog.info(context, LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
+                DevLog.info(LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
                 ret = ValidationResultCommand.DeleteRequest
             }
             else {
-                DevLog.info(context, LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
+                DevLog.info(LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
                 ret = ValidationResultCommand.UpdateRequest
             }
         }
@@ -299,18 +298,18 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
     ): ValidationResultCommand {
 
         if (event.details.startTime < cleanupEventsTo && event.details.endTime < cleanupEventsTo) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId}  ${event.type} for removal from DB")
             return ValidationResultCommand.DeleteRequest
         }
 
         val calendarEvent = provider.getEvent(context, event.eventId)
         if (calendarEvent == null) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for removal from DB -- no longer in the provider")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for removal from DB -- no longer in the provider")
             return ValidationResultCommand.DeleteRequest
         }
 
         if (calendarEvent.details == event.oldDetails) {
-            DevLog.info(context, LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
+            DevLog.info(LOG_TAG, "Scheduling event change request for ${event.eventId} ${event.type} for re-apply")
             event.onValidated(false)
             return ValidationResultCommand.ReApplyRequest
         }
@@ -318,17 +317,17 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         var ret = ValidationResultCommand.JustSkipRequest
 
         val isDirty = provider.getEventIsDirty(context, event.eventId)
-        DevLog.info(context, LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
+        DevLog.info(LOG_TAG, "Event ${event.eventId}, isDirty=$isDirty")
         if (isDirty != null) {
 
             event.onValidated(!isDirty)
 
             if (event.status == EventChangeStatus.Synced) {
-                DevLog.info(context, LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
+                DevLog.info(LOG_TAG, "Scheduling event change request ${event.eventId} ${event.type} for removal: it is fully synced now")
                 ret = ValidationResultCommand.DeleteRequest
             }
             else {
-                DevLog.info(context, LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
+                DevLog.info(LOG_TAG, "Event change request ${event.eventId} ${event.type}: new status ${event.status}")
                 ret = ValidationResultCommand.UpdateRequest
             }
         }

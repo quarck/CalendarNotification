@@ -41,7 +41,7 @@ class NotificationChannelActivityShortcutPreference(context: Context, val attrs:
 
         val channel = attrs.getAttributeValue(XML_NS, XML_ATTR)
         if (channel != null) {
-            DevLog.info(context, LOG_TAG, "Got channel $channel, launching activity")
+            DevLog.info(LOG_TAG, "Got channel $channel, launching activity")
 
             val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
             intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
@@ -49,7 +49,7 @@ class NotificationChannelActivityShortcutPreference(context: Context, val attrs:
             context.startActivity(intent)
         }
         else {
-            DevLog.error(context, LOG_TAG, "NotificationChannelActivityShortcutPreference without channel name")
+            DevLog.error(LOG_TAG, "NotificationChannelActivityShortcutPreference without channel name")
         }
     }
 

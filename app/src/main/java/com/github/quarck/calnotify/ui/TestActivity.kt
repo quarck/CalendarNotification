@@ -32,13 +32,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.logs.DevLoggerSettings
-import com.github.quarck.calnotify.utils.detailed
-import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*

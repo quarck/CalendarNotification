@@ -19,8 +19,6 @@
 
 package com.github.quarck.calnotify.calendarmonitor
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
@@ -48,14 +46,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onSystemTimeChange(context: Context) {
 
-        DevLog.info(context, LOG_TAG, "onSystemTimeChange");
+        DevLog.info(LOG_TAG, "onSystemTimeChange");
         //launchRescanService(context)
     }
 
     // should return true if we have fired at new requests, so UI should reload if it is open
     override fun onAppResumed(context: Context, monitorSettingsChanged: Boolean) {
 
-        DevLog.info(context, LOG_TAG, "onAppResumed")
+        DevLog.info(LOG_TAG, "onAppResumed")
 
         CalendarMonitorIntentService.startRescanService(
                 context,
@@ -68,18 +66,18 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     override fun onAlarmBroadcast(context: Context, intent: Intent) {
 
         if (!Settings(context).enableCalendarRescan) {
-            DevLog.error(context, LOG_TAG, "onAlarmBroadcast - manual scan disabled")
+            DevLog.error(LOG_TAG, "onAlarmBroadcast - manual scan disabled")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
+            DevLog.error(LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
-        DevLog.info(context, LOG_TAG, "onAlarmBroadcast")
+        DevLog.info(LOG_TAG, "onAlarmBroadcast")
 
         try {
 
@@ -90,9 +88,8 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             val nextEventFireFromScan = state.nextEventFireFromScan
             if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
 
-                DevLog.info(context, LOG_TAG,
-                        "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current" +
-                                " time $currentTime + THRS, checking what to fire")
+                DevLog.info(LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current" +
+                        " time $currentTime + THRS, checking what to fire")
 
                 val firedManual = manualScanner.manualFireEventsAt_NoHousekeeping(
                         context, state.nextEventFireFromScan, state.prevEventFireFromScan)
@@ -109,7 +106,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 //            )
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
         }
     }
 
@@ -119,18 +116,18 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
+            DevLog.error(LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
-        DevLog.info(context, LOG_TAG, "onProviderReminderBroadcast");
+        DevLog.info(LOG_TAG, "onProviderReminderBroadcast");
 
         val uri = intent.data;
 
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime == null) {
-            DevLog.error(context, LOG_TAG, "ERROR alertTime is null!")
+            DevLog.error(LOG_TAG, "ERROR alertTime is null!")
             //launchRescanService(context)
             return
         }
@@ -144,11 +141,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             for (event in events) {
 
                 if (getAlertWasHandled(context, event)) {
-                    DevLog.info(context, LOG_TAG, "Broadcast: Event ${event.eventId} / ${event.instanceStartTime} was handled already")
+                    DevLog.info(LOG_TAG, "Broadcast: Event ${event.eventId} / ${event.instanceStartTime} was handled already")
                     continue
                 }
 
-                DevLog.info(context, LOG_TAG, "Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime}")
+                DevLog.info(LOG_TAG, "Broadcast: Seen event ${event.eventId} / ${event.instanceStartTime}")
 
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
@@ -163,7 +160,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while trying to load fired event details, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while trying to load fired event details, ${ex.detailed}")
         }
 
         try {
@@ -172,17 +169,17 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             for (event in eventsToSilentlyDrop) {
                 setAlertWasHandled(context, event, createdByUs = false)
                 CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                DevLog.info(context, LOG_TAG, "IGNORED Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
+                DevLog.info(LOG_TAG, "IGNORED Event ${event.eventId} / ${event.instanceStartTime} is marked as handled in the DB and in the provider")
             }
 
             for (event in eventsToPost) {
                 setAlertWasHandled(context, event, createdByUs = false)
                 CalendarProvider.dismissNativeEventAlert(context, event.eventId);
-                DevLog.info(context, LOG_TAG, "Event ${event.eventId} / ${event.instanceStartTime}: marked as handled in the DB and in the provider")
+                DevLog.info(LOG_TAG, "Event ${event.eventId} / ${event.instanceStartTime}: marked as handled in the DB and in the provider")
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception while posting notifications: ${ex.detailed}")
+            DevLog.error(LOG_TAG, "Exception while posting notifications: ${ex.detailed}")
         }
 
         ApplicationController.afterCalendarEventFired(context)
@@ -195,30 +192,30 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onEventEditedByUs(context: Context, eventId: Long) {
 
-        DevLog.info(context, LOG_TAG, "onEventEditedByUs")
+        DevLog.info(LOG_TAG, "onEventEditedByUs")
 
         val settings = Settings(context)
 
         if (!settings.enableCalendarRescan) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs - manual scan disabled")
+            DevLog.error(LOG_TAG, "onEventEditedByUs - manual scan disabled")
             return
         }
 
         if (!settings.rescanCreatedEvent) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs - manual scan disabled[2]")
+            DevLog.error(LOG_TAG, "onEventEditedByUs - manual scan disabled[2]")
             return
         }
 
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
+            DevLog.error(LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
         val event: EventRecord? = calendarProvider.getEvent(context, eventId)
         if (event == null) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs - cannot find event $eventId")
+            DevLog.error(LOG_TAG, "onEventEditedByUs - cannot find event $eventId")
             return
         }
 
@@ -232,13 +229,13 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val scanEnd = System.currentTimeMillis()
 
-            DevLog.info(context, LOG_TAG, "scanForSingleEvent, perf: ${scanEnd - scanStart}")
+            DevLog.info(LOG_TAG, "scanForSingleEvent, perf: ${scanEnd - scanStart}")
         }
         catch (ex: java.lang.SecurityException) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs: SecurityException, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "onEventEditedByUs: SecurityException, ${ex.detailed}")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "onEventEditedByUs: exception, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "onEventEditedByUs: exception, ${ex.detailed}")
         }
 
         if (firedAnything)
@@ -248,7 +245,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     override fun onRescanFromService(context: Context) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService - no calendar permission to proceed")
+            DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
@@ -257,12 +254,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 //        schedulePeriodicRescanAlarm(context)
 
         if (!Settings(context).enableCalendarRescan) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService - manual scan disabled")
+            DevLog.error(LOG_TAG, "onRescanFromService - manual scan disabled")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
-        DevLog.info(context, LOG_TAG, "onRescanFromService")
+        DevLog.info(LOG_TAG, "onRescanFromService")
 
         var firedAnything = false
 
@@ -282,16 +279,16 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val t3 = System.currentTimeMillis()
 
-            DevLog.info(context, LOG_TAG, "Manual scan, next alarm: $nextAlarmFromManual, " +
+            DevLog.info(LOG_TAG, "Manual scan, next alarm: $nextAlarmFromManual, " +
                     "timings: ${t3-t2},${t2-t1},${t1-t0}")
 
             firedAnything = firedEventsManual
         }
         catch (ex: java.lang.SecurityException) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService: SecurityException, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "onRescanFromService: SecurityException, ${ex.detailed}")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "onRescanFromService: exception, ${ex.detailed}")
+            DevLog.error(LOG_TAG, "onRescanFromService: exception, ${ex.detailed}")
         }
 
         if (firedAnything)
@@ -308,7 +305,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
             val now = System.currentTimeMillis()
 
-            DevLog.info(context, LOG_TAG, "Setting alarm at $time (T+${(time - now) / 1000L / 60L}min)")
+            DevLog.info(LOG_TAG, "Setting alarm at $time (T+${(time - now) / 1000L / 60L}min)")
 
             val exactTime = time + Consts.ALARM_THRESHOLD / 2 // give calendar provider a little chance - schedule alarm to a bit after
 
@@ -322,7 +319,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                     )
         }
         else {
-            DevLog.info(context, LOG_TAG, "No next alerts, cancelling")
+            DevLog.info(LOG_TAG, "No next alerts, cancelling")
             context.alarmManager.cancelExactAndAlarm(
                     context,
                     ManualEventAlarmBroadcastReceiver::class.java,

@@ -26,7 +26,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 
@@ -75,7 +74,7 @@ class WasHandledCacheImplV1(val context: Context) : WasHandledCacheImplInterface
             DevLog.debug(LOG_TAG, "This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!, updating instead")
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "addAlert($entry): exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "addAlert($entry): exception ${ex.detailed}")
         }
     }
 
@@ -116,13 +115,13 @@ class WasHandledCacheImplV1(val context: Context) : WasHandledCacheImplInterface
             }
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "getAlertWasHandled: exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "getAlertWasHandled: exception ${ex.detailed}")
         }
         finally {
             cursor?.close()
         }
 
-        DevLog.info(context, LOG_TAG, "getAlertWasHandled: $ret for ${entry.toPublicString()}")
+        DevLog.info(LOG_TAG, "getAlertWasHandled: $ret for ${entry.toPublicString()}")
 
         return ret
     }
@@ -147,7 +146,7 @@ class WasHandledCacheImplV1(val context: Context) : WasHandledCacheImplInterface
             )
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "removeOldEntries($minAge): exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "removeOldEntries($minAge): exception ${ex.detailed}")
         }
 
         return ret

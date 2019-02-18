@@ -280,7 +280,7 @@ object NotificationChannelManager {
             }
         }
 
-        DevLog.info(context, LOG_TAG, "Notification channel for state $soundState " +
+        DevLog.info(LOG_TAG, "Notification channel for state $soundState " +
                 " -> channel ID $channelId, importance $importance")
 
         // Configure the notification channel.
@@ -303,7 +303,7 @@ object NotificationChannelManager {
             notificationChannel.bypassDnd = true
             notificationChannel.legacyStreamType = AudioManager.STREAM_ALARM
 
-            DevLog.info(context, LOG_TAG, "Alarm attributes applied")
+            DevLog.info(LOG_TAG, "Alarm attributes applied")
         }
         else {
             attribBuilder.setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
@@ -359,7 +359,7 @@ object NotificationChannelManager {
             importance = NotificationChannelAttributes.IMPORTANCE_DEFAULT
         }
 
-        DevLog.info(context, LOG_TAG, "Notification channel for reminder state $soundState" +
+        DevLog.info(LOG_TAG, "Notification channel for reminder state $soundState" +
                 " -> channel ID $channelId, importance $importance")
 
         // Configure the notification channel.
@@ -382,7 +382,7 @@ object NotificationChannelManager {
             notificationChannel.bypassDnd = true
             notificationChannel.legacyStreamType = AudioManager.STREAM_ALARM
 
-            DevLog.info(context, LOG_TAG, "Alarm attributes applied")
+            DevLog.info(LOG_TAG, "Alarm attributes applied")
         }
         else {
             attribBuilder.setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)

@@ -33,10 +33,10 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
         var eventId = -1L
 
-        DevLog.info(context, LOG_TAG, "Request to create an event")
+        DevLog.info(LOG_TAG, "Request to create an event")
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "createEvent: no permissions");
+            DevLog.error(LOG_TAG, "createEvent: no permissions");
             return -1L;
         }
 
@@ -54,18 +54,18 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             db ->
 
             db.add(event)
-            DevLog.info(context, LOG_TAG, "Event creation request logged")
+            DevLog.info(LOG_TAG, "Event creation request logged")
 
             eventId = provider.createEvent(context, event.calendarId, event.calendarOwnerAccount, event.details)
 
             if (eventId != -1L) {
-                DevLog.info(context, LOG_TAG, "Created new event, id $eventId")
+                DevLog.info(LOG_TAG, "Created new event, id $eventId")
 
                 event.eventId = eventId
                 db.update(event)
             }
             else {
-                DevLog.info(context, LOG_TAG, "Failed to create a new event, will retry later")
+                DevLog.info(LOG_TAG, "Failed to create a new event, will retry later")
             }
         }
 
@@ -81,7 +81,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         var ret = false
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
+            DevLog.error(LOG_TAG, "moveEvent: no permissions");
             return false;
         }
 
@@ -118,24 +118,24 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
                 newStartTime = event.startTime + addTimeMillis * addUnits
                 newEndTime = event.endTime + addTimeMillis * addUnits
 
-                DevLog.warn(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
+                DevLog.warn(LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
             }
             else {
                 newStartTime = event.startTime + addTimeMillis
                 newEndTime = event.endTime + addTimeMillis
             }
 
-            DevLog.info(context, LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
+            DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
 
             ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
             event.startTime = newStartTime
             event.endTime = newEndTime
 
-            DevLog.info(context, LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
+            DevLog.info(LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
 
             val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
 
-            DevLog.info(context, LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
+            DevLog.info(LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
 
             db.add(
                     CalendarChangeRequest(
@@ -161,7 +161,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
     override fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "moveRepeatingAsCopy: no permissions");
+            DevLog.error(LOG_TAG, "moveRepeatingAsCopy: no permissions");
             return -1L
         }
 
@@ -181,14 +181,14 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             newStartTime = event.instanceStartTime + addTimeMillis * addUnits
             newEndTime = event.instanceEndTime + addTimeMillis * addUnits
 
-            DevLog.warn(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
+            DevLog.warn(LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
         }
         else {
             newStartTime = event.instanceStartTime + addTimeMillis
             newEndTime = event.instanceEndTime + addTimeMillis
         }
 
-        DevLog.info(context, LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
+        DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
 
         val details = oldEvent.details.copy(
                 startTime = newStartTime,
@@ -211,7 +211,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
     override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(context, LOG_TAG, "updateEvent: no permissions");
+            DevLog.error(LOG_TAG, "updateEvent: no permissions");
             return false;
         }
 
@@ -225,13 +225,13 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
             ret = provider.updateEvent(context, eventToEdit, details)
 
             if (ret) {
-                DevLog.info(context, LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
+                DevLog.info(LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
             }
             else {
-                DevLog.error(context, LOG_TAG, "Failed to updated provider, event ${eventToEdit.eventId}")
+                DevLog.error(LOG_TAG, "Failed to updated provider, event ${eventToEdit.eventId}")
             }
 
-            DevLog.info(context, LOG_TAG, "Adding edit request into DB: ${eventToEdit.eventId} ")
+            DevLog.info(LOG_TAG, "Adding edit request into DB: ${eventToEdit.eventId} ")
 
             db.add(
                     CalendarChangeRequest(
@@ -249,7 +249,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
         if (ret && (eventToEdit.startTime != details.startTime)) {
 
-            DevLog.info(context, LOG_TAG, "Event ${eventToEdit.eventId} was moved, ${eventToEdit.startTime} != ${details.startTime}, checking for notification auto-dismissal")
+            DevLog.info(LOG_TAG, "Event ${eventToEdit.eventId} was moved, ${eventToEdit.startTime} != ${details.startTime}, checking for notification auto-dismissal")
 
             val newEvent = provider.getEvent(context, eventToEdit.eventId)
 

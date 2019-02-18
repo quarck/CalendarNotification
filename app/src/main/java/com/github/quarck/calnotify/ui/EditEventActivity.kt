@@ -412,7 +412,7 @@ open class EditEventActivity : AppCompatActivity() {
                 }
 
         if (calendars.isEmpty()) {
-            DevLog.error(this, LOG_TAG, "You have no enabled calendars")
+            DevLog.error(LOG_TAG, "You have no enabled calendars")
 
             accountName.text = "" // remove debug mess
 
@@ -809,7 +809,7 @@ open class EditEventActivity : AppCompatActivity() {
         if (eventToEdit == null) {
             val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
-                DevLog.debug(this, LOG_TAG, "Event created: id=${eventId}")
+                DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
 
                 val nextReminder = calendarProvider.getNextEventReminderTime(this, eventId, startTime)
                 if (nextReminder != 0L) {
@@ -825,7 +825,7 @@ open class EditEventActivity : AppCompatActivity() {
                 finish()
 
             } else {
-                DevLog.error(this, LOG_TAG, "Failed to create event")
+                DevLog.error(LOG_TAG, "Failed to create event")
 
                 AlertDialog.Builder(this)
                         .setMessage(R.string.new_event_failed_to_create_event)
@@ -1277,7 +1277,7 @@ open class EditEventActivity : AppCompatActivity() {
     private fun addReminder(reminder: EventReminderRecord, isForAllDay: Boolean) {
 
         if (reminders.find { it.reminder == reminder} != null) {
-            DevLog.warn(this, LOG_TAG, "Not adding reminder: already in the list")
+            DevLog.warn(LOG_TAG, "Not adding reminder: already in the list")
             return
         }
 

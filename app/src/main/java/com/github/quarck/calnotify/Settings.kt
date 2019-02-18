@@ -230,10 +230,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getInt(FIRST_DAY_OF_WEEK_KEY, 1)
         set(value) = setInt(FIRST_DAY_OF_WEEK_KEY, value)
 
-    var shouldKeepLogs: Boolean
-        get() = getBoolean(KEEP_APP_LOGS_KEY, false)
-        set(value) = setBoolean(KEEP_APP_LOGS_KEY, value)
-
     var enableCalendarRescan: Boolean
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
         set(value) = setBoolean(ENABLE_CALENDAR_RESCAN_KEY, value)
@@ -329,8 +325,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week_2"
 
         private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification"
-
-        private const val KEEP_APP_LOGS_KEY = "keep_logs"
 
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"

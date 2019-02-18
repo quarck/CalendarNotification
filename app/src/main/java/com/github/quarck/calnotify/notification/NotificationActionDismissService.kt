@@ -49,15 +49,15 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
                             eventId,
                             instanceStartTime,
                             notificationId)
-                    DevLog.info(this, LOG_TAG, "ServiceNotificationActionDismiss: event dismissed by user: $eventId")
+                    DevLog.info(LOG_TAG, "ServiceNotificationActionDismiss: event dismissed by user: $eventId")
 
                     UINotifier.notify(this, true)
                 } else {
-                    DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, instanceStartTime=$instanceStartTime, or type is null")
+                    DevLog.error(LOG_TAG, "notificationId=$notificationId, eventId=$eventId, instanceStartTime=$instanceStartTime, or type is null")
                 }
             }
             else {
-                DevLog.info(this, LOG_TAG, "ServiceNotificationActionDismiss: dismiss all")
+                DevLog.info(LOG_TAG, "ServiceNotificationActionDismiss: dismiss all")
 
                 ApplicationController.dismissAllButRecentAndSnoozed(
                         this,
@@ -67,7 +67,7 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
             }
         }
         else {
-            DevLog.error(this, LOG_TAG, "Intent is null!")
+            DevLog.error(LOG_TAG, "Intent is null!")
         }
 
         ApplicationController.cleanupEventReminder(this)

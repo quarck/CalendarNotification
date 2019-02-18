@@ -35,7 +35,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
@@ -178,12 +177,12 @@ class EventListAdapter(
                         val adapter = recyclerView?.adapter as EventListAdapter?
 
                         if (adapter == null) {
-                            DevLog.error(context, LOG_TAG, "getMovementFlags: no adapter! returning 0")
+                            DevLog.error(LOG_TAG, "getMovementFlags: no adapter! returning 0")
                             return 0
                         }
 
                         if (adapter.isPendingRemoval(position)) {
-                            DevLog.info(context, LOG_TAG, "getMovementFlags: pos ${position} is pending removal, returning 0")
+                            DevLog.info(LOG_TAG, "getMovementFlags: pos ${position} is pending removal, returning 0")
                             return 0
                         }
 
@@ -211,11 +210,11 @@ class EventListAdapter(
                                 callback.onItemRemoved(event)
                             }
                             else {
-                                DevLog.error(context, LOG_TAG, "Failed to get event at post $swipedPosition")
+                                DevLog.error(LOG_TAG, "Failed to get event at post $swipedPosition")
                             }
                         }
                         else {
-                            DevLog.error(context, LOG_TAG, "onSwiped: can't get swipedPosition")
+                            DevLog.error(LOG_TAG, "onSwiped: can't get swipedPosition")
                         }
                     }
 
@@ -385,17 +384,17 @@ class EventListAdapter(
             = synchronized(this) {
 
                 if (position < 0) {
-                    DevLog.error(context, LOG_TAG, "getEventAtPosition: negative position $position")
+                    DevLog.error(LOG_TAG, "getEventAtPosition: negative position $position")
                     return null
                 }
 
                 if (position >= events.size) {
-                    DevLog.error(context, LOG_TAG, "getEventAtPosition: position $position exceeds events size ${events.size}")
+                    DevLog.error(LOG_TAG, "getEventAtPosition: position $position exceeds events size ${events.size}")
                     return null
                 }
 
                 if (events[position].eventId != expectedEventId) {
-                    DevLog.error(context, LOG_TAG, "Event at position $position is not matching expected event id, " +
+                    DevLog.error(LOG_TAG, "Event at position $position is not matching expected event id, " +
                             "expected: $expectedEventId, found: ${events[position].eventId} " +
                             "(instance start ${events[position].instanceStartTime}, alertTime ${events[position].alertTime}, " +
                             "calendar id ${events[position].calendarId})")
@@ -410,7 +409,7 @@ class EventListAdapter(
         if (position >= 0 && position < events.size)
             events[position];
         else {
-            DevLog.error(context, LOG_TAG, "getEventAtPosition: requested pos $position, size: ${events.size}")
+            DevLog.error(LOG_TAG, "getEventAtPosition: requested pos $position, size: ${events.size}")
             null
         }
     }
@@ -448,10 +447,10 @@ class EventListAdapter(
                                 notifyItemRemoved(idx)
                             }
                             else {
-                                DevLog.error(context, LOG_TAG, "removeWithUndo pending action: cannot find event with id ${event.eventId}, instance start ${event.instanceStartTime}")
-                                DevLog.error(context, LOG_TAG, "Known events: ")
+                                DevLog.error(LOG_TAG, "removeWithUndo pending action: cannot find event with id ${event.eventId}, instance start ${event.instanceStartTime}")
+                                DevLog.error(LOG_TAG, "Known events: ")
                                 for (ev in events) {
-                                    DevLog.error(context, LOG_TAG, "${ev.eventId}, ${ev.instanceStartTime}, eq: ${ev == event}")
+                                    DevLog.error(LOG_TAG, "${ev.eventId}, ${ev.instanceStartTime}, eq: ${ev == event}")
                                 }
 
                                 val foundByManual =
@@ -460,7 +459,7 @@ class EventListAdapter(
                                             ev.eventId == event.eventId && ev.instanceStartTime == event.instanceStartTime
                                         }
 
-                                DevLog.error(context, LOG_TAG, "Found by manual: ${foundByManual != null}")
+                                DevLog.error(LOG_TAG, "Found by manual: ${foundByManual != null}")
 
                                 if (foundByManual != null) {
                                     notifyItemRemoved(foundByManual.index)
@@ -474,7 +473,7 @@ class EventListAdapter(
             }
         }
         else {
-            DevLog.error(context, LOG_TAG, "Event is already scheduled for removal!")
+            DevLog.error(LOG_TAG, "Event is already scheduled for removal!")
         }
     }
 

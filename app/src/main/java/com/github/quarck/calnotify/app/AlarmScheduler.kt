@@ -62,11 +62,11 @@ object AlarmScheduler : AlarmSchedulerInterface {
                 val currentTime = System.currentTimeMillis()
 
                 if (nextEventAlarm < currentTime) {
-                    DevLog.error(context, LOG_TAG, "CRITICAL: rescheduleAlarms: nextAlarm=$nextEventAlarm is less than currentTime $currentTime");
+                    DevLog.error(LOG_TAG, "CRITICAL: rescheduleAlarms: nextAlarm=$nextEventAlarm is less than currentTime $currentTime");
                     nextEventAlarm = currentTime + Consts.MINUTE_IN_SECONDS * 5 * 1000L;
                 }
 
-                DevLog.info(context, LOG_TAG, "next alarm at ${nextEventAlarm} (T+${(nextEventAlarm - currentTime) / 1000L}s)");
+                DevLog.info(LOG_TAG, "next alarm at ${nextEventAlarm} (T+${(nextEventAlarm - currentTime) / 1000L}s)");
 
                 context.alarmManager.setExactAndAlarm(
                         context,
@@ -81,7 +81,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
             }
             else { // if (nextEventAlarm != null) {
 
-                DevLog.info(context, LOG_TAG, "Cancelling alarms (snooze and reminder)");
+                DevLog.info(LOG_TAG, "Cancelling alarms (snooze and reminder)");
 
                 context.alarmManager.cancelExactAndAlarm(
                         context,
@@ -119,21 +119,21 @@ object AlarmScheduler : AlarmSchedulerInterface {
                     if (!hasActiveAlarms) {
                         val quietUntil = quietHoursManager.getSilentUntil(settings, reminderAlarmNextFire)
                         if (quietUntil != 0L) {
-                            DevLog.info(context, LOG_TAG, "Reminder alarm moved: $reminderAlarmNextFire -> ${quietUntil + Consts.ALARM_THRESHOLD}, reason: quiet hours");
+                            DevLog.info(LOG_TAG, "Reminder alarm moved: $reminderAlarmNextFire -> ${quietUntil + Consts.ALARM_THRESHOLD}, reason: quiet hours");
                             // give a little extra delay, so if requests would fire precisely at the
                             // quietUntil, reminders would wait a bit longer
                             reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
                         }
                     }
 
-                    DevLog.info(context, LOG_TAG, "Reminder Alarm next fire: $reminderAlarmNextFire")
+                    DevLog.info(LOG_TAG, "Reminder Alarm next fire: $reminderAlarmNextFire")
                 }
                 else {  // if (hasActiveNotifications)
-                    DevLog.info(context, LOG_TAG, "no active requests")
+                    DevLog.info(LOG_TAG, "no active requests")
                 }
             }
             else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
-                DevLog.info(context, LOG_TAG, "reminders are not enabled")
+                DevLog.info(LOG_TAG, "reminders are not enabled")
             }
 
             if (reminderAlarmNextFire != null) {

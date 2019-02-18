@@ -26,10 +26,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
-import android.os.Build
 import android.os.PowerManager
 import android.os.Vibrator
-import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
@@ -125,12 +123,12 @@ fun AlarmManager.setExactAndAlarm(
                 alarmClockInfo,
                 pendingIntentExact)
 
-        DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+        DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
     }
     else {
         setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
 
-        DevLog.info(context, LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+        DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
     }
 }
 
@@ -150,7 +148,7 @@ fun AlarmManager.cancelExactAndAlarm(
     val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
     cancel(pendingIntentExact)
 
-    DevLog.info(context, LOG_TAG, "Cancelled alarm")
+    DevLog.info(LOG_TAG, "Cancelled alarm")
 }
 
 

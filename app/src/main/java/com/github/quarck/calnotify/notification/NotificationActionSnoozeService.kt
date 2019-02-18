@@ -52,24 +52,24 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             val isSnoozeAllCollapsed = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_COLLAPSED_KEY, false)
 
             if (isSnoozeAll){
-                DevLog.info(this, LOG_TAG, "Snooze all from notification request")
+                DevLog.info(LOG_TAG, "Snooze all from notification request")
 
                 val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
 
                 if (ApplicationController.snoozeAllEvents(this, snoozeDelay, false, true) != null) {
-                    DevLog.info(this, LOG_TAG, "all visible snoozed by $snoozeDelay")
+                    DevLog.info(LOG_TAG, "all visible snoozed by $snoozeDelay")
                     onSnoozedBy(snoozeDelay)
                 }
 
                 UINotifier.notify(this, true)
             }
             else if (isSnoozeAllCollapsed) {
-                DevLog.info(this, LOG_TAG, "Snooze all collapsed from notification request")
+                DevLog.info(LOG_TAG, "Snooze all collapsed from notification request")
 
                 val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
 
                 if (ApplicationController.snoozeAllCollapsedEvents(this, snoozeDelay, false, true) != null) {
-                    DevLog.info(this, LOG_TAG, "all collapsed snoozed by $snoozeDelay")
+                    DevLog.info(LOG_TAG, "all collapsed snoozed by $snoozeDelay")
                     onSnoozedBy(snoozeDelay)
                 }
 
@@ -83,19 +83,19 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
 
                 if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                     if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null) {
-                        DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime snoozed by $snoozeDelay")
+                        DevLog.info(LOG_TAG, "event $eventId / $instanceStartTime snoozed by $snoozeDelay")
                         onSnoozedBy(snoozeDelay)
                     }
 
                     UINotifier.notify(this, true)
                 } else {
-                    DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
+                    DevLog.error(LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
                 }
             }
 
         }
         else {
-            DevLog.error(this, LOG_TAG, "Intent is null!")
+            DevLog.error(LOG_TAG, "Intent is null!")
         }
 
         ApplicationController.cleanupEventReminder(this)

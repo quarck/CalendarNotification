@@ -44,7 +44,7 @@ class EventsStorage(val context: Context)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
-        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion == newVersion)
             return
@@ -65,7 +65,7 @@ class EventsStorage(val context: Context)
 
             val events = implOld.getEventsImpl(db)
 
-            DevLog.info(context, LOG_TAG, "${events.size} requests to convert")
+            DevLog.info(LOG_TAG, "${events.size} requests to convert")
 
             for (event in events) {
                 if (impl.addEventImpl(db, event)) {
@@ -76,7 +76,7 @@ class EventsStorage(val context: Context)
             }
 
             if (implOld.getEventsImpl(db).isEmpty()) {
-                DevLog.info(context, LOG_TAG, "Finally - dropping old tables")
+                DevLog.info(LOG_TAG, "Finally - dropping old tables")
                 implOld.dropAll(db)
             }
             else {
@@ -85,7 +85,7 @@ class EventsStorage(val context: Context)
 
         }
         catch (ex: Exception) {
-            DevLog.error(context, LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
+            DevLog.error(LOG_TAG, "Exception during DB upgrade $oldVersion -> $newVersion: ${ex.message}, ${ex.stackTrace}")
             throw ex
         }
     }

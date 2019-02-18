@@ -41,7 +41,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
     }
 
     override fun isInsideQuietPeriod(settings: Settings, time: Long) =
-            getSilentUntil(settings, time) > 0L
+            getSilentUntil(settings, time) > time
 
     override fun isInsideQuietPeriod(settings: Settings, currentTimes: LongArray) =
             getSilentUntil(settings, currentTimes).map { it -> it > 0L }.toBooleanArray()
@@ -56,7 +56,10 @@ object QuietHoursManager : QuietHoursManagerInterface {
         var ret = 0L
 
         val currentTime = if (time != 0L) time else System.currentTimeMillis()
-        val manualEnd = settings.manualQuietPeriodUntil
+        var manualEnd = settings.manualQuietPeriodUntil
+        if (manualEnd < currentTime) {
+            manualEnd = 0L
+        }
 
         if (currentTime < manualEnd) {
             // we are in the manual quiet hours, but by the end of it we could hit the regular - double
@@ -118,12 +121,13 @@ object QuietHoursManager : QuietHoursManagerInterface {
 
     override fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
-        val manualEnd = settings.manualQuietPeriodUntil
+        val manualEndValue = settings.manualQuietPeriodUntil
+
         val tmp = LongArray(currentTimes.size)
 
         for (i in 0 until currentTimes.size) {
-            if (currentTimes[i] < manualEnd) {
-                tmp[i] = manualEnd
+            if (currentTimes[i] < manualEndValue) {
+                tmp[i] = manualEndValue
             } else {
                 tmp[i] = currentTimes[i]
             }
@@ -132,6 +136,8 @@ object QuietHoursManager : QuietHoursManagerInterface {
         val ret = getSilentUntilImpl(settings, tmp)
 
         for (i in 0 until currentTimes.size) {
+            val manualEnd = if (currentTimes[i] < manualEndValue) manualEndValue else 0L
+
             if (ret[i] < manualEnd)
                 ret[i] = manualEnd
         }
@@ -199,5 +205,4 @@ object QuietHoursManager : QuietHoursManagerInterface {
 
         return ret
     }
-
 }

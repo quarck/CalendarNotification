@@ -42,7 +42,7 @@ class CalendarChangeRequestsStorage(val context: Context)
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
-        DevLog.info(context, LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
+        DevLog.info(LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
         if (oldVersion == newVersion)
             return

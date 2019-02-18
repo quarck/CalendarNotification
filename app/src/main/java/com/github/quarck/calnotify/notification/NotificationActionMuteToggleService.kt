@@ -40,15 +40,15 @@ class NotificationActionMuteToggleService: IntentService("NotificationActionMute
 
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                 if (ApplicationController.toggleMuteForEvent(this, eventId, instanceStartTime, muteAction))
-                    DevLog.info(this, LOG_TAG, "event $eventId / $instanceStartTime mute toggled from $muteAction")
+                    DevLog.info(LOG_TAG, "event $eventId / $instanceStartTime mute toggled from $muteAction")
 
                 UINotifier.notify(this, true)
             } else {
-                DevLog.error(this, LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
+                DevLog.error(LOG_TAG, "notificationId=$notificationId, eventId=$eventId, or type is null")
             }
         }
         else {
-            DevLog.error(this, LOG_TAG, "Intent is null!")
+            DevLog.error(LOG_TAG, "Intent is null!")
         }
     }
 

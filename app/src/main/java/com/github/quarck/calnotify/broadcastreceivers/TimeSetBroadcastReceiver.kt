@@ -31,7 +31,7 @@ open class TimeSetBroadcastReceiver : BroadcastReceiver() {
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context?, intent: Intent?) {
-        DevLog.info(context, LOG_TAG, "onReceive")
+        DevLog.info(LOG_TAG, "onReceive")
         if (context != null)
             ApplicationController.onTimeChanged(context)
     }

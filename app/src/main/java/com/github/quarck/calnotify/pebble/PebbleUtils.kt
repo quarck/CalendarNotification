@@ -62,7 +62,7 @@ object PebbleUtils {
 
         context.sendBroadcast(i)
 
-        DevLog.info(context, LOG_TAG, "Notification was forwarded to pebble")
+        DevLog.info(LOG_TAG, "Notification was forwarded to pebble")
     }
 
     private const val LOG_TAG = "PebbleUtils"

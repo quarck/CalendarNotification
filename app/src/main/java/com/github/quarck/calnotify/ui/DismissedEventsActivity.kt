@@ -93,11 +93,11 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
                     true
                 }
 
-                R.id.action_remove -> {
-                    DismissedEventsStorage(this).use { db -> db.deleteEvent(entry) }
-                    adapter.removeEntry(entry)
-                    true
-                }
+//                R.id.action_remove_dismissed -> {
+//                    DismissedEventsStorage(this).use { db -> db.deleteEvent(entry) }
+//                    adapter.removeEntry(entry)
+//                    true
+//                }
                 else ->
                     false
             }

@@ -108,6 +108,11 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 settings.notificationSwipeBehavior = it
             }
 
+            switch(getString(R.string.group_swipe_snooze_title), getString(R.string.group_swipe_snooze_rationale)) {
+                initial(settings.groupNotificationSwipeSnoozes)
+                onChange{ settings.groupNotificationSwipeSnoozes = it }
+            }
+
             switch(R.string.show_snooze_button,
                     R.string.show_snooze_button_desc) {
                 initial(settings.showSnoozeButton)

@@ -483,6 +483,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val alertOnlyOnce = notificationRecords.all{it.alertOnlyOnce}
         val contentText = if (lines.size > 0) lines[0] else ""
 
+        val notificationBehavior = settings.groupNotificationSwipeBehavior
+
         val builder =
                 NotificationCompat.Builder(context, channel.channelId)
                         .setContentTitle(contentTitle)
@@ -490,13 +492,28 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setSmallIcon(R.drawable.stat_notify_calendar_multiple)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
-                        .setOngoing(true)
+                        .setOngoing(notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed)
                         .setStyle(notificationStyle)
                         .setNumber(numEvents)
                         .setShowWhen(false)
                         .setOnlyAlertOnce(alertOnlyOnce)
 
         DevLog.info(LOG_TAG, "Building collapsed notification: alertOnlyOnce=$alertOnlyOnce, contentTitle=$contentTitle, number=$numEvents, channel=$channel")
+
+        when (notificationBehavior) {
+            NotificationSwipeBehavior.SwipeDisallowed -> {
+            }
+            else -> {
+                val snoozeIntent = Intent(context, NotificationActionSnoozeService::class.java)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+
+                val pendingSnoozeIntent = pendingServiceIntent(context, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+                builder.setDeleteIntent(pendingSnoozeIntent)
+            }
+        }
+
+
 
         builder.applyChannelAttributes(channel)
 

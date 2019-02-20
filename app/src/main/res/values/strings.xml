@@ -416,5 +416,7 @@
     <string name="befre_big_notice_on_obligations">PLEASE BE AWARE:\n\nIt is in developers interest to keep application as bug free as possible, as well as implement features that could be useful for developers and other users.\nHOWEVER developers of Calendar Notifications Plus have no obligation on fixing any reported issues or implement any requested features.\nWe do what we can when we can.\nAll the work on this app is done in a free time from job and other real life / family duties.\nNo one is getting paid for working on this app.</string>
     <string name="donation_offers_are_rejected">Any donation offers would be rejected</string>
     <string name="wiki_text">NOTE: some useful information on using the app can be found in the app\'s wiki:</string>
+    <string name="group_swipe_snooze_rationale">When number of total notifications exceeds a certain limit, all notification would be grouped into a summary notification. Default behavior is to disallow swipe of such notification, thus prevent accidental dismiss of ALL notifications. Enabling this setting would allow swiping with the action - snooze with first present of all the notifications.</string>
+    <string name="group_swipe_snooze_title">Allow group swipe</string>
 </resources>
 

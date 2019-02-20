@@ -145,7 +145,6 @@ class DismissedEventListAdapter(
 
         val itemTouchCallback =
                 object : ItemTouchHelper.Callback() {
-
                     internal val escapeVelocityMultiplier = 5.0f
 
                     internal val background = ColorDrawable(ContextCompat.getColor(context, R.color.material_red))
@@ -156,8 +155,8 @@ class DismissedEventListAdapter(
                         xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
                     }
 
-                    override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                        val adapter = recyclerView?.adapter as DismissedEventListAdapter?
+                    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                        val adapter = recyclerView.adapter as DismissedEventListAdapter?
 
                         if (adapter == null)
                             return 0
@@ -166,11 +165,11 @@ class DismissedEventListAdapter(
                                 makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
                     }
 
-                    override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                         return false
                     }
 
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val swipedPosition = viewHolder?.adapterPosition
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;

@@ -172,7 +172,7 @@ class EventListAdapter(
                         xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
                     }
 
-                    override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+                    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
                         val position = viewHolder!!.adapterPosition
                         val adapter = recyclerView?.adapter as EventListAdapter?
 
@@ -191,11 +191,11 @@ class EventListAdapter(
                     }
 
                     @Suppress("UseExpressionBody")
-                    override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                         return false
                     }
 
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                         val swipedPosition = viewHolder?.adapterPosition
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;

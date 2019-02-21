@@ -273,6 +273,6 @@
     <string name="snooze_on_swipe_summary">Свайп буде відкладати подію замість її відхилення</string>
     <string name="calendar">Календар</string>
     <string name="N_calendar_events" formatted="false">Подій %d</string>
-    
+
 </resources>
 

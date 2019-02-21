@@ -216,6 +216,13 @@
     <string name="notification_behavior">"Comportement des notifications"</string>
     <string name="pebble_forward_reminders">"Envoyer les rappels sur Pebble"</string>
     <string name="pebble_forward_reminders_summary">"Par défaut, les notifications d'événements originaux sont transmises"</string>
+
+    <string name="calendar">"Calendrier"</string>
+    <string formatted="false" name="N_calendar_events">"%d événements"</string>
+
+    <string name="snooze_on_swipe">"Glisser pour répéter"</string>
+    <string name="snooze_on_swipe_summary">"Le glissement de la notificaton 'répètera' l'évenement au lieu de le rejeter (le 1er paramètre sera utilisé)"</string>
+
 </resources>
 
 

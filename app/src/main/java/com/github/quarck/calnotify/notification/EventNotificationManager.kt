@@ -80,6 +80,10 @@ class EventNotificationManager : EventNotificationManagerInterface {
             removeNotification(context, event.notificationId)
         }
 
+        if (!hasActiveEvents) {
+            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
+        }
+
         if (postNotifications) {
             postEventNotifications(context, formatter)
         }
@@ -447,7 +451,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 else
                     soundState
 
-        val channel = NotificationChannelManager.createNotificationChannel(context, activeSoundState, isReminder)
+        val channel = NotificationChannelManager.createNotificationChannel(context, activeSoundState, isReminder, settings)
 
         val notificationStyle = NotificationCompat.InboxStyle()
 
@@ -513,8 +517,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-
-
         builder.applyChannelAttributes(channel)
 
         val notification = builder.build()
@@ -527,7 +529,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             DevLog.error(LOG_TAG, "Error posting notification: $ex, ${ex.stackTrace}")
         }
 
-        if (isReminder && settings.forwardReminersToPebble) {
+        val isOngoing = notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed
+        if ((isReminder || isOngoing) && settings.forwardReminersToPebble) {
             PebbleUtils.forwardNotificationToPebble(context, contentTitle, contentText, false)
         }
     }
@@ -599,6 +602,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
 
+        if (settings.postGroupNotification)
+            postGroupNotification(
+                    context,
+                    notificationRecords.size,
+                    settings
+            )
+        else
+            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
+
         val snooze0time = settings.firstNonNegativeSnoozeTime
 
         for (ntf in notificationRecords) {
@@ -662,6 +674,82 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return pendingIntent != null
     }
 
+    private fun postGroupNotification(
+            ctx: Context,
+            numTotalEvents: Int,
+            settings: Settings
+    ) {
+        val notificationManager = ctx.notificationManager
+
+        val intent = Intent(ctx, MainActivity::class.java)
+        val pendingIntent = pendingActivityIntent(ctx, intent, MAIN_ACTIVITY_GROUP_NOTIFICATION_CODE, clearTop = true)
+
+        val text = ctx.resources.getString(R.string.N_calendar_events).format(numTotalEvents)
+
+        val channel = NotificationChannelManager.createNotificationChannel(ctx,
+                NotificationChannelManager.SoundState.Silent,
+                false, settings)
+
+        val notificationBehavior = settings.groupNotificationSwipeBehavior
+
+        val groupBuilder = NotificationCompat.Builder(ctx, channel.channelId)
+                .setContentTitle(ctx.resources.getString(R.string.calendar))
+                .setContentText(text)
+                .setSubText(text)
+                .setGroupSummary(true)
+                .setGroup(NOTIFICATION_GROUP)
+                .setContentIntent(pendingIntent)
+                .setCategory(
+                        NotificationCompat.CATEGORY_EVENT
+                )
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(false)
+                .setNumber(numTotalEvents)
+                .setOnlyAlertOnce(true)
+                .setOngoing(notificationBehavior == NotificationSwipeBehavior.SwipeDisallowed)
+
+        if (numTotalEvents > 1) {
+            groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar_multiple)
+        }
+        else {
+            groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar)
+        }
+
+        when (notificationBehavior) {
+            NotificationSwipeBehavior.SnoozeEvent -> {
+                val snoozeIntent = Intent(ctx, NotificationActionSnoozeService::class.java)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_PRESET, settings.firstNonNegativeSnoozeTime)
+                snoozeIntent.putExtra(Consts.INTENT_SNOOZE_ALL_KEY, true)
+
+                val pendingSnoozeIntent =
+                        pendingServiceIntent(ctx, snoozeIntent, EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET)
+
+                groupBuilder.setDeleteIntent(pendingSnoozeIntent)
+            }
+
+            NotificationSwipeBehavior.DismissEvent ->  {
+                val dismissIntent = Intent(ctx, NotificationActionDismissService::class.java)
+                dismissIntent.putExtra(Consts.INTENT_DISMISS_ALL_KEY, true)
+
+                val pendingDismissIntent = pendingServiceIntent(ctx, dismissIntent, EVENT_CODE_DISMISS_OFFSET)
+                groupBuilder.setDeleteIntent(pendingDismissIntent)
+            }
+
+            NotificationSwipeBehavior.SwipeDisallowed -> {
+
+            }
+        }
+
+        try {
+            notificationManager.notify(
+                    Consts.NOTIFICATION_ID_BUNDLED_GROUP,
+                    groupBuilder.build()
+            )
+        }
+        catch (ex: Exception) {
+            DevLog.error(LOG_TAG, "Exception: ${ex.detailed}")
+        }
+    }
 
     private fun postNotification(
             ctx: Context,
@@ -738,7 +826,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val channel = NotificationChannelManager.createNotificationChannel(
                 ctx,
                 soundState = activeSoundState,
-                isReminder = isReminder
+                isReminder = isReminder,
+                settings = settings
         )
 
         val notificationBehavior = notificationSettings.notificationSwipeBehavior
@@ -794,8 +883,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val extender = NotificationCompat.WearableExtender()
 
-        if ((notificationSettings.enableNotificationMute || event.isMuted) && !event.isTask) {
-            // build and append
+        if ((notificationSettings.enableNotificationMute || event.isMuted) && !event.isTask && settings.allowMuteAndAlarm) {            // build and append
 
             val muteTogglePendingIntent =
                     pendingServiceIntent(ctx,

@@ -108,11 +108,6 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 settings.notificationSwipeBehavior = it
             }
 
-            switch(getString(R.string.group_swipe_snooze_title), getString(R.string.group_swipe_snooze_rationale)) {
-                initial(settings.groupNotificationSwipeSnoozes)
-                onChange{ settings.groupNotificationSwipeSnoozes = it }
-            }
-
             switch(R.string.show_snooze_button,
                     R.string.show_snooze_button_desc) {
                 initial(settings.showSnoozeButton)
@@ -120,6 +115,22 @@ class NotificationSettingsActivity : AppCompatActivity(){
             }
 
             separator()
+
+            switch (R.string.group_notifications, R.string.group_notifications_summary) {
+                initial (settings.postGroupNotification)
+                onChange { settings.postGroupNotification = it }
+                depending {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        red_notice(R.string.group_notifications_android_oreo_gore)
+                    }
+
+                    groupNotificationBehavior(settings.groupNotificationSwipeBehavior) {
+                        settings.groupNotificationSwipeBehavior = it
+                    }
+                    separator()
+                }
+            }
 
             header(R.string.other)
 
@@ -135,10 +146,11 @@ class NotificationSettingsActivity : AppCompatActivity(){
                 onChange{settings.notificationsAlwaysCollapsed = it }
             }
 
-
-            switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
-                initial(settings.notificationUseAlarmStream)
-                onChange { settings.notificationUseAlarmStream = it }
+            if (settings.allowMuteAndAlarm) {
+                switch(R.string.use_alarm_stream, R.string.use_alarm_stream_summary) {
+                    initial(settings.notificationUseAlarmStream)
+                    onChange { settings.notificationUseAlarmStream = it }
+                }
             }
         }
     }

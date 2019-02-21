@@ -416,7 +416,15 @@
     <string name="befre_big_notice_on_obligations">PLEASE BE AWARE:\n\nIt is in developers interest to keep application as bug free as possible, as well as implement features that could be useful for developers and other users.\nHOWEVER developers of Calendar Notifications Plus have no obligation on fixing any reported issues or implement any requested features.\nWe do what we can when we can.\nAll the work on this app is done in a free time from job and other real life / family duties.\nNo one is getting paid for working on this app.</string>
     <string name="donation_offers_are_rejected">Any donation offers would be rejected</string>
     <string name="wiki_text">NOTE: some useful information on using the app can be found in the app\'s wiki:</string>
-    <string name="group_swipe_snooze_rationale">When number of total notifications exceeds a certain limit, all notification would be grouped into a summary notification. Default behavior is to disallow swipe of such notification, thus prevent accidental dismiss of ALL notifications. Enabling this setting would allow swiping with the action - snooze with first present of all the notifications.</string>
-    <string name="group_swipe_snooze_title">Allow group swipe</string>
+
+    <string name="N_calendar_events" formatted="false">%d events</string>
+    <string name="calendar">Calendar</string>
+    <string name="snooze_on_swipe">Snooze on swipe</string>
+    <string name="snooze_on_swipe_summary">Swiping would snooze event instead of dismissing it (1st present is used)</string>
+    <string name="snooze_on_swipe_summary_v2">Swiping would snooze event instead of dismissing it (hard-coded 5 mins snooze)</string>
+    <string name="group_notifications">Group notifications</string>
+    <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
+    <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
+
 </resources>
 

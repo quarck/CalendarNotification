@@ -334,4 +334,10 @@
     <string name="mute_tag">#mute</string>
     <string name="alarm_tag">#alarm</string>
 
+    <string name="calendar">Kalendar</string>
+    <string name="N_calendar_events" formatted="false">%d Termine</string>
+    <string name="snooze_on_swipe">Schlummer Wischgeste</string>
+    <string name="snooze_on_swipe_summary">Wischgeste setzt Schlummern anstatt Ablehnen (erstes Auftreten wird verwendet)</string>
+
+
 </resources>

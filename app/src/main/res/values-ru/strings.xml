@@ -269,5 +269,12 @@
     <string name="notification_is_muted">Звук уведомления отключен</string>
     <string name="calendar_handling_options">Параметры календаря</string>
     <string name="create_event">Создать событие</string>
+
+    <string name="snooze_on_swipe">Отсрочить при смахивании</string>
+    <string name="snooze_on_swipe_summary">Смахивание будет отсрочивать событие вместо его отклонения</string>
+
+    <string name="calendar">Календарь</string>
+    <string name="N_calendar_events" formatted="false">Событий %d</string>
+
 </resources>
 

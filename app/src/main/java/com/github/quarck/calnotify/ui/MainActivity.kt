@@ -410,12 +410,22 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val customQuiet = menu.findItem(R.id.action_custom_quiet_interval)
         if (customQuiet != null) {
-            customQuiet.title =
-                    resources.getString(
-                        if (ApplicationController.isCustomQuietHoursActive(this))
-                            R.string.stop_quiet_hours
-                        else
-                            R.string.start_quiet_hours)
+            if (settings.allowMuteAndAlarm) {
+                customQuiet.isVisible = true
+                customQuiet.title =
+                        resources.getString(
+                                if (ApplicationController.isCustomQuietHoursActive(this))
+                                    R.string.stop_quiet_hours
+                                else
+                                    R.string.start_quiet_hours)
+            } else {
+              customQuiet.isVisible = false
+            }
+        }
+
+        val muteAll = menu.findItem(R.id.action_mute_all)
+        if (muteAll != null) {
+            muteAll.isVisible = settings.allowMuteAndAlarm
         }
 
         if (settings.devModeEnabled) {

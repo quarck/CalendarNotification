@@ -400,6 +400,14 @@
     <string name="always_use_extenal_editor">Zawsze edytuj w kalendarzu</string>
     <string name="always_use_external_editor_summary">Przycisk edycji na ekranie odłożeń będzie uruchamiał aplikację kalendarza zamiast wewnętrznego edytora.</string>
 
+    <string name="snooze_on_swipe">Przesuń, aby odłożyć</string>
+    <string name="snooze_on_swipe_summary">Przesuwaj powiadomienie, aby je odłożyć na okres pierwszej wartości ustalonej w Defnicjach odłożeń.</string>
+    <string name="group_notifications">Powiadomienia grupowe</string>
+    <string name="group_notifications_summary">Powiadomienia grupowe zwinięte do jednego, rozwijanego powiadomienia \nUWAGA: wyłączenie tego ustawienia nie wyłącza grupowania powiadomień w przypadku osiągnięcia ustalonego limitu a jedynie zabezpiecza aplikację przed awarią w przypadku przekroczenia limitu powiadomień.</string>
+
+    <string name="calendar">Kalendarz</string>
+    <string name="N_calendar_events" formatted="false">%d wydarzenia</string>
+
 </resources>
 
 

@@ -268,5 +268,11 @@
     <string name="notification_is_muted">Звук сповіщення вимкнений</string>
     <string name="calendar_handling_options">Параметри календаря</string>
     <string name="create_event">Створити подію</string>
+
+    <string name="snooze_on_swipe">Відкласти при свайпі</string>
+    <string name="snooze_on_swipe_summary">Свайп буде відкладати подію замість її відхилення</string>
+    <string name="calendar">Календар</string>
+    <string name="N_calendar_events" formatted="false">Подій %d</string>
+    
 </resources>
 

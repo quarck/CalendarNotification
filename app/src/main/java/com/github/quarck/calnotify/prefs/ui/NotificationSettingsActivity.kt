@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.activities
+package com.github.quarck.calnotify.prefs.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -25,8 +25,8 @@ import android.support.v7.app.AppCompatActivity
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.notification.NotificationChannelManager
-import com.github.quarck.calnotify.prefs.MaxRemindersPreference
-import com.github.quarck.calnotify.prefs.ReminderPatternPreference
+import com.github.quarck.calnotify.prefs.components.MaxRemindersPreference
+import com.github.quarck.calnotify.prefs.components.ReminderPatternPreference
 import com.github.quarck.calnotify.prefs.preferences
 
 class NotificationSettingsActivity : AppCompatActivity(){
@@ -144,6 +144,11 @@ class NotificationSettingsActivity : AppCompatActivity(){
             switch(R.string.always_collapse, R.string.always_collapse_detail) {
                 initial(settings.notificationsAlwaysCollapsed)
                 onChange{settings.notificationsAlwaysCollapsed = it }
+            }
+
+            switch (getString(R.string.sticky_collapsed_state_title), getString(R.string.sticky_collapsed_state_value)) {
+                initial(settings.stickyCollapsedState)
+                onChange{ settings.stickyCollapsedState = it }
             }
 
             if (settings.allowMuteAndAlarm) {

@@ -18,7 +18,7 @@
 //
 
 
-package com.github.quarck.calnotify.prefs
+package com.github.quarck.calnotify.prefs.components
 
 import android.app.AlertDialog
 import android.content.Context
@@ -30,6 +30,7 @@ import android.widget.EditText
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.find
 
 class SnoozePresetPreference(internal var context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {

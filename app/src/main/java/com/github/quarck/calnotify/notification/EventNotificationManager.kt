@@ -125,27 +125,30 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
     /**
      * @param events - events to sort
-     * @returns pair of boolean and list, boolean means "all collapsed"
+     * @returns pair of lists, first - uncollapsed notifications, second - collapsed
      */
     private fun sortEvents(
             events: List<EventAlertRecord>,
             settings: Settings
-    ): Pair<Boolean, List<EventAlertRecord>> {
+    ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
 
-        var allCollapsed = false
+        if (settings.notificationsAlwaysCollapsed) {
+            return Pair(listOf(), events) // everything goes collapsed
+        }
 
-        val maxNotificationsBeforeCollapse =
-                if (settings.notificationsAlwaysCollapsed)
-                    0
-                else
-                    Consts.MAX_UNCOLLAPSED_NOTIFICATIONS
+        if (settings.stickyCollapsedState && events.any {it.displayStatus == EventDisplayStatus.DisplayedCollapsed}) {
+            return Pair(listOf(), events) // everything goes collapsed
+        }
 
-        if (events.size > maxNotificationsBeforeCollapse)
-            allCollapsed = true
-        else if (events.any {it.displayStatus == EventDisplayStatus.DisplayedCollapsed})
-            allCollapsed = true
+        if (events.size <= Consts.MAX_UNCOLLAPSED_NOTIFICATIONS) {
+            // nothing is collapsed
+            return Pair(events, listOf())
+        }
 
-        return Pair(allCollapsed, events)
+        // now - some are, some are not
+        val uncollapsed = events.take(Consts.MAX_UNCOLLAPSED_NOTIFICATIONS - 1)
+        val collapsed = events.takeLast(events.size - uncollapsed.size) // remaining
+        return Pair(uncollapsed, collapsed)
     }
 
     // NOTES:
@@ -165,9 +168,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context: Context,
             db: EventsStorage,
             settings: Settings
-    ): Pair<Boolean, List<EventAlertRecord>> {
+    ): Pair<List<EventAlertRecord>, List<EventAlertRecord>> {
 
-        //val events = getEventsAndUnSnooze(context, db)
         return sortEvents(getEventsAndUnSnooze(context, db), settings)
     }
 
@@ -188,11 +190,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         EventsStorage(context).use {
             db ->
 
-            val (allCollapsed, events) = processEvents(context, db, settings)
+            val (displayedEvents, collapsedEvents) = processEvents(context, db, settings)
 
-            val notificationRecords = generateNotificationRecords(
+            val displayedNotificationsRecords = generateNotificationRecords(
                     context = context,
-                    events = events,
+                    events = displayedEvents,
                     primaryEventId = primaryEventId,
                     settings = settings,
                     isQuietPeriodActive = isQuietPeriodActive,
@@ -200,32 +202,42 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     isRepost = isRepost
             )
 
-            if (!allCollapsed) {
-                hideCollapsedEventsNotification(context)
+            val notificationRecordsCollapsed = generateNotificationRecords(
+                    context = context,
+                    events = collapsedEvents,
+                    primaryEventId = primaryEventId,
+                    settings = settings,
+                    isQuietPeriodActive = isQuietPeriodActive,
+                    isReminder = isReminder,
+                    isRepost = isRepost
+            )
 
-                if (events.isNotEmpty()) {
-                    postDisplayedEventNotifications(
-                            context = context,
-                            db = db,
-                            settings = settings,
-                            formatter = formatterLocal,
-                            notificationRecords = notificationRecords,
-                            isRepost = isRepost,
-                            isQuietPeriodActive = isQuietPeriodActive,
-                            primaryEventId = primaryEventId,
-                            isReminder = isReminder
-                    )
-                }
+            if (displayedEvents.isNotEmpty()) {
+                postDisplayedEventNotifications(
+                        context = context,
+                        db = db,
+                        settings = settings,
+                        formatter = formatterLocal,
+                        notificationRecords = displayedNotificationsRecords,
+                        isRepost = isRepost,
+                        isQuietPeriodActive = isQuietPeriodActive,
+                        primaryEventId = primaryEventId,
+                        isReminder = isReminder
+                )
             }
-            else {
+
+            if (collapsedEvents.isNotEmpty()) {
                 postEverythingCollapsed(
                         context = context,
                         db = db,
-                        notificationRecords = notificationRecords,
+                        notificationRecords = notificationRecordsCollapsed,
                         settings = settings,
                         isQuietPeriodActive = isQuietPeriodActive,
                         isReminder = isReminder
                 )
+            }
+            else {
+                hideCollapsedEventsNotification(context)
             }
         }
     }

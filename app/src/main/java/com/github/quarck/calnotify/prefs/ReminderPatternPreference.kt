@@ -17,20 +17,24 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.components
+package com.github.quarck.calnotify.prefs
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.TypedArray
+import android.preference.DialogPreference
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.prefs.PreferenceUtils
 //import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.ui.TimeIntervalPickerController
+import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
 
 class ReminderPatternPreference(val context: Context, val settings: Settings, val inflater: LayoutInflater)

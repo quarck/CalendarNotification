@@ -16,7 +16,7 @@
 //   along with this program; if not, write to the Free Software Foundation,
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
-package com.github.quarck.calnotify.prefs.ui
+package com.github.quarck.calnotify.prefs
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable

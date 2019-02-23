@@ -18,7 +18,7 @@
 //
 
 
-package com.github.quarck.calnotify.prefs.components
+package com.github.quarck.calnotify.prefs
 
 import android.content.Context
 import android.content.Intent

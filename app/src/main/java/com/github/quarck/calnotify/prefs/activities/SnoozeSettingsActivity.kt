@@ -17,17 +17,21 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.ui
+package com.github.quarck.calnotify.prefs.activities
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.preference.PreferenceActivity
+import android.preference.PreferenceFragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Switch
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.utils.findOrThrow
 import android.content.DialogInterface
+import android.view.LayoutInflater
 import android.widget.EditText
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.prefs.PreferenceUtils

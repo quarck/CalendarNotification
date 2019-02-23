@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.components
+package com.github.quarck.calnotify.prefs
 
 import android.content.Context
 import android.content.res.TypedArray

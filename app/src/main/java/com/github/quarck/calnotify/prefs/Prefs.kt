@@ -10,8 +10,6 @@ import android.widget.Switch
 import android.widget.TextView
 import com.github.quarck.calnotify.NotificationSwipeBehavior
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.prefs.components.ListPreference
-import com.github.quarck.calnotify.prefs.components.TimeOfDayPreference
 import com.github.quarck.calnotify.utils.findOrThrow
 import java.text.DateFormat
 import java.util.*
@@ -458,7 +456,8 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
                             textMainId,
                             arrayNames,
                             arrayValues,
-                            { name, value ->
+                            {
+                                name, value ->
 
                                 if (showValue)
                                     this@PrefsItem.setValue(name)

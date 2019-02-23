@@ -1,6 +1,6 @@
 //
 //   Calendar Notifications Plus
-//   Copyright (C) 2017 Sergey Parshin (s.parshin.sc@gmail.com)
+//   Copyright (C) 2016 Sergey Parshin (s.parshin.sc@gmail.com)
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.components
+package com.github.quarck.calnotify.prefs
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -28,26 +28,52 @@ import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.NumberPicker
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.ui.TimeIntervalPickerController
+import com.github.quarck.calnotify.Settings
+//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.find
+import com.github.quarck.calnotify.utils.findOrThrow
+import com.github.quarck.calnotify.utils.toIntOrNull
 
-class DefaultManualNotificationPreference(
-        val context: Context,
-        var inflater: LayoutInflater,
-        defaultValue: Int,
-        val onNewValue: (Int)->Unit
-) {
+class NumberPickerController(val view: View, val minValue: Int, val maxValue: Int) {
 
-    internal var timeValue = defaultValue
+    var numberPicker: NumberPicker
 
-    internal lateinit var picker: TimeIntervalPickerController
+    init {
+        numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerMaxReminders)
+
+        numberPicker.minValue = minValue
+        numberPicker.maxValue = maxValue
+    }
+
+    fun clearFocus() {
+        numberPicker.clearFocus()
+    }
+
+    var value: Int
+        get() {
+            clearFocus()
+            return numberPicker.value
+        }
+        set(value) {
+            numberPicker.value = value
+        }
+}
+
+class MaxRemindersPreference(val context: Context, val settings: Settings, var inflater: LayoutInflater) {
+
+    internal var value = settings.maxNumberOfReminders
+
+    internal lateinit var picker: NumberPickerController
 
     fun create(): Dialog {
+
         val builder = AlertDialog.Builder(context)
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        val rootView: View = inflater.inflate(R.layout.dialog_default_manual_notification, null)
+        val rootView: View = inflater.inflate(R.layout.dialog_max_reminders, null)
 
         onBindDialogView(rootView)
 
@@ -64,13 +90,11 @@ class DefaultManualNotificationPreference(
         })
 
         return builder.create()
-
     }
 
-
     fun onBindDialogView(view: View) {
-        picker = TimeIntervalPickerController(view, null, 0, false)
-        picker.intervalMinutes = timeValue
+        picker = NumberPickerController(view, 0, 999)
+        picker.value = value
     }
 
 //    override fun onClick() {
@@ -82,29 +106,12 @@ class DefaultManualNotificationPreference(
 
         if (positiveResult) {
             picker.clearFocus()
-
-            timeValue = picker.intervalMinutes
-            onNewValue(timeValue)
+            value = picker.value
+            settings.maxNumberOfReminders = value
         }
     }
 
-//    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-//        if (restorePersistedValue) {
-//            // Restore existing state
-//            timeValue = this.getPersistedInt(0)
-//        }
-//        else if (defaultValue != null && defaultValue is Int) {
-//            // Set default state from the XML attribute
-//            timeValue = defaultValue
-//            persistInt(timeValue)
-//        }
-//    }
-//
-//    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-//        return a.getInteger(index, 15)
-//    }
-//
     companion object {
-        private const val LOG_TAG = "DefaultManualNotificationPreference"
+        private const val LOG_TAG = "MaxRemindersPreference"
     }
 }

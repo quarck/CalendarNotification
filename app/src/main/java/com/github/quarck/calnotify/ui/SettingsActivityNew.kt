@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.prefs.ui.CalendarsActivity
-import com.github.quarck.calnotify.prefs.ui.*
+import com.github.quarck.calnotify.prefs.CalendarsActivity
+import com.github.quarck.calnotify.prefs.activities.*
 
 class SettingsActivityNew : AppCompatActivity() {
 

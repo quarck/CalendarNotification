@@ -17,58 +17,50 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.prefs.components
+package com.github.quarck.calnotify.prefs
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.res.TypedArray
+import android.preference.DialogPreference
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.NumberPicker
+import android.widget.TextView
+import android.widget.TimePicker
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 //import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
+import java.text.DateFormat
+import java.util.*
 
-class NumberPickerController(val view: View, val minValue: Int, val maxValue: Int) {
+// val context: Context, val settings: Settings, var inflater: LayoutInflater
 
-    var numberPicker: NumberPicker
+class TimeOfDayPreference(
+        val context: Context,
+        var inflater:
+        LayoutInflater,
+        var timeValue: Pair<Int, Int>,
+        val onNewValue: (Pair<Int, Int>) -> Unit) {
 
-    init {
-        numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerMaxReminders)
+    // UI representation
+    internal lateinit var picker: TimePicker
 
-        numberPicker.minValue = minValue
-        numberPicker.maxValue = maxValue
-    }
-
-    fun clearFocus() {
-        numberPicker.clearFocus()
-    }
-
-    var value: Int
-        get() {
-            clearFocus()
-            return numberPicker.value
-        }
-        set(value) {
-            numberPicker.value = value
-        }
-}
-
-class MaxRemindersPreference(val context: Context, val settings: Settings, var inflater: LayoutInflater) {
-
-    internal var value = settings.maxNumberOfReminders
-
-    internal lateinit var picker: NumberPickerController
+    internal var isTwentyFourHour: Boolean = true
 
     fun create(): Dialog {
 
         val builder = AlertDialog.Builder(context)
 
+        isTwentyFourHour = android.text.format.DateFormat.is24HourFormat(context)//  context.is24HoursClock()
+
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        val rootView: View = inflater.inflate(R.layout.dialog_max_reminders, null)
+        val rootView: View = inflater.inflate(R.layout.dialog_time_of_day, null)
 
         onBindDialogView(rootView)
 
@@ -88,8 +80,11 @@ class MaxRemindersPreference(val context: Context, val settings: Settings, var i
     }
 
     fun onBindDialogView(view: View) {
-        picker = NumberPickerController(view, 0, 999)
-        picker.value = value
+        picker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_time_of_day)
+
+        picker.setIs24HourView(isTwentyFourHour)
+        picker.hour = timeValue.component1()
+        picker.minute = timeValue.component2()
     }
 
 //    override fun onClick() {
@@ -99,14 +94,15 @@ class MaxRemindersPreference(val context: Context, val settings: Settings, var i
 
     fun onDialogClosed(positiveResult: Boolean) {
 
+        // When the user selects "OK", persist the new value
         if (positiveResult) {
             picker.clearFocus()
-            value = picker.value
-            settings.maxNumberOfReminders = value
+            timeValue = Pair(picker.hour, picker.minute)
+            onNewValue(timeValue)
         }
     }
 
     companion object {
-        private const val LOG_TAG = "MaxRemindersPreference"
+        private const val LOG_TAG = "TimeOfDayPreference"
     }
 }

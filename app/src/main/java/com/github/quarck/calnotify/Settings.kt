@@ -294,10 +294,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getLong(MANUAL_QUIET_PERIOD_UNTIL, 0)
         set(value) = setLong(MANUAL_QUIET_PERIOD_UNTIL, value)
 
-    var stickyCollapsedState: Boolean
-        get() = getBoolean(STICKY_COLLAPSED_STATE, false)
-        set(value) = setBoolean(STICKY_COLLAPSED_STATE, value)
-
     companion object {
 
         // Preferences keys
@@ -363,8 +359,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val NOTIFICATIONS_ALWAYS_COLLAPSED = "cxiam_kolapsita"
 
         private const val MANUAL_QUIET_PERIOD_UNTIL = "manual_quiet_until"
-
-        private const val STICKY_COLLAPSED_STATE = "sticky_collapsed"
 
         // Default values
         internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"

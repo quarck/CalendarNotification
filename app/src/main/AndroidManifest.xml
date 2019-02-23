@@ -64,7 +64,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".prefs.ui.CalendarsActivity"
+            android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme.NoActionBar">
@@ -121,27 +121,27 @@
             android:theme="@style/AppTheme"
             />
 
-        <activity android:name=".prefs.ui.BehaviorSettingsActivity"
+        <activity android:name=".prefs.activities.BehaviorSettingsActivity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme"
             android:label="@string/app_behavior"
             />
-        <activity android:name=".prefs.ui.MiscSettingsActivity"
+        <activity android:name=".prefs.activities.MiscSettingsActivity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme"
             android:label="@string/misc_settings"
             />
-        <activity android:name=".prefs.ui.NotificationSettingsActivity"
+        <activity android:name=".prefs.activities.NotificationSettingsActivity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme"
             android:label="@string/notification_settings"
             />
-        <activity android:name=".prefs.ui.QuietHoursSettingsActivity"
+        <activity android:name=".prefs.activities.QuietHoursSettingsActivity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:label="@string/quiet_hours_section"
             android:theme="@style/AppTheme"
             />
-        <activity android:name=".prefs.ui.SnoozeSettingsActivity"
+        <activity android:name=".prefs.activities.SnoozeSettingsActivity"
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme"
             android:label="@string/snooze_presets"

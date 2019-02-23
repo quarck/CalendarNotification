@@ -425,8 +425,6 @@
     <string name="group_notifications">Group notifications</string>
     <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
     <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
-    <string name="sticky_collapsed_state_title">Sticky collapse state</string>
-    <string name="sticky_collapsed_state_value">Once number of notifications reaches collapsing limit, all the notifications are collapsed into one and staying in collapsed until all currently active notifications are dismissed or snoozed; new notifications arrived during \'sticky\' period would join collapsed notifications</string>
 
 </resources>
 

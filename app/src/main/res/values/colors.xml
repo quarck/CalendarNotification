@@ -14,6 +14,8 @@
 
     <color name="primary">#607D8B</color>
     <color name="primary_dark">#455A64</color>
+	<color name="primary_light">#CFD8DC</color>
+
     <color name="accent">#009688</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
@@ -49,5 +51,24 @@
     <color name="quiet_hours_active_text">#FFC107</color>
     <color name="quiet_hours_active_background">#212121</color>
 
+	    <color name="led_clr1">#0000ff</color>
+    <color name="led_clr2">#00FF00</color>
+    <color name="led_clr3">#00FFFF</color>
+    <color name="led_clr4">#FF0000</color>
+    <color name="led_clr5">#FF00FF</color>
+    <color name="led_clr6">#FFFF00</color>
+    <color name="led_clr7">#FFFFFF</color>
+    <color name="led_clr8">#7F00FF</color>
+
+    <array name="led_colors">
+        <item>@color/led_clr1</item>
+        <item>@color/led_clr2</item>
+        <item>@color/led_clr3</item>
+        <item>@color/led_clr4</item>
+        <item>@color/led_clr5</item>
+        <item>@color/led_clr6</item>
+        <item>@color/led_clr7</item>
+        <item>@color/led_clr8</item>
+    </array>
 
 </resources>

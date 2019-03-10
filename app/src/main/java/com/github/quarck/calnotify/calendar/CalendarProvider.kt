@@ -1179,7 +1179,9 @@ object CalendarProvider : CalendarProviderInterface {
                     CalendarContract.Calendars.VISIBLE
             )
 
-            fields.add(CalendarContract.Calendars.IS_PRIMARY)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                fields.add(CalendarContract.Calendars.IS_PRIMARY)
+            }
 
             val uri = CalendarContract.Calendars.CONTENT_URI
 

@@ -1,0 +1,159 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/ringtone"
+        android:key="_notifications_ringtone">
+
+        <RingtonePreference
+            android:key="pref_key_ringtone"
+            android:summary="@string/ringtone_selection_summary"
+            android:title="@string/ringtone_selection"
+            android:ringtoneType="notification"
+            android:showSilent="true"
+            android:showDefault="true"
+            />
+
+        <CheckBoxPreference
+            android:key="use_alarm_stream_for_notification"
+            android:title="@string/use_alarm_stream"
+            android:summary="@string/use_alarm_stream_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/vibration"
+        android:key="_notifications_vibration">
+        <CheckBoxPreference android:key="vibra_on"
+            android:title="@string/vibra_on"
+            android:defaultValue="true"/>
+
+        <ListPreference
+            android:key="pref_vibration_pattern"
+            android:title="@string/vibration_pattern"
+            android:dialogTitle="@string/vibration_pattern"
+            android:entries="@array/pref_vibration_pattern_entries"
+            android:entryValues="@array/pref_vibration_pattern_values"
+            android:defaultValue="0" />
+
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/led"
+        android:key="_notifications_led">
+        <CheckBoxPreference
+            android:key="notification_led"
+            android:summary="@string/notification_light_summary"
+            android:title="@string/notification_light_title"
+            android:defaultValue="true" />
+
+        <com.github.quarck.calnotify.prefs.LEDColorPickerPreference
+            android:key="notification_led_color"
+            android:title="@string/led_color"
+            android:dependency="notification_led" />
+
+        <com.github.quarck.calnotify.prefs.LEDPatternPreference
+            android:key="notification_led_v2pattern"
+            android:title="@string/led_pattern"
+            android:dependency="notification_led"
+            android:defaultValue="300,2000"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/notification_behavior"
+        android:key="_notifications_behavior">
+        <CheckBoxPreference
+            android:key="pref_enable_bundled_notifications"
+            android:title="@string/bundle_notifications_title"
+            android:summary="@string/bundle_notifications_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
+            android:key="pref_key_enable_allow_swipe"
+            android:title="@string/allow_notification_swipe_title"
+            android:summary="@string/allow_notification_swipe_summary"
+            android:defaultValue="false"  />
+
+        <CheckBoxPreference
+            android:key="pref_key_enable_swipe_to_snooze"
+            android:title="@string/snooze_on_swipe"
+            android:summary="@string/snooze_on_swipe_summary"
+            android:defaultValue="false"
+            android:dependency="pref_key_enable_allow_swipe"
+            />
+
+        <CheckBoxPreference android:key="heads_up_notification"
+            android:title="@string/heads_up_notification"
+            android:summary="@string/heads_up_notification_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference android:key="notification_wake_screen"
+            android:title="@string/wake_screen_title"
+            android:summary="@string/wake_screen_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference android:key="notification_cal_color"
+            android:title="@string/event_color_notification"
+            android:summary="@string/event_color_notification_summary"
+            android:defaultValue="true"
+            />
+
+    </PreferenceCategory>
+
+    <!-- CheckBoxPreference android:key="notification_tts"
+        android:title="@string/notify_tts"
+        android:summary="@string/notify_tts_summary"
+        android:defaultValue="false"
+        / -->
+
+    <PreferenceCategory
+        android:title="@string/advanced"
+        android:key="_notifications_advanced">
+
+        <CheckBoxPreference
+            android:key="notification_opens_snooze"
+            android:title="@string/notfication_opens_snooze"
+            android:summary="@string/notfication_opens_snooze_summary"
+            android:defaultValue="true" />
+
+         <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
+            android:key="max_notifications_before_collapse"
+            android:title="@string/max_notifications_before_collapse"
+            android:summary="@string/max_notifications_before_collapse_summary"
+            android:defaultValue="8"/>
+
+        <CheckBoxPreference
+            android:key="max_notifications_collapse_everything"
+            android:title="@string/collapse_everything"
+            android:summary="@string/collapse_everything_summary"
+            android:defaultValue="false"/>
+
+        <CheckBoxPreference
+            android:key="show_event_desc_in_the_notification"
+            android:title="@string/show_event_desc_in_the_notification_title"
+            android:summary="@string/show_event_desc_in_the_notification_summary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/notifications_pure_hacks"
+        android:key="_notification_hacks"
+        >
+        <CheckBoxPreference
+            android:key="add_empty_action_to_the_end"
+            android:title="@string/add_empty_action_to_the_end_title"
+            android:summary="@string/add_empty_action_to_the_end_summary"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

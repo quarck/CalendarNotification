@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/before_the_event"
+            android:id="@+id/text_view_before_the_event"
             android:layout_gravity="center_horizontal"
             android:paddingLeft="30dp"
             android:paddingStart="30dp"

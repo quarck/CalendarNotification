@@ -26,11 +26,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.PowerManager
 import android.os.Vibrator
+import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
 
 
 @Suppress("UNCHECKED_CAST")
@@ -51,39 +52,35 @@ val Context.vibratorService: Vibrator
 val Context.notificationManager: NotificationManager
     get() = service(Context.NOTIFICATION_SERVICE)
 
-fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit) {
+fun wakeLocked(pm: PowerManager, timeout: Long, levelAndFlags: Int, tag: String, fn: () -> Unit) {
 
-    val wakeLock = pm.newWakeLock(levelAndFlags, tag);
-    if (wakeLock == null)
-        throw Exception("Failed to acquire wakelock")
+    val wakeLock = pm.newWakeLock(levelAndFlags, tag) ?: throw Exception("Failed to acquire wakelock")
 
     try {
-        wakeLock.acquire()
-        fn();
+        wakeLock.acquire(timeout)
+        fn()
     }
     finally {
-        wakeLock.release()
-    }
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, noinline fn: () -> Unit) {
-
-    val wakeLock = pm.newWakeLock(levelAndFlags, tag);
-    if (wakeLock == null)
-        throw Exception("Failed to acquire wakelock")
-
-    wakeLock.acquire()
-
-    background {
         try {
-            fn();
-        }
-        finally {
             wakeLock.release()
         }
+        catch (ex: Exception) {
+            // ignore
+        }
     }
 }
+
+fun partialWakeLocked(ctx: Context, timeout: Long, tag: String, fn: () -> Unit) =
+        wakeLocked(ctx.powerManager, timeout, PowerManager.PARTIAL_WAKE_LOCK, tag, fn)
+
+val isMarshmallowOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+
+val isLollipopOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
+
+val isKitkatOrAbove: Boolean
+    get() = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT
 
 @SuppressLint("NewApi")
 fun AlarmManager.setExactAndAlarm(
@@ -96,39 +93,56 @@ fun AlarmManager.setExactAndAlarm(
 ) {
     val LOG_TAG = "AlarmManager.setExactAndAlarm"
 
-    // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
-    // so set it as a "first thing", followed by more precise alarm
-    val intent = Intent(context, roughIntentClass);
-    val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis + Consts.ALARM_THRESHOLD / 3, pendingIntent);
+    if (isMarshmallowOrAbove) {
+        // setExactAndAllowWhileIdle supposed to work during idle / doze standby, but it is very non-precise
+        // so set it as a "first thing", followed by more precise alarm
+        val intent = Intent(context, roughIntentClass);
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis + Consts.ALARM_THRESHOLD / 3, pendingIntent);
 
 
-    // add more precise alarm, depending on the setting it is a setAlarmClock or "setExact"
-    // setAlarmClock is very precise, but it shows UI indicating that alarm is pending
-    // on the other hand setExact is more precise than setExactAndAllowWhileIdle, but it can't
-    // fire during doze / standby
+        // add more precise alarm, depending on the setting it is a setAlarmClock or "setExact"
+        // setAlarmClock is very precise, but it shows UI indicating that alarm is pending
+        // on the other hand setExact is more precise than setExactAndAllowWhileIdle, but it can't
+        // fire during doze / standby
 
-    val intentExact = Intent(context, exactIntentClass);
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intentExact = Intent(context, exactIntentClass);
+        val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
 
-    //if (settings.useSetAlarmClock) {
-    if (useSetAlarmClock) {
+        //if (settings.useSetAlarmClock) {
+        if (useSetAlarmClock) {
 
-        val intentInfo = Intent(context, alarmInfoIntent);
-        val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
+            val intentInfo = Intent(context, alarmInfoIntent);
+            val pendingIntentInfo = PendingIntent.getActivity(context, 0, intentInfo, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntentInfo)
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntentInfo)
 
-        setAlarmClock(
-                alarmClockInfo,
-                pendingIntentExact)
+            setAlarmClock(
+                    alarmClockInfo,
+                    pendingIntentExact)
 
-        DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+            DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setAlarmClock(T+0)")
+        }
+        else {
+            setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
+
+            DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+        }
     }
     else {
-        setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
+        val intent = Intent(context, exactIntentClass);
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
+        if (isKitkatOrAbove) {
+            // KitKat way
+            setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExact(T+0)")
+        }
+        else {
+            // Ancient way
+            set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using set(T+0)")
+        }
     }
 }
 
@@ -144,12 +158,44 @@ fun AlarmManager.cancelExactAndAlarm(
     val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     cancel(pendingIntent);
 
-    val intentExact = Intent(context, exactIntentClass);
-    val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
-    cancel(pendingIntentExact)
+    if (isMarshmallowOrAbove) {
+        val intentExact = Intent(context, exactIntentClass);
+        val pendingIntentExact = PendingIntent.getBroadcast(context, 0, intentExact, PendingIntent.FLAG_UPDATE_CURRENT)
+        cancel(pendingIntentExact)
+    }
 
     DevLog.info(LOG_TAG, "Cancelled alarm")
 }
+
+@Suppress("DEPRECATION")
+var TimePicker.hourCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour
+        else
+            this.currentHour
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.hour = value
+        else
+            this.currentHour = value
+    }
+
+@Suppress("DEPRECATION")
+var TimePicker.minuteCompat: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute
+        else
+            this.currentMinute
+    }
+    set(value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            this.minute = value
+        else
+            this.currentMinute = value
+    }
 
 
 val Exception.detailed: String

@@ -43,6 +43,8 @@ class ReportABugActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+
+
         DevLog.debug(LOG_TAG, "onCreate")
     }
 

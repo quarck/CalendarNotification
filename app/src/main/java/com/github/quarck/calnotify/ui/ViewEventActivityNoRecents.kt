@@ -409,7 +409,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         val menuItemMute = popup.menu.findItem(R.id.action_mute_event)
         if (menuItemMute != null) {
-            menuItemMute.isVisible = !event.isMuted && !event.isTask && settings.allowMuteAndAlarm
+            menuItemMute.isVisible = !event.isMuted && !event.isTask
         }
 
         val menuItemUnMute = popup.menu.findItem(R.id.action_unmute_event)

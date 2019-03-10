@@ -36,8 +36,17 @@ open class ManualEventAlarmGenericBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-open class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
-}
+open class ManualEventAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver()
 
-open class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver() {
+open class ManualEventExactAlarmBroadcastReceiver : ManualEventAlarmGenericBroadcastReceiver()
+
+open class ManualEventAlarmPeriodicRescanBroadcastReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+        if (context == null || intent == null)
+            return
+
+        ApplicationController.CalendarMonitor.onPeriodicRescanBroadcast(context, intent)
+    }
 }

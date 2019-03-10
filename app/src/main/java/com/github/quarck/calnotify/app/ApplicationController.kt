@@ -43,8 +43,6 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorOneTimeJobService
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorPeriodicJobService
 import com.github.quarck.calnotify.monitorstorage.WasHandledCache
 import com.github.quarck.calnotify.monitorstorage.WasHandledCacheInterface
 import com.github.quarck.calnotify.utils.detailed
@@ -108,8 +106,13 @@ object ApplicationController : EventMovedHandler {
         val currentTime = System.currentTimeMillis()
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
-        notificationManager.postEventNotifications(context)
+
+        notificationManager.postEventNotifications(context, EventFormatter(context), false, null)
         alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
+
+        if (currentTime > alarmWasExpectedAt + Consts.ALARM_THRESHOLD) {
+            this.onSnoozeAlarmLate(context, currentTime, alarmWasExpectedAt)
+        }
     }
 
     fun onAppUpdated(context: Context) {
@@ -117,9 +120,14 @@ object ApplicationController : EventMovedHandler {
         DevLog.info(LOG_TAG, "Application updated")
 
         // this will post event notifications for existing known requests
-        notificationManager.postEventNotifications(context, isRepost = true);
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-        CalendarMonitorPeriodicJobService.schedule(context)
+        notificationManager.postEventNotifications(context, EventFormatter(context), isRepost = true)
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
+
+        calendarMonitorInternal.launchRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = true
+        )
     }
 
     fun onBootComplete(context: Context) {
@@ -127,17 +135,26 @@ object ApplicationController : EventMovedHandler {
         DevLog.info(LOG_TAG, "OS boot is complete")
 
         // this will post event notifications for existing known requests
-        notificationManager.postEventNotifications(context, isRepost = true);
+        notificationManager.postEventNotifications(context, EventFormatter(context), isRepost = true)
 
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
 
-        CalendarMonitorPeriodicJobService.schedule(context)
+        calendarMonitorInternal.launchRescanService(
+                context,
+                reloadCalendar = true,
+                rescanMonitor = true
+        )
     }
 
     fun onCalendarChanged(context: Context) {
 
         DevLog.info(LOG_TAG, "onCalendarChanged")
-        CalendarMonitorOneTimeJobService.schedule(context, 2000)
+        calendarMonitorInternal.launchRescanService(
+                context,
+                delayed = 2000,
+                reloadCalendar = true,
+                rescanMonitor = true
+        )
     }
 
     fun onCalendarRescanForRescheduledFromService(context: Context, userActionUntil: Long) {
@@ -149,7 +166,10 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (changes) {
-            notificationManager.postEventNotifications(context, isRepost = true)
+            notificationManager.postEventNotifications(context,
+                    EventFormatter(context),
+                    isRepost = true
+            )
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
 
@@ -172,7 +192,11 @@ object ApplicationController : EventMovedHandler {
         DevLog.debug(LOG_TAG, "calendarReloadFromService: ${changes}")
 
         if (changes) {
-            notificationManager.postEventNotifications(context, isRepost = true)
+            notificationManager.postEventNotifications(
+                    context,
+                    EventFormatter(context),
+                    isRepost = true
+            )
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
 
@@ -232,8 +256,7 @@ object ApplicationController : EventMovedHandler {
         if (events.size == 1)
             notificationManager.onEventAdded(context, EventFormatter(context), events.first())
         else
-            notificationManager.postEventNotifications(context)
-
+            notificationManager.postEventNotifications(context, EventFormatter(context))
     }
 
     fun shouldMarkEventAsHandledAndSkip(context: Context, event: EventAlertRecord): Boolean {
@@ -761,16 +784,14 @@ object ApplicationController : EventMovedHandler {
             val settings = getSettings(context)
 
             if (settings.versionCodeFirstInstalled == 0L) {
-                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0);
-                settings.versionCodeFirstInstalled = pInfo.versionCode.toLong();
+                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                settings.versionCodeFirstInstalled = pInfo.versionCode.toLong()
             }
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun onMainActivityStarted(context: Context?) {
-        if (context != null)
-            CalendarMonitorPeriodicJobService.schedule(context)
     }
 
     fun onMainActivityResumed(
@@ -783,7 +804,7 @@ object ApplicationController : EventMovedHandler {
             cleanupEventReminder(context)
 
             if (shouldRepost) {
-                notificationManager.postEventNotifications(context, isRepost = true)
+                notificationManager.postEventNotifications(context, EventFormatter(context), isRepost = true)
                 context.globalState?.lastNotificationRePost = System.currentTimeMillis()
             }
 
@@ -1060,7 +1081,7 @@ object ApplicationController : EventMovedHandler {
     // used for debug purpose
     @Suppress("unused")
     fun forceRepostNotifications(context: Context) {
-        notificationManager.postEventNotifications(context, isRepost = true)
+        notificationManager.postEventNotifications(context, EventFormatter(context), isRepost = true)
     }
 
     // used for debug purpose
@@ -1091,6 +1112,28 @@ object ApplicationController : EventMovedHandler {
         } else {
             quietHoursManager.stopManualQuietPeriod(settings)
             alarmScheduler.rescheduleAlarms(ctx, getSettings(ctx), quietHoursManager)
+        }
+    }
+
+    fun onReminderAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
+
+        if (getSettings(context).debugAlarmDelays) {
+
+            val warningMessage = "Expected: $alarmWasExpectedAt, " +
+                    "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
+
+            notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
+        }
+    }
+
+    fun onSnoozeAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
+
+        if (getSettings(context).debugAlarmDelays) {
+
+            val warningMessage = "Expected: $alarmWasExpectedAt, " +
+                    "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
+
+            notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
         }
     }
 }

@@ -12,11 +12,6 @@ open class RemoteCommandBroadcastReceiver: BroadcastReceiver() {
         if (context == null || intent == null)
             return
 
-        when (intent.action) {
-            Consts.REMOTE_COMMAND_MUTE_ALL ->
-                ApplicationController.muteAllVisibleEvents(context)
-            else ->
-                Unit
-        }
+        /* Currently ignored - placeholder for the future */
     }
 }

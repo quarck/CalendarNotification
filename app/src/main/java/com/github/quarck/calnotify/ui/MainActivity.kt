@@ -393,7 +393,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
         if (muteAllMenuItem != null) {
-            muteAllMenuItem.isVisible = true
+            muteAllMenuItem.isVisible = settings.enableNotificationMute
             muteAllMenuItem.isEnabled = adapter.anyForMute
         }
 
@@ -410,22 +410,13 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val customQuiet = menu.findItem(R.id.action_custom_quiet_interval)
         if (customQuiet != null) {
-            if (settings.allowMuteAndAlarm) {
-                customQuiet.isVisible = true
-                customQuiet.title =
-                        resources.getString(
-                                if (ApplicationController.isCustomQuietHoursActive(this))
-                                    R.string.stop_quiet_hours
-                                else
-                                    R.string.start_quiet_hours)
-            } else {
-              customQuiet.isVisible = false
-            }
-        }
-
-        val muteAll = menu.findItem(R.id.action_mute_all)
-        if (muteAll != null) {
-            muteAll.isVisible = settings.allowMuteAndAlarm
+            customQuiet.isVisible = true
+            customQuiet.title =
+                    resources.getString(
+                            if (ApplicationController.isCustomQuietHoursActive(this))
+                                R.string.stop_quiet_hours
+                            else
+                                R.string.start_quiet_hours)
         }
 
         if (settings.devModeEnabled) {
@@ -459,7 +450,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             R.id.action_settings -> {
                 shouldForceRepost = true // so onResume would re-post everything
                 startActivity(
-                        Intent(this, SettingsActivityNew::class.java)
+                        Intent(this, SettingsActivity::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
 

@@ -233,8 +233,6 @@ open class EditEventActivity : AppCompatActivity() {
     private lateinit var eventTitleLayout: RelativeLayout
     private lateinit var tagsLayout: LinearLayout
 
-    private var muteAndAlarmAllowed: Boolean = true
-
     private var isMuted = false
     private var isTask = false
     private var isAlarm = false
@@ -377,8 +375,6 @@ open class EditEventActivity : AppCompatActivity() {
         // settings
         settings = Settings(this)
 
-        muteAndAlarmAllowed = settings.allowMuteAndAlarm
-
         taskTagButton = find<TextView?>(R.id.add_event_task_tag) ?: throw Exception("Can't find add_event_task_tag")
         muteTagButton = find<TextView?>(R.id.add_event_mute_tag) ?: throw Exception("Can't find add_event_mute_tag")
         alarmTagButton = find<TextView?>(R.id.add_event_alarm_tag) ?: throw Exception("Can't find add_event_alarm_tag")
@@ -389,20 +385,20 @@ open class EditEventActivity : AppCompatActivity() {
 
         if (originalEvent == null) {
 
-            taskTagButton.setOnClickListener( {
+            taskTagButton.setOnClickListener {
                 isTask = !isTask
                 updateTags(false)
-            })
+            }
 
-            muteTagButton.setOnClickListener( {
+            muteTagButton.setOnClickListener {
                 isMuted = !isMuted
                 updateTags(false)
-            })
+            }
 
-            alarmTagButton.setOnClickListener( {
+            alarmTagButton.setOnClickListener {
                 isAlarm = !isAlarm
                 updateTags(false)
-            })
+            }
         }
 
         // Default calendar
@@ -474,7 +470,9 @@ open class EditEventActivity : AppCompatActivity() {
             eventTitleLayout.background = ColorDrawable(color.adjustCalendarColor())
             eventTitleText.background = ColorDrawable(color.adjustCalendarColor())
 
-            window.statusBarColor = color.scaleColor(0.7f)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = color.scaleColor(0.7f)
+            }
 
             from = state.from
             to = state.to
@@ -520,7 +518,9 @@ open class EditEventActivity : AppCompatActivity() {
             eventTitleLayout.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
             eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
 
-            window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
+            }
 
             eventTitleText.setText(eventToEdit.title)
             note.setText(eventToEdit.desc)
@@ -565,7 +565,9 @@ open class EditEventActivity : AppCompatActivity() {
                 eventTitleText.setText(receivedSharedText)
             }
 
-            window.statusBarColor = calendar.color.scaleColor(0.7f)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = calendar.color.scaleColor(0.7f)
+            }
 
             // Set default date and time
             var currentTime = System.currentTimeMillis()
@@ -577,11 +579,11 @@ open class EditEventActivity : AppCompatActivity() {
             from.second = 0
 
             to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-            to.addMinutes(Consts.DEFAULT_NEW_EVENT_DURATION_MINUTES)
+            to.addMinutes(settings.defaultNewEventDurationMinutes)
 
             DevLog.debug(LOG_TAG, "${from.timeInMillis}, ${to.timeInMillis}, $from, $to")
 
-            updateDateTimeUI();
+            updateDateTimeUI()
 
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
@@ -672,8 +674,8 @@ open class EditEventActivity : AppCompatActivity() {
 
             if (updateLayouts) {
                 taskTagButton.visibility = View.VISIBLE
-                muteTagButton.visibility = if (muteAndAlarmAllowed) View.VISIBLE else View.GONE
-                alarmTagButton.visibility = if (muteAndAlarmAllowed) View.VISIBLE else View.GONE
+                muteTagButton.visibility = View.VISIBLE
+                alarmTagButton.visibility = View.VISIBLE
             }
 
             val selectedColor = ContextCompat.getColor(this, R.color.event_selected_tag_color)
@@ -758,7 +760,9 @@ open class EditEventActivity : AppCompatActivity() {
 //                eventTitleText.background = ColorDrawable(
 //                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
-                window.statusBarColor = calendar.color.scaleColor(0.7f)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.statusBarColor = calendar.color.scaleColor(0.7f)
+                }
 
                 eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor())
                 eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor())
@@ -870,7 +874,7 @@ open class EditEventActivity : AppCompatActivity() {
         }
         else {
             to = DateTimeUtils.createCalendarTime(from.timeInMillis)
-            to.addMinutes(Consts.DEFAULT_NEW_EVENT_DURATION_MINUTES)
+            to.addMinutes(settings.defaultNewEventDurationMinutes)
         }
 
         updateDateTimeUI()
@@ -1134,8 +1138,8 @@ open class EditEventActivity : AppCompatActivity() {
 
         val (hr, min) = currentReminder.allDayHourOfDayAndMinute
 
-        timePicker.hour = hr
-        timePicker.minute = min
+        timePicker.hourCompat = hr
+        timePicker.minuteCompat = min
 
 
         val builder = AlertDialog.Builder(this)
@@ -1149,8 +1153,8 @@ open class EditEventActivity : AppCompatActivity() {
             timePicker.clearFocus()
 
             val daysBefore = numberPicker.value
-            val pickerHr = timePicker.hour
-            val pickerMin = timePicker.minute
+            val pickerHr = timePicker.hourCompat
+            val pickerMin = timePicker.minuteCompat
 
             val daysInMilliseconds = daysBefore * Consts.DAY_IN_MILLISECONDS
             val hrMinInMilliseconds = pickerHr * Consts.HOUR_IN_MILLISECONDS + pickerMin * Consts.MINUTE_IN_MILLISECONDS
@@ -1289,16 +1293,31 @@ open class EditEventActivity : AppCompatActivity() {
 
         textView.setOnClickListener (this::onNotificationClick)
 
-        textView.setTextAppearance(android.R.style.TextAppearance_Medium)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            textView.setTextAppearance(android.R.style.TextAppearance_Medium)
+        }
+        else {
+            @Suppress("DEPRECATION")
+            textView.setTextAppearance(this, android.R.style.TextAppearance_Medium)
+        }
 
         textView.setTextColor(notificationPrototype.textColors)
 
 
-        textView.setPaddingRelative(
-                notificationPrototype.paddingStart,
-                notificationPrototype.paddingTop,
-                notificationPrototype.paddingEnd,
-                notificationPrototype.paddingBottom)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            textView.setPaddingRelative(
+                    notificationPrototype.paddingStart,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingEnd,
+                    notificationPrototype.paddingBottom)
+        }
+        else {
+            textView.setPadding(
+                    notificationPrototype.paddingLeft,
+                    notificationPrototype.paddingTop,
+                    notificationPrototype.paddingRight,
+                    notificationPrototype.paddingBottom)
+        }
 
         textView.isClickable = true
         textView.background = notificationPrototype.background

@@ -165,8 +165,8 @@
     <string name="until_event_time">Until event time</string>
 
     <string name="multiple_events_single_notification" formatted="false">%d calendar events</string>
-    <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
+    <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
     <string name="dismissed_events">Dismissed events</string>
     <string name="deleted_events">Bin</string>
@@ -399,6 +399,8 @@
 
     <string name="pre_oreo_notification_channels_explanation">Attention pre-Oreo users:\n\nThis app is running in compatibility mode on your device\n\nMultiple users has requested F-Droid build to be installable on pre-Oreo devices, thus this change was made. But sound / vibration / LED control are all now migrated to notification channel settings which are absent on pre-Oreo devices, so you would not be able to control these. To get these settings back - please revert to an older version (Google Play will serve older version for pre-Oreo devices, or ask me directly).</string>
 
+    <string name="pre_oreo_notification_channels_explanation_v2" translatable="false">Things are changing back. Please wait, it will all be re-stored.</string>
+
     <string name="battery_optimisation_title">Battery optimisation</string>
     <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
     <string name="you_can_do_it">DO IT</string>
@@ -425,6 +427,85 @@
     <string name="group_notifications">Group notifications</string>
     <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
     <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
+
+    <!-- TODO: WARNING: Note: values below should be back-ported -->
+    <string name="multiple_events_details_2">Tap to see details</string>
+    <string name="reminder_after_quiet_time">Reminder: events fired during quiet hours</string>
+    <string name="reminder_you_have_missed_event">Reminder: you have missed event</string>
+    <string name="reminder_you_have_missed_events">Reminder: you have missed events</string>
+    <string name="last_notification_s_ago" formatted="false">Last notification: %s ago, reminder %d of %d</string>
+    <string name="last_event_s_ago" formatted="false">Last event: %s ago</string>
+    <string name="multiple_events">%d more events</string>
+    <string name="title_activity_activity_snooze">Snooze</string>
+    <string name="snooze_until_string">Snooze until date / time:</string>
+
+	<string name="enable_mute_title">Enable mute</string>
+    <string name="enable_mute_summary">Enables functionality of muting events:\n* adds \'mute\' button in the notification \n* enables related functionality in the main UI\nMuted notifications would not generate reminders, muted snoozed event would re-appear silently without sound or vibration</string>
+
+	
+    <string name="_100ms">100ms</string>
+    <string name="_2500ms">2500ms</string>
+    <string name="led_on_time">LED On Time:</string>
+    <string name="led_off_time">LED Off Time:</string>
+    <string name="led_pattern">LED Pattern</string>
+    <string name="mute_options">Mute options</string>
+    <string name="bin_size">Bin size</string>
+    <string name="bin_size_summary">Number of days to keep dismissed notifications</string>
+    <string name="default_duration">Default duration for new events</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="vibration">Vibration</string>
+    <string name="led">LED</string>
+    <string name="ringtone_selection">Notification Ringtone</string>
+    <string name="ringtone_selection_summary">Choose ringtone for notification</string>
+
+    <string name="vibra_on">Vibration</string>
+    <string name="vibration_pattern">Vibration pattern</string>
+    <string name="notification_light_summary">Use LED to notify about active notification</string>
+    <string name="notification_light_title">Notification LED</string>
+    <string name="led_color">LED Color</string>
+    <string name="bundle_notifications_title">Bundle notifications</string>
+    <string name="bundle_notifications_summary">Use bundled notifications on Android 6+</string>
+    <string name="allow_notification_swipe_title">Allow notification swipe</string>
+    <string name="allow_notification_swipe_summary">Use notification swipe instead of \'dismiss\' action to dismiss the event</string>
+    <string name="heads_up_notification">Heads-up Notification</string>
+    <string name="heads_up_notification_summary">Briefly show notification balloon at the top of the screen</string>
+    <string name="wake_screen_title">Wake screen</string>
+    <string name="wake_screen_summary">Wake screen for a short period of time when notification arrives</string>
+    <string name="event_color_notification">Event color in the notification</string>
+    <string name="event_color_notification_summary">Show event color in the notification icon</string>
+    <string name="advanced">Advanced</string>
+    <string name="notfication_opens_snooze">Notification opens snooze dialog</string>
+    <string name="notfication_opens_snooze_summary">Enable if you want notification to open Snooze dialog directly\nClick on event title on Snooze dialog to go to actual event on Calendar</string>
+    <string name="max_notifications_before_collapse">Max notifications</string>
+    <string name="max_notifications_before_collapse_summary">Number of max allowed notifications to be displayed at any time by the app simultaneously\n\nNote: upper number is limited to 8 to avoid potential SystemUI crashes that happen on some devices when app is posting too many notifications</string>
+    <string name="collapse_everything">Collapse everything on exceeding</string>
+    <string name="collapse_everything_summary">When number of total active notifications exceeds max notifications, everything would be collapsed into a single group notification</string>
+    <string name="show_event_desc_in_the_notification_title">Show event description</string>
+    <string name="show_event_desc_in_the_notification_summary">Show event description in the notification</string>
+    <string name="notifications_pure_hacks">Pure Hacks</string>
+    <string name="reminders_section">Reminders</string>
+    <string name="bin_setting_group_name">Bin settings</string>
+
+    <string name="quiet_hours_mute_primary">Mute primary notifications</string>
+    <string name="quiet_hours_mute_primary_summary">Mute primary notifications during quiet time, so app becomes completely silent. Primary notification is a very first notification for particular event</string>
+    <string name="quiet_hours_mute_led">Mute LED</string>
+    <string name="quiet_hours_mute_led_summary">Led notification would be disabled during quiet hours</string>
+    <string name="reminder_custom_ringtone">Custom ringtone</string>
+    <string name="reminder_custom_vibration">Custom vibration</string>
+    <string name="reminder_custom_vibration_summary">Use custom vibration for notifications</string>
+    <string name="reminder_custom_ringtone_summary">Use custom ringtone for notifications</string>
+    <string name="pebble">Pebble</string>
+    <string name="forward_to_pebble">Forward to Pebble</string>
+    <string name="forward_to_pebble_summary">If you have Pebble Smart Watch - this will enable app to forward notifications to your Pebble</string>
+    <string name="pebble_event_text_in_the_title">Event text in the title</string>
+    <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
+    <string name="custom_snooze_options_title">Custom snooze options</string>
+    <string name="custom_snooze_options_summary">Show custom snooze options on the snooze activity</string>
+    <string name="snooze_hide_event_description_title">Hide description</string>
+    <string name="snooze_hide_event_description_summary">Do not show event description on the snooze activity</string>
+    <string name="open_calendar_from_snooze_title">Tap on title opens calendar</string>
+    <string name="open_calendar_from_snooze_summary">Tap on the event title/time on Snooze activity would open details in the calendar application</string>
+    <string name="milliseconds_suffix">ms</string>
 
 </resources>
 

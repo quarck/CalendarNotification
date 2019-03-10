@@ -19,91 +19,65 @@
 
 package com.github.quarck.calnotify.prefs
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.TypedArray
 import android.preference.DialogPreference
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.ui.TimeIntervalPickerController
 
-class DefaultManualNotificationPreference(
-        val context: Context,
-        var inflater: LayoutInflater,
-        defaultValue: Int,
-        val onNewValue: (Int)->Unit
-) {
+class DefaultManualNotificationPreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
-    internal var timeValue = defaultValue
+    internal var timeValue = 0
 
     internal lateinit var picker: TimeIntervalPickerController
 
-    fun create(): Dialog {
-        val builder = AlertDialog.Builder(context)
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        val rootView: View = inflater.inflate(R.layout.dialog_default_manual_notification, null)
-
-        onBindDialogView(rootView)
-
-        builder.setView(rootView)
-
-        builder.setPositiveButton(android.R.string.ok, DialogInterface.OnClickListener {
-            _, _ ->
-            onDialogClosed(true)
-        })
-
-        builder.setNegativeButton(android.R.string.cancel, DialogInterface.OnClickListener {
-            _, _ ->
-            onDialogClosed(false)
-        })
-
-        return builder.create()
-
+    init {
+        dialogLayoutResource = R.layout.dialog_default_manual_notification
+        setPositiveButtonText(android.R.string.ok)
+        setNegativeButtonText(android.R.string.cancel)
+        dialogIcon = null
     }
 
+    override fun onBindDialogView(view: View) {
+        super.onBindDialogView(view)
 
-    fun onBindDialogView(view: View) {
         picker = TimeIntervalPickerController(view, null, 0, false)
         picker.intervalMinutes = timeValue
     }
 
-//    override fun onClick() {
-//        super.onClick()
-//        picker.clearFocus()
-//    }
+    override fun onClick() {
+        super.onClick()
+        picker.clearFocus()
+    }
 
-    fun onDialogClosed(positiveResult: Boolean) {
+    override fun onDialogClosed(positiveResult: Boolean) {
 
         if (positiveResult) {
             picker.clearFocus()
 
             timeValue = picker.intervalMinutes
-            onNewValue(timeValue)
+            persistInt(timeValue)
         }
     }
 
-//    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-//        if (restorePersistedValue) {
-//            // Restore existing state
-//            timeValue = this.getPersistedInt(0)
-//        }
-//        else if (defaultValue != null && defaultValue is Int) {
-//            // Set default state from the XML attribute
-//            timeValue = defaultValue
-//            persistInt(timeValue)
-//        }
-//    }
-//
-//    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
-//        return a.getInteger(index, 15)
-//    }
-//
+    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
+        if (restorePersistedValue) {
+            // Restore existing state
+            timeValue = this.getPersistedInt(0)
+        }
+        else if (defaultValue != null && defaultValue is Int) {
+            // Set default state from the XML attribute
+            timeValue = defaultValue
+            persistInt(timeValue)
+        }
+    }
+
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
+        return a.getInteger(index, 15)
+    }
+
     companion object {
         private const val LOG_TAG = "DefaultManualNotificationPreference"
     }

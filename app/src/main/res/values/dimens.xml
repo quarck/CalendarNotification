@@ -3,12 +3,15 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
     <!-- Compact view - 'dismissed' view - 'x' icon margin -->
     <dimen name="ic_clear_margin">25dp</dimen>
 
     <!--  amount to scroll on the main activity until 'undo' layout hides itself, in dp-s -->
     <dimen name="undo_dismiss_sensitivity">160dp</dimen>
+
+    <dimen name="snooze_close_btn_padding">8dp</dimen>
 
     <dimen name="snooze_view_padding_start">60dp</dimen>
     <dimen name="snooze_view_padding_end">20dp</dimen>
@@ -19,6 +22,8 @@
     <dimen name="snooze_view_header_padding_top">16dp</dimen>
     <dimen name="snooze_view_header_padding_bottom">24dp</dimen>
 
+    <dimen name="snooze_view_header_spacing">22dp</dimen>
+
     <dimen name="snooze_view_action_padding_top">16dp</dimen>
     <dimen name="snooze_view_action_padding_bottom">8dp</dimen>
 
@@ -26,9 +31,28 @@
 
     <dimen name="snooze_view_img_topbottom">20dp</dimen>
 
+    <dimen name="snooze_view_event_title_max_height">160dp</dimen>
+    <dimen name="snooze_view_event_details_max_height">100dp</dimen>
+    <dimen name="snooze_view_title_height">130dp</dimen>
+
     <dimen name="snooze_view_in_text_vert_padding">4dp</dimen>
     <dimen name="snooze_view_details_initial_padding">10dp</dimen>
 
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+
+    <dimen name="card_margin_vertical">3dp</dimen>
+    <dimen name="card_margin_hirizontal">4dp</dimen>
+
+    <dimen name="card_view_img_padding_top">16dp</dimen>
+    <dimen name="card_view_snoozed_until_top">1dp</dimen>
+    <dimen name="card_view_detais_layout_top_margin">10dp</dimen>
+    <dimen name="card_view_action_buttons_top_padding">10dp</dimen>
+    <dimen name="card_view_action_buttons_start_padding">16dp</dimen>
+    <dimen name="card_view_action_buttons_end_padding">16dp</dimen>
+    <dimen name="card_view_action_buttons_bottom_padding">10dp</dimen>
+
+    <dimen name="card_view_title_max_height">188dp</dimen>
     <dimen name="activity_main_action_buttons_start_padding">16dp</dimen>
     <dimen name="activity_main_action_buttons_end_padding">16dp</dimen>
     <dimen name="activity_main_action_buttons_top_padding">16dp</dimen>
@@ -38,11 +62,17 @@
     <dimen name="activity_main_text_pading_start">16dp</dimen>
     <dimen name="activity_main_text_pading_end">16dp</dimen>
     <dimen name="activity_help_credits_padding_left">0dp</dimen>
+    <dimen name="activity_help_credits_padding_translators_left">20dp</dimen>
     <dimen name="activity_help_credits_padding_right">16dp</dimen>
     <dimen name="activity_help_credits_padding_vertical">6dp</dimen>
     <dimen name="dlg_snooze_presets_text_label_padding">16dp</dimen>
     <dimen name="dlg_snooze_presets_input_padding">16dp</dimen>
+    <dimen name="textview_widget_status_text_size">16sp</dimen>
     <dimen name="text_view_main_activity_quiet_hrs_status_padding">5dp</dimen>
+    <dimen name="color_picker_spacing">3dp</dimen>
+    <dimen name="color_picker_sqr_size">50dp</dimen>
+    <dimen name="color_picker_sqr_size_sm">30dp</dimen>
+    <dimen name="color_picker_sqr_size_pls_sp">56dp</dimen>
     <dimen name="date_time_picker_margin">2dp</dimen>
     <dimen name="date_time_picker_padding">5dp</dimen>
 
@@ -50,6 +80,7 @@
     <dimen name="compact_view_left_margin">10dp</dimen>
     <dimen name="compact_view_right_margin">10dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 
     <dimen name="add_event_text_start">16dp</dimen>
@@ -64,8 +95,10 @@
     <dimen name="add_event_time_start">30dp</dimen>
     <dimen name="add_event_view_action_padding_top">8dp</dimen>
     <dimen name="add_event_view_action_padding_bottom">8dp</dimen>
+    <dimen name="add_event_view_event_title_max_height">160dp</dimen>
     <dimen name="add_event_view_header_padding_top">16dp</dimen>
     <dimen name="add_event_view_header_padding_bottom">24dp</dimen>
+    <dimen name="add_event_view_header_spacing">22dp</dimen>
     <dimen name="add_event_view_padding_start">30dp</dimen>
     <dimen name="add_event_view_padding_end">20dp</dimen>
     <dimen name="add_event_view_img_padding_start">16dp</dimen>

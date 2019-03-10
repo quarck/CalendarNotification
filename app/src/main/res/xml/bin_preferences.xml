@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:key="keep_history_days"
+        android:title="@string/bin_size"
+        android:summary="@string/bin_size_summary"
+        android:dependency="keep_history"
+        android:numeric="integer"
+        android:defaultValue="3"
+        />
+
+</PreferenceScreen>

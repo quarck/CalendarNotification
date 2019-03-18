@@ -97,17 +97,17 @@ class SettingsActivity : PreferenceActivity() {
             delegate.invalidateOptionsMenu()
 
     override fun onBuildHeaders(target: List<PreferenceActivity.Header>) =
-            loadHeadersFromResource(R.xml.preference_headers, target);
+            loadHeadersFromResource(R.xml.preference_headers, target)
 
     override fun isValidFragment(fragmentName: String) = true
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        if (android.R.id.home == item?.getItemId()) {
-            finish();
-            return true;
-        }
+//        if (android.R.id.home == item?.itemId) {
+//            finish()
+//            return true
+//        }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 }

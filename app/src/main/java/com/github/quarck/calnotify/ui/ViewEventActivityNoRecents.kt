@@ -46,6 +46,7 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Handler
 import android.support.v4.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
@@ -319,7 +320,9 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         val colorDrawable = ColorDrawable(color)
         findOrThrow<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
 
-        window.statusBarColor = color.scaleColor(0.7f)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = color.scaleColor(0.7f)
+        }
 
 //        val shouldOfferMove = (!event.isRepeating) && (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
         val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
@@ -603,8 +606,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
                     val time = Calendar.getInstance()
                     time.timeInMillis = state.timeAMillis
-                    time.set(Calendar.HOUR_OF_DAY, timePicker.hour)
-                    time.set(Calendar.MINUTE, timePicker.minute)
+                    time.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+                    time.set(Calendar.MINUTE, timePicker.minuteCompat)
 
                     state.timeBMillis = time.timeInMillis
                 }
@@ -720,9 +723,11 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedDatePicker
         snoozeUntil_DatePicker = datePicker
 
-        val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1)
-            snoozeUntil_DatePicker?.firstDayOfWeek = firstDayOfWeek
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val firstDayOfWeek = Settings(this).firstDayOfWeek
+            if (firstDayOfWeek != -1)
+                snoozeUntil_DatePicker?.firstDayOfWeek = firstDayOfWeek
+        }
 
         if (initialValueForDate != 0L) {
             val cal = Calendar.getInstance()
@@ -780,8 +785,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             val cal = Calendar.getInstance()
             cal.timeInMillis = initialTimeValue
 
-            timePicker.hour = cal.get(Calendar.HOUR_OF_DAY)
-            timePicker.minute = cal.get(Calendar.MINUTE)
+            timePicker.hourCompat = cal.get(Calendar.HOUR_OF_DAY)
+            timePicker.minuteCompat = cal.get(Calendar.MINUTE)
         }
 
         val title = dialogTime.findOrThrow<TextView>(R.id.textViewSnoozeUntilDate)
@@ -802,8 +807,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
             // grab time from timePicker + date picker
 
-            date.set(Calendar.HOUR_OF_DAY, timePicker.hour)
-            date.set(Calendar.MINUTE, timePicker.minute)
+            date.set(Calendar.HOUR_OF_DAY, timePicker.hourCompat)
+            date.set(Calendar.MINUTE, timePicker.minuteCompat)
 
             val snoozeFor = date.timeInMillis - System.currentTimeMillis() + Consts.ALARM_THRESHOLD
 

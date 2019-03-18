@@ -34,28 +34,9 @@
         android:summary=""
         />
 
-
-    <header
-        android:fragment="com.github.quarck.calnotify.prefs.fragments.BinSettingsFragment"
-        android:title="@string/bin_setting_group_name"
-        android:summary=""
-        />
-
-
-    <header
-        android:fragment="com.github.quarck.calnotify.prefs.fragments.SmartwatchSettingsFragment"
-        android:title="SMARTWATCH_MOVE_IT"
-        android:summary="" />
-
     <header
         android:fragment="com.github.quarck.calnotify.prefs.fragments.MiscSettingsFragment"
         android:title="@string/misc_settings"
         android:summary="" />
-
-    <!-- ExperimentalFeaturesFragment -->
-    <!-- header
-        android:fragment="com.github.quarck.calnotify.prefs.fragments.ExperimentalFeaturesFragment"
-        android:title="@string/experimental_features"
-        android:summary="" / -->
 
 </preference-headers>

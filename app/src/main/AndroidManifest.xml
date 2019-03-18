@@ -66,7 +66,7 @@
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
-            android:parentActivityName=".ui.SettingsActivityNew"
+            android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity" />

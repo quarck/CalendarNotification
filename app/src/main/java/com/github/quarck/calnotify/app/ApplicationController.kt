@@ -1117,23 +1117,26 @@ object ApplicationController : EventMovedHandler {
 
     fun onReminderAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
 
-        if (getSettings(context).debugAlarmDelays) {
-
+//        if (getSettings(context).debugAlarmDelays) {
+//
             val warningMessage = "Expected: $alarmWasExpectedAt, " +
                     "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
-
-            notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
-        }
+            DevLog.error(LOG_TAG, "Late reminders alarm detected: $warningMessage")
+//
+//            notificationManager.postNotificationsAlarmDelayDebugMessage(context, "Reminder alarm was late!", warningMessage)
+//        }
     }
 
     fun onSnoozeAlarmLate(context: Context, currentTime: Long, alarmWasExpectedAt: Long) {
 
-        if (getSettings(context).debugAlarmDelays) {
-
+//        if (getSettings(context).debugAlarmDelays) {
+//
             val warningMessage = "Expected: $alarmWasExpectedAt, " +
                     "received: $currentTime, ${(currentTime - alarmWasExpectedAt) / 1000L}s late"
 
-            notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
-        }
+            DevLog.error(LOG_TAG, "Late snooze alarm detected: $warningMessage")
+
+//            notificationManager.postNotificationsSnoozeAlarmDelayDebugMessage(context, "Snooze alarm was late!", warningMessage)
+//        }
     }
 }

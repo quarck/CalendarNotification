@@ -291,33 +291,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (numActiveEvents > 0) {
 
-                if (settings.separateReminderNotification) {
-
-                    // TODO: test if this is necessary
-                    if (itIsAfterQuietHoursReminder && settings.ledNotificationOn)
-                        postEventNotifications(context, EventFormatter(context), true, null) // Re-post everything to enable LEDs
-
-                    postReminderNotification(
-                            context,
-                            numActiveEvents,
-                            lastStatusChange,
-                            notificationSettings,
-                            isQuietPeriodActive,
-                            itIsAfterQuietHoursReminder,
-                            hasActiveAlarms
-                    )
-                }
-                else {
-                    fireEventReminderNoSeparateNotification(
-                            context,
-                            db,
-                            EventFormatter(context),
-                            settings,
-                            notificationSettings,
-                            isQuietPeriodActive,
-                            activeEvents
-                    )
-                }
+                fireEventReminderNoSeparateNotification(
+                        context,
+                        db,
+                        EventFormatter(context),
+                        settings,
+                        notificationSettings,
+                        isQuietPeriodActive,
+                        activeEvents
+                )
 
                 wakeScreenIfRequired(context, settings)
             }
@@ -764,16 +746,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         isQuietPeriodActive)
 
                 if (event.snoozedUntil + Consts.ALARM_THRESHOLD < currentTime) {
-
-                    val warningMessage = "snooze alarm is very late: expected at ${event.snoozedUntil}, " +
-                            "received at $currentTime, late by ${currentTime - event.snoozedUntil} us"
-
-                    DevLog.warn(LOG_TAG, warningMessage)
-
-                    if (settings.debugAlarmDelays)
-                        postNotificationsAlarmDelayDebugMessage(context,
-                                "Snooze alarm was late!", "Late by ${(currentTime - event.snoozedUntil) / 1000L}s")
-
+                    DevLog.warn(LOG_TAG, "Warning: snooze alarm is very late: expected at ${event.snoozedUntil}, " +
+                            "received at $currentTime, late by ${currentTime - event.snoozedUntil} us")
                 }
                 // Update Db to indicate that event is currently displayed and no longer snoozed
                 // Since it is displayed now -- it is no longer snoozed, set snoozedUntil to zero
@@ -1484,15 +1458,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
                                 NotificationCompat.CATEGORY_EVENT
                         )
 
-        if (settings.useBundledNotifications) {
+        val notificationSettings = settings.loadNotificationSettings()
+
+        if (notificationSettings.useBundledNotifications) {
             builder.setGroup(NOTIFICATION_GROUP)
         }
 
-        if (settings.ledNotificationOn && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
-            if (settings.ledPattern.size == 2)
-                builder.setLights(settings.ledColor, settings.ledPattern[0], settings.ledPattern[1])
+        if (notificationSettings.led.on && (!isQuietPeriodActive || !settings.quietHoursMuteLED)) {
+            if (notificationSettings.led.pattern.size == 2)
+                builder.setLights(notificationSettings.led.colour, notificationSettings.led.pattern[0], notificationSettings.led.pattern[1])
             else
-                builder.setLights(settings.ledColor, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+                builder.setLights(notificationSettings.led.colour, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
         }
 
         val notification = builder.build()

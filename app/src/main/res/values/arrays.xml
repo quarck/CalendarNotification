@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array
-        name="pref_vibration_pattern_entries">
+    <string-array name="pref_vibration_pattern_entries">
         <item>Single Long</item>
         <item>Single Very Long</item>
         <item>Short Short Short</item>
@@ -10,8 +9,7 @@
         <item>Short Short Short Long</item>
     </string-array>
 
-    <string-array
-        name="pref_vibration_pattern_values">
+    <string-array name="pref_vibration_pattern_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -20,8 +18,7 @@
     </string-array>
 
 
-    <string-array
-        name="days_of_week_entries">
+    <string-array name="days_of_week_entries">
         <item>Monday</item>
         <item>Tuesday</item>
         <item>Wednesday</item>
@@ -31,8 +28,7 @@
         <item>Sunday</item>
     </string-array>
 
-    <integer-array
-        name="days_of_week_values">
+    <string-array name="days_of_week_values">
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -40,7 +36,7 @@
         <item>6</item>
         <item>7</item>
         <item>1</item>
-    </integer-array>
+    </string-array>
 
     <integer-array
         name="default_reminder_intervals_milliseconds_values">
@@ -55,8 +51,7 @@
         <item>-1</item>
     </integer-array>
 
-    <integer-array
-        name="default_reminder_intervals_all_day_seconds_values">
+    <integer-array name="default_reminder_intervals_all_day_seconds_values">
         <item>-2147483648</item>     <!-- since both negative and positive values are legal here, -2^31 is used as an indicator for 'enter manually' -->
         <item>57600</item>
         <item>43200</item>

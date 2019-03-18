@@ -118,10 +118,12 @@
         android:key="_notifications_advanced">
 
         <CheckBoxPreference
-            android:key="notification_opens_snooze"
-            android:title="@string/notfication_opens_snooze"
-            android:summary="@string/notfication_opens_snooze_summary"
-            android:defaultValue="true" />
+            android:key="open_calendar_from_snooze"
+            android:title="@string/open_calendar_from_snooze_title"
+            android:summary="@string/open_calendar_from_snooze_summary"
+            android:defaultValue="true"
+            />
+
 
          <com.github.quarck.calnotify.prefs.MaxNotificationsPreference
             android:key="max_notifications_before_collapse"

@@ -331,10 +331,6 @@ class CalendarMonitorManual(
 
             if (special != null)
                 ApplicationController.registerNewEvent(context, special) // not posting it in the notifications
-
-            if (settings.debugAlarmDelays)  {
-                ApplicationController.postNearlyMissedNotificationDebugMessage(context)
-            }
         }
 
         // Finally - find the next nearest alert

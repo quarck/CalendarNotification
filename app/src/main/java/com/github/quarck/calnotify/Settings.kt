@@ -82,9 +82,6 @@ data class NotificationBehaviorSettings (
         val allowNotificationSwipe: Boolean,
         val notificationSwipeDoesSnooze: Boolean,
 
-        val allowGroupNotificationSwipe: Boolean,
-        val groupNotificationSwipeDoesSnooze: Boolean,
-
         val enableNotificationMute: Boolean,
         val notificationOpensSnooze: Boolean
 )
@@ -147,12 +144,12 @@ class Settings(context: Context) : PersistentStorageBase(context) {
             return ret;
         }
 
-    val firstNonNegativeSnoozeTime: Long
-        get() {
-            val result = snoozePresets.firstOrNull { snoozeTimeInMillis -> snoozeTimeInMillis >= 0 }
-            return result ?: Consts.DEFAULT_SNOOZE_TIME
-        }
-
+//    val firstNonNegativeSnoozeTime: Long
+//        get() {
+//            val result = snoozePresets.firstOrNull { snoozeTimeInMillis -> snoozeTimeInMillis >= 0 }
+//            return result ?: Consts.DEFAULT_SNOOZE_TIME
+//        }
+//
     private fun loadRingtoneUri(settingsKey: String): Uri? {
 
         val ringtoneNotSetValue = "--ringtone-not-set-value--"
@@ -179,9 +176,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     private val reminderCustomRingtone: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
 
-    val notificationUseAlarmStream: Boolean
-        get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
-
+//    val notificationUseAlarmStream: Boolean
+//        get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
+//
     val remindersEnabled: Boolean
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
@@ -191,22 +188,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val remindersIntervalMillisPattern: LongArray
         get() {
             val raw = remindersIntervalMillisPatternRaw
-
-            val ret: LongArray?
-
-            if (!raw.isEmpty()) {
-                ret = PreferenceUtils.parseSnoozePresets(raw)
-            } else {
-                val intervalSeconds = getInt(REMIND_INTERVAL_SECONDS_KEY, 0)
-                if (intervalSeconds != 0) {
-                    ret = longArrayOf(intervalSeconds * 1000L)
-                }
-                else {
-                    val intervalMinutes = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES)
-                    ret = longArrayOf(intervalMinutes * 60L * 1000L)
-                }
-            }
-
+            val ret: LongArray?  = if (!raw.isEmpty()) PreferenceUtils.parseSnoozePresets(raw) else null
             return ret ?: longArrayOf(DEFAULT_REMINDER_INTERVAL_SECONDS * 1000L)
         }
 
@@ -270,7 +252,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = defaultReminderTimeForAllDayEventWithNoreminderMinutes * 60L * 1000L
 
     val manualCalWatchScanWindow: Long
-        get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
+        get() = 30L * 24L * 3600L * 1000L // 1 month by default and only that
 
     val dontShowDeclinedEvents: Boolean
         get() = getBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, false)
@@ -281,12 +263,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val dontShowAllDayEvents: Boolean
         get() = getBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, false)
 
-    var enableMonitorDebug: Boolean
-        get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
-        set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
-
     val firstDayOfWeek: Int
-        get() = getInt(FIRST_DAY_OF_WEEK_KEY, 1)
+        get() = getString(FIRST_DAY_OF_WEEK_KEY, "1").toIntOrNull() ?: 1
 
     val enableCalendarRescan: Boolean
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
@@ -297,13 +275,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
 
-    val forwardReminersToPebble: Boolean
-        get() = getBoolean(FORWARD_REMINDERS_TO_PEBBLE, false)
-
-
-    val postGroupNotification: Boolean
-        get() = getBoolean(GROUP_NOTIFICAITONS, false)
-
     var doNotShowBatteryOptimisationWarning: Boolean
         get() = getBoolean(DO_NOT_SHOW_BATTERY_OPTIMISATION, false)
         set(value) = setBoolean(DO_NOT_SHOW_BATTERY_OPTIMISATION, value)
@@ -313,10 +284,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         return NotificationBehaviorSettings(
             allowNotificationSwipe = getBoolean(ALLOW_NOTIFICATION_SWIPE_KEY, false),
             notificationSwipeDoesSnooze = getBoolean(NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false),
-            allowGroupNotificationSwipe = getBoolean(ALLOW_GROUP_NOTIFICATION_SWIPE_KEY, false),
-            groupNotificationSwipeDoesSnooze = getBoolean(GROUP_NOTIFICATION_SWIPE_DOES_SNOOZE_KEY, false),
             enableNotificationMute = getBoolean(ENABLE_NOTIFICATION_MUTE_KEY, true),
-            notificationOpensSnooze = !getBoolean(SHOW_SNOOZE_BUTTON, false)
+            notificationOpensSnooze = !getBoolean(OPEN_CALENDAR_FROM_SNOOZE_KEY, true)
         )
     }
 
@@ -391,243 +360,23 @@ class Settings(context: Context) : PersistentStorageBase(context) {
             showDescriptionInTheNotification = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false),
             appendEmptyAction = getBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, false),
 
-            useBundledNotifications = getBoolean(GROUP_NOTIFICAITONS, false)
+            useBundledNotifications = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
         )
     }
 
     val alwaysUseExternalEditor: Boolean
         get() = getBoolean(ALWAYS_USE_EXTERNAL_EDITOR, false)
 
-    val notificationsAlwaysCollapsed: Boolean
-        get() = getBoolean(NOTIFICATIONS_ALWAYS_COLLAPSED, false)
-
     var manualQuietPeriodUntil: Long
         get() = getLong(MANUAL_QUIET_PERIOD_UNTIL, 0)
         set(value) = setLong(MANUAL_QUIET_PERIOD_UNTIL, value)
 
-    companion object {
-
-        // Preferences keys
-        private const val SNOOZE_PRESET_KEY = "pref_snooze_presets"
-
-        private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule"
-
-        private const val ENABLE_REMINDERS_KEY = "enable_reminding_key"
-        private const val REMIND_INTERVAL_MINUTES_KEY = "remind_interval_key2"
-        private const val REMIND_INTERVAL_SECONDS_KEY = "remind_interval_key_seconds"
-        private const val REMINDER_INTERVAL_PATTERN_KEY = "remind_interval_key_pattern"
-
-        private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe"
-        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze"
-
-        private const val ALLOW_GROUP_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_group_swipe"
-        private const val GROUP_NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_group_swipe_to_snooze"
-
-
-        private const val MAX_REMINDERS_KEY = "reminder_max_reminders"
-
-        private const val ENABLE_QUIET_HOURS_KEY = "enable_quiet_hours"
-        private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from"
-        private const val QUIET_HOURS_TO_KEY = "quiet_hours_to"
-
-        private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
-
-        private const val VERSION_CODE_FIRST_INSTALLED_KEY = "first_installed_ver"
-
-        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock"
-        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY = "use_set_alarm_clock_for_failback"
-
-        private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
-        private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time"
-        private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_rminder_time"
-
-        private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
-
-        private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events"
-        private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"
-        private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events"
-
-        private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
-
-        private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week_2"
-
-        private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification"
-
-        private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan"
-        private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events"
-
-        private const val DEVELOPER_MODE_KEY = "dev"
-
-        private const val NOTIFICATION_ADD_EMPTY_ACTION_KEY = "add_empty_action_to_the_end"
-
-        private const val FORWARD_REMINDERS_TO_PEBBLE = "forward_reminders_to_pebble"
-
-        private const val SHOW_SNOOZE_BUTTON = "show_snooze_btn_0001"
-
-        private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor_0001"
-
-        private const val GROUP_NOTIFICAITONS = "group_notifications_001"
-
-
-        private const val ENABLE_NOTIFICATION_MUTE_KEY = "enable_notification_mute"
-
-
-        private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas_"
-
-        private const val NOTIFICATIONS_ALWAYS_COLLAPSED = "cxiam_kolapsita"
-
-        private const val MANUAL_QUIET_PERIOD_UNTIL = "manual_quiet_until"
-
-        // Default values
-        internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
-        internal const val DEFAULT_REMINDER_INTERVAL_MINUTES = 10
-        internal const val DEFAULT_REMINDER_INTERVAL_SECONDS = 600
-        internal const val DEFAULT_MAX_REMINDERS = "0"
-
-
-        ///// ///////////
-        private const val DISMISS_ENABLED_KEY = "pref_key_enable_dismiss_button"
-
-        private const val RINGTONE_KEY = "pref_key_ringtone"
-        private const val VIBRATION_ENABLED_KEY = "vibra_on"
-        private const val VIBRATION_PATTERN_KEY = "pref_vibration_pattern"
-        private const val LED_ENABLED_KEY = "notification_led"
-        private const val LED_COLOR_KEY = "notification_led_color"
-        private const val LED_PATTERN_KEY = "notification_led_v2pattern"
-
-        private const val NOTIFICATION_OPENS_SNOOZE_KEY = "notification_opens_snooze"
-        private const val NOTIFICATION_AUTO_DISMISS_DEBUG_KEY = "auto_dismiss_debug"
-        private const val NOTIFICATION_ALARM_DELAYS_DEBUG_KEY = "alarm_delays_debug"
-
-        private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble"
-        private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title"
-        private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification"
-        private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen"
-        private const val NOTIFICATION_TTS_KEY = "notification_tts"
-        private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color"
-
-        private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse"
-        private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything"
-
-        private const val SHOW_CUSTOM_SNOOZE_TIMES_KEY = "show_custom_snooze_and_until"
-
-
-        private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders"
-
-        private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone"
-        private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration"
-        private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone"
-
-        private const val REMINDERS_VIBRATION_ENABLED_KEY = "reminder_vibra_on"
-        private const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern"
-
-        private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary"
-        private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
-        private const val QUIET_HOURS_MUTE_LED = "quiet_hours_mute_led"
-
-        private const val SHOW_NEW_STYLE_MSG_KEY = "show_new_style_message"
-
-        private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days"
-
-        private const val DARKER_CALENDAR_COLORS_KEY = "darker_calendar_colors"
-
-        private const val KEEP_APP_LOGS_KEY = "keep_logs"
-
-        private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications"
-
-        private const val SEPARATE_REMINDER_NOTIFICATION_KEY = "separate_reminder_notification"
-
-        private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration"
-
-        private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze"
-
-        private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description"
-
-        private const val SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY = "show_event_desc_in_the_notification"
-
-    }
-
-
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-    //// OLD SETTINGS HERE
-
     val defaultNewEventDurationMinutes: Int
         get() = getString(ADD_EVENT_DEFAULT_DURATION_KEY, "").toIntOrNull() ?: 30
 
-    val showDismissButtonDepricated: Boolean
-        get() = getBoolean(DISMISS_ENABLED_KEY, true)
-
-
-    val snoozeTapOpensCalendar: Boolean
-        get() = getBoolean(OPEN_CALENDAR_FROM_SNOOZE_KEY, true)
-
-    val snoozeHideEventDesc: Boolean
-        get() = getBoolean(SNOOZE_HIDE_EVENT_DESC_KEY, false)
-
-    val vibraOn: Boolean
-        get() = getBoolean(VIBRATION_ENABLED_KEY, true)
-
-    val notificationOpensSnooze: Boolean
-        get() = getBoolean(NOTIFICATION_OPENS_SNOOZE_KEY, false)
-
-    var debugNotificationAutoDismiss: Boolean
-        get() = getBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, false)
-        set(value) = setBoolean(NOTIFICATION_AUTO_DISMISS_DEBUG_KEY, value)
-
-    var debugAlarmDelays: Boolean
-        get() = getBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, false)
-        set(value) = setBoolean(NOTIFICATION_ALARM_DELAYS_DEBUG_KEY, value)
-
-    val ledNotificationOn: Boolean
-        get() = getBoolean(LED_ENABLED_KEY, true)
-
-    val ledColor: Int
-        get() = getInt(LED_COLOR_KEY, Consts.DEFAULT_LED_COLOR)
-
-    val ledPattern: IntArray
-        get() =
-            getString(LED_PATTERN_KEY, Consts.DEFAULT_LED_PATTERN)
-                    .split(",")
-                    .map { it.toInt() }
-                    .toIntArray()
-
-    val forwardEventToPebble: Boolean
-        get() = getBoolean(FORWARD_TO_PEBBLE_KEY, false)
-
-    val pebbleOldFirmware: Boolean
-        get() = getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false)
-
-    val forwardReminderToPebble: Boolean
-        get() = getBoolean(PEBBLE_FORWARD_REMINDERS_KEY, false)
-
-    val headsUpNotification: Boolean
-        get() = getBoolean(HEADS_UP_NOTIFICATINO_KEY, true)
 
     val notificationWakeScreen: Boolean
         get() = getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
-
-    val showColorInNotification: Boolean
-        get() = getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true)
-
-    val notificationPlayTts: Boolean
-        get() = getBoolean(NOTIFICATION_TTS_KEY, false)
-
-    val showCustomSnoozeAndUntil: Boolean
-        get() = getBoolean(SHOW_CUSTOM_SNOOZE_TIMES_KEY, true)//
-
 
     val reminderCustomVibra: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_VIBRATION_KEY, false)
@@ -650,59 +399,92 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val collapseEverything: Boolean
         get() = getBoolean(NOTIFICATION_COLLAPSE_EVERYTHING_KEY, false)
 
-    val separateReminderNotification: Boolean
-        get() = getBoolean(SEPARATE_REMINDER_NOTIFICATION_KEY, false)
-
-    val remindersIntervalMillisDepricated1: Long
-        get() = getInt(REMIND_INTERVAL_MINUTES_KEY, DEFAULT_REMINDER_INTERVAL_MINUTES) * 60L * 1000L;
-
-    var remindersIntervalMillisDepricated2: Long
-        get() = getInt(REMIND_INTERVAL_SECONDS_KEY, DEFAULT_REMINDER_INTERVAL_SECONDS) * 1000L
-        set(value) = setInt(REMIND_INTERVAL_SECONDS_KEY, (value / 1000L).toInt())
-
-
     val quietHoursMutePrimary: Boolean
         get() = getBoolean(QUIET_HOURS_MUTE_PRIMARY_KEY, false)
 
     val quietHoursMuteLED: Boolean
         get() = getBoolean(QUIET_HOURS_MUTE_LED, false)
 
-    val keepHistoryDays: Int
-        get() = getString(KEEP_HISTORY_DAYS_KEY, "").toIntOrNull() ?: 3
-
-    val keepHistoryMilliseconds: Long
-        get() = keepHistoryDays.toLong() * Consts.DAY_IN_MILLISECONDS
-
-    var showNewStyleMessage: Boolean
-        get() = getBoolean(SHOW_NEW_STYLE_MSG_KEY, true)
-        set(value) = setBoolean(SHOW_NEW_STYLE_MSG_KEY, value)
-
-//    var dontShowMarshmallowWarning: Boolean
-//        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_KEY, false)
-//        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_KEY, value)
-//
-//    var dontShowMarshmallowWarningInSettings: Boolean
-//        get() = getBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, false)
-//        set(value) = setBoolean(HIDE_MARSHMALLOW_WARNING_IN_SETTINGS_KEY, value)
-
-    val defaultReminderTimeForEventWithNoReminder: Long
-        get() = getInt(DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY, 15) * 60L * 1000L
-
-    val defaultReminderTimeForAllDayEventWithNoreminder: Long
-        get() = getInt(DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER, -480) * 60L * 1000L
-
-
-    val shouldKeepLogs: Boolean
-        get() = getBoolean(KEEP_APP_LOGS_KEY, false)
-
-    val useBundledNotifications: Boolean
-        get() = getBoolean(ENABLE_BUNDLED_NOTIFICATIONS_KEY, false)
-
-    val showEventDescInTheNotification: Boolean
-        get() = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false)
-
     val enableNotificationMute: Boolean
         get() = getBoolean(ENABLE_NOTIFICATION_MUTE_KEY, false)
+
+    companion object {
+
+        // Preferences keys
+        private const val VERSION_CODE_FIRST_INSTALLED_KEY = "first_installed_ver"
+
+        private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
+
+        private const val SNOOZE_PRESET_KEY = "pref_snooze_presets" //"15m, 1h, 4h, 1d"
+        private const val VIEW_AFTER_EDIT_KEY = "show_event_after_reschedule" // true
+        private const val ENABLE_REMINDERS_KEY = "enable_reminding_key" // false
+        private const val REMINDER_INTERVAL_PATTERN_KEY = "remind_interval_key_pattern" // "10m"
+        private const val ALLOW_NOTIFICATION_SWIPE_KEY = "pref_key_enable_allow_swipe" // false
+        private const val NOTIFICATION_SWIPE_DOES_SNOOZE_KEY = "pref_key_enable_swipe_to_snooze" // false
+        private const val MAX_REMINDERS_KEY = "reminder_max_reminders" // 0 //
+        private const val ENABLE_QUIET_HOURS_KEY = "enable_quiet_hours" // false
+        private const val QUIET_HOURS_FROM_KEY = "quiet_hours_from" //1320
+        private const val QUIET_HOURS_TO_KEY = "quiet_hours_to" //360
+
+        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock" // true
+        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY = "use_set_alarm_clock_for_failback" // false
+        private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs" // false
+        private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time" // 15
+        private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_rminder_time" // -480
+
+        private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events" // false
+        private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events" // false
+        private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events" // false
+        private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week_2" // "1" (string!)
+        private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification" // false
+        private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan" // true
+        private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events" // false
+        private const val DEVELOPER_MODE_KEY = "dev"
+        private const val NOTIFICATION_ADD_EMPTY_ACTION_KEY = "add_empty_action_to_the_end" // false
+
+        private const val ALWAYS_USE_EXTERNAL_EDITOR = "always_use_external_editor"
+
+        private const val ENABLE_NOTIFICATION_MUTE_KEY = "enable_notification_mute" // false
+
+        private const val DO_NOT_SHOW_BATTERY_OPTIMISATION = "dormi_mi_volas_"
+
+        private const val MANUAL_QUIET_PERIOD_UNTIL = "manual_quiet_until"
+
+        private const val RINGTONE_KEY = "pref_key_ringtone"
+        private const val VIBRATION_ENABLED_KEY = "vibra_on" // true
+        private const val VIBRATION_PATTERN_KEY = "pref_vibration_pattern" // "0"
+        private const val LED_ENABLED_KEY = "notification_led" // true
+        private const val LED_COLOR_KEY = "notification_led_color" //
+        private const val LED_PATTERN_KEY = "notification_led_v2pattern" // "300,2000"
+        private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble" // false
+        private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title" // false
+        private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification" // true
+        private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen" // false
+        private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color" // true  --> must be hard-coded true  -- kill the pref
+        private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse" // 8
+        private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything" // false (change to true)
+        private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders" // false
+        private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone" // false
+        private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration" // false
+        private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone" //
+        private const val REMINDERS_VIBRATION_ENABLED_KEY = "reminder_vibra_on" // true
+        private const val REMINDERS_VIBRATION_PATTERN_KEY = "reminder_pref_vibration_pattern" // 0
+        private const val QUIET_HOURS_MUTE_PRIMARY_KEY = "quiet_hours_mute_primary" // false -- now hard-coded to false must be
+//        private const val QUIET_HOURS_ONE_TIME_REMINDER_ENABLED_KEY = "quiet_hours_one_time_reminder"
+        private const val QUIET_HOURS_MUTE_LED = "quiet_hours_mute_led" // false
+//        private const val KEEP_HISTORY_DAYS_KEY = "keep_history_days" // 3
+        private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications" // false
+        private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration" // 30
+        private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze" // true -- change?
+        //private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description" // false
+        private const val SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY = "show_event_desc_in_the_notification" // false
+
+        // Default values
+        internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
+        internal const val DEFAULT_REMINDER_INTERVAL_MINUTES = 10
+        internal const val DEFAULT_REMINDER_INTERVAL_SECONDS = 600
+        internal const val DEFAULT_MAX_REMINDERS = "0"
+    }
 }
 
 

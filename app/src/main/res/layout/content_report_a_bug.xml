@@ -28,6 +28,7 @@
           android:textStyle="bold"
           android:text="@string/report_any_bugs_or_suggestions_directly_to_github"
           android:clickable="true"
+          android:focusable="true"
           android:onClick="OnButtonEasterEgg"
         />
 
@@ -47,6 +48,7 @@
         />
 
     <TextView
+        android:id="@+id/textViewBugDetailsNotice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"

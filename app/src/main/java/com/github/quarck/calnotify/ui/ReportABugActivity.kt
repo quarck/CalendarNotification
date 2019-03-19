@@ -20,10 +20,12 @@
 package com.github.quarck.calnotify.ui
 
 //import com.github.quarck.calnotify.logs.Logger
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
@@ -43,6 +45,14 @@ class ReportABugActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        val pInfo = packageManager.getPackageInfo(packageName, 0)
+
+        val memoText = resources.getString(R.string.bugs_details).format(
+                "${Build.MANUFACTURER} ${Build.MODEL}",
+                "${Build.VERSION.RELEASE} ${Build.DISPLAY}",
+                "${pInfo.versionName} (${pInfo.versionCode}"
+        )
+        (findViewById(R.id.textViewBugDetailsNotice) as TextView).text = memoText
 
 
         DevLog.debug(LOG_TAG, "onCreate")

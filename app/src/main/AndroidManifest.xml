@@ -115,37 +115,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <!--<activity android:name=".ui.SettingsActivityNew"-->
-            <!--android:label="@string/settings_name"-->
-            <!--android:parentActivityName=".ui.MainActivity"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--/>-->
-
-        <!--<activity android:name=".prefs.activities.BehaviorSettingsActivity"-->
-            <!--android:parentActivityName=".ui.SettingsActivityNew"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:label="@string/app_behavior"-->
-            <!--/>-->
-        <!--<activity android:name=".prefs.activities.MiscSettingsActivity"-->
-            <!--android:parentActivityName=".ui.SettingsActivityNew"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:label="@string/misc_settings"-->
-            <!--/>-->
-        <!--<activity android:name=".prefs.activities.NotificationSettingsActivity"-->
-            <!--android:parentActivityName=".ui.SettingsActivityNew"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:label="@string/notification_settings"-->
-            <!--/>-->
-        <!--<activity android:name=".prefs.activities.QuietHoursSettingsActivity"-->
-            <!--android:parentActivityName=".ui.SettingsActivityNew"-->
-            <!--android:label="@string/quiet_hours_section"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--/>-->
-        <!--<activity android:name=".prefs.activities.SnoozeSettingsActivity"-->
-            <!--android:parentActivityName=".ui.SettingsActivityNew"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:label="@string/snooze_presets"-->
-            <!--/>-->
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -158,11 +127,7 @@
         </provider>
 
         <service android:name=".calendarmonitor.CalendarMonitorService" />
-        <!--<service android:name=".calendarmonitor.CalendarMonitorService" />-->
-        <!--<service android:name=".calendarmonitor.CalendarMonitorOneTimeJobService"-->
-            <!--android:permission="android.permission.BIND_JOB_SERVICE"/>-->
-        <!--<service android:name=".calendarmonitor.CalendarMonitorPeriodicJobService"-->
-            <!--android:permission="android.permission.BIND_JOB_SERVICE"/>-->
+
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".notification.NotificationActionMuteToggleService" />

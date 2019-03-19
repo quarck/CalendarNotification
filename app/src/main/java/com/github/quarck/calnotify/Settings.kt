@@ -264,7 +264,18 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, false)
 
     val firstDayOfWeek: Int
-        get() = getString(FIRST_DAY_OF_WEEK_KEY, "1").toIntOrNull() ?: 1
+        get() {
+            try {
+                val ret = getString(FIRST_DAY_OF_WEEK_KEY, "1").toIntOrNull()
+                if (ret != null && ret in 1..7) {
+                    return ret
+                }
+            }
+            catch (ex: Exception) {
+                // ignore
+            }
+            return -1
+        }
 
     val enableCalendarRescan: Boolean
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
@@ -435,7 +446,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events" // false
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events" // false
         private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events" // false
-        private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week_2" // "1" (string!)
+        private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week" // "1" (string!)
         private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification" // false
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan" // true
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events" // false

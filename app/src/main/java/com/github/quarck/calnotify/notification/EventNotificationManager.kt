@@ -503,7 +503,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 NotificationCompat.Builder(context)
                         .setContentTitle(title)
                         .setContentText(text)
-                        .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
+                        .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar_multiple)
                         .setPriority(
                                 if (notificationsSettings.headsUpNotification && shouldPlayAndVibrate)
                                     NotificationCompat.PRIORITY_HIGH
@@ -1447,7 +1447,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 NotificationCompat.Builder(context)
                         .setContentTitle(title)
                         .setContentText(text)
-                        .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar)
+                        .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar_multiple)
                         .setPriority(Notification.PRIORITY_LOW) // always LOW regardless of other settings for regular notifications, so it is always last
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)

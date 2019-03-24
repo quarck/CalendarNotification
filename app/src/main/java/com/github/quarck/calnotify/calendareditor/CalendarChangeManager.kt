@@ -35,7 +35,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
         DevLog.info(LOG_TAG, "Request to create an event")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "createEvent: no permissions");
             return -1L;
         }
@@ -80,7 +80,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
         var ret = false
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "moveEvent: no permissions");
             return false;
         }
@@ -160,7 +160,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
     override fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "moveRepeatingAsCopy: no permissions");
             return -1L
         }
@@ -210,7 +210,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
 
     override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "updateEvent: no permissions");
             return false;
         }

@@ -581,7 +581,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "cloneAndMoveEvent: no permissions")
             return -1
         }
@@ -745,7 +745,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to create Event, startTime: ${details.startTime}, endTime: ${details.endTime}, reminder: ${details.reminders}")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "createEvent: no permissions")
             return -1
         }
@@ -872,7 +872,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "moveEvent: no permissions")
             return false
         }
@@ -907,7 +907,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to update event $eventId")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "updateEvent: no permissions")
             return false
         }
@@ -1044,7 +1044,7 @@ object CalendarProvider : CalendarProviderInterface {
 
         DevLog.debug(LOG_TAG, "Request to delete event $eventId")
 
-        if (!PermissionsManager.hasAllPermissions(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
             DevLog.error(LOG_TAG, "deleteEvent: no permissions")
             return false
         }
@@ -1100,7 +1100,7 @@ object CalendarProvider : CalendarProviderInterface {
 //
 //        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
 //
-//        if (!PermissionsManager.hasAllPermissions(context)) {
+//        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
 //            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
 //            return false;
 //        }

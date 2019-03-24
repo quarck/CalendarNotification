@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.AboutActivity"
+    tools:showIn="@layout/activity_car_mode"
+    >
+
+    <TextView
+        android:id="@+id/textViewCarModeComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/secondary_text"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"
+        android:text="@string/car_mode_comment" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_bt_devices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cardview_light_background"
+        android:layout_below="@id/textViewCarModeComment"
+        android:layout_alignParentBottom="true"
+        />
+
+    <TextView
+        android:id="@+id/no_devices_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/secondary_text"
+        android:text="@string/no_known_bluetooth_devices" />
+
+</RelativeLayout>

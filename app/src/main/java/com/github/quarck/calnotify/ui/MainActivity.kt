@@ -222,19 +222,19 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     private fun checkPermissions() {
-        val hasPermissions = PermissionsManager.hasAllPermissions(this)
+        val hasPermissions = PermissionsManager.hasAllCalendarPermissions(this)
 
         //find<TextView>(R.id.no_permissions_view).visibility = if (hasPermissions) View.GONE else View.VISIBLE;
 
         if (!hasPermissions) {
-            if (PermissionsManager.shouldShowRationale(this)) {
+            if (PermissionsManager.shouldShowCalendarRationale(this)) {
 
                 AlertDialog.Builder(this)
                         .setMessage(R.string.application_has_no_access)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
                             _, _ ->
-                            PermissionsManager.requestPermissions(this)
+                            PermissionsManager.requestCalendarPermissions(this)
                         }
                         .setNegativeButton(R.string.exit) {
                             _, _ ->
@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .show()
             }
             else {
-                PermissionsManager.requestPermissions(this)
+                PermissionsManager.requestCalendarPermissions(this)
             }
         }
         else {

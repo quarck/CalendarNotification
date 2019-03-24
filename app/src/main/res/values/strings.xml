@@ -506,6 +506,10 @@
     <string name="open_calendar_from_snooze_title">Tap on title opens calendar</string>
     <string name="open_calendar_from_snooze_summary">Tap on the event title/time on Snooze activity would open details in the calendar application</string>
     <string name="milliseconds_suffix">ms</string>
+    <string name="car_mode_pref_name">Car mode</string>
+    <string name="title_car_mode_activity">Car Mode</string>
+    <string name="no_known_bluetooth_devices">No known Bluetooth devices</string>
+    <string name="car_mode_comment">Select BT devices to automatically trigger silent mode when device is connected:</string>
 
 </resources>
 

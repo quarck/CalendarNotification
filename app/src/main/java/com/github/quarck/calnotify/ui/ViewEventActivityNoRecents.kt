@@ -169,7 +169,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        if (!PermissionsManager.hasAllPermissions(this)) {
+        if (!PermissionsManager.hasAllCalendarPermissions(this)) {
             finish()
             return
         }

@@ -14,6 +14,10 @@
 
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- this is also required for BlueTooth - according to google bluetooth device discovery can be used for coarse location -->
+
+
     <application
         android:name=".GlobalState"
         android:allowBackup="true"
@@ -70,6 +74,18 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.github.quarck.calnotify.prefs.CalendarsActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".prefs.CarModeActivity"
+            android:label="@string/title_car_mode_activity"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="com.github.quarck.calnotify.prefs.CarModeActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -29,7 +29,7 @@ import android.support.v4.content.ContextCompat
 
 object PermissionsManager {
     private fun Context.hasPermission(perm: String) =
-            ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED;
+            ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
 
     private fun Activity.shouldShowRationale(perm: String) =
             ActivityCompat.shouldShowRequestPermissionRationale(this, perm)
@@ -40,8 +40,12 @@ object PermissionsManager {
     fun hasReadCalendarNoCache(context: Context)
             = context.hasPermission(Manifest.permission.READ_CALENDAR)
 
+    fun hasCoarseLocationNoCache(context: Context)
+            = context.hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+
     private var hasWriteCalendarCached: Boolean = false
     private var hasReadCalendarCached: Boolean = false
+    private var hasAccessCoarseLocationCached: Boolean = false
 
     fun hasWriteCalendar(context: Context): Boolean {
         if (!hasWriteCalendarCached)
@@ -55,15 +59,27 @@ object PermissionsManager {
         return hasReadCalendarCached
     }
 
-    fun hasAllPermissions(context: Context) = hasWriteCalendar(context) && hasReadCalendar(context)
+    fun hasAccessCoarseLocation(context: Context): Boolean {
+        if (!hasAccessCoarseLocationCached)
+            hasAccessCoarseLocationCached = hasCoarseLocationNoCache(context)
+        return hasAccessCoarseLocationCached
+    }
 
-    fun hasAllPermissionsNoCache(context: Context) = hasWriteCalendarNoCache(context) && hasReadCalendarNoCache(context)
+    fun hasAllCalendarPermissions(context: Context) = hasWriteCalendar(context) && hasReadCalendar(context)
 
-    fun shouldShowRationale(activity: Activity) =
-            activity.shouldShowRationale(Manifest.permission.WRITE_CALENDAR)
-                    || activity.shouldShowRationale(Manifest.permission.READ_CALENDAR)
+    fun hasAllCalendarPermissionsNoCache(context: Context) = hasWriteCalendarNoCache(context) && hasReadCalendarNoCache(context)
 
-    fun requestPermissions(activity: Activity) =
+    fun shouldShowCalendarRationale(activity: Activity) =
+            activity.shouldShowRationale(Manifest.permission.WRITE_CALENDAR) || activity.shouldShowRationale(Manifest.permission.READ_CALENDAR)
+
+    fun shouldShowLocationRationale(activity: Activity) =
+            activity.shouldShowRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    fun requestCalendarPermissions(activity: Activity) =
             ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR), 0)
+
+    fun requestLocationPermissions(activity: Activity) =
+            ActivityCompat.requestPermissions(activity,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 0)
 }

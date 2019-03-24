@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/linearLayoutBluetoothDeviceListEntry"
+    >
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="___DEVICE_NAME__"
+        android:id="@+id/checkBoxBTDeviceSelection"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/primary_text"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewDeviceMac"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="FE:E1:DE:AD:0A:0A"
+
+        android:textColor="@color/primary_text"
+        android:layout_marginStart="8dp"
+
+        android:paddingStart="40dp"
+        android:paddingEnd="15dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="10dp"
+        />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:visibility="gone" />
+
+</LinearLayout>

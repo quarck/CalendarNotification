@@ -90,7 +90,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             return
         }
 
-        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -134,7 +134,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
-        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -240,7 +240,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
 
 
-        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -277,7 +277,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onRescanFromService(context: Context) {
 
-        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return

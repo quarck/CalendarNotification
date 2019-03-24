@@ -39,4 +39,12 @@
         android:title="@string/misc_settings"
         android:summary="" />
 
+    <header
+        android:title="@string/car_mode_pref_name"
+        android:summary="">
+        <intent
+            android:action="com.github.quarck.calnotify.prefs.CarModeActivity"/>
+    </header>
+
+
 </preference-headers>

@@ -19,15 +19,18 @@
 
 package com.github.quarck.calnotify.quiethours
 
+import android.content.Context
 import com.github.quarck.calnotify.Settings
+import com.github.quarck.calnotify.bluetooth.BTDeviceManager
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.DateTimeUtils
 import com.github.quarck.calnotify.utils.addDays
 import java.util.*
 
-object QuietHoursManager : QuietHoursManagerInterface {
-    private const val LOG_TAG = "QuietPeriodManager"
+class QuietHoursManager (val ctx: Context) : QuietHoursManagerInterface {
+
+    private val btDeviceManager: BTDeviceManager by lazy { BTDeviceManager(ctx) }
 
     private fun isEnabled(settings: Settings)
             = settings.quietHoursEnabled && (settings.quietHoursFrom != settings.quietHoursTo)
@@ -56,7 +59,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
         var ret = 0L
 
         val currentTime = if (time != 0L) time else System.currentTimeMillis()
-        var manualEnd = settings.manualQuietPeriodUntil
+        var manualEnd = Math.max(settings.manualQuietPeriodUntil, btDeviceManager.carModeSilentUntil)
         if (manualEnd < currentTime) {
             manualEnd = 0L
         }
@@ -121,7 +124,7 @@ object QuietHoursManager : QuietHoursManagerInterface {
 
     override fun getSilentUntil(settings: Settings, currentTimes: LongArray): LongArray {
 
-        val manualEndValue = settings.manualQuietPeriodUntil
+        val manualEndValue = Math.max(settings.manualQuietPeriodUntil, btDeviceManager.carModeSilentUntil)
 
         val tmp = LongArray(currentTimes.size)
 
@@ -204,5 +207,9 @@ object QuietHoursManager : QuietHoursManagerInterface {
         }
 
         return ret
+    }
+
+    companion object {
+        private const val LOG_TAG = "QuietPeriodManager"
     }
 }

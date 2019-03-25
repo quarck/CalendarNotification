@@ -507,7 +507,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 }).toTypedArray()
                     }
 
-            val quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
+            val quietPeriodUntil = QuietHoursManager(this).getSilentUntil(settings)
 
             runOnUiThread {
                 adapter.setEventsToDisplay(events);

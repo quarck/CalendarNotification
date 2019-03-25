@@ -72,7 +72,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                     if (hasActiveAlarms)
                         0L
                     else
-                        QuietHoursManager.getSilentUntil(settings)
+                        QuietHoursManager(context).getSilentUntil(settings)
 
             if (hasActiveAlarms) {
                 DevLog.info(LOG_TAG, "Quiet hours overriden by #alarm tag")

@@ -109,6 +109,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             return
 
         val settings = Settings(context)
+        val quietHoursManager = QuietHoursManager(context)
 
         val notificationSettings = settings.loadNotificationSettings()
         val notificationsSettingsQuiet = notificationSettings.toQuiet()
@@ -121,7 +122,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 isForce = true,
                 wasCollapsed = false,
                 snoozePresetsNotFiltered = settings.snoozePresets,
-                isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L,
+                isQuietPeriodActive = quietHoursManager.getSilentUntil(settings) != 0L,
                 isReminder = false
         )
 
@@ -198,10 +199,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         //
         val settings = Settings(context)
         val behaviorSettings = settings.loadNotificationBehaviorSettings()
+        val quietHoursManager = QuietHoursManager(context)
 
         val currentTime = System.currentTimeMillis()
 
-        val isQuietPeriodActive = QuietHoursManager.getSilentUntil(settings) != 0L
+        val isQuietPeriodActive = quietHoursManager.getSilentUntil(settings) != 0L
 
         var updatedAnything = false
 
@@ -273,7 +275,8 @@ class EventNotificationManager : EventNotificationManagerInterface {
     override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean) {
 
         val settings = Settings(context)
-        val isQuietPeriodActive = !hasActiveAlarms && (QuietHoursManager.getSilentUntil(settings) != 0L)
+        val quietHoursManager = QuietHoursManager(context)
+        val isQuietPeriodActive = !hasActiveAlarms && (quietHoursManager.getSilentUntil(settings) != 0L)
 
         EventsStorage(context).use {
             db ->

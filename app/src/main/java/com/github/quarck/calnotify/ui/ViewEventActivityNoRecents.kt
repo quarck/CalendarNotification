@@ -238,7 +238,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             snoozePresets = snoozePresets.filter { it > 0L }.toLongArray()
 
         val isQuiet =
-                QuietHoursManager.isInsideQuietPeriod(
+                QuietHoursManager(this).isInsideQuietPeriod(
                         settings,
                         snoozePresets.map { it -> currentTime + it }.toLongArray())
 

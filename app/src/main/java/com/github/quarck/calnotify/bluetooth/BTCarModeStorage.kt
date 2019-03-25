@@ -15,6 +15,8 @@ class BTCarModeStorage(private val ctx: Context) : PersistentStorageBase(ctx, PR
             carModeTriggerDevicesRaw = value.joinToString (",")
         }
 
+    var carModeSilentUntil by LongProperty(0, "B")
+
     companion object {
         const val PREFS_NAME: String = "car_mode_state"
     }

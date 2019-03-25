@@ -27,12 +27,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewDeviceMac"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="FE:E1:DE:AD:0A:0A"
+        android:text="__mi_estas_adreso__"
 
         android:textColor="@color/primary_text"
         android:layout_marginStart="8dp"
 
-        android:paddingStart="40dp"
+        android:paddingStart="56dp"
         android:paddingEnd="15dp"
         android:paddingTop="0dp"
         android:paddingBottom="10dp"

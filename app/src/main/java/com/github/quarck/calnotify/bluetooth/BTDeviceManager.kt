@@ -1,9 +1,8 @@
 package com.github.quarck.calnotify.bluetooth
 
 import android.bluetooth.*
-import android.bluetooth.BluetoothProfile.GATT
-import android.bluetooth.BluetoothProfile.STATE_CONNECTED
 import android.content.Context
+import com.github.quarck.calnotify.Consts
 
 data class BTDeviceSummary(val name: String, val address: String, val currentlyConnected: Boolean)
 
@@ -32,9 +31,30 @@ class BTDeviceManager(val ctx: Context){
     fun isDeviceConnected(dev: BTDeviceSummary): Boolean =
             adapter?.getRemoteDevice(dev.address)?.let { isDeviceConnected(it) } ?: false
 
-    fun hasCarModeTriggersConnected(): Boolean =
-            storage.carModeTriggerDevices.any { isDeviceConnected(it) }
+    private val hasCarModeTriggersConnected: Boolean
+        get() = storage.carModeTriggerDevices.any { isDeviceConnected(it) }
 
-    //
 
+    val carModeSilentUntil: Long
+        get() {
+            val lastCachedValue = storage.carModeSilentUntil
+            val now = System.currentTimeMillis()
+
+            if (now + Consts.MINUTE_IN_MILLISECONDS < lastCachedValue ) {
+                return lastCachedValue
+            }
+
+            try {
+                if (!hasCarModeTriggersConnected) {
+                    return 0
+                }
+            }
+            catch (ex: Exception) {
+                return 0
+            }
+
+            val newValue = now + Consts.CAR_MODE_SLEEP_QUANTUM
+            storage.carModeSilentUntil = newValue
+            return newValue
+        }
 }

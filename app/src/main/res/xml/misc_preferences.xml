@@ -36,13 +36,13 @@
 
         <CheckBoxPreference
             android:key="forward_to_pebble"
-            android:title="@string/forward_to_pebble"
-            android:summary="@string/forward_to_pebble_summary"
+            android:title="@string/forward_to_pebble2"
+            android:summary="@string/forward_to_pebble_summary2"
             android:defaultValue="false"/>
 
         <CheckBoxPreference
             android:key="pebble_forward_reminders"
-            android:title="@string/pebble_forward_reminders"
+            android:title="@string/pebble_forward_reminders2"
             android:summary="@string/pebble_forward_reminders_summary"
             android:defaultValue="false"/>
 
@@ -50,6 +50,13 @@
             android:key="pebble_text_in_title"
             android:title="@string/pebble_event_text_in_the_title"
             android:summary="@string/pebble_event_text_in_the_title_summary"
+            android:defaultValue="false"
+            android:dependency="forward_to_pebble"/>
+
+        <CheckBoxPreference
+            android:key="pebble_only_alarm_events"
+            android:title="@string/pebble_only_alarms"
+            android:summary="@string/pebble_only_alarms_summary"
             android:defaultValue="false"
             android:dependency="forward_to_pebble"/>
 

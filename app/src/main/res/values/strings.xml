@@ -225,6 +225,7 @@
 
     <string name="notification_behavior">Notification behavior</string>
     <string name="pebble_forward_reminders">Forward reminders to pebble</string>
+    <string name="pebble_forward_reminders2">Forward reminders to PebbleAPI</string>
     <string name="pebble_forward_reminders_summary">By default only original event notifications are forwarded</string>
 
     <string name="exit">Exit</string>
@@ -497,6 +498,10 @@
     <string name="pebble">Pebble</string>
     <string name="forward_to_pebble">Forward to Pebble</string>
     <string name="forward_to_pebble_summary">If you have Pebble Smart Watch - this will enable app to forward notifications to your Pebble</string>
+
+    <string name="forward_to_pebble2">Forward to PebbleAPI</string>
+    <string name="forward_to_pebble_summary2">Works together with GadgetBridge to forward event notification to your smart device</string>
+
     <string name="pebble_event_text_in_the_title">Event text in the title</string>
     <string name="pebble_event_text_in_the_title_summary">Useful for old pebble firmwares</string>
     <string name="custom_snooze_options_title">Custom snooze options</string>
@@ -510,6 +515,8 @@
     <string name="title_car_mode_activity">Car Mode</string>
     <string name="no_known_bluetooth_devices">No known Bluetooth devices</string>
     <string name="car_mode_comment">Select BT devices to automatically trigger silent mode when device is connected:</string>
+    <string name="pebble_only_alarms">PebbleAPI - only #alarm-s</string>
+    <string name="pebble_only_alarms_summary">Only forward #alarm events to PebbleAPI</string>
 
 </resources>
 

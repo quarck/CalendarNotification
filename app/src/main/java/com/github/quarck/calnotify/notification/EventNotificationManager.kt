@@ -570,8 +570,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 reminderState.quietHoursOneTimeReminderEnabled = true
         }
 
-        if (shouldPlayAndVibrate && notificationsSettings.pebble.forwardEventToPebble)
-            PebbleUtils.forwardNotificationToPebble(context, title, "", true)
+        if (shouldPlayAndVibrate && notificationsSettings.pebble.forwardEventToPebble) {
+            if (!notificationsSettings.pebble.forwardOnlyAlarms || hasAlarms) {
+                PebbleUtils.forwardNotificationToPebble(context, title, "", true)
+            }
+        }
 
         return postedNotification
     }
@@ -810,132 +813,132 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return sb.reverse().toString()
     }
 
-    @Suppress("DEPRECATION")
-    private fun postReminderNotification(
-            ctx: Context,
-            numActiveEvents: Int,
-            lastStatusChange: Long,
-            notificationSettings: NotificationSettings,
-            isQuietPeriodActive: Boolean,
-            itIsAfterQuietHoursReminder: Boolean,
-            forceAlarmStream: Boolean
-    ) {
-        val notificationManager = NotificationManagerCompat.from(ctx)
-
-        val intent = Intent(ctx, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(ctx, MAIN_ACTIVITY_REMINDER_CODE, intent, 0)
-
-        val persistentState = ctx.persistentState
-
-        val currentTime = System.currentTimeMillis()
-        val msAgo: Long = (currentTime - persistentState.notificationLastFireTime)
-
-        val resources = ctx.resources
-
-        val title =
-                when {
-                    itIsAfterQuietHoursReminder ->
-                        resources.getString(R.string.reminder_after_quiet_time)
-                    numActiveEvents == 1 ->
-                        resources.getString(R.string.reminder_you_have_missed_event)
-                    else ->
-                        resources.getString(R.string.reminder_you_have_missed_events)
-                }
-
-        var text = ""
-
-        if (!itIsAfterQuietHoursReminder) {
-
-            val currentReminder = ReminderState(ctx).numRemindersFired + 1
-            val totalReminders = Settings(ctx).maxNumberOfReminders
-
-            val textTemplate = resources.getString(R.string.last_notification_s_ago)
-
-            text = String.format(textTemplate,
-                    EventFormatter(ctx).formatTimeDuration(msAgo),
-                    currentReminder, totalReminders)
-        }
-        else {
-            val textTemplate = resources.getString(R.string.last_event_s_ago)
-
-            text = String.format(textTemplate,
-                    EventFormatter(ctx).formatTimeDuration(msAgo))
-        }
-
-        val builder = NotificationCompat.Builder(ctx)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setSmallIcon(R.drawable.stat_notify_calendar)
-                .setPriority(
-                        NotificationCompat.PRIORITY_LOW
-                )
-                .setContentIntent(
-                        pendingIntent
-                )
-                .setAutoCancel(true)
-                .setOngoing(false)
-                .setStyle(
-                        NotificationCompat.BigTextStyle().bigText(text)
-                )
-                .setWhen(
-                        lastStatusChange
-                )
-                .setShowWhen(false)
-                .setSortKey(
-                        lastStatusChangeToSortingKey(lastStatusChange, 0)
-                )
-                .setCategory(
-                        NotificationCompat.CATEGORY_REMINDER
-                )
-                .setOnlyAlertOnce(false)
-
-        if (notificationSettings.ringtoneUri != null
-                && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
-
-            lastSoundTimestamp = currentTime
-
-            if (notificationSettings.useAlarmStreamForEverything || forceAlarmStream)
-                builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
-            else
-                builder.setSound(notificationSettings.ringtoneUri)
-        }
-
-        if (notificationSettings.vibration.on
-                && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
-
-            lastVibrationTimestamp = currentTime
-
-            builder.setVibrate(notificationSettings.vibration.pattern)
-        }
-        else {
-            builder.setVibrate(longArrayOf(0))
-        }
-
-        if (notificationSettings.led.on && (!isQuietPeriodActive || !notificationSettings.quietHoursMuteLED)) {
-            if (notificationSettings.led.pattern.size == 2)
-                builder.setLights(notificationSettings.led.colour, notificationSettings.led.pattern[0], notificationSettings.led.pattern[1])
-            else
-                builder.setLights(notificationSettings.led.colour, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
-        }
-
-        val notification = builder.build()
-
-        try {
-            DevLog.info(LOG_TAG, "adding reminder notification")
-
-            notificationManager.notify(
-                    Consts.NOTIFICATION_ID_REMINDER,
-                    notification
-            )
-        }
-        catch (ex: Exception) {
-            DevLog.error(LOG_TAG, "Exception: ${ex.detailed}")
-        }
-
-        if (notificationSettings.pebble.forwardReminderToPebble) {
-            PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebble.pebbleOldFirmware)
-        }
-    }
+//    @Suppress("DEPRECATION")
+//    private fun postReminderNotification__unused(
+//            ctx: Context,
+//            numActiveEvents: Int,
+//            lastStatusChange: Long,
+//            notificationSettings: NotificationSettings,
+//            isQuietPeriodActive: Boolean,
+//            itIsAfterQuietHoursReminder: Boolean,
+//            forceAlarmStream: Boolean
+//    ) {
+//        val notificationManager = NotificationManagerCompat.from(ctx)
+//
+//        val intent = Intent(ctx, MainActivity::class.java)
+//        val pendingIntent = PendingIntent.getActivity(ctx, MAIN_ACTIVITY_REMINDER_CODE, intent, 0)
+//
+//        val persistentState = ctx.persistentState
+//
+//        val currentTime = System.currentTimeMillis()
+//        val msAgo: Long = (currentTime - persistentState.notificationLastFireTime)
+//
+//        val resources = ctx.resources
+//
+//        val title =
+//                when {
+//                    itIsAfterQuietHoursReminder ->
+//                        resources.getString(R.string.reminder_after_quiet_time)
+//                    numActiveEvents == 1 ->
+//                        resources.getString(R.string.reminder_you_have_missed_event)
+//                    else ->
+//                        resources.getString(R.string.reminder_you_have_missed_events)
+//                }
+//
+//        var text = ""
+//
+//        if (!itIsAfterQuietHoursReminder) {
+//
+//            val currentReminder = ReminderState(ctx).numRemindersFired + 1
+//            val totalReminders = Settings(ctx).maxNumberOfReminders
+//
+//            val textTemplate = resources.getString(R.string.last_notification_s_ago)
+//
+//            text = String.format(textTemplate,
+//                    EventFormatter(ctx).formatTimeDuration(msAgo),
+//                    currentReminder, totalReminders)
+//        }
+//        else {
+//            val textTemplate = resources.getString(R.string.last_event_s_ago)
+//
+//            text = String.format(textTemplate,
+//                    EventFormatter(ctx).formatTimeDuration(msAgo))
+//        }
+//
+//        val builder = NotificationCompat.Builder(ctx)
+//                .setContentTitle(title)
+//                .setContentText(text)
+//                .setSmallIcon(R.drawable.stat_notify_calendar)
+//                .setPriority(
+//                        NotificationCompat.PRIORITY_LOW
+//                )
+//                .setContentIntent(
+//                        pendingIntent
+//                )
+//                .setAutoCancel(true)
+//                .setOngoing(false)
+//                .setStyle(
+//                        NotificationCompat.BigTextStyle().bigText(text)
+//                )
+//                .setWhen(
+//                        lastStatusChange
+//                )
+//                .setShowWhen(false)
+//                .setSortKey(
+//                        lastStatusChangeToSortingKey(lastStatusChange, 0)
+//                )
+//                .setCategory(
+//                        NotificationCompat.CATEGORY_REMINDER
+//                )
+//                .setOnlyAlertOnce(false)
+//
+//        if (notificationSettings.ringtoneUri != null
+//                && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
+//
+//            lastSoundTimestamp = currentTime
+//
+//            if (notificationSettings.useAlarmStreamForEverything || forceAlarmStream)
+//                builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
+//            else
+//                builder.setSound(notificationSettings.ringtoneUri)
+//        }
+//
+//        if (notificationSettings.vibration.on
+//                && (currentTime - lastVibrationTimestamp > Consts.MIN_INTERVAL_BETWEEN_VIBRATIONS)) {
+//
+//            lastVibrationTimestamp = currentTime
+//
+//            builder.setVibrate(notificationSettings.vibration.pattern)
+//        }
+//        else {
+//            builder.setVibrate(longArrayOf(0))
+//        }
+//
+//        if (notificationSettings.led.on && (!isQuietPeriodActive || !notificationSettings.quietHoursMuteLED)) {
+//            if (notificationSettings.led.pattern.size == 2)
+//                builder.setLights(notificationSettings.led.colour, notificationSettings.led.pattern[0], notificationSettings.led.pattern[1])
+//            else
+//                builder.setLights(notificationSettings.led.colour, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+//        }
+//
+//        val notification = builder.build()
+//
+//        try {
+//            DevLog.info(LOG_TAG, "adding reminder notification")
+//
+//            notificationManager.notify(
+//                    Consts.NOTIFICATION_ID_REMINDER,
+//                    notification
+//            )
+//        }
+//        catch (ex: Exception) {
+//            DevLog.error(LOG_TAG, "Exception: ${ex.detailed}")
+//        }
+//
+//        if (notificationSettings.pebble.forwardReminderToPebble) {
+//            PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebble.pebbleOldFirmware)
+//        }
+//    }
 
     @Suppress("unused")
     private fun isNotificationVisible(ctx: Context, event: EventAlertRecord): Boolean {
@@ -1326,7 +1329,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if ((!isReminder && notificationSettings.pebble.forwardEventToPebble) ||
                 (isReminder && notificationSettings.pebble.forwardReminderToPebble)) {
-            PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationTextString, notificationSettings.pebble.pebbleOldFirmware)
+            if (!notificationSettings.pebble.forwardOnlyAlarms || event.isAlarm || forceAlarmStream) {
+                PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationTextString, notificationSettings.pebble.pebbleOldFirmware)
+            }
         }
     }
 

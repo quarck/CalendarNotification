@@ -26,7 +26,6 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
-import com.github.quarck.calnotify.monitorstorage.WasHandledCache
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
 import java.util.*
@@ -105,78 +104,73 @@ class CalendarMonitorManual(
         var numAlertsNotFound = 0
         var numErrors = 0
 
-        WasHandledCache(context).use { wasHandledCache ->
+        for (alert in alerts) {
+            if (alert.wasHandled)
+                continue
 
-            for (alert in alerts) {
-                if (alert.wasHandled)
-                    continue
+            DevLog.info(LOG_TAG, "registerFiredEventsInDB: $alert")
 
-                DevLog.info(LOG_TAG, "registerFiredEventsInDB: $alert")
+            var event: EventAlertRecord? = null
 
-                var event: EventAlertRecord? = null
+            if (!alert.alertCreatedByUs) {
+                // not manually created -- can read directly from the provider!
+                DevLog.info(LOG_TAG, "Alert was not created by the app, so trying to read alert off the provider")
+                event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
 
-                if (!alert.alertCreatedByUs) {
-                    // not manually created -- can read directly from the provider!
-                    DevLog.info(LOG_TAG, "Alert was not created by the app, so trying to read alert off the provider")
-                    event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
+                if (event != null)
+                    numAlertsFound++
+                else
+                    numAlertsNotFound++
+            }
 
-                    if (event != null)
-                        numAlertsFound++
-                    else
-                        numAlertsNotFound++
-                }
+            if (event == null) {
+                DevLog.warn(LOG_TAG, "Alert not found - reading event by ID for details")
 
-                if (event == null) {
-                    DevLog.warn(LOG_TAG, "Alert not found - reading event by ID for details")
-
-                    val calEvent = calendarProvider.getEvent(context, alert.eventId)
-                    if (calEvent != null) {
-                        event = EventAlertRecord(
-                                calendarId = calEvent.calendarId,
-                                eventId = calEvent.eventId,
-                                isAllDay = calEvent.isAllDay,
-                                isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId)
-                                        ?: false,
-                                alertTime = alert.alertTime,
-                                notificationId = 0,
-                                title = calEvent.title,
-                                desc = calEvent.desc,
-                                startTime = calEvent.startTime,
-                                endTime = calEvent.endTime,
-                                instanceStartTime = alert.instanceStartTime,
-                                instanceEndTime = alert.instanceEndTime,
-                                location = calEvent.location,
-                                color = calEvent.color,
-                                lastStatusChangeTime = 0,
-                                snoozedUntil = 0
-                        )
-                    }
-                }
-
-                if (event != null) {
-                    event.origin = EventOrigin.FullManual
-                    event.timeFirstSeen = System.currentTimeMillis()
-
-                    if (!wasHandledCache.getAlertWasHandled(event)) {
-                        pairs.add(Pair(alert, event))
-                    }
-                } else {
-                    DevLog.error(LOG_TAG, "Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
-                    // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
-                    markAlertsAsHandledInDB(context, listOf(alert))
-                    numErrors++
+                val calEvent = calendarProvider.getEvent(context, alert.eventId)
+                if (calEvent != null) {
+                    event = EventAlertRecord(
+                            calendarId = calEvent.calendarId,
+                            eventId = calEvent.eventId,
+                            isAllDay = calEvent.isAllDay,
+                            isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId)
+                                    ?: false,
+                            alertTime = alert.alertTime,
+                            notificationId = 0,
+                            title = calEvent.title,
+                            desc = calEvent.desc,
+                            startTime = calEvent.startTime,
+                            endTime = calEvent.endTime,
+                            instanceStartTime = alert.instanceStartTime,
+                            instanceEndTime = alert.instanceEndTime,
+                            location = calEvent.location,
+                            color = calEvent.color,
+                            lastStatusChangeTime = 0,
+                            snoozedUntil = 0
+                    )
                 }
             }
 
-            if (numAlertsNotFound != 0 || numErrors != 0)
-                DevLog.info(LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
+            if (event != null) {
+                event.origin = EventOrigin.FullManual
+                event.timeFirstSeen = System.currentTimeMillis()
 
-            val pairsToAdd = pairs.filter { (_, event) ->
-                !ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)
+                pairs.add(Pair(alert, event))
+            } else {
+                DevLog.error(LOG_TAG, "Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
+                // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
+                markAlertsAsHandledInDB(context, listOf(alert))
+                numErrors++
             }
-
-            return ApplicationController.registerNewEvents(context, wasHandledCache, pairsToAdd)
         }
+
+        if (numAlertsNotFound != 0 || numErrors != 0)
+            DevLog.info(LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
+
+        val pairsToAdd = pairs.filter { (_, event) ->
+            !ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)
+        }
+
+        return ApplicationController.registerNewEvents(context, pairsToAdd)
     }
 
 

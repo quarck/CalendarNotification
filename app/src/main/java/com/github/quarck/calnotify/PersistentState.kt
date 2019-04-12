@@ -30,8 +30,6 @@ class PersistentState(private val ctx: Context) : PersistentStorageBase(ctx, PRE
 
     var lastCustomSnoozeIntervalMillis by LongProperty(Consts.HOUR_IN_SECONDS * 1000L, "C")
 
-    var lastWasHandledCacheCleanup by LongProperty(0, "D")
-
     companion object {
         const val PREFS_NAME: String = "persistent_state"
     }

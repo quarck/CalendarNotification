@@ -43,8 +43,6 @@ import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.monitorstorage.WasHandledCache
-import com.github.quarck.calnotify.monitorstorage.WasHandledCacheInterface
 import com.github.quarck.calnotify.utils.detailed
 
 
@@ -381,9 +379,9 @@ object ApplicationController : EventMovedHandler {
         else {
             DevLog.debug(LOG_TAG, "event added: ${event.eventId} (cal id: ${event.calendarId})")
 
-            WasHandledCache(context).use {
-                cache -> cache.addHandledAlert(event)
-            }
+//            WasHandledCache(context).use {
+//                cache -> cache.addHandledAlert(event)
+//            }
         }
 
         ReminderState(context).onNewEventFired()
@@ -393,7 +391,7 @@ object ApplicationController : EventMovedHandler {
 
     fun registerNewEvents(
             context: Context,
-            wasHandledCache: WasHandledCacheInterface,
+            //wasHandledCache: WasHandledCacheInterface,
             pairs: List<Pair<MonitorEventAlertEntry, EventAlertRecord>>
     ): ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
 
@@ -520,7 +518,7 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (pairs.size == validPairs.size) {
-            eventsToAdd?.let { wasHandledCache.addHandledAlerts(it) }
+            //eventsToAdd?.let { wasHandledCache.addHandledAlerts(it) }
         }
         else {
             DevLog.warn(LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
@@ -829,22 +827,22 @@ object ApplicationController : EventMovedHandler {
             // This would automatically launch the rescan of calendar and monitor
             calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
 
-            checkAndCleanupWasHandledCache(context)
+            //checkAndCleanupWasHandledCache(context)
         }
     }
 
-    fun checkAndCleanupWasHandledCache(context: Context) {
-
-        val prState = context.persistentState
-        val now = System.currentTimeMillis()
-
-        if (now - prState.lastWasHandledCacheCleanup < Consts.WAS_HANDLED_CACHE_CLEANUP_INTERVALS)
-            return
-
-        WasHandledCache(context).use { it.removeOldEntries( Consts.WAS_HANDLED_CACHE_MAX_AGE_MILLIS )}
-
-        prState.lastWasHandledCacheCleanup = now
-    }
+//    fun checkAndCleanupWasHandledCache(context: Context) {
+//
+//        val prState = context.persistentState
+//        val now = System.currentTimeMillis()
+//
+//        if (now - prState.lastWasHandledCacheCleanup < Consts.WAS_HANDLED_CACHE_CLEANUP_INTERVALS)
+//            return
+//
+//        WasHandledCache(context).use { it.removeOldEntries( Consts.WAS_HANDLED_CACHE_MAX_AGE_MILLIS )}
+//
+//        prState.lastWasHandledCacheCleanup = now
+//    }
 
     fun onTimeChanged(context: Context) {
         alarmScheduler.rescheduleAlarms(context, getSettings(context), getQuietHoursManager(context))

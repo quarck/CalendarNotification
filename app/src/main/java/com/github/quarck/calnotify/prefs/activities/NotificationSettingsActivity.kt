@@ -40,9 +40,9 @@ class NotificationSettingsActivity : AppCompatActivity(){
 
         preferences(this) {
 
-            header(R.string.main_notifications)
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                header(R.string.main_notifications)
 
                 item(R.string.regular_notification_settings) {
                     NotificationChannelManager.launchSystemSettingForChannel(this@NotificationSettingsActivity,
@@ -61,12 +61,12 @@ class NotificationSettingsActivity : AppCompatActivity(){
                             NotificationChannelManager.SoundState.Alarm,
                             false)
                 }
+
+                header(R.string.reminder_notifications)
             }
             else {
-                red_notice(R.string.pre_oreo_notification_channels_explanation)
+                red_notice(R.string.pre_oreo_notification_channels_explanation_v2)
             }
-
-            header(R.string.reminder_notifications)
 
             switch(R.string.enable_reminders, R.string.enable_reminders_summary) {
 

@@ -23,7 +23,8 @@
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
         android:textStyle="bold"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        android:autoLink="web" />
 
     <View
         android:layout_width="match_parent"

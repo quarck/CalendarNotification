@@ -519,6 +519,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
                         .setNumber(numEvents)
                         .setShowWhen(false)
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
         if (shouldPlayAndVibrate) {
             if (notificationsSettings.ringtoneUri != null
@@ -891,6 +892,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 //                        NotificationCompat.CATEGORY_REMINDER
 //                )
 //                .setOnlyAlertOnce(false)
+//                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 //
 //        if (notificationSettings.ringtoneUri != null
 //                && (currentTime - lastSoundTimestamp > Consts.MIN_INTERVAL_BETWEEN_SOUNDS)) {
@@ -977,6 +979,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setWhen(System.currentTimeMillis())
                 .setShowWhen(false)
                 .setNumber(numTotalEvents)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
         if (numTotalEvents > 1) {
             groupBuilder.setSmallIcon(R.drawable.stat_notify_calendar_multiple)
@@ -1120,6 +1123,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setCategory(
                         NotificationCompat.CATEGORY_EVENT
                 )
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
         if (notificationSettings.useBundledNotifications) {
             builder.setGroup(NOTIFICATION_GROUP)
@@ -1465,6 +1469,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setCategory(
                                 NotificationCompat.CATEGORY_EVENT
                         )
+                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
         val notificationSettings = settings.loadNotificationSettings()
 
@@ -1506,6 +1511,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_ERROR)
                 .setLights(Consts.DEFAULT_LED_COLOR, Consts.LED_DURATION_ON, Consts.LED_DURATION_OFF)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
         val notification = builder.build()
 

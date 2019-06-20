@@ -400,8 +400,6 @@
 
     <string name="pre_oreo_notification_channels_explanation">Attention pre-Oreo users:\n\nThis app is running in compatibility mode on your device\n\nMultiple users has requested F-Droid build to be installable on pre-Oreo devices, thus this change was made. But sound / vibration / LED control are all now migrated to notification channel settings which are absent on pre-Oreo devices, so you would not be able to control these. To get these settings back - please revert to an older version (Google Play will serve older version for pre-Oreo devices, or ask me directly).</string>
 
-    <string name="pre_oreo_notification_channels_explanation_v2" translatable="false">Things are changing back. Please wait, it will all be re-stored.</string>
-
     <string name="battery_optimisation_title">Battery optimisation</string>
     <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
     <string name="you_can_do_it">DO IT</string>

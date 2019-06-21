@@ -23,12 +23,12 @@
             android:title="@string/advanced"
             android:key="_snooze_advanced">
 
-                <!--<CheckBoxPreference-->
-                        <!--android:key="snooze_hide_event_description"-->
-                        <!--android:title="@string/snooze_hide_event_description_title"-->
-                        <!--android:summary="@string/snooze_hide_event_description_summary"-->
-                        <!--android:defaultValue="false"-->
-                        <!--/>-->
+                <CheckBoxPreference
+                        android:key="snooze_hide_event_description"
+                        android:title="@string/snooze_hide_event_description_title"
+                        android:summary="@string/snooze_hide_event_description_summary"
+                        android:defaultValue="false"
+                        />
 
                 <CheckBoxPreference
                     android:key="always_use_external_editor"

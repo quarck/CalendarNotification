@@ -307,7 +307,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         }
         title.setTextIsSelectable(true)
 
-        if (event.desc.isNotEmpty()) {
+        if (event.desc.isNotEmpty() && !settings.snoozeHideEventDescription) {
             // Show the event desc
             findOrThrow<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
             findOrThrow<TextView>(R.id.snooze_view_event_description).text = event.desc

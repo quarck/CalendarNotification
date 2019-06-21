@@ -421,6 +421,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val enableNotificationMute: Boolean
         get() = getBoolean(ENABLE_NOTIFICATION_MUTE_KEY, false)
 
+    val snoozeHideEventDescription: Boolean
+        get() = getBoolean(SNOOZE_HIDE_EVENT_DESC_KEY, false)
+
     companion object {
 
         // Preferences keys
@@ -490,7 +493,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val ENABLE_BUNDLED_NOTIFICATIONS_KEY = "pref_enable_bundled_notifications" // false
         private const val ADD_EVENT_DEFAULT_DURATION_KEY = "default_new_event_duration" // 30
         private const val OPEN_CALENDAR_FROM_SNOOZE_KEY = "open_calendar_from_snooze" // true -- change?
-        //private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description" // false
+        private const val SNOOZE_HIDE_EVENT_DESC_KEY = "snooze_hide_event_description" // false
         private const val SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY = "show_event_desc_in_the_notification" // false
 
         // Default values

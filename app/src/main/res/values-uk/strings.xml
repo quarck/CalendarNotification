@@ -6,9 +6,9 @@
     <string name="application_has_no_access">Для роботи цього додатка потрібні спеціальні дозволи для доступу до сповіщень календаря\n\nБудь ласка, надайте дозволи READ_CALENDAR та WRITE_CALENDAR\n\nДозвіл WRITE_CALENDAR необхідний для приховування сповіщень оригінального календаря</string>
     <string name="cancel">Скасувати</string>
     <string name="dismiss">Відхилити</string>
-    <string name="dismiss_event">Відхилити подiю</string> <!-- to distinguish from dismissing the notification -->
+    <string name="dismiss_event">Відхилити подiю</string>
     <string name="snooze">Відкласти</string>
-    <string name="help_feedback">Допомога</string>
+    <string name="help_feedback">Зворотній зв\'язок</string>
     <string name="empty_title">(Без назви)</string>
     <string name="snooze_event_for">Відкласти подію на:</string>
     <string name="snooze_preset_15_min">15 хвилин</string>
@@ -31,7 +31,7 @@
     <string name="snooze_presets">Відкладення</string>
     <string name="error_cannot_parse_preset">Вибачте, неможливо розібрати введені дані</string>
     <string name="snooze_presets_title">Варіанти відкладення</string>
-    <string name="snooze_presets_summary">Тут ви можете змінити стандартні варіанти відкладення</string>
+    <string name="snooze_presets_summary">Змінити стандартні варіанти відкладення</string>
     <string name="error_too_many_presets">Підтримується тільки 6 варіантів, інші будуть проігноровані</string>
     <string name="now">зараз</string>
     <string name="days">дн.</string>
@@ -45,7 +45,7 @@
     <string name="no_events_to_display">Немає активних сповіщень</string>
     <string name="no_calendar_permissions_main">У додатку немає доступу до календаря</string>
     <string name="view_after_edit">Перегляд після зміни</string>
-    <string name="view_after_edit_summary">Увімкнути можливість автоматичного перегляду події в календарі після відкладення часу події</string>
+    <string name="view_after_edit_summary">Увімкнути можливість перегляду події в календарі після відкладення</string>
     <string name="misc_settings">Інші налаштування</string>
     <string name="enable_reminders">Увімкнути нагадування</string>
     <string name="enable_reminders_summary">Якщо увімкнено, додаток буде постійно нагадувати про активні сповіщення</string>
@@ -73,7 +73,6 @@
     <string name="quiet_hours_summary">Під час тихої години буде вимкнуто звук для всіх сповіщень і відкладених подій у зазначений час, крім важливих подій (в залежності від налаштувань)</string>
     <string name="quiet_hours_main_activity_status" formatted="false">Увімкнена тиха година\nБез нагадувань до %s</string>
     <string name="hits_quiet_period">(тиха година)</string>
-    <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
     <string name="for_a_custom_time">Інший період</string>
     <string name="until_specific_time">Вказати дату і час</string>
     <string name="snooze_for">Відкласти на:</string>
@@ -118,7 +117,7 @@
     <string name="choose_time" formatted="false">Відкладено до %s\nЧас відкладення</string>
     <string name="next">Далі</string>
     <string name="until_event_time">До часу події</string>
-    <string name="multiple_events_single_notification">Подій календаря %d</string>
+    <string name="multiple_events_single_notification" formatted="false">Подій календаря %d</string>
     <string name="dismissed_events">Відхилені події</string>
     <string name="deleted_events">Кошик</string>
     <string name="app_behavior">Параметри</string>
@@ -126,7 +125,7 @@
     <string name="dismissed_from_notification" formatted="false">Відхилено у сповіщенні %s</string>
     <string name="event_moved_new_time" formatted="false">Переміщено, новий час: %s</string>
     <string name="restore">Відновити сповіщення</string>
-    <string name="swipe_to_delete">Змахніть, щоб видалити з історії</string>
+    <string name="swipe_to_delete">Свайп для видалення з історії</string>
     <string name="remove_all">Видалити все</string>
     <string name="remove_all_confirmation">Видалити всі записи?</string>
     <string name="title_activity_privacy_policy">Політика конфіденційності</string>
@@ -165,8 +164,9 @@
     <string name="manual_event_rescan_summary">Покращує надійність нагадувань про події та дозволяє обробляти події без нагадувань</string>
     <string name="handle_email_only_events_title">Події з нагадуванням поштою</string>
     <string name="handle_email_only_events_summary">Сповіщати про події з нагадуванням за ел. поштою</string>
-    <string name="notification_behavior">Параметри сповіщення</string>
+    <string name="notification_behavior">Параметри сповіщень</string>
     <string name="pebble_forward_reminders">Відправляти нагадування на Pebble</string>
+    <string name="pebble_forward_reminders2">Відправляти нагадування на PebbleAPI</string>
     <string name="pebble_forward_reminders_summary">За умовчанням будуть відправлятися тільки оригінальні сповіщення</string>
     <string name="exit">Вийти</string>
     <string name="special_thanks_line1">моїй дружині Дарині</string>
@@ -193,21 +193,19 @@
     <string name="days_before">дн., о:</string>
     <string name="remind">За</string>
 
-    <string-array
-        name="default_reminder_intervals">
-        <item>1 хв.</item>
-        <item>15 хв.</item>
-        <item>30 хв.</item>
-        <item>1 год.</item>
-        <item>2 год.</item>
-        <item>4 год.</item>
-        <item>1 дн.</item>
-        <item>1 тиж.</item>
-        <item>Інше</item>
+    <string-array name="default_reminder_intervals">
+        <item>1 хвилина</item>
+        <item>15 хвилин</item>
+        <item>30 хвилин</item>
+        <item>1 година</item>
+        <item>2 години</item>
+        <item>4 години</item>
+        <item>1 день</item>
+        <item>1 тиждень</item>
+        <item>Вказати період</item>
     </string-array>
 
-    <string-array
-        name="default_reminder_intervals_all_day">
+    <string-array name="default_reminder_intervals_all_day">
         <item>Інше</item>
         <item>За день о 8:00</item>
         <item>За день о 12:00</item>
@@ -217,26 +215,25 @@
         <item>За фактом о 12:00</item>
     </string-array>
 
-    <string-array
-        name="default_snooze_intervals">
+    <string-array name="default_snooze_intervals">
         <item>Другое</item>
-        <item>15 хв.</item>
-        <item>30 хв.</item>
-        <item>45 хв.</item>
-        <item>1 год.</item>
-        <item>2 год.</item>
-        <item>3 год.</item>
-        <item>4 год.</item>
-        <item>6 год.</item>
-        <item>8 год.</item>
-        <item>12 год.</item>
-        <item>18 год.</item>
-        <item>1 дн.</item>
-        <item>1.5 дн.</item>
-        <item>2 дн.</item>
-        <item>3 дн.</item>
-        <item>4 дн.</item>
-        <item>7 дн.</item>
+        <item>15 хвилин</item>
+        <item>30 хвилин</item>
+        <item>45 хвилин</item>
+        <item>1 година</item>
+        <item>2 години</item>
+        <item>3 години</item>
+        <item>4 години</item>
+        <item>6 годин</item>
+        <item>8 годин</item>
+        <item>12 годин</item>
+        <item>18 годин</item>
+        <item>1 день</item>
+        <item>1.5 дні</item>
+        <item>2 дні</item>
+        <item>3 дні</item>
+        <item>4 дні</item>
+        <item>7 днів</item>
     </string-array>
 
     <string name="new_event_max_reminder_is_28_days">Максимальний інтервал - 28 днів до події</string>
@@ -269,10 +266,102 @@
     <string name="calendar_handling_options">Параметри календаря</string>
     <string name="create_event">Створити подію</string>
 
-    <string name="snooze_on_swipe">Відкласти при свайпі</string>
-    <string name="snooze_on_swipe_summary">Свайп буде відкладати подію замість її відхилення</string>
+
+    <string name="always_use_extenal_editor">Зовнішній редактор</string>
+    <string name="always_use_external_editor_summary">Використовувати зовнішній редактор для зміни/перегляду події</string>
+    <string name="battery_optimisation_title">Оптимізація акумулятора</string>
+    <string name="battery_optimisation_details">Для коректної роботи рекомендується вимкнути оптимізацію акумулятора для цього додатка (Ця функція Android може перевести додаток в глибокий сон, що призведе до пропуску сповіщень)</string>
+    <string name="you_can_do_it">Зробити це</string>
+    <string name="you_can_do_it_later">Пізніше</string>
+    <string name="you_cannot_do_it">Відхилити</string>
+
+    <string name="always_collapse">Завжди згортати</string>
+    <string name="always_collapse_detail">Завжди згортати кілька сповіщень в одне</string>
+    <string name="start_quiet_hours">Увімк. тиху годину</string>
+    <string name="stop_quiet_hours">Вимк. тиху годину</string>
+    <string name="start_quiet_hours_dialog_title">Увімк. тиху годину на:</string>
+    <string name="report_a_bug">Зворотній зв\'язок</string>
+    <string name="report_any_bugs_or_suggestions_directly_to_github">Повідомляйте про помилки або про пропозиції безпосередньо на github:</string>
+    <string name="bugs_details" formatted="false">При повідомленні про помилку обов\'язково вказуйте:\n\n * device model (%s)\n\n * OS version (%s)\n\n * app version (%s)\n\n * докладний опис проблеми: що очікувалося, що сталося;\n\n * було б дуже корисно, якщо ви зробите logcat відразу після виникнення помилки, але майте на увазі, що деякі ваші додатки можуть іноді залишати особисту інформацію в логе, так що перегляньте двічі, перш ніж відправляти його до загального огляду!</string>
+    <string name="befre_big_notice_on_obligations">БУДЬ ЛАСКА, ЗВЕРНІТЬ УВАГУ:\n\nРозробники зацікавлені в тому, щоб в додатку було якомога менше помилок, а також в реалізації різних корисних функції.\nОДНАК розробники Calendar Notifications Plus не зобов\'язані виправляти всі проблеми, що повідомляються і реалізовувати всі функції, що запитуються.\nМи робимо, що можемо і коли можемо.\nВся робота над додатком ведеться у вільний від роботи та інших життєвих/сімейних обов\'язків час.\nНіхто не отримує за це оплату.</string>
+    <string name="donation_offers_are_rejected">Будь-які пожертвування будуть відхилені</string>
+    <string name="wiki_text">Примітка: деяку корисну інформацію про використання додатка можна знайти на wiki-сторінці:</string>
+
     <string name="calendar">Календар</string>
     <string name="N_calendar_events" formatted="false">Подій %d</string>
+    <string name="snooze_on_swipe">Відкласти при свайпі</string>
+    <string name="snooze_on_swipe_summary">Свайп буде відкладати подію замість її відхилення</string>
 
+    <string name="enable_mute_title">Увімкнути функції \"Без звуку\"</string>
+    <string name="enable_mute_summary">Увімкнути функції \"Без звуку\" для подій:\n *додає кнопку \'Тиша\' до сповіщення \n* додає відповідний функціонал до основного інтерфейсу\nБеззвучні сповіщення будуть без нагадувань, відхилені беззвучні події будуть з\'являтися без звуку і вібрації</string>
+
+    <string name="_100ms">100мс</string>
+    <string name="_2500ms">2500мс</string>
+    <string name="led_on_time">Увімкнення:</string>
+    <string name="led_off_time">Вимкнення:</string>
+    <string name="led_pattern">Шаблон індикації</string>
+    <string name="mute_options">Параметри \"Без звуку\"</string>
+    <string name="default_duration">Тривалість для нових подій</string>
+    <string name="ringtone">Мелодія</string>
+    <string name="vibration">Вібрація</string>
+    <string name="led">Світлодіод</string>
+    <string name="ringtone_selection">Мелодія сповіщення</string>
+    <string name="ringtone_selection_summary">Виберіть мелодію для сповіщення</string>
+
+    <string name="vibra_on">Вібрація</string>
+    <string name="vibration_pattern">Шаблон вібрації</string>
+    <string name="notification_light_summary">Використовувати світлодіод для сповіщення</string>
+    <string name="notification_light_title">Сповіщення світлодіодом</string>
+    <string name="led_color">Колір світлодіода</string>
+    <string name="bundle_notifications_title">Групувати сповіщення</string>
+    <string name="bundle_notifications_summary">Використовувати групування сповіщень для Android 6+</string>
+    <string name="allow_notification_swipe_title">Свайп сповіщень</string>
+    <string name="allow_notification_swipe_summary">Використовувати свайп замість кнопки \'Відхилити\' для відхилення сповіщення</string>
+    <string name="heads_up_notification">Спливаючі сповіщення</string>
+    <string name="heads_up_notification_summary">Показувати спливаючі сповіщення у верхній частині екрану</string>
+    <string name="wake_screen_title">Пробуджувати екран</string>
+    <string name="wake_screen_summary">Пробуджувати екран при сповіщенні</string>
+    <string name="event_color_notification">Колір події у сповіщенні</string>
+    <string name="event_color_notification_summary">Відображати колір події у сповіщенні</string>
+    <string name="advanced">Розширені</string>
+    <string name="notfication_opens_snooze">Відкривати діалог відкладення</string>
+    <string name="notfication_opens_snooze_summary">Увімкніть, якщо ви бажаетє, щоб сповіщення відкривало діалог відкладення\nНатисніть на заголовок події на екрані відкладення, щоб перейти до відповідної події у календарі</string>
+    <string name="max_notifications_before_collapse">Макс. кількість сповіщень</string>
+    <string name="max_notifications_before_collapse_summary">Максимальна кількість сповіщень, що одночасно відображаються\n\nЗауваження: за умовчанням максимальне число обмежено 8, щоб уникнути можливих помилок SystemUI, які трапляються на деяких пристроях.</string>
+    <string name="collapse_everything">Згортати сповіщення</string>
+    <string name="collapse_everything_summary">Згортати сповіщення у одне групове сповіщення, якщо кількість сповіщень перевищує максимально число сповіщень</string>
+    <string name="show_event_desc_in_the_notification_title">Показувати опис події</string>
+    <string name="show_event_desc_in_the_notification_summary">Показувати опис події в сповіщені</string>
+    <string name="notifications_pure_hacks">Твіки</string>
+    <string name="reminders_section">Нагадування</string>
+
+    <string name="quiet_hours_mute_primary">Приглушати важливі сповіщення</string>
+    <string name="quiet_hours_mute_primary_summary">Вимикати звук для важливих сповіщень під час тихої години</string>
+    <string name="quiet_hours_mute_led">Вимикати світлодіод</string>
+    <string name="quiet_hours_mute_led_summary">Не сповіщати світлодіодом під час тихої години</string>
+    <string name="reminder_custom_ringtone">Своя мелодія</string>
+    <string name="reminder_custom_vibration">Своя вібрація</string>
+    <string name="reminder_custom_ringtone_summary">Використовувати свою мелодію для сповіщень</string>
+    <string name="reminder_custom_vibration_summary">Використовувати свою вібрацію для сповіщень</string>
+    <string name="pebble">Pebble</string>
+
+    <string name="forward_to_pebble2">Відправляти на PebbleAPI</string>
+    <string name="forward_to_pebble_summary2">Працює разом з GadgetBridge для відправки сповіщень на пристрій</string>
+
+    <string name="pebble_event_text_in_the_title">Текст події в заголовку</string>
+    <string name="pebble_event_text_in_the_title_summary">Корисно для старих Pebble прошивок</string>
+    <string name="custom_snooze_options_title">Свої налаштування відкладення</string>
+    <string name="custom_snooze_options_summary">Показувати свої налаштування у вікні відкладення</string>
+    <string name="snooze_hide_event_description_title">Приховати опис</string>
+    <string name="snooze_hide_event_description_summary">Не показувати опис події на екрані відкладення</string>
+    <string name="open_calendar_from_snooze_title">Натискання на заголовок</string>
+    <string name="open_calendar_from_snooze_summary">Відкривати календар з описом події після натискання на заголовок/час у вікні відкладення</string>
+    <string name="milliseconds_suffix">мс</string>
+    <string name="car_mode_pref_name">Режим автомобіля</string>
+    <string name="title_car_mode_activity">Режим автомобіля</string>
+    <string name="no_known_bluetooth_devices">Немає пов\'язаних пристроїв</string>
+    <string name="car_mode_comment">Виберіть BT-пристрої для автоматичного увімкнення тихого режиму після підключення:</string>
+    <string name="pebble_only_alarms">PebbleAPI - лише #alarm</string>
+    <string name="pebble_only_alarms_summary">Відправляти на PebbleAPI лише події з тегом #alarm</string>
 </resources>
 

@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array
-        name="days_of_week_entries">
+    <string-array name="pref_vibration_pattern_entries">
+        <item>—</item>
+        <item>————</item>
+        <item>• • •</item>
+        <item>— • • •</item>
+        <item>• • • —</item>
+    </string-array>
+    <string-array name="days_of_week_entries">
         <item>Понеділок</item>
         <item>Вівторок</item>
         <item>Середа</item>
@@ -9,5 +15,14 @@
         <item>П\'ятниця</item>
         <item>Субота</item>
         <item>Неділя</item>
+    </string-array>
+    <string-array name="custom_quiet_hours_interval_names">
+        <item>30 хвилин</item>
+        <item>1 година</item>
+        <item>2 години</item>
+        <item>4 години</item>
+        <item>8 годин</item>
+        <item>12 годин</item>
+        <item>1 день</item>
     </string-array>
 </resources>

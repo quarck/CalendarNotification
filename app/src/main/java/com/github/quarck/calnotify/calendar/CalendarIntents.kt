@@ -50,7 +50,8 @@ object CalendarIntents {
         val canAddEventTime =
                 event.instanceStartTime != 0L &&
                         event.instanceEndTime != 0L &&
-                        event.instanceStartTime < event.instanceEndTime
+                        event.instanceStartTime < event.instanceEndTime &&
+                        event.instanceEndTime > System.currentTimeMillis()
 
         if (shouldAddEventTime && canAddEventTime) {
             // only add if it is a valid instance start / end time, and we need both

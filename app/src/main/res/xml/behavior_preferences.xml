@@ -61,6 +61,12 @@
             android:summary="@string/ignore_all_day_events_summary"
             android:defaultValue="false" />
 
+        <CheckBoxPreference
+            android:key="skip_expired_events"
+            android:title="@string/skip_expired_events_title"
+            android:summary="@string/skip_expired_events_summary"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -26,7 +26,7 @@ import com.github.quarck.calnotify.calendareditor.CalendarChangeRequest
 
 interface CalendarProviderInterface {
 
-    fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord>
+    fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean, skipExpiredEvents: Boolean): List<EventAlertRecord>
 
     fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord?
 

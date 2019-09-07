@@ -515,6 +515,8 @@
     <string name="car_mode_comment">Select BT devices to automatically trigger silent mode when device is connected:</string>
     <string name="pebble_only_alarms">PebbleAPI - only #alarm-s</string>
     <string name="pebble_only_alarms_summary">Only forward #alarm events to PebbleAPI</string>
+    <string name="skip_expired_events_title">Ignore expired events</string>
+    <string name="skip_expired_events_summary">Do not process events if end time is already in the past</string>
 
 </resources>
 

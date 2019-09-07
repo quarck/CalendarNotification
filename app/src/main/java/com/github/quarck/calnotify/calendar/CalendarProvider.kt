@@ -122,7 +122,7 @@ object CalendarProvider : CalendarProviderInterface {
         return Pair(state, event)
     }
 
-    override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
+    override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean, skipExpiredEvents: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getAlertByTime: has no permissions")
@@ -147,13 +147,17 @@ object CalendarProvider : CalendarProviderInterface {
                 val (state, event) = cursorToAlertRecord(cursor, alertTime)
 
                 if (state != null && event != null) {
-                    if (!skipDismissed ||
-                        (state != CalendarContract.CalendarAlerts.STATE_DISMISSED && event.instanceEndTime > System.currentTimeMillis())) {
-                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
-                        ret.add(event)
+
+                    if (skipDismissed && state == CalendarContract.CalendarAlerts.STATE_DISMISSED) {
+                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - already dismissed in provider, ignoring")
+                    }
+                    else if (skipExpiredEvents && event.instanceEndTime < System.currentTimeMillis()) {
+                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - event has expired, ignoring")
                     }
                     else {
-                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}] - already dismissed in provider, ignoring")
+                        // good to go finally
+                        DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
+                        ret.add(event)
                     }
                 }
                 else {
@@ -1460,7 +1464,7 @@ object CalendarProvider : CalendarProviderInterface {
                 }
 
                 val alertTime = event.startTime - reminderTime - utcOffset
-                if (event.endTime < System.currentTimeMillis()) {
+                if (event.endTime < System.currentTimeMillis() && settings.skipExpiredEvents) {
                     continue
                 }
 
@@ -1653,9 +1657,9 @@ object CalendarProvider : CalendarProviderInterface {
 
                     var hasAnyReminders = false
                     var hasNonLocalReminders = false
-                    var currentTime = System.currentTimeMillis()
+                    val currentTime = System.currentTimeMillis()
 
-                    if (evt.instanceEnd < currentTime) {
+                    if (evt.instanceEnd < currentTime && settings.skipExpiredEvents) {
                         continue
                     }
 

@@ -264,6 +264,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val dontShowAllDayEvents: Boolean
         get() = getBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, false)
 
+    val skipExpiredEvents: Boolean
+        get() = getBoolean(SKIP_EXPIRED_EVENTS_KEY, false)
+
     val firstDayOfWeek: Int
         get() {
             try {
@@ -451,6 +454,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events" // false
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events" // false
         private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events" // false
+        private const val SKIP_EXPIRED_EVENTS_KEY = "skip_expired_events"
+
         private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week" // "1" (string!)
         private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification" // false
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan" // true

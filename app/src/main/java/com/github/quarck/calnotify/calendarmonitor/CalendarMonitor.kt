@@ -155,7 +155,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         val eventsToSilentlyDrop = mutableListOf<EventAlertRecord>()
 
         try {
-            val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
+
+            val settings = Settings(context)
+
+            val events = CalendarProvider.getAlertByTime(
+                    context, alertTime,
+                    skipDismissed = false,
+                    skipExpiredEvents = settings.skipExpiredEvents
+            )
 
             for (event in events) {
 

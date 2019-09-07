@@ -147,7 +147,8 @@ object CalendarProvider : CalendarProviderInterface {
                 val (state, event) = cursorToAlertRecord(cursor, alertTime)
 
                 if (state != null && event != null) {
-                    if (!skipDismissed || state != CalendarContract.CalendarAlerts.STATE_DISMISSED) {
+                    if (!skipDismissed ||
+                        (state != CalendarContract.CalendarAlerts.STATE_DISMISSED && event.instanceEndTime > System.currentTimeMillis())) {
                         DevLog.info(LOG_TAG, "Read event ${event.eventId}, st $state, time: [${event.startTime},${event.endTime}]")
                         ret.add(event)
                     }
@@ -1459,6 +1460,9 @@ object CalendarProvider : CalendarProviderInterface {
                 }
 
                 val alertTime = event.startTime - reminderTime - utcOffset
+                if (event.endTime < System.currentTimeMillis()) {
+                    continue
+                }
 
                 val entry = MonitorEventAlertEntry(
                         event.eventId,
@@ -1649,7 +1653,11 @@ object CalendarProvider : CalendarProviderInterface {
 
                     var hasAnyReminders = false
                     var hasNonLocalReminders = false
+                    var currentTime = System.currentTimeMillis()
 
+                    if (evt.instanceEnd < currentTime) {
+                        continue
+                    }
 
                     if (reminders != null)
                         for ((isLocal, reminderTime) in reminders) {
